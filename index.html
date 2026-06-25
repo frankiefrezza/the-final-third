@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Final Third</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES (THEMING) --- */
+        :root {
+            --bg-dark: #0d0f12;
+            --surface: #1a1d24;
+            --surface-hover: #232730;
+            --gold: #d4af37;
+            --gold-muted: rgba(212, 175, 55, 0.2);
+            --text-main: #f8f9fa;
+            --text-secondary: #8b929b;
+            --danger: #ef4444;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        /* --- GLOBAL STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: var(--font-sans);
+            background-color: #000; 
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Mobile Container to simulate app on desktop */
+        #app-container {
+            width: 100%;
+            max-width: 430px; 
+            background-color: var(--bg-dark);
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- VIEW MANAGEMENT (Prevents Stacking) --- */
+        .app-environment {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        
+        .app-environment.active {
+            display: flex;
+        }
+
+        /* Login Screen Specifics */
+        #login-environment {
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        /* Inner Views for Main App */
+        .view-section {
+            flex-grow: 1;
+            padding: 20px 20px 100px 20px; 
+            display: none;
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+        }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- TYPOGRAPHY & HEADER --- */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 25px 0; font-size: 20px; color: var(--gold); }
+        .greeting-block { text-align: center; margin-bottom: 30px; }
+        .greeting-block h1 { font-family: var(--font-serif); font-size: 28px; font-weight: 600; margin-bottom: 5px; color: var(--text-main); }
+        .greeting-block p { color: var(--text-secondary); font-size: 14px; letter-spacing: 0.5px; }
+        .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* --- COMPONENTS --- */
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 35px; }
+        .stat-card { background: var(--surface); border-radius: 16px; padding: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-icon { font-size: 20px; color: var(--gold); width: 24px; text-align: center; }
+        .stat-info h3 { font-size: 22px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+        .stat-info p { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; }
+
+        .cigar-card { background: var(--surface); border-radius: 16px; padding: 12px; display: flex; align-items: center; gap: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .cigar-img-placeholder { width: 50px; height: 50px; background: #2a2d35; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--gold); font-size: 24px; flex-shrink: 0; }
+        .cigar-details { flex-grow: 1; min-width: 0; }
+        .cigar-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cigar-meta { font-size: 12px; color: var(--text-secondary); }
+        .cigar-rating { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--gold); display: flex; justify-content: center; align-items: center; color: var(--gold); font-size: 12px; font-weight: 700; flex-shrink: 0; }
+        .cigar-actions { display: flex; flex-direction: column; gap: 12px; padding-left: 12px; border-left: 1px solid rgba(255,255,255,0.1); justify-content: center; }
+
+        .btn-primary { width: 100%; background: var(--gold); color: #000; font-family: var(--font-sans); font-weight: 600; font-size: 16px; padding: 16px; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s; margin-top: 10px; display: flex; justify-content: center; align-items: center; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+        
+        .tab-group { display: flex; background: var(--surface); border-radius: 10px; padding: 4px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; background: transparent; color: var(--text-secondary); border: none; padding: 10px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { background: #2a2d35; color: var(--text-main); }
+
+        .form-group { margin-bottom: 20px; width: 100%; text-align: left; }
+        .form-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600; }
+        .form-input { width: 100%; background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 16px; border-radius: 12px; font-family: var(--font-sans); font-size: 15px; }
+        .form-input:focus { outline: none; border-color: var(--gold); }
+        .star-rating { display: flex; gap: 10px; color: var(--gold); font-size: 24px; padding: 10px 0; cursor: pointer; }
+        
+        .segmented-control { display: flex; gap: 10px; }
+        .seg-btn { flex: 1; background: var(--surface); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .seg-btn.active { background: var(--gold-muted); border-color: var(--gold); color: var(--gold); }
+
+        /* --- TOAST NOTIFICATIONS --- */
+        #toast { position: fixed; top: -60px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); transition: top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; }
+        #toast.show { top: 20px; }
+
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13, 15, 18, 0.8); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--surface); padding: 30px; border-radius: 24px; width: 340px; max-width: 90%; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .hidden { display: none !important; }
+
+        /* Video element for camera scanner */
+        #camera-feed { width: 100%; border-radius: 12px; margin-bottom: 20px; background: #000; object-fit: cover; display: none; }
+
+        /* --- BOTTOM NAV DOCK --- */
+        .bottom-dock { position: fixed; bottom: 0; left: 0; right: 0; max-width: 430px; margin: 0 auto; background: rgba(26, 29, 36, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; align-items: center; padding: 15px 10px calc(15px + env(safe-area-inset-bottom)); z-index: 100; }
+        
+        .nav-item { color: var(--text-secondary); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 500; cursor: pointer; transition: color 0.2s; width: 60px; }
+        .nav-item i { font-size: 20px; }
+        .nav-item.active { color: var(--gold); }
+        
+        .fab-container { transform: translateY(-20px); }
+        .fab-btn { width: 56px; height: 56px; background: var(--gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #000; font-size: 24px; border: 4px solid var(--bg-dark); cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); transition: transform 0.2s; }
+        .fab-btn:active { transform: scale(0.9); }
+    </style>
+</head>
+<body>
+
+<div id="toast">Message</div>
+
+<div id="app-container">
+
+    <div id="login-environment" class="app-environment active">
+        <i class="fa-solid fa-leaf" style="color: var(--gold); font-size: 45px; margin-bottom: 20px;"></i>
+        <h1 style="font-family: var(--font-serif); font-size: 32px; margin-bottom: 5px;">The Final Third</h1>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 40px;">From First Light to Final Third.</p>
+        
+        <div class="form-group" style="margin-bottom: 30px;">
+            <label class="form-label">Username</label>
+            <input type="text" id="login-name" class="form-input" placeholder="Enter your name">
+        </div>
+        
+        <button id="login-btn" class="btn-primary" onclick="handleAuth()">Enter Journal <i class="fa-solid fa-arrow-right" style="margin-left: 10px;"></i></button>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 20px; text-align: center;">If your name isn't recognized, a new journal will automatically be created for you.</p>
+    </div>
+
+    <div id="main-environment" class="app-environment">
+        
+        <section id="view-home" class="view-section active">
+            <div class="top-bar">
+                <i class="fa-solid fa-circle-user" style="cursor:pointer; font-size: 24px;" onclick="switchTab('view-profile')"></i>
+                <i class="fa-regular fa-bell" style="cursor:pointer;" onclick="showToast('No new notifications')"></i>
+            </div>
+            
+            <div class="greeting-block">
+                <i class="fa-solid fa-leaf" style="color: var(--gold); margin-bottom: 15px; font-size: 20px;"></i>
+                <h1>Good evening, <span id="display-name">User</span></h1>
+                <p>From First Light to Final Third.</p>
+            </div>
+
+            <div class="section-title">At a Glance</div>
+            <div class="grid-stats">
+                <div class="stat-card">
+                    <i class="fa-solid fa-fire stat-icon"></i>
+                    <div class="stat-info"><h3 id="stat-smoked">0</h3><p>Smoked</p></div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-box-open stat-icon"></i>
+                    <div class="stat-info"><h3 id="stat-collection">0</h3><p>Collection</p></div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-regular fa-star stat-icon"></i>
+                    <div class="stat-info"><h3 id="stat-favs">0</h3><p>Favorites</p></div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-chart-line stat-icon"></i>
+                    <div class="stat-info"><h3 id="stat-avg">0.0</h3><p>Avg Rating</p></div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <span>Recent Smokes</span>
+                <span style="color: var(--gold); cursor: pointer;" onclick="switchTab('view-journal')">See All</span>
+            </div>
+            
+            <div id="recent-smokes-list">
+                </div>
+
+            <button class="btn-primary" onclick="initAddSmoke()">
+                <i class="fa-solid fa-plus" style="margin-right: 8px;"></i> Log a Smoke
+            </button>
+        </section>
+
+        <section id="view-collection" class="view-section">
+            <div class="top-bar">
+                <h2 style="color: var(--text-main); font-size: 20px; font-weight: 600;">Collection</h2>
+                <div>
+                    <i class="fa-solid fa-search" style="margin-right: 15px; cursor:pointer;" onclick="showToast('Search feature coming soon!')"></i>
+                    <i class="fa-solid fa-filter" style="cursor:pointer;" onclick="showToast('Filter options coming soon!')"></i>
+                </div>
+            </div>
+
+            <div class="tab-group" id="collection-tabs">
+                <button class="tab-btn active" onclick="toggleTab(this)">All</button>
+                <button class="tab-btn" onclick="toggleTab(this)">Owned</button>
+                <button class="tab-btn" onclick="toggleTab(this)">Wishlist</button>
+            </div>
+
+            <div class="section-title" style="margin-bottom: 10px;"><span id="collection-count">0</span> Cigars</div>
+
+            <div id="collection-list">
+                </div>
+        </section>
+
+        <section id="view-journal" class="view-section">
+            <div class="top-bar">
+                <h2 style="color: var(--text-main); font-size: 20px; font-weight: 600;">My Journal</h2>
+                <i class="fa-solid fa-search" style="cursor:pointer;" onclick="showToast('Search journal feature coming soon!')"></i>
+            </div>
+            <div id="full-journal-list">
+                </div>
+        </section>
+
+        <section id="view-profile" class="view-section">
+            <div class="top-bar">
+                <h2 style="color: var(--text-main); font-size: 20px; font-weight: 600;">Profile</h2>
+            </div>
+            
+            <div class="cigar-card" style="flex-direction: column; padding: 30px; text-align: center;">
+                
+                <div style="position: relative; display: inline-block; cursor: pointer; margin-bottom: 15px;">
+                    <label for="avatar-upload" style="cursor: pointer;">
+                        <img id="profile-avatar-img" src="" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; display: none; border: 2px solid var(--gold);">
+                        <i id="profile-avatar-icon" class="fa-solid fa-circle-user" style="font-size: 90px; color: var(--gold); display: inline-block;"></i>
+                        <div style="position: absolute; bottom: 0; right: 0; background: var(--bg-dark); border-radius: 50%; padding: 6px; border: 1px solid var(--gold);">
+                            <i class="fa-solid fa-camera" style="font-size: 14px; color: var(--gold);"></i>
+                        </div>
+                    </label>
+                    <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+                </div>
+
+                <h2 id="profile-name-display" style="margin-bottom: 5px;">User</h2>
+                <p style="color: var(--text-secondary); font-size: 13px;">The Final Third Active</p>
+            </div>
+
+            <div class="section-title" style="margin-top: 20px;">Data Management</div>
+            <button class="btn-primary" style="background: var(--surface); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); margin-bottom: 15px;" onclick="showToast('Data backed up successfully!')">
+                <i class="fa-solid fa-cloud-arrow-up" style="margin-right: 10px; color: var(--gold);"></i> Backup Data
+            </button>
+            
+            <div class="section-title" style="margin-top: 20px;">Account</div>
+            <button class="btn-primary" style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); color: var(--danger);" onclick="handleLogout()">
+                <i class="fa-solid fa-right-from-bracket" style="margin-right: 10px;"></i> Log Out
+            </button>
+
+            <div style="text-align: center; margin-top: 35px;">
+                <div onclick="switchTab('view-home')" style="display: inline-flex; justify-content: center; align-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s;">
+                    <i class="fa-solid fa-xmark" style="color: var(--text-secondary); font-size: 20px;"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-add" class="view-section">
+            <div class="top-bar">
+                <span style="font-size: 16px; cursor: pointer; color: var(--text-secondary);" onclick="cancelAddSmoke()">Cancel</span>
+                <h2 id="add-smoke-title" style="color: var(--text-main); font-size: 18px; font-weight: 600;">Add Smoke</h2>
+                <span style="font-size: 16px; cursor: pointer; color: var(--gold);" onclick="saveSmoke()">Save</span>
+            </div>
+
+            <div class="cigar-card" style="margin-bottom: 20px; background: #232730; cursor: pointer;" onclick="openCameraModal()">
+                <div class="cigar-img-placeholder" style="background: var(--bg-dark);"><i class="fa-solid fa-camera"></i></div>
+                <div class="cigar-details">
+                    <div class="cigar-name" style="color: var(--gold);">Scan Cigar Band</div>
+                    <div class="cigar-meta">Auto-fill details using camera</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Cigar Name</label>
+                <input type="text" id="smoke-name" class="form-input" placeholder="e.g. Padron 1926 No. 6">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Date Smoked</label>
+                <input type="date" id="smoke-date" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Location</label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-location-dot" style="position: absolute; left: 15px; top: 18px; color: var(--text-secondary);"></i>
+                    <input type="text" id="smoke-location" class="form-input" style="padding-left: 40px;" placeholder="e.g. Home Lounge" value="Greensboro, NC">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label class="form-label">Rating</label>
+                    <span id="rating-label" style="font-size: 11px; color: var(--gold); font-weight: 600;">Excellent</span>
+                </div>
+                <div class="star-rating" id="star-rating-container">
+                    <i class="fa-solid fa-star" onclick="setRating(1)"></i>
+                    <i class="fa-solid fa-star" onclick="setRating(2)"></i>
+                    <i class="fa-solid fa-star" onclick="setRating(3)"></i>
+                    <i class="fa-solid fa-star" onclick="setRating(4)"></i>
+                    <i class="fa-solid fa-star" onclick="setRating(5)"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea id="smoke-notes" class="form-input" rows="4" placeholder="Flavor profile, draw, construction..."></textarea>
+            </div>
+            
+            <button class="btn-primary" onclick="saveSmoke()">Save to Journal</button>
+        </section>
+
+        <nav class="bottom-dock">
+            <div class="nav-item active" onclick="switchTab('view-home')" id="nav-home">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('view-collection')" id="nav-collection">
+                <i class="fa-solid fa-box-open"></i>
+                <span>Collection</span>
+            </div>
+            
+            <div class="fab-container">
+                <div class="fab-btn" onclick="initAddSmoke()">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </div>
+            
+            <div class="nav-item" onclick="switchTab('view-journal')" id="nav-journal">
+                <i class="fa-solid fa-book-open"></i>
+                <span>Journal</span>
+            </div>
+            
+            <div class="nav-item" onclick="switchTab('view-profile')" id="nav-profile">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </div>
+        </nav>
+
+    </div> </div>
+
+<div id="modal-camera" class="modal-overlay hidden">
+    <div class="modal-content" style="border-color: var(--gold);">
+        <div id="camera-placeholder">
+            <i class="fa-solid fa-expand" style="font-size: 60px; color: var(--gold); margin-bottom: 20px; opacity: 0.5;"></i>
+            <h3 style="color: var(--text-main); margin-bottom: 10px;">Accessing Camera...</h3>
+        </div>
+        
+        <video id="camera-feed" autoplay playsinline></video>
+        
+        <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 25px;">Align the cigar band within the frame so the AI can read it.</p>
+        
+        <button id="scan-action-btn" class="btn-primary" onclick="executeScan()">Capture & Analyze</button>
+        <button class="btn-primary" style="background: var(--bg-dark); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1);" onclick="closeCameraModal()">Cancel</button>
+    </div>
+</div>
+
+
+<script type="module">
+    // 1. IMPORT FIREBASE MODULAR SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    // 2. CONFIGURE FIREBASE
+    const firebaseConfig = {
+        apiKey: "AIzaSyBdJ-ctGph_yGm4rdyAmPYYZR2QqWNBLxc",
+        authDomain: "the-final-third.firebaseapp.com",
+        projectId: "the-final-third",
+        storageBucket: "the-final-third.firebasestorage.app",
+        messagingSenderId: "686549768886",
+        appId: "1:686549768886:web:a0af4ee205001503f4e417",
+        measurementId: "G-JESSM5976P"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    // --- STATE MANAGEMENT ---
+    let currentUser = null;
+    let currentAvatar = null;
+    let currentRating = 5;
+    let editingSmokeId = null;
+    let appData = { smokes: [], collection: [] };
+    let cameraStream = null;
+
+    document.getElementById('smoke-date').value = new Date().toISOString().split('T')[0];
+
+    // --- AUTHENTICATION LOGIC (FIRESTORE INTEGRATED) ---
+    window.handleAuth = async function() {
+        const name = document.getElementById('login-name').value.trim();
+        const loginBtn = document.getElementById('login-btn');
+        
+        if(!name) return showToast("Please enter a username to continue.");
+        
+        // Show loading state
+        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 10px;"></i> Accessing Vault...';
+        loginBtn.disabled = true;
+        
+        try {
+            const userRef = doc(db, 'users', name);
+            const docSnap = await getDoc(userRef);
+            
+            if (docSnap.exists()) {
+                // User exists, pull data from Firestore
+                const userData = docSnap.data();
+                currentUser = name;
+                appData = userData.data || { smokes: [], collection: [] };
+                currentAvatar = userData.avatar || null;
+                loginSuccess(currentAvatar);
+                showToast("Welcome back!");
+            } else {
+                // Register New User in Firestore with default mock data
+                appData = {
+                    smokes: [
+                        { id: Date.now(), name: "Arturo Fuente Don Carlos", date: "2026-06-24", location: "Greensboro, NC", notes: "Flawless construction. Perfect end to the day.", rating: 5 },
+                        { id: Date.now() - 1000, name: "Partagás Serie D No. 4", date: "2026-06-20", location: "Home Lounge", notes: "Enjoyed on the patio. Spicy and robust.", rating: 4 }
+                    ],
+                    collection: [
+                        { id: 1, name: "Padron 1926 No. 6", size: "Toro • 6 x 52" },
+                        { id: 2, name: "Montecristo No. 2", size: "Torpedo • 6 1/8 x 52" },
+                        { id: 3, name: "Arturo Fuente OpusX", size: "Robusto • 5 1/4 x 50" }
+                    ]
+                };
+                currentAvatar = null;
+                currentUser = name;
+                
+                await setDoc(userRef, { data: appData, avatar: currentAvatar });
+                
+                loginSuccess(currentAvatar);
+                showToast("New journal created in the cloud!");
+            }
+        } catch (error) {
+            console.error("Error accessing Firestore:", error);
+            showToast("Network Error. Check console.");
+        } finally {
+            // Reset Button
+            loginBtn.innerHTML = 'Enter Journal <i class="fa-solid fa-arrow-right" style="margin-left: 10px;"></i>';
+            loginBtn.disabled = false;
+        }
+    };
+
+    window.loginSuccess = function(avatarDataUrl) {
+        document.getElementById('login-environment').classList.remove('active');
+        document.getElementById('main-environment').classList.add('active');
+        
+        renderHomeData();
+        renderCollectionData();
+        renderJournalData();
+        
+        document.getElementById('display-name').innerText = currentUser;
+        document.getElementById('profile-name-display').innerText = currentUser;
+        updateAvatarUI(avatarDataUrl);
+        
+        switchTab('view-home');
+    };
+
+    window.handleLogout = function() {
+        currentUser = null;
+        currentAvatar = null;
+        appData = { smokes: [], collection: [] };
+        
+        document.getElementById('main-environment').classList.remove('active');
+        document.getElementById('login-environment').classList.add('active');
+        
+        document.getElementById('login-name').value = '';
+        showToast("Logged out successfully.");
+    };
+
+    // --- AVATAR UPLOAD LOGIC (FIRESTORE INTEGRATED) ---
+    window.handleAvatarUpload = function(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                // Resize image via canvas to keep Firebase storage small
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const maxSize = 250;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxSize) { height *= maxSize / width; width = maxSize; }
+                } else {
+                    if (height > maxSize) { width *= maxSize / height; height = maxSize; }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+                const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+                currentAvatar = resizedDataUrl;
+                updateAvatarUI(resizedDataUrl);
+                syncData(); // Push new avatar to Firestore
+                showToast("Profile picture updated!");
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.updateAvatarUI = function(dataUrl) {
+        const imgEl = document.getElementById('profile-avatar-img');
+        const iconEl = document.getElementById('profile-avatar-icon');
+        
+        if(dataUrl) {
+            imgEl.src = dataUrl;
+            imgEl.style.display = 'inline-block';
+            iconEl.style.display = 'none';
+        } else {
+            imgEl.style.display = 'none';
+            iconEl.style.display = 'inline-block';
+            imgEl.src = '';
+        }
+    };
+
+    // --- LIVE CAMERA & SCANNING LOGIC ---
+    window.openCameraModal = async function() {
+        const modal = document.getElementById('modal-camera');
+        const video = document.getElementById('camera-feed');
+        const placeholder = document.getElementById('camera-placeholder');
+        const btn = document.getElementById('scan-action-btn');
+        
+        modal.classList.remove('hidden');
+        btn.innerHTML = 'Capture & Analyze';
+        btn.disabled = false;
+
+        try {
+            // Request camera (prefer rear camera)
+            cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = cameraStream;
+            video.style.display = 'block';
+            placeholder.style.display = 'none';
+        } catch (err) {
+            console.error("Camera access denied or unavailable", err);
+            showToast("Could not access camera. Simulation mode active.");
+            video.style.display = 'none';
+            placeholder.style.display = 'block';
+            placeholder.innerHTML = '<i class="fa-solid fa-image" style="font-size: 60px; color: var(--gold); margin-bottom: 20px; opacity: 0.5;"></i><h3 style="color: var(--text-main); margin-bottom: 10px;">Camera Unavailable</h3>';
+        }
+    };
+
+    window.closeCameraModal = function() {
+        const modal = document.getElementById('modal-camera');
+        modal.classList.add('hidden');
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+        }
+    };
+
+    window.executeScan = function() {
+        const btn = document.getElementById('scan-action-btn');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 10px;"></i> Processing AI Vision...';
+        btn.disabled = true;
+
+        // Simulate an API delay for extracting text
+        setTimeout(() => {
+            closeCameraModal();
+            
+            // Auto-populate the form
+            document.getElementById('smoke-name').value = "Padron 1926 Serie No. 6";
+            document.getElementById('smoke-notes').value = "Pre-filled by AI: Flawless draw. Notes of dark espresso, cocoa powder, and aged leather with a very smooth, slightly peppery retrohale.";
+            setRating(5);
+            
+            showToast("Band details extracted successfully!");
+        }, 2500);
+    };
+
+    // --- HTML GENERATORS FOR CIGAR CARDS ---
+    window.createSmokeCardHTML = function(smoke) {
+        return `
+            <div class="cigar-card">
+                <div class="cigar-img-placeholder"><i class="fa-solid fa-joint"></i></div>
+                <div class="cigar-details">
+                    <div class="cigar-name">${smoke.name}</div>
+                    <div class="cigar-meta">${smoke.date} • ${smoke.location}</div>
+                </div>
+                <div class="cigar-rating">${smoke.rating.toFixed(1)}</div>
+                <div class="cigar-actions">
+                    <i class="fa-solid fa-pen" style="color: var(--text-secondary); cursor: pointer; font-size: 14px;" onclick="editSmoke(${smoke.id})"></i>
+                    <i class="fa-solid fa-trash" style="color: var(--danger); cursor: pointer; font-size: 14px;" onclick="deleteSmoke(${smoke.id})"></i>
+                </div>
+            </div>
+        `;
+    };
+
+    // --- DATA RENDERING ---
+    window.renderHomeData = function() {
+        document.getElementById('stat-smoked').innerText = appData.smokes.length;
+        document.getElementById('stat-collection').innerText = appData.collection.length;
+        
+        let sum = 0, favs = 0;
+        appData.smokes.forEach(s => {
+            sum += s.rating;
+            if(s.rating >= 4) favs++;
+        });
+        const avg = appData.smokes.length ? (sum / appData.smokes.length).toFixed(1) : "0.0";
+        document.getElementById('stat-favs').innerText = favs;
+        document.getElementById('stat-avg').innerText = avg;
+        
+        const recentList = document.getElementById('recent-smokes-list');
+        recentList.innerHTML = '';
+        const recentSmokes = appData.smokes.slice(0, 3);
+        
+        if(recentSmokes.length === 0) {
+            recentList.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px;">No smokes logged yet.</p>';
+        } else {
+            recentSmokes.forEach(s => { recentList.innerHTML += createSmokeCardHTML(s); });
+        }
+    };
+
+    window.renderCollectionData = function() {
+        const list = document.getElementById('collection-list');
+        list.innerHTML = '';
+        document.getElementById('collection-count').innerText = appData.collection.length;
+        
+        appData.collection.forEach(c => {
+            list.innerHTML += `
+                <div class="cigar-card">
+                    <div class="cigar-img-placeholder"><i class="fa-solid fa-joint"></i></div>
+                    <div class="cigar-details">
+                        <div class="cigar-name">${c.name}</div>
+                        <div class="cigar-meta">${c.size}</div>
+                    </div>
+                </div>
+            `;
+        });
+    };
+
+    window.renderJournalData = function() {
+        const list = document.getElementById('full-journal-list');
+        list.innerHTML = '';
+        if(appData.smokes.length === 0) {
+            list.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">No smokes logged yet.</p>';
+            return;
+        }
+        appData.smokes.forEach(s => { list.innerHTML += createSmokeCardHTML(s); });
+    };
+
+    // --- FORM & SAVING LOGIC ---
+    window.setRating = function(stars) {
+        currentRating = stars;
+        const container = document.getElementById('star-rating-container');
+        container.innerHTML = '';
+        for(let i=1; i<=5; i++) {
+            container.innerHTML += i <= stars ? `<i class="fa-solid fa-star" onclick="setRating(${i})"></i>` : `<i class="fa-regular fa-star" onclick="setRating(${i})"></i>`;
+        }
+        const labels = ["Poor", "Fair", "Good", "Great", "Excellent"];
+        document.getElementById('rating-label').innerText = labels[stars-1];
+    };
+
+    window.initAddSmoke = function() {
+        editingSmokeId = null;
+        document.getElementById('add-smoke-title').innerText = "Add Smoke";
+        document.getElementById('smoke-name').value = '';
+        document.getElementById('smoke-notes').value = '';
+        document.getElementById('smoke-date').value = new Date().toISOString().split('T')[0];
+        setRating(5);
+        switchTab('view-add');
+    };
+
+    window.cancelAddSmoke = function() {
+        editingSmokeId = null;
+        switchTab('view-home');
+    };
+
+    window.editSmoke = function(id) {
+        const smoke = appData.smokes.find(s => s.id === id);
+        if(!smoke) return;
+
+        editingSmokeId = id;
+        document.getElementById('add-smoke-title').innerText = "Edit Smoke";
+        document.getElementById('smoke-name').value = smoke.name;
+        document.getElementById('smoke-date').value = smoke.date;
+        document.getElementById('smoke-location').value = smoke.location;
+        document.getElementById('smoke-notes').value = smoke.notes;
+        setRating(smoke.rating);
+        
+        switchTab('view-add');
+    };
+
+    window.deleteSmoke = function(id) {
+        if(confirm("Are you sure you want to delete this log?")) {
+            appData.smokes = appData.smokes.filter(s => s.id !== id);
+            syncData();
+            renderHomeData();
+            renderJournalData();
+            showToast("Log deleted.");
+        }
+    };
+
+    window.saveSmoke = function() {
+        const name = document.getElementById('smoke-name').value.trim() || "Unknown Cigar";
+        const date = document.getElementById('smoke-date').value;
+        const location = document.getElementById('smoke-location').value.trim();
+        const notes = document.getElementById('smoke-notes').value.trim();
+        
+        if (editingSmokeId) {
+            const index = appData.smokes.findIndex(s => s.id === editingSmokeId);
+            if (index !== -1) {
+                appData.smokes[index] = { ...appData.smokes[index], name, date, location, notes, rating: currentRating };
+            }
+            showToast("Smoke updated!");
+            editingSmokeId = null;
+        } else {
+            appData.smokes.unshift({
+                id: Date.now(),
+                name, date, location, notes, rating: currentRating
+            });
+            showToast("Smoke saved to journal!");
+        }
+        
+        syncData();
+        renderHomeData();
+        renderJournalData();
+        switchTab('view-home');
+    };
+
+    // Pushes current state directly to Firestore
+    window.syncData = async function() {
+        if(!currentUser) return;
+        try {
+            const userRef = doc(db, 'users', currentUser);
+            await updateDoc(userRef, { data: appData, avatar: currentAvatar });
+        } catch(error) {
+            console.error("Error syncing to Firestore: ", error);
+            showToast("Sync Error. Check console.");
+        }
+    };
+
+    // --- UI HELPERS ---
+    window.switchTab = function(targetViewId) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(targetViewId).classList.add('active');
+
+        const navMap = { 
+            'view-home': 'nav-home', 
+            'view-collection': 'nav-collection', 
+            'view-journal': 'nav-journal', 
+            'view-profile': 'nav-profile' 
+        };
+        
+        if(navMap[targetViewId]) {
+            document.getElementById(navMap[targetViewId]).classList.add('active');
+        }
+    };
+
+    window.toggleTab = function(btn) {
+        btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    };
+
+    window.toggleSegment = function(btn) {
+        btn.parentElement.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    };
+
+    window.showToast = function(msg) {
+        const toast = document.getElementById('toast');
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); };
+    window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
+
+</script>
+
+</body>
+</html>
