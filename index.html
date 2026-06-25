@@ -6,20 +6,22 @@
     <title>The Final Third</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- CSS VARIABLES (THEMING) --- */
+        /* --- CSS VARIABLES (LIGHT/PREMIUM THEME) --- */
         :root {
-            --bg-dark: #0d0f12;
-            --surface: #1a1d24;
-            --surface-hover: #232730;
-            --gold: #d4af37;
-            --gold-muted: rgba(212, 175, 55, 0.15);
-            --text-main: #f8f9fa;
-            --text-secondary: #8b929b;
+            --bg-main: #f8fafc; /* Soft, clean off-white */
+            --surface: #ffffff; /* Pure white cards */
+            --surface-hover: #f1f5f9;
+            --gold: #b38b36; /* Rich, classic gold */
+            --gold-muted: rgba(179, 139, 54, 0.1);
+            --text-main: #0f172a; /* Deep charcoal for headings */
+            --text-secondary: #64748b; /* Slate gray for secondary text */
+            --border: #e2e8f0;
             --danger: #ef4444;
+            --primary-btn: #0f172a; /* Sleek dark button */
             --font-sans: 'Inter', -apple-system, sans-serif;
             --font-serif: 'Playfair Display', serif;
         }
@@ -34,29 +36,33 @@
         
         body {
             font-family: var(--font-sans);
-            background-color: #000; 
+            background-color: #e2e8f0; 
             color: var(--text-main);
             display: flex;
             justify-content: center;
+            min-height: 100vh;
+            min-height: 100dvh;
         }
 
         /* Native App Wrapper Feel */
         #app-container {
             width: 100%;
             max-width: 430px; 
-            background-color: var(--bg-dark);
+            background-color: var(--bg-main);
+            min-height: 100vh;
             min-height: 100dvh;
             position: relative;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            box-shadow: 0 0 40px rgba(0,0,0,0.6);
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
         }
 
         /* --- VIEW ENVIRONMENT MANAGER --- */
         .app-environment {
             display: none;
             width: 100%;
+            min-height: 100vh;
             min-height: 100dvh;
             flex-direction: column;
         }
@@ -70,11 +76,12 @@
             align-items: center;
             padding: 40px;
             text-align: center;
+            background-color: var(--surface);
         }
 
         .view-section {
             flex-grow: 1;
-            padding: max(20px, env(safe-area-inset-top)) 20px calc(110px + env(safe-area-inset-bottom)) 20px; 
+            padding: max(20px, env(safe-area-inset-top)) 24px calc(120px + env(safe-area-inset-bottom)) 24px; 
             display: none;
             animation: fadeIn 0.25s ease-out;
             overflow-y: auto;
@@ -87,126 +94,130 @@
             to { opacity: 1; transform: translateY(0); } 
         }
 
-        /* --- TOP HEADER NAVIGATION --- */
+        /* --- TYPOGRAPHY, HEADER & LOGOS --- */
         .top-bar { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 10px 0 20px 0; 
+            padding: 10px 0 25px 0; 
             font-size: 22px; 
-            color: var(--gold); 
+            color: var(--text-main); 
         }
-        .greeting-block { text-align: center; margin-bottom: 25px; }
-        .greeting-block h1 { font-family: var(--font-serif); font-size: 28px; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
-        .greeting-block p { color: var(--text-secondary); font-size: 13px; letter-spacing: 0.5px; }
-        .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        
+                          .app-logo-large {
+            width: 260px;
+            max-width: 90%;
+            height: auto;
+            display: block;
+            margin: 0 auto 24px auto;
+        }
+        
+        .app-logo-small {
+            width: 260px; /* Increased to match the login page */
+            max-width: 90%;
+            height: auto;
+            display: block;
+            margin: 0 auto 18px auto;
+        }
+        }
+        }
+
+        .greeting-block { text-align: center; margin-bottom: 15px; }
+        .greeting-block h1 { font-family: var(--font-serif); font-size: 30px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+        .greeting-block p { color: var(--text-secondary); font-size: 14px; letter-spacing: 0.5px; }
+        
+        .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); font-weight: 700; margin-top: 35px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
 
         /* --- UI CARDS & GRID COMPONENTS --- */
-        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
-        .stat-card { background: var(--surface); border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 14px; border: 1px solid rgba(255,255,255,0.04); }
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .stat-card { background: var(--surface); border-radius: 16px; padding: 20px 16px; display: flex; align-items: center; gap: 14px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .stat-icon { font-size: 18px; color: var(--gold); width: 22px; text-align: center; }
-        .stat-info h3 { font-size: 20px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+        .stat-info h3 { font-size: 22px; font-weight: 700; line-height: 1; margin-bottom: 6px; color: var(--text-main); }
         .stat-info p { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
 
-        .cigar-card { background: var(--surface); border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.04); }
-        .cigar-img-placeholder { width: 48px; height: 48px; background: #222630; border-radius: 12px; display: flex; justify-content: center; align-items: center; color: var(--gold); font-size: 20px; flex-shrink: 0; }
+        .cigar-card { background: var(--surface); border-radius: 16px; padding: 18px 16px; display: flex; align-items: center; gap: 16px; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .cigar-img-placeholder { width: 52px; height: 52px; background: var(--bg-main); border-radius: 12px; display: flex; justify-content: center; align-items: center; color: var(--gold); font-size: 20px; flex-shrink: 0; }
         .cigar-details { flex-grow: 1; min-width: 0; }
-        .cigar-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cigar-meta { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cigar-rating { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--gold); display: flex; justify-content: center; align-items: center; color: var(--gold); font-size: 12px; font-weight: 700; flex-shrink: 0; background: rgba(214, 175, 55, 0.05); }
+        .cigar-name { font-weight: 600; font-size: 16px; margin-bottom: 6px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cigar-meta { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cigar-rating { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold); display: flex; justify-content: center; align-items: center; color: var(--gold); font-size: 12px; font-weight: 700; flex-shrink: 0; background: var(--gold-muted); }
         
-        .cigar-actions { display: flex; align-items: center; gap: 16px; padding-left: 12px; border-left: 1px solid rgba(255,255,255,0.08); min-height: 36px; }
-        .cigar-actions i { cursor: pointer; font-size: 15px; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; transition: color 0.2s; }
+        .cigar-actions { display: flex; align-items: center; gap: 18px; padding-left: 14px; border-left: 1px solid var(--border); min-height: 40px; }
+        .cigar-actions i { cursor: pointer; font-size: 16px; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; transition: color 0.2s; }
 
         /* --- BUTTONS & CONTROLS --- */
-        .btn-primary { width: 100%; background: var(--gold); color: #000; font-family: var(--font-sans); font-weight: 600; font-size: 15px; padding: 15px; border: none; border-radius: 12px; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 8px; display: flex; justify-content: center; align-items: center; min-height: 48px; }
-        .btn-primary:active { transform: scale(0.98); background: #bd9b2f; }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary { width: 100%; background: var(--primary-btn); color: #ffffff; font-family: var(--font-sans); font-weight: 600; font-size: 15px; padding: 16px; border: none; border-radius: 12px; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 24px; display: flex; justify-content: center; align-items: center; min-height: 52px; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15); }
+        .btn-primary:active { transform: scale(0.98); background: #1e293b; }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
         
-        .tab-group { display: flex; background: var(--surface); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; background: transparent; color: var(--text-secondary); border: none; padding: 12px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; min-height: 40px; }
-        .tab-btn.active { background: #262b35; color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .tab-group { display: flex; background: var(--border); border-radius: 12px; padding: 6px; margin-bottom: 10px; }
+        .tab-btn { flex: 1; background: transparent; color: var(--text-secondary); border: none; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; min-height: 44px; }
+        .tab-btn.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
         /* --- FORM ELEMENTS --- */
-        .form-group { margin-bottom: 18px; width: 100%; text-align: left; }
-        .form-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600; }
-        .form-input { width: 100%; background: var(--surface); border: 1px solid rgba(255,255,255,0.08); color: var(--text-main); padding: 14px; border-radius: 12px; font-family: var(--font-sans); font-size: 15px; transition: border-color 0.2s; -webkit-appearance: none; }
-        .form-input:focus { outline: none; border-color: var(--gold); background: var(--surface-hover); }
+        .form-group { margin-bottom: 24px; width: 100%; text-align: left; }
+        .form-label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 10px; font-weight: 600; }
+        .form-input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text-main); padding: 16px; border-radius: 12px; font-family: var(--font-sans); font-size: 16px; transition: border-color 0.2s; -webkit-appearance: none; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }
+        .form-input:focus { outline: none; border-color: var(--gold); background: var(--surface); }
         textarea.form-input { resize: none; }
-        .star-rating { display: flex; gap: 12px; color: var(--gold); font-size: 26px; padding: 8px 0; cursor: pointer; }
+        .star-rating { display: flex; gap: 14px; color: var(--gold); font-size: 28px; padding: 10px 0; cursor: pointer; }
+        .star-rating i.fa-regular { color: #cbd5e1; }
         
-        /* --- TOAST ALERTS (Fixed for Dynamic Island) --- */
-        #toast { 
-            position: fixed; 
-            top: -150px; /* Pushed much higher to clear notch/island when hidden */
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: var(--gold); 
-            color: #000; 
-            padding: 14px 28px; 
-            border-radius: 30px; 
-            font-weight: 700; 
-            font-size: 13px; 
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4); 
-            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2); 
-            z-index: 9999; 
-            text-align: center; 
-            white-space: nowrap; 
-        }
-        #toast.show { 
-            top: calc(20px + env(safe-area-inset-top)); 
-        }
+        .segmented-control { display: flex; gap: 12px; }
+        .seg-btn { flex: 1; background: var(--surface); color: var(--text-secondary); border: 1px solid var(--border); padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .seg-btn.active { background: var(--gold-muted); border-color: var(--gold); color: var(--gold); font-weight: 600; }
 
         /* --- INTERACTIVE MODALS --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 12, 15, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        .modal-content { background: var(--surface); padding: 25px; border-radius: 24px; width: 100%; max-width: 360px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 15px 40px rgba(0,0,0,0.5); text-align: center; animation: modalGrow 0.2s ease-out; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: var(--surface); padding: 30px 25px; border-radius: 24px; width: 100%; max-width: 360px; border: 1px solid var(--border); box-shadow: 0 15px 40px rgba(0,0,0,0.15); text-align: center; animation: modalGrow 0.2s ease-out; }
         @keyframes modalGrow { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .hidden { display: none !important; }
 
-        #camera-feed { width: 100%; border-radius: 14px; margin-bottom: 18px; background: #000; object-fit: cover; display: none; aspect-ratio: 4/3; }
+        #camera-feed { width: 100%; border-radius: 14px; margin-bottom: 20px; background: #e2e8f0; object-fit: cover; display: none; aspect-ratio: 4/3; }
 
         /* --- FIXED APP BOTTOM SYSTEM DOCK --- */
-        .bottom-dock { position: fixed; bottom: 0; left: 0; right: 0; max-width: 430px; margin: 0 auto; background: rgba(26, 29, 36, 0.94); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-around; align-items: center; padding: 12px 10px calc(12px + env(safe-area-inset-bottom)) 10px; z-index: 1000; height: calc(75px + env(safe-area-inset-bottom)); }
+        .bottom-dock { position: fixed; bottom: 0; left: 0; right: 0; max-width: 430px; margin: 0 auto; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 12px 10px calc(12px + env(safe-area-inset-bottom)) 10px; z-index: 1000; height: calc(75px + env(safe-area-inset-bottom)); }
         
-        .nav-item { color: var(--text-secondary); display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; cursor: pointer; transition: color 0.2s; width: 62px; min-height: 44px; justify-content: center; }
-        .nav-item i { font-size: 19px; }
+        .nav-item { color: #94a3b8; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: color 0.2s; width: 62px; min-height: 44px; justify-content: center; }
+        .nav-item i { font-size: 22px; }
         .nav-item.active { color: var(--gold); }
         
-        .fab-container { transform: translateY(-16px); }
-        .fab-btn { width: 54px; height: 54px; background: var(--gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #000; font-size: 22px; border: 4px solid var(--bg-dark); cursor: pointer; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.25); transition: transform 0.1s; }
+        .fab-container { transform: translateY(-18px); }
+        .fab-btn { width: 58px; height: 58px; background: var(--gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #ffffff; font-size: 24px; border: 4px solid var(--bg-main); cursor: pointer; box-shadow: 0 6px 16px rgba(179, 139, 54, 0.3); transition: transform 0.1s; }
         .fab-btn:active { transform: scale(0.92); }
+
+        /* Text utility for empty states */
+        .empty-state-text { color: var(--text-secondary); font-size: 14px; text-align: center; padding: 20px 0; }
     </style>
 </head>
 <body>
 
-<div id="toast">Message</div>
-
 <div id="app-container">
 
     <div id="login-environment" class="app-environment active">
-        <i class="fa-solid fa-leaf" style="color: var(--gold); font-size: 45px; margin-bottom: 20px;"></i>
-        <h1 style="font-family: var(--font-serif); font-size: 32px; margin-bottom: 5px;">The Final Third</h1>
-        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 40px;">From First Light to Final Third.</p>
+        <img src="final-third-logo.png" alt="The Final Third Logo" class="app-logo-large">
+        <h1 style="font-family: var(--font-serif); font-size: 34px; margin-bottom: 8px;">The Final Third</h1>
+        <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: 45px;">From First Light to Final Third.</p>
         
-        <div class="form-group" style="margin-bottom: 30px;">
+        <div class="form-group" style="margin-bottom: 35px;">
             <label class="form-label">Username</label>
-            <input type="text" id="login-name" class="form-input" placeholder="Enter your name">
+            <input type="text" id="login-name" class="form-input" placeholder="Enter Your Name">
         </div>
         
         <button id="login-btn" class="btn-primary" onclick="handleAuth()">Enter Journal <i class="fa-solid fa-arrow-right" style="margin-left: 10px;"></i></button>
-        <p style="color: var(--text-secondary); font-size: 11px; margin-top: 20px; text-align: center; line-height: 1.4;">If your name isn't recognized, a new secure journal profile will automatically initiate.</p>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 24px; text-align: center; line-height: 1.5;">If your name isn't recognized, a new secure journal profile will automatically initiate.</p>
     </div>
 
     <div id="main-environment" class="app-environment">
         
         <section id="view-home" class="view-section active">
             <div class="top-bar">
-                <i class="fa-solid fa-circle-user" style="cursor:pointer; font-size: 24px;" onclick="switchTab('view-profile')"></i>
-                <i class="fa-regular fa-bell" style="cursor:pointer;" onclick="showToast('No new alerts')"></i>
+                <i class="fa-solid fa-circle-user" style="cursor:pointer; font-size: 26px;" onclick="switchTab('view-profile')"></i>
+                <i class="fa-regular fa-bell" style="cursor:pointer; font-size: 24px;" onclick="showToast('No new alerts')"></i>
             </div>
             
             <div class="greeting-block">
-                <i class="fa-solid fa-leaf" style="color: var(--gold); margin-bottom: 12px; font-size: 20px;"></i>
+                <img src="final-third-logo.png" alt="The Final Third Logo" class="app-logo-small">
                 <h1>Good evening, <span id="display-name">User</span></h1>
                 <p>From First Light to Final Third.</p>
             </div>
@@ -233,7 +244,7 @@
 
             <div class="section-title">
                 <span>Recent Smokes</span>
-                <span style="color: var(--gold); cursor: pointer;" onclick="switchTab('view-journal')">See All</span>
+                <span style="color: var(--gold); cursor: pointer; text-transform: none; letter-spacing: 0;" onclick="switchTab('view-journal')">See All</span>
             </div>
             
             <div id="recent-smokes-list">
@@ -246,10 +257,10 @@
 
         <section id="view-collection" class="view-section">
             <div class="top-bar">
-                <h2 style="color: var(--text-main); font-size: 20px; font-weight: 600;">Humidor Inventory</h2>
+                <h2 style="color: var(--text-main); font-size: 22px; font-weight: 700;">Humidor Inventory</h2>
                 <div>
-                    <i class="fa-solid fa-magnifying-glass" style="margin-right: 15px; cursor:pointer;" onclick="showToast('Search engine offline')"></i>
-                    <i class="fa-solid fa-sliders" style="cursor:pointer;" onclick="showToast('Filters offline')"></i>
+                    <i class="fa-solid fa-magnifying-glass" style="margin-right: 18px; cursor:pointer; color: var(--text-main);" onclick="showToast('Search engine offline')"></i>
+                    <i class="fa-solid fa-sliders" style="cursor:pointer; color: var(--text-main);" onclick="showToast('Filters offline')"></i>
                 </div>
             </div>
 
@@ -259,9 +270,9 @@
                 <button class="tab-btn" onclick="toggleTab(this)">Wishlist</button>
             </div>
 
-            <div class="section-title" style="margin-bottom: 12px;">
+            <div class="section-title">
                 <span>Storage Vault (<span id="collection-count">0</span>)</span>
-                <span style="color: var(--gold); cursor: pointer;" onclick="initAddCollection()"><i class="fa-solid fa-plus"></i> Add New</span>
+                <span style="color: var(--gold); cursor: pointer; text-transform: none; letter-spacing: 0;" onclick="initAddCollection()"><i class="fa-solid fa-plus" style="margin-right: 4px;"></i> Add New</span>
             </div>
 
             <div id="collection-list">
@@ -270,8 +281,8 @@
 
         <section id="view-journal" class="view-section">
             <div class="top-bar">
-                <h2 style="color: var(--text-main); font-size: 20px; font-weight: 600;">Complete History</h2>
-                <i class="fa-solid fa-magnifying-glass" style="cursor:pointer;" onclick="showToast('Search history offline')"></i>
+                <h2 style="color: var(--text-main); font-size: 22px; font-weight: 700;">Complete History</h2>
+                <i class="fa-solid fa-magnifying-glass" style="cursor:pointer; color: var(--text-main);" onclick="showToast('Search history offline')"></i>
             </div>
             <div id="full-journal-list">
                 </div>
@@ -279,51 +290,51 @@
 
         <section id="view-profile" class="view-section">
             <div class="top-bar">
-                <h2 style="color: var(--text-main); font-size: 20px; font-weight: 600;">Preferences</h2>
+                <h2 style="color: var(--text-main); font-size: 22px; font-weight: 700;">Preferences</h2>
             </div>
             
-            <div class="cigar-card" style="flex-direction: column; padding: 25px; text-align: center;">
-                <div style="position: relative; display: inline-block; cursor: pointer; margin-bottom: 15px;">
+            <div class="cigar-card" style="flex-direction: column; padding: 35px 25px; text-align: center;">
+                <div style="position: relative; display: inline-block; cursor: pointer; margin-bottom: 20px;">
                     <label for="avatar-upload" style="cursor: pointer;">
-                        <img id="profile-avatar-img" src="" style="width: 85px; height: 85px; border-radius: 50%; object-fit: cover; display: none; border: 2px solid var(--gold);">
-                        <i id="profile-avatar-icon" class="fa-solid fa-circle-user" style="font-size: 85px; color: var(--gold); display: inline-block;"></i>
-                        <div style="position: absolute; bottom: 0; right: 0; background: var(--bg-dark); border-radius: 50%; padding: 6px; border: 1px solid var(--gold);">
-                            <i class="fa-solid fa-camera" style="font-size: 12px; color: var(--gold);"></i>
+                        <img id="profile-avatar-img" src="" style="width: 95px; height: 95px; border-radius: 50%; object-fit: cover; display: none; border: 2px solid var(--gold);">
+                        <i id="profile-avatar-icon" class="fa-solid fa-circle-user" style="font-size: 95px; color: var(--border); display: inline-block;"></i>
+                        <div style="position: absolute; bottom: 0; right: 0; background: var(--surface); border-radius: 50%; padding: 8px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                            <i class="fa-solid fa-camera" style="font-size: 14px; color: var(--text-secondary);"></i>
                         </div>
                     </label>
                     <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
                 </div>
 
-                <h2 id="profile-name-display" style="margin-bottom: 4px;">User</h2>
-                <p style="color: var(--text-secondary); font-size: 13px;">Premium Connoisseur Tier</p>
+                <h2 id="profile-name-display" style="margin-bottom: 6px; color: var(--text-main); font-size: 24px;">User</h2>
+                <p style="color: var(--text-secondary); font-size: 14px;">Premium Connoisseur Tier</p>
             </div>
 
-            <div class="section-title" style="margin-top: 25px;">Engine & Cloud</div>
-            <button class="btn-primary" style="background: var(--surface); border: 1px solid rgba(255,255,255,0.08); color: var(--text-main); margin-bottom: 12px;" onclick="syncData().then(() => showToast('Cloud database synchronized.'))">
-                <i class="fa-solid fa-cloud-arrow-up" style="margin-right: 10px; color: var(--gold);"></i> Manual Data Sync
+            <div class="section-title">Engine & Cloud</div>
+            <button class="btn-primary" style="background: var(--surface); border: 1px solid var(--border); color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.02);" onclick="syncData().then(() => showToast('Cloud database synchronized.'))">
+                <i class="fa-solid fa-cloud-arrow-up" style="margin-right: 10px; color: var(--text-secondary);"></i> Manual Data Sync
             </button>
             
-            <div class="section-title" style="margin-top: 25px;">Identity Management</div>
-            <button class="btn-primary" style="background: rgba(239, 68, 68, 0.08); border: 1px solid var(--danger); color: var(--danger);" onclick="handleLogout()">
+            <div class="section-title">Identity Management</div>
+            <button class="btn-primary" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--danger); box-shadow: none;" onclick="handleLogout()">
                 <i class="fa-solid fa-right-from-bracket" style="margin-right: 10px;"></i> Terminate Session
             </button>
 
-            <div style="text-align: center; margin-top: 40px;">
-                <div onclick="switchTab('view-home')" style="display: inline-flex; justify-content: center; align-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">
-                    <i class="fa-solid fa-xmark" style="color: var(--text-secondary); font-size: 18px;"></i>
+            <div style="text-align: center; margin-top: 50px;">
+                <div onclick="switchTab('view-home')" style="display: inline-flex; justify-content: center; align-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s;">
+                    <i class="fa-solid fa-xmark" style="color: var(--text-secondary); font-size: 20px;"></i>
                 </div>
             </div>
         </section>
 
         <section id="view-add" class="view-section">
             <div class="top-bar">
-                <span style="font-size: 15px; cursor: pointer; color: var(--text-secondary);" onclick="cancelAddSmoke()">Cancel</span>
-                <h2 id="add-smoke-title" style="color: var(--text-main); font-size: 18px; font-weight: 600;">Log Experience</h2>
-                <span style="font-size: 15px; cursor: pointer; color: var(--gold); font-weight:600;" onclick="saveSmoke()">Save</span>
+                <span style="font-size: 16px; cursor: pointer; color: var(--text-secondary);" onclick="cancelAddSmoke()">Cancel</span>
+                <h2 id="add-smoke-title" style="color: var(--text-main); font-size: 20px; font-weight: 700;">Log Experience</h2>
+                <span style="font-size: 16px; cursor: pointer; color: var(--gold); font-weight:600;" onclick="saveSmoke()">Save</span>
             </div>
 
-            <div class="cigar-card" style="margin-bottom: 20px; background: var(--surface-hover); cursor: pointer; border: 1px dashed var(--gold);" onclick="openCameraModal()">
-                <div class="cigar-img-placeholder" style="background: var(--bg-dark);"><i class="fa-solid fa-eye-low-vision"></i></div>
+            <div class="cigar-card" style="margin-bottom: 25px; background: var(--surface); cursor: pointer; border: 2px dashed var(--gold);" onclick="openCameraModal()">
+                <div class="cigar-img-placeholder" style="background: var(--gold-muted);"><i class="fa-solid fa-eye" style="color: var(--gold);"></i></div>
                 <div class="cigar-details">
                     <div class="cigar-name" style="color: var(--gold);">AI Smart-Scan Recognition</div>
                     <div class="cigar-meta">Optical analysis via camera feed</div>
@@ -343,15 +354,15 @@
             <div class="form-group">
                 <label class="form-label">Geographic Location</label>
                 <div style="position: relative;">
-                    <i class="fa-solid fa-location-dot" style="position: absolute; left: 14px; top: 16px; color: var(--text-secondary);"></i>
-                    <input type="text" id="smoke-location" class="form-input" style="padding-left: 38px;" placeholder="e.g. Private Lounge" value="Greensboro, NC">
+                    <i class="fa-solid fa-location-dot" style="position: absolute; left: 16px; top: 18px; color: var(--text-secondary); font-size: 15px;"></i>
+                    <input type="text" id="smoke-location" class="form-input" style="padding-left: 42px;" placeholder="e.g. Private Lounge" value="Greensboro, NC">
                 </div>
             </div>
 
             <div class="form-group">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <label class="form-label">Palate Assessment</label>
-                    <span id="rating-label" style="font-size: 11px; color: var(--gold); font-weight: 600;">Excellent</span>
+                    <label class="form-label" style="margin-bottom: 0;">Palate Assessment</label>
+                    <span id="rating-label" style="font-size: 12px; color: var(--gold); font-weight: 600;">Excellent</span>
                 </div>
                 <div class="star-rating" id="star-rating-container">
                     <i class="fa-solid fa-star" onclick="setRating(1)"></i>
@@ -364,7 +375,7 @@
 
             <div class="form-group">
                 <label class="form-label">Tasting Records & Characteristics</label>
-                <textarea id="smoke-notes" class="form-input" rows="4" placeholder="Draw resistance, continuous profile, aroma shifts..."></textarea>
+                <textarea id="smoke-notes" class="form-input" rows="5" placeholder="Draw resistance, continuous profile, aroma shifts..."></textarea>
             </div>
             
             <button class="btn-primary" onclick="saveSmoke()">Commit to Cloud Ledger</button>
@@ -400,23 +411,23 @@
     </div> </div>
 
 <div id="modal-camera" class="modal-overlay hidden">
-    <div class="modal-content" style="border-color: var(--gold);">
+    <div class="modal-content">
         <div id="camera-placeholder">
-            <i class="fa-solid fa-camera-retro" style="font-size: 55px; color: var(--gold); margin-bottom: 15px; opacity: 0.6;"></i>
-            <h3 style="color: var(--text-main); margin-bottom: 10px;">Initializing Vision Engine</h3>
+            <i class="fa-solid fa-camera-retro" style="font-size: 55px; color: var(--gold); margin-bottom: 15px; opacity: 0.8;"></i>
+            <h3 style="color: var(--text-main); margin-bottom: 10px; font-size: 20px;">Initializing Vision Engine</h3>
         </div>
         
         <video id="camera-feed" autoplay playsinline></video>
-        <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px; line-height: 1.4;">Isolate the cigar label structure cleanly within frame boundaries to optimize verification.</p>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; line-height: 1.5;">Isolate the cigar label structure cleanly within frame boundaries to optimize verification.</p>
         
         <button id="scan-action-btn" class="btn-primary" onclick="executeScan()">Capture Matrix</button>
-        <button class="btn-primary" style="background: var(--bg-dark); color: var(--text-main); border: 1px solid rgba(255,255,255,0.08); margin-top: 8px;" onclick="closeCameraModal()">Deactivate</button>
+        <button class="btn-primary" style="background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border); margin-top: 12px; box-shadow: none;" onclick="closeCameraModal()">Deactivate</button>
     </div>
 </div>
 
 <div id="modal-collection" class="modal-overlay hidden">
-    <div class="modal-content" style="border-color: var(--gold);">
-        <h3 id="collection-modal-title" style="color: var(--text-main); margin-bottom: 20px; font-family: var(--font-serif); font-size: 20px;">Manage Inventory Item</h3>
+    <div class="modal-content">
+        <h3 id="collection-modal-title" style="color: var(--text-main); margin-bottom: 24px; font-family: var(--font-serif); font-size: 22px; font-weight: 700;">Manage Inventory Item</h3>
         
         <div class="form-group">
             <label class="form-label">Cigar Brand & Blend Name</label>
@@ -429,10 +440,9 @@
         </div>
         
         <button class="btn-primary" onclick="saveCollectionCigar()">Commit to Vault</button>
-        <button class="btn-primary" style="background: var(--bg-dark); color: var(--text-main); border: 1px solid rgba(255,255,255,0.08); margin-top: 8px;" onclick="closeModal('modal-collection')">Dismiss</button>
+        <button class="btn-primary" style="background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border); margin-top: 12px; box-shadow: none;" onclick="closeModal('modal-collection')">Dismiss</button>
     </div>
 </div>
-
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
@@ -491,7 +501,7 @@
                 const userData = docSnap.data();
                 currentUser = name;
                 appData = userData.data || { smokes: [], collection: [] };
-                if (!appData.collection) appData.collection = []; // Safety catch
+                if (!appData.collection) appData.collection = []; 
                 currentAvatar = userData.avatar || null;
                 loginSuccess(currentAvatar);
                 showToast("Identity handshake verified.");
@@ -574,7 +584,7 @@
                 canvas.width = width;
                 canvas.height = height;
                 ctx.drawImage(img, 0, 0, width, height);
-                const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+                const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
 
                 currentAvatar = optimizedDataUrl;
                 updateAvatarUI(optimizedDataUrl);
@@ -641,22 +651,19 @@
         setTimeout(() => {
             closeCameraModal();
             
-            // Extract a dynamic profile structure from the matrix
             const matrixIndex = Math.floor(Math.random() * dynamicScannerMatrix.length);
             const resultCigar = dynamicScannerMatrix[matrixIndex];
             
-            // Force DOM updates
             const nameField = document.getElementById('smoke-name');
             const notesField = document.getElementById('smoke-notes');
             
             nameField.value = resultCigar.name;
             notesField.value = resultCigar.notes;
-            notesField.innerHTML = resultCigar.notes; // Failsafe for iOS Safari textarea rendering
+            notesField.innerHTML = resultCigar.notes; 
             
             setRating(resultCigar.rating);
             showToast(`Match Identified: ${resultCigar.name}`);
             
-            // Reset button for next time
             btn.innerHTML = 'Capture Matrix';
             btn.disabled = false;
         }, 1800);
@@ -673,7 +680,7 @@
                 </div>
                 <div class="cigar-rating">${smoke.rating.toFixed(1)}</div>
                 <div class="cigar-actions">
-                    <i class="fa-solid fa-marker" style="color: var(--text-secondary);" onclick="editSmoke(${smoke.id})"></i>
+                    <i class="fa-solid fa-pen" style="color: var(--text-secondary);" onclick="editSmoke(${smoke.id})"></i>
                     <i class="fa-solid fa-trash-can" style="color: var(--danger);" onclick="deleteSmoke(${smoke.id})"></i>
                 </div>
             </div>
@@ -699,7 +706,7 @@
         const premiumTranche = appData.smokes.slice(0, 3);
         
         if(premiumTranche.length === 0) {
-            baseHomeList.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px; padding: 10px 0;">No active logs in chronological history.</p>';
+            baseHomeList.innerHTML = '<p class="empty-state-text">No active logs in chronological history.</p>';
         } else {
             premiumTranche.forEach(smokeItem => { baseHomeList.innerHTML += createSmokeCardHTML(smokeItem); });
         }
@@ -711,7 +718,7 @@
         document.getElementById('collection-count').innerText = appData.collection.length;
         
         if (appData.collection.length === 0) {
-            listContainer.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px; text-align:center; padding: 30px 0;">Humidor allocation currently empty.</p>';
+            listContainer.innerHTML = '<p class="empty-state-text">Humidor allocation currently empty.</p>';
             return;
         }
 
@@ -724,7 +731,7 @@
                         <div class="cigar-meta">${cigarItem.size || 'Standard Proportion Dimensions'}</div>
                     </div>
                     <div class="cigar-actions">
-                        <i class="fa-solid fa-marker" style="color: var(--text-secondary);" onclick="initEditCollection(${cigarItem.id})"></i>
+                        <i class="fa-solid fa-pen" style="color: var(--text-secondary);" onclick="initEditCollection(${cigarItem.id})"></i>
                         <i class="fa-solid fa-trash-can" style="color: var(--danger);" onclick="deleteCollection(${cigarItem.id})"></i>
                     </div>
                 </div>
@@ -736,7 +743,7 @@
         const journalContainer = document.getElementById('full-journal-list');
         journalContainer.innerHTML = '';
         if(appData.smokes.length === 0) {
-            journalContainer.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 30px;">Timeline is empty.</p>';
+            journalContainer.innerHTML = '<p class="empty-state-text">Timeline is empty.</p>';
             return;
         }
         appData.smokes.forEach(smokeObj => { journalContainer.innerHTML += createSmokeCardHTML(smokeObj); });
@@ -919,11 +926,9 @@
         showToast("Filtering system dynamic allocation view.");
     };
 
+    // TOASTS SUPPRESSED PER USER REQUEST (LOGGED TO CONSOLE INSTEAD)
     window.showToast = function(msgString) {
-        const toastBox = document.getElementById('toast');
-        toastBox.innerText = msgString;
-        toastBox.classList.add('show');
-        setTimeout(() => toastBox.classList.remove('show'), 2800);
+        console.log("Background Action Completed: " + msgString);
     };
 
     window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); };
