@@ -78,7 +78,7 @@
         #login-environment {
             justify-content: center;
             align-items: center;
-            padding: 50px 40px;
+            padding: 40px 24px;
             text-align: center;
             background-color: var(--bg-ivory);
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
@@ -96,16 +96,26 @@
             z-index: -1; pointer-events: none;
         }
 
-        .login-logo { width: 240px; max-width: 90%; height: auto; display: block; margin: 0 auto 28px auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.05)); }
+        /* Enlarged Login Logo */
+        .login-logo { width: 300px; max-width: 95%; height: auto; display: block; margin: 0 auto 20px auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.05)); }
         body.dark-theme .login-logo { filter: invert(1) brightness(0.9); }
         
         .matte-divider { width: 35px; height: 1px; background-color: var(--gold-matte); margin: 0 auto 30px auto; }
         
-        .login-title { font-family: var(--font-serif); font-size: 32px; font-weight: 600; color: var(--ink-main); margin-bottom: 12px; letter-spacing: 0.5px; }
-        .login-subtitle { font-family: var(--font-sans); color: var(--ink-secondary); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500; margin-bottom: 60px; }
+        /* Larger Title & Smaller Tagline */
+        .login-title { font-family: var(--font-serif); font-size: 42px; font-weight: 600; color: var(--ink-main); margin-bottom: 8px; letter-spacing: 0.5px; line-height: 1.1; }
+        .login-subtitle { font-family: var(--font-sans); color: var(--ink-secondary); font-size: 9px; letter-spacing: 3.5px; text-transform: uppercase; font-weight: 500; margin-bottom: 0; }
 
-        .luxury-input-group { margin-bottom: 45px; width: 100%; text-align: center; }
-        .luxury-label { display: block; font-size: 11px; color: var(--ink-secondary); margin-bottom: 8px; font-weight: 400; }
+        /* Tapered Line Resuable Class */
+        .tapered-line {
+            display: block;
+            width: 75%;
+            max-width: 280px;
+            height: 3px;
+            margin: 0 auto;
+            opacity: 0.85;
+        }
+
         .editorial-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--ink-main); padding: 12px 0; font-family: var(--font-serif); font-size: 22px; text-align: center; transition: border-bottom-color 0.3s ease, border-bottom-width 0.1s ease; -webkit-appearance: none; border-radius: 0; caret-color: var(--gold-matte); }
         .editorial-input:focus { outline: none; border-bottom: 2px solid var(--gold-matte); padding-bottom: 11px; }
         .editorial-input::placeholder { color: #9CA3AF; font-style: italic; font-size: 18px; }
@@ -123,7 +133,7 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-radius 0.2s ease;
             display: flex; justify-content: center; align-items: center; min-height: 56px;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
         }
@@ -239,7 +249,6 @@
         .bottom-dock-wrapper { position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; pointer-events: none; }
         .bottom-dock { width: calc(100% - 40px); max-width: 390px; background: var(--dock-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 28px; display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; pointer-events: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: background-color 0.3s; }
         
-        /* Updated nav-item: Solid user icon to match the rest */
         .nav-item { color: var(--ink-secondary); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; cursor: pointer; transition: color 0.2s, transform 0.1s; flex: 1; justify-content: center; }
         .nav-item i { font-size: 20px; margin-bottom: 2px; }
         .nav-item.active { color: var(--gold-matte); }
@@ -255,7 +264,7 @@
         .toggle-slider { width: 22px; height: 22px; background-color: #ffffff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .toggle-switch.active .toggle-slider { transform: translateX(22px); }
 
-        /* ACTION SHEET MODAL (For Avatar Upload) */
+        /* ACTION SHEET MODAL */
         .action-sheet-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.4);
@@ -296,21 +305,23 @@
 
     <div id="login-environment" class="app-environment active">
         <div class="radial-glow"></div>
-        <img src="final-third-logo.png" alt="The Final Third Logo" class="login-logo fade-sequence-1">
-        <div class="matte-divider fade-sequence-1"></div>
-        <h1 class="login-title fade-sequence-2">The Final Third</h1>
-        <p class="login-subtitle fade-sequence-2">From First Light to Final Third</p>
         
-        <div class="luxury-input-group fade-sequence-3">
-            <label class="luxury-label">Journal Name</label>
-            <input type="text" id="login-name" class="editorial-input" placeholder="Enter your name" autocomplete="off">
+        <div class="module-container fade-sequence-1" style="width: 100%; padding: 40px 20px; margin-bottom: 24px;">
+            <img src="final-third-logo.png" alt="The Final Third Logo" class="login-logo">
+            <h1 class="login-title">The Final Third</h1>
+            <p class="login-subtitle" style="margin-bottom: 0;">From First Light to Final Third</p>
         </div>
         
-        <button id="login-btn" class="btn-luxury fade-sequence-4" onclick="handleAuth()">
-            <span id="btn-dynamic-text" class="btn-luxury-text">Begin Journal</span> 
-            <i class="fa-solid fa-arrow-right" style="margin-left: 10px;"></i>
-        </button>
-        <p class="login-footer fade-sequence-5">Your journal is encrypted and created automatically on first entry.</p>
+        <div class="module-container fade-sequence-2" style="width: 100%; padding: 35px 20px;">
+            <input type="text" id="login-name" class="editorial-input" placeholder="Enter your name" autocomplete="off" style="margin-bottom: 24px;">
+            
+            <button id="login-btn" class="btn-luxury" style="border-radius: 30px;" onclick="handleAuth()">
+                <span id="btn-dynamic-text" class="btn-luxury-text">Begin Journal</span> 
+                <i class="fa-solid fa-arrow-right" style="margin-left: 10px;"></i>
+            </button>
+        </div>
+        
+        <p class="login-footer fade-sequence-3">Your journal is encrypted and created automatically on first entry.</p>
     </div>
 
     <div id="main-environment" class="app-environment">
@@ -321,7 +332,7 @@
                 <img src="final-third-logo.png" alt="The Final Third Logo" class="dash-logo">
                 <div class="greeting-block">
                     <h1>Good Evening, <span id="display-name">User</span></h1>
-                    <svg class="greeting-divider" viewBox="0 0 300 3" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="tapered-line" viewBox="0 0 300 3" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0,1.5 Q150,0 300,1.5 Q150,3 0,1.5 Z" fill="var(--gold-matte)"/>
                     </svg>
                 </div>
@@ -403,7 +414,6 @@
                 
                 <div style="position: relative; display: inline-block; margin-bottom: 20px; cursor: pointer;" onclick="openAvatarActionSheet()">
                     <img id="profile-avatar-img" src="" style="width: 86px; height: 86px; border-radius: 50%; object-fit: cover; display: none; border: 2px solid var(--gold-matte); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                    
                     <i id="profile-avatar-icon" class="fa-solid fa-circle-user" style="font-size: 86px; color: var(--border);"></i>
                     
                     <div style="position: absolute; bottom: 0; right: 0; background: var(--surface); border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
@@ -559,7 +569,7 @@
         </button>
         <button class="action-btn cancel" onclick="closeAvatarActionSheet()">Cancel</button>
         
-        <input type="file" id="camera-upload" accept="image/*" capture="user" style="display: none;" onchange="handleAvatarUpload(event)">
+        <input type="file" id="camera-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleAvatarUpload(event)">
         <input type="file" id="gallery-upload" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
     </div>
 </div>
