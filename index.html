@@ -96,8 +96,8 @@
             z-index: -1; pointer-events: none;
         }
 
-        /* Enlarged Login Logo */
-        .login-logo { width: 300px; max-width: 95%; height: auto; display: block; margin: 0 auto 20px auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.05)); }
+        /* Much Larger Login Logo */
+        .login-logo { width: 380px; max-width: 100%; height: auto; display: block; margin: 0 auto 20px auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.05)); }
         body.dark-theme .login-logo { filter: invert(1) brightness(0.9); }
         
         .matte-divider { width: 35px; height: 1px; background-color: var(--gold-matte); margin: 0 auto 30px auto; }
@@ -143,13 +143,8 @@
         .btn-luxury:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
         .btn-luxury-text { transition: opacity 0.2s; }
 
-        .login-footer { color: var(--ink-secondary); font-size: 11px; margin-top: 35px; text-align: center; line-height: 1.6; font-weight: 300; }
-
         .fade-sequence-1 { animation: elegantFadeIn 0.8s ease-out forwards; opacity: 0; animation-delay: 0.1s; }
         .fade-sequence-2 { animation: elegantFadeIn 0.8s ease-out forwards; opacity: 0; animation-delay: 0.25s; }
-        .fade-sequence-3 { animation: elegantFadeIn 0.8s ease-out forwards; opacity: 0; animation-delay: 0.4s; }
-        .fade-sequence-4 { animation: elegantFadeIn 0.8s ease-out forwards; opacity: 0; animation-delay: 0.55s; }
-        .fade-sequence-5 { animation: elegantFadeIn 0.8s ease-out forwards; opacity: 0; animation-delay: 0.7s; }
 
         @keyframes elegantFadeIn { from { opacity: 0; transform: translateY(8px); filter: blur(2px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
@@ -205,7 +200,8 @@
             color: var(--gold-matte);
         }
 
-        .dash-logo { width: 240px; max-width: 100%; height: auto; display: block; margin: 0 auto 20px auto; }
+        /* Much Larger Dashboard Logo */
+        .dash-logo { width: 320px; max-width: 100%; height: auto; display: block; margin: 0 auto 20px auto; }
         body.dark-theme .dash-logo { filter: invert(1) brightness(0.9); }
         
         .greeting-block { text-align: center; margin-bottom: 0; }
@@ -321,7 +317,6 @@
             </button>
         </div>
         
-        <p class="login-footer fade-sequence-3">Your journal is encrypted and created automatically on first entry.</p>
     </div>
 
     <div id="main-environment" class="app-environment">
