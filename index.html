@@ -39,33 +39,44 @@
         .app-environment { display: none; width: 100%; min-height: 100vh; flex-direction: column; }
         .app-environment.active { display: flex; }
 
-        /* --- VIEW SECTIONS (Fixed Display Glitch) --- */
-        .view-section { flex-grow: 1; background: var(--bg-base); padding: max(20px, env(safe-area-inset-top)) 24px calc(110px + env(safe-area-inset-bottom)) 24px; display: none; animation: fadeIn 0.3s ease; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .view-section.active { display: block; }
-        #view-home.active { display: flex; flex-direction: column; padding: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         /* --- LOGIN SCREEN --- */
-        #login-environment { justify-content: center; align-items: center; padding: 40px 24px; text-align: center; background: var(--bg-base); }
-        .login-icon { font-size: 56px; color: var(--leather); margin-bottom: 24px; }
-        .login-title { font-family: var(--font-serif); font-size: 34px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; letter-spacing: -0.5px; }
-        .login-subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 48px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        #login-environment { justify-content: center; align-items: center; padding: 40px 24px; text-align: center; background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%); }
+        .login-subtitle { color: var(--text-dim); font-size: 11px; margin-bottom: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
         .editorial-input { width: 100%; background: var(--surface-1); border: 2px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); padding: 18px 20px; font-size: 16px; font-weight: 600; text-align: center; outline: none; margin-bottom: 24px; transition: border 0.3s; font-family: var(--font-sans); }
         .editorial-input:focus { border-color: var(--leather); }
         .btn-primary { width: 100%; background: var(--leather); color: #0B0F19; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); letter-spacing: 0.5px; }
         .btn-primary:active { transform: scale(0.98); background: #966938; }
 
-        /* --- DASHBOARD HEADER --- */
-        .dash-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; padding-top: 10px; }
-        .dash-date { color: var(--text-dim); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; line-height: 1.4; }
-        .dash-date strong { font-family: var(--font-serif); color: var(--text-main); font-size: 24px; font-weight: 800; letter-spacing: -0.5px; text-transform: none; display: block; margin-top: 4px; }
-        .header-actions { display: flex; gap: 12px; align-items: center; }
-        .circle-icon-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--surface-1); border: 1px solid var(--border-subtle); display: flex; justify-content: center; align-items: center; color: var(--text-main); font-size: 16px; cursor: pointer; transition: background 0.2s; }
-        .avatar-wrap { position: relative; width: 44px; height: 44px; cursor: pointer; }
+        /* --- PERSISTENT HEADER (LAYER 1) --- */
+        .dash-header { display: flex; justify-content: space-between; align-items: center; padding: max(20px, env(safe-area-inset-top)) 24px 16px 24px; z-index: 10; }
+        .avatar-wrap { position: relative; width: 40px; height: 40px; cursor: pointer; }
         .avatar-small { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--surface-1); background: var(--surface-2); }
 
-        .greeting { font-family: var(--font-serif); font-size: 30px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; letter-spacing: -0.5px; line-height: 1.2; }
-        .greeting span { display: block; font-family: var(--font-sans); font-size: 15px; font-weight: 500; color: var(--text-dim); letter-spacing: 0; margin-top: 6px; text-transform: none; }
+        /* --- DYNAMIC TITLE (LAYER 2) --- */
+        .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
+        
+        /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
+        .layer-3-container { background: var(--surface-1); border-top-left-radius: 40px; margin-top: -40px; position: relative; flex-grow: 1; border-top: 1px solid rgba(255,255,255,0.05); box-shadow: 0 -8px 24px rgba(0,0,0,0.6); overflow: hidden; z-index: 15; }
+
+                /* --- VIEW SECTIONS (Static Content, Animated Container) --- */
+        .view-section { position: absolute; top: 0; bottom: 0; left: 0; right: 0; padding: 32px 24px calc(110px + env(safe-area-inset-bottom)) 24px; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .view-section.active { display: block; }
+        
+                /* --- VIEW SECTIONS & ANIMATIONS --- */
+        .layer-3-container.slide-anim { animation: cardSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes cardSlide { 
+            0% { opacity: 0; transform: translateY(60px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
+
+        .greeting.text-slide-up { animation: textSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes textSlideUp { 
+            0% { opacity: 0; transform: translateY(15px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
+
         .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; margin-top: 32px; }
         .section-title { font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main); }
         .section-link { font-size: 13px; font-weight: 800; color: var(--leather); cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -125,40 +136,45 @@
 <div id="app-container">
 
     <div id="login-environment" class="app-environment active">
-        <div style="width: 100%; max-width: 400px;">
-            <img src="final-third-logo.png" alt="Final Third Logo" style="width: 450px; max-width: 100%; height: auto; margin: 0 auto 10px auto; display: block;">
+        <div style="width: 100%; max-width: 400px; margin-top: 20px;">
+            <img src="final-third-logo.png" alt="Final Third Logo" style="width: 120%; max-width: 120%; height: auto; margin: 0 0 4px -10%; display: block; filter: drop-shadow(0 0 35px rgba(0, 0, 0, 0.95));">
             <p class="login-subtitle">FROM THE FIRST LIGHT TO THE FINAL THIRD</p>
             <input type="text" id="login-name" class="editorial-input" placeholder="Enter your name" autocomplete="off">
             <button id="login-btn" class="btn-primary" onclick="handleAuth()">
-                <span id="btn-dynamic-text">Access Humidor</span> <i class="fa-solid fa-arrow-right"></i>
+                <span id="btn-dynamic-text">Log In</span> <i class="fa-solid fa-arrow-right"></i>
             </button>
         </div>
     </div>
 
-    <div id="main-environment" class="app-environment">
+    <!-- MAIN APP SHELL -->
+    <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
-        <!-- HOME SCREEN -->
-        <section id="view-home" class="view-section active">
+        <!-- LAYER 1: PERSISTENT HEADER -->
+        <div class="dash-header">
+            <div>
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8;">TODAY</span><br>
+                <strong id="current-date-display" style="margin-top: 2px; font-size: 20px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Date</strong>
+            </div>
+            <div class="header-actions">
+                <div class="avatar-wrap" onclick="switchTab('view-profile', 4)"><img src="" class="avatar-small" id="home-avatar"></div>
+            </div>
+        </div>
+
+                <!-- LAYER 2: DYNAMIC TITLE LAYER -->
+        <div style="background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%); border-top-left-radius: 40px; padding: 28px 24px 76px 24px; position: relative; border-top: 1px solid rgba(255,255,255,0.03); box-shadow: 0 -4px 20px rgba(0,0,0,0.5); z-index: 5;">
+            <div class="greeting" id="greeting-container">
+                <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800;">
+                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit;">User</span>.
+                </span>
+                <span id="dynamic-layer-2-subtitle" style="color: rgba(255, 255, 255, 0.5); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; display: block; font-family: var(--font-sans);">Vault Overview</span>
+            </div>
+        </div>
+
+        <!-- LAYER 3: PERSISTENT CONTENT CONTAINER -->
+        <div class="layer-3-container">
             
-            <!-- LAYER 1: HEADER (Midnight Slate Background) -->
-            <div class="dash-header" style="padding: max(20px, env(safe-area-inset-top)) 24px 20px 24px; margin-bottom: 0; align-items: center;">
-                <div class="dash-date"><strong id="current-date-display" style="margin-top: 0; font-size: 26px;">Date</strong></div>
-                <div class="header-actions">
-                    <div class="avatar-wrap" onclick="switchTab('view-profile', 4)"><img src="" class="avatar-small" id="home-avatar"></div>
-                </div>
-            </div>
-
-            <!-- LAYER 2: GREETING (Ambient Slate Gradient Background) -->
-            <div style="background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%); border-top-left-radius: 40px; padding: 36px 24px 80px 24px; position: relative; border-top: 1px solid rgba(255,255,255,0.03); box-shadow: 0 -4px 20px rgba(0,0,0,0.5);">
-                <div class="greeting" style="margin-bottom: 0;">
-                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit;">User</span>.<br>
-                    <span style="color: rgba(255, 255, 255, 0.5); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 8px;">Humidor Overview</span>
-                </div>
-            </div>
-
-            <!-- LAYER 3: MAIN CONTENT (Charcoal Navy Background) -->
-            <div style="background: var(--surface-1); border-top-left-radius: 40px; padding: 32px 24px calc(110px + env(safe-area-inset-bottom)) 24px; margin-top: -40px; position: relative; flex-grow: 1; border-top: 1px solid rgba(255,255,255,0.05); box-shadow: 0 -8px 24px rgba(0,0,0,0.6);">
-                
+            <!-- HOME SCREEN -->
+            <section id="view-home" class="view-section active">
                 <div class="stats-grid">
                     <div class="stat-box" onclick="switchTab('view-humidor', 1)">
                         <div class="stat-header">
@@ -217,312 +233,300 @@
                         <span>No recent logs</span>
                     </div>
                 </div>
+            </section>
 
-            </div>
-
-        </section>
-
-        <!-- HUMIDOR / SUPPLY CHAIN SCREEN -->
-        <section id="view-humidor" class="view-section">
-            
-            <div class="dash-header">
-                <div class="dash-date">Logistics<br><strong>Humidor</strong></div>
-            </div>
-
-            <!-- Predictive Logistics Module -->
-            <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; margin-bottom: 24px; border: 1px solid var(--border-subtle);">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                    <span style="font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;">Supply Chain Health</span>
-                    <i class="fa-solid fa-satellite-dish" style="color: var(--leather);"></i>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <div style="flex: 1; background: var(--surface-2); padding: 12px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase;">Boveda Tracker</div>
-                        <div style="font-size: 13px; font-weight: 700; color: var(--gold);">Replace in 14 Days</div>
+            <!-- HUMIDOR / SUPPLY CHAIN SCREEN -->
+            <section id="view-humidor" class="view-section">
+                
+                <!-- Predictive Logistics Module -->
+                <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; margin-bottom: 24px; border: 1px solid var(--border-subtle);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;">Supply Chain Health</span>
+                        <i class="fa-solid fa-satellite-dish" style="color: var(--leather);"></i>
                     </div>
-                    <div style="flex: 1; background: var(--surface-2); padding: 12px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase;">Seasoning</div>
-                        <div style="font-size: 13px; font-weight: 700; color: var(--walnut);">Optimal Info</div>
+                    <div style="display: flex; gap: 12px;">
+                        <div style="flex: 1; background: var(--surface-2); padding: 12px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase;">Boveda Tracker</div>
+                            <div style="font-size: 13px; font-weight: 700; color: var(--gold);">Replace in 14 Days</div>
+                        </div>
+                        <div style="flex: 1; background: var(--surface-2); padding: 12px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase;">Seasoning</div>
+                            <div style="font-size: 13px; font-weight: 700; color: var(--walnut);">Optimal Info</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="section-header" style="margin-top: 0;">
-                <div class="section-title">Store New Acquisition</div>
-                <div class="badge badge-indigo" style="cursor: pointer;" onclick="alert('Camera AI Interface Pending Native Build.')"><i class="fa-solid fa-camera"></i> AI Scan</div>
-            </div>
-
-            <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
-                    <option value="" disabled selected>Vitola</option>
-                    <optgroup label="Parejo (Straight)">
-                        <option value="Petit Corona">Petit Corona</option>
-                        <option value="Corona">Corona</option>
-                        <option value="Corona Gorda">Corona Gorda</option>
-                        <option value="Lonsdale">Lonsdale</option>
-                        <option value="Panatela">Panatela</option>
-                        <option value="Lancero">Lancero</option>
-                        <option value="Rothschild">Rothschild</option>
-                        <option value="Robusto">Robusto</option>
-                        <option value="Petit Robusto">Petit Robusto</option>
-                        <option value="Toro">Toro</option>
-                        <option value="Gordo">Gordo</option>
-                        <option value="Churchill">Churchill</option>
-                        <option value="Double Corona">Double Corona</option>
-                        <option value="Presidente">Presidente</option>
-                        <option value="Gigante">Gigante</option>
-                    </optgroup>
-                    <optgroup label="Figurado (Shaped)">
-                        <option value="Belicoso">Belicoso</option>
-                        <option value="Torpedo">Torpedo</option>
-                        <option value="Pyramid">Pyramid</option>
-                        <option value="Perfecto">Perfecto</option>
-                        <option value="Salomon">Salomon</option>
-                        <option value="Diadema">Diadema</option>
-                        <option value="Culebra">Culebra</option>
-                        <option value="Chisel">Chisel</option>
-                    </optgroup>
-                </select>
-                <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                <select id="vault-wrapper" class="form-input form-select" style="margin-bottom: 0;">
-                    <option value="" disabled selected>Wrapper</option>
-                    <option value="Connecticut">Connecticut</option>
-                    <option value="Corojo">Corojo</option>
-                    <option value="Habano">Habano</option>
-                    <option value="Maduro">Maduro</option>
-                    <option value="Oscuro">Oscuro</option>
-                    <option value="Cameroon">Cameroon</option>
-                    <option value="Candela">Candela</option>
-                    <option value="Sumatra">Sumatra</option>
-                    <option value="Broadleaf">Broadleaf</option>
-                    <option value="Rosado">Rosado</option>
-                </select>
-                <select id="vault-target" class="form-input form-select" style="margin-bottom: 0;">
-                    <option value="3">Peak: 3 Mos</option>
-                    <option value="6" selected>Peak: 6 Mos</option>
-                    <option value="12">Peak: 1 Year</option>
-                </select>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0;">
-                <input type="number" id="vault-rating" class="form-input" placeholder="Rating (1-10)" min="1" max="10" step="0.25" style="margin-bottom: 0;">
-            </div>
-            
-            <button class="btn-primary" onclick="storeCigar()" style="margin-top: 16px;">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
-
-            <div class="section-header" style="margin-top: 32px;">
-                <div class="section-title">Aging Timeline</div>
-                <div id="edit-vault-btn" style="color: var(--leather); font-weight: 800; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;" onclick="toggleVaultEdit()">Edit</div>
-            </div>
-
-            <div id="humidor-inventory-list" style="margin-bottom: 40px;">
-                <div class="empty-state">
-                    <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>Humidor is currently empty</span>
+                <div class="section-header" style="margin-top: 0;">
+                    <div class="section-title">Store New Acquisition</div>
+                    <div class="badge badge-indigo" style="cursor: pointer;" onclick="alert('Camera AI Interface Pending Native Build.')"><i class="fa-solid fa-camera"></i> AI Scan</div>
                 </div>
-            </div>
-        </section>
 
-        <!-- JOURNAL SCREEN -->
-        <section id="view-journal" class="view-section">
-            
-            <div class="dash-header">
-                <div class="dash-date">Journal<br><strong>Log Smoke</strong></div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
-                <input type="date" id="log-date" class="form-input" style="margin-bottom: 0;">
-                <input type="text" id="log-brand" class="form-input" placeholder="Brand & Line (e.g., Perdomo 10th Anniv)" style="margin-bottom: 0;">
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                <select id="log-vitola" class="form-input form-select" style="margin-bottom: 0;">
-                    <option value="" disabled selected>Vitola</option>
-                    <optgroup label="Parejo (Straight)">
-                        <option value="Petit Corona">Petit Corona</option>
-                        <option value="Corona">Corona</option>
-                        <option value="Corona Gorda">Corona Gorda</option>
-                        <option value="Lonsdale">Lonsdale</option>
-                        <option value="Panatela">Panatela</option>
-                        <option value="Lancero">Lancero</option>
-                        <option value="Rothschild">Rothschild</option>
-                        <option value="Robusto">Robusto</option>
-                        <option value="Petit Robusto">Petit Robusto</option>
-                        <option value="Toro">Toro</option>
-                        <option value="Gordo">Gordo</option>
-                        <option value="Churchill">Churchill</option>
-                        <option value="Double Corona">Double Corona</option>
-                        <option value="Presidente">Presidente</option>
-                        <option value="Gigante">Gigante</option>
-                    </optgroup>
-                    <optgroup label="Figurado (Shaped)">
-                        <option value="Belicoso">Belicoso</option>
-                        <option value="Torpedo">Torpedo</option>
-                        <option value="Pyramid">Pyramid</option>
-                        <option value="Perfecto">Perfecto</option>
-                        <option value="Salomon">Salomon</option>
-                        <option value="Diadema">Diadema</option>
-                        <option value="Culebra">Culebra</option>
-                        <option value="Chisel">Chisel</option>
-                    </optgroup>
-                </select>
-                <input type="number" id="log-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                <select id="log-wrapper" class="form-input form-select" style="margin-bottom: 0;">
-                    <option value="" disabled selected>Wrapper</option>
-                    <option value="Connecticut">Connecticut</option>
-                    <option value="Corojo">Corojo</option>
-                    <option value="Habano">Habano</option>
-                    <option value="Maduro">Maduro</option>
-                    <option value="Oscuro">Oscuro</option>
-                    <option value="Cameroon">Cameroon</option>
-                    <option value="Candela">Candela</option>
-                    <option value="Sumatra">Sumatra</option>
-                    <option value="Broadleaf">Broadleaf</option>
-                    <option value="Rosado">Rosado</option>
-                </select>
-                <select id="log-cut" class="form-input form-select" style="margin-bottom: 0;">
-                    <option value="" disabled selected>Cut Style</option>
-                    <option value="Straight Cut">Straight Cut</option>
-                    <option value="V-Cut">V-Cut</option>
-                    <option value="Crown Cut">Crown Cut</option>
-                    <option value="Punch">Punch</option>
-                </select>
-            </div>
-
-            <!-- Mechanics Tracking & Pairings -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                <select id="log-light" class="form-input form-select" style="margin-bottom: 0;">
-                    <option value="" disabled selected>Light Method</option>
-                    <option value="Torch Lighter">Torch Lighter</option>
-                    <option value="Soft Flame">Soft Flame</option>
-                    <option value="Cedar Spill">Cedar Spill</option>
-                    <option value="Matches">Matches</option>
-                </select>
-                <input type="text" id="log-pairing" class="form-input" placeholder="Pairing (e.g., Keto Bourbon)" style="margin-bottom: 0;">
-            </div>
-
-            <textarea id="log-notes" class="form-input" placeholder="Tasting notes for the final third..." rows="3" style="resize: none; margin-top: 16px;"></textarea>
-            
-            <button class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button>
-
-            <div class="section-header" style="margin-top: 32px;">
-                <div class="section-title">Journal History</div>
-                <div id="edit-journal-btn" style="color: var(--leather); font-weight: 800; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;" onclick="toggleJournalEdit()">Edit</div>
-            </div>
-            <div id="journal-history-list">
-                <div class="empty-state">
-                    <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>No smokes logged yet</span>
+                <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Vitola</option>
+                        <optgroup label="Parejo (Straight)">
+                            <option value="Petit Corona">Petit Corona</option>
+                            <option value="Corona">Corona</option>
+                            <option value="Corona Gorda">Corona Gorda</option>
+                            <option value="Lonsdale">Lonsdale</option>
+                            <option value="Panatela">Panatela</option>
+                            <option value="Lancero">Lancero</option>
+                            <option value="Rothschild">Rothschild</option>
+                            <option value="Robusto">Robusto</option>
+                            <option value="Petit Robusto">Petit Robusto</option>
+                            <option value="Toro">Toro</option>
+                            <option value="Gordo">Gordo</option>
+                            <option value="Churchill">Churchill</option>
+                            <option value="Double Corona">Double Corona</option>
+                            <option value="Presidente">Presidente</option>
+                            <option value="Gigante">Gigante</option>
+                        </optgroup>
+                        <optgroup label="Figurado (Shaped)">
+                            <option value="Belicoso">Belicoso</option>
+                            <option value="Torpedo">Torpedo</option>
+                            <option value="Pyramid">Pyramid</option>
+                            <option value="Perfecto">Perfecto</option>
+                            <option value="Salomon">Salomon</option>
+                            <option value="Diadema">Diadema</option>
+                            <option value="Culebra">Culebra</option>
+                            <option value="Chisel">Chisel</option>
+                        </optgroup>
+                    </select>
+                    <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
                 </div>
-            </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <select id="vault-wrapper" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Wrapper</option>
+                        <option value="Connecticut">Connecticut</option>
+                        <option value="Corojo">Corojo</option>
+                        <option value="Habano">Habano</option>
+                        <option value="Maduro">Maduro</option>
+                        <option value="Oscuro">Oscuro</option>
+                        <option value="Cameroon">Cameroon</option>
+                        <option value="Candela">Candela</option>
+                        <option value="Sumatra">Sumatra</option>
+                        <option value="Broadleaf">Broadleaf</option>
+                        <option value="Rosado">Rosado</option>
+                    </select>
+                    <select id="vault-target" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="3">Peak: 3 Mos</option>
+                        <option value="6" selected>Peak: 6 Mos</option>
+                        <option value="12">Peak: 1 Year</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0;">
+                    <input type="number" id="vault-rating" class="form-input" placeholder="Rating (1-10)" min="1" max="10" step="0.25" style="margin-bottom: 0;">
+                </div>
+                
+                <button class="btn-primary" onclick="storeCigar()" style="margin-top: 16px;">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
 
-        </section>
+                <div class="section-header" style="margin-top: 32px;">
+                    <div class="section-title">Aging Timeline</div>
+                    <div id="edit-vault-btn" style="color: var(--leather); font-weight: 800; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;" onclick="toggleVaultEdit()">Edit</div>
+                </div>
 
-        <!-- INFO (DISCOVERY & SOURCING) SCREEN -->
-        <section id="view-radar" class="view-section">
-            <div class="dash-header">
-                <div class="dash-date">Discovery<br><strong>Info</strong></div>
-            </div>
-            
-            <div class="section-header" style="margin-top: 0;">
-                <div class="section-title">Restock Alerts</div>
-            </div>
-            <!-- Predictive Logistics: Restock Warnings -->
-            <div class="log-card" style="border-left: 4px solid var(--danger);">
-                <div class="log-header">
+                <div id="humidor-inventory-list" style="margin-bottom: 40px;">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
+                        <span>Humidor is currently empty</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- JOURNAL SCREEN -->
+            <section id="view-journal" class="view-section">
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                    <input type="date" id="log-date" class="form-input" style="margin-bottom: 0;">
+                    <input type="text" id="log-brand" class="form-input" placeholder="Brand & Line (e.g., Perdomo 10th Anniv)" style="margin-bottom: 0;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <select id="log-vitola" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Vitola</option>
+                        <optgroup label="Parejo (Straight)">
+                            <option value="Petit Corona">Petit Corona</option>
+                            <option value="Corona">Corona</option>
+                            <option value="Corona Gorda">Corona Gorda</option>
+                            <option value="Lonsdale">Lonsdale</option>
+                            <option value="Panatela">Panatela</option>
+                            <option value="Lancero">Lancero</option>
+                            <option value="Rothschild">Rothschild</option>
+                            <option value="Robusto">Robusto</option>
+                            <option value="Petit Robusto">Petit Robusto</option>
+                            <option value="Toro">Toro</option>
+                            <option value="Gordo">Gordo</option>
+                            <option value="Churchill">Churchill</option>
+                            <option value="Double Corona">Double Corona</option>
+                            <option value="Presidente">Presidente</option>
+                            <option value="Gigante">Gigante</option>
+                        </optgroup>
+                        <optgroup label="Figurado (Shaped)">
+                            <option value="Belicoso">Belicoso</option>
+                            <option value="Torpedo">Torpedo</option>
+                            <option value="Pyramid">Pyramid</option>
+                            <option value="Perfecto">Perfecto</option>
+                            <option value="Salomon">Salomon</option>
+                            <option value="Diadema">Diadema</option>
+                            <option value="Culebra">Culebra</option>
+                            <option value="Chisel">Chisel</option>
+                        </optgroup>
+                    </select>
+                    <input type="number" id="log-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <select id="log-wrapper" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Wrapper</option>
+                        <option value="Connecticut">Connecticut</option>
+                        <option value="Corojo">Corojo</option>
+                        <option value="Habano">Habano</option>
+                        <option value="Maduro">Maduro</option>
+                        <option value="Oscuro">Oscuro</option>
+                        <option value="Cameroon">Cameroon</option>
+                        <option value="Candela">Candela</option>
+                        <option value="Sumatra">Sumatra</option>
+                        <option value="Broadleaf">Broadleaf</option>
+                        <option value="Rosado">Rosado</option>
+                    </select>
+                    <select id="log-cut" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Cut Style</option>
+                        <option value="Straight Cut">Straight Cut</option>
+                        <option value="V-Cut">V-Cut</option>
+                        <option value="Crown Cut">Crown Cut</option>
+                        <option value="Punch">Punch</option>
+                    </select>
+                </div>
+
+                <!-- Mechanics Tracking & Pairings -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <select id="log-light" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Light Method</option>
+                        <option value="Torch Lighter">Torch Lighter</option>
+                        <option value="Soft Flame">Soft Flame</option>
+                        <option value="Cedar Spill">Cedar Spill</option>
+                        <option value="Matches">Matches</option>
+                    </select>
+                    <input type="text" id="log-pairing" class="form-input" placeholder="Pairing (e.g., Keto Bourbon)" style="margin-bottom: 0;">
+                </div>
+
+                <textarea id="log-notes" class="form-input" placeholder="Tasting notes for the final third..." rows="3" style="resize: none; margin-top: 16px;"></textarea>
+                
+                <button class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button>
+
+                <div class="section-header" style="margin-top: 32px;">
+                    <div class="section-title">Journal History</div>
+                    <div id="edit-journal-btn" style="color: var(--leather); font-weight: 800; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;" onclick="toggleJournalEdit()">Edit</div>
+                </div>
+                <div id="journal-history-list">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
+                        <span>No smokes logged yet</span>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- INFO (DISCOVERY & SOURCING) SCREEN -->
+            <section id="view-radar" class="view-section">
+                
+                <div class="section-header" style="margin-top: 0;">
+                    <div class="section-title">Restock Alerts</div>
+                </div>
+                <!-- Predictive Logistics: Restock Warnings -->
+                <div class="log-card" style="border-left: 4px solid var(--danger);">
+                    <div class="log-header">
+                        <div>
+                            <div class="log-title">Oliva Serie V Melanio</div>
+                            <div class="log-meta" style="font-family: var(--font-mono);">Burn Rate: 2.5 / wk</div>
+                        </div>
+                        <div class="badge badge-rose">1 Left</div>
+                    </div>
+                </div>
+                <div class="log-card" style="border-left: 4px solid var(--gold);">
+                    <div class="log-header">
+                        <div>
+                            <div class="log-title">Perdomo Champagne 10th Anniv</div>
+                            <div class="log-meta" style="font-family: var(--font-mono);">Burn Rate: 1.2 / wk</div>
+                        </div>
+                        <div class="badge badge-mint">3 Left</div>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 32px;">
+                    <div class="section-title">Live Price Aggregation</div>
+                </div>
+                <input type="text" class="form-input" placeholder="Search retailers for a specific box..." style="border-radius: 20px; padding-left: 20px;">
+                <div class="empty-state" style="margin-top: 8px;">
+                    <i class="fa-solid fa-circle-info" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>Awaiting search query</span>
+                </div>
+            </section>
+
+            <!-- PROFILE (DATA & ANALYTICS) SCREEN -->
+            <section id="view-profile" class="view-section">
+                
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <div style="position: relative; display: inline-block; cursor: pointer;" onclick="openAvatarActionSheet()">
+                        <img id="profile-avatar-img" src="" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
+                        <div style="position: absolute; bottom: 0; right: 0; background: var(--leather); color: #0B0F19; border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--surface-1);">
+                            <i class="fa-solid fa-camera" style="font-size: 12px;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 0;">
+                    <div class="section-title">Combustion & Burn Analytics</div>
+                </div>
+                <!-- Analytics Dashboard -->
+                <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border-subtle); display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div>
-                        <div class="log-title">Oliva Serie V Melanio</div>
-                        <div class="log-meta" style="font-family: var(--font-mono);">Burn Rate: 2.5 / wk</div>
+                        <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Inventory Turnover</div>
+                        <div style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 4px;">4.2 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">/ wk</span></div>
                     </div>
-                    <div class="badge badge-rose">1 Left</div>
-                </div>
-            </div>
-            <div class="log-card" style="border-left: 4px solid var(--gold);">
-                <div class="log-header">
                     <div>
-                        <div class="log-title">Perdomo Champagne 10th Anniv</div>
-                        <div class="log-meta" style="font-family: var(--font-mono);">Burn Rate: 1.2 / wk</div>
-                    </div>
-                    <div class="badge badge-mint">3 Left</div>
-                </div>
-            </div>
-
-            <div class="section-header" style="margin-top: 32px;">
-                <div class="section-title">Live Price Aggregation</div>
-            </div>
-            <input type="text" class="form-input" placeholder="Search retailers for a specific box..." style="border-radius: 20px; padding-left: 20px;">
-            <div class="empty-state" style="margin-top: 8px;">
-                <i class="fa-solid fa-circle-info" style="font-size: 20px; opacity: 0.3;"></i>
-                <span>Awaiting search query</span>
-            </div>
-        </section>
-
-        <!-- PROFILE (DATA & ANALYTICS) SCREEN -->
-        <section id="view-profile" class="view-section">
-            <div class="dash-header" style="justify-content: flex-end;">
-                <div class="circle-icon-btn" style="color: var(--danger); border-color: rgba(225, 90, 90, 0.2);" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i></div>
-            </div>
-            
-            <div style="text-align: center; margin-bottom: 32px;">
-                <div style="position: relative; display: inline-block; cursor: pointer;" onclick="openAvatarActionSheet()">
-                    <img id="profile-avatar-img" src="" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
-                    <div style="position: absolute; bottom: 0; right: 0; background: var(--leather); color: #0B0F19; border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--bg-base);">
-                        <i class="fa-solid fa-camera" style="font-size: 12px;"></i>
+                        <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Est. Humidor Value</div>
+                        <div style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--leather); margin-top: 4px;">$450.00</div>
                     </div>
                 </div>
-                <h1 id="profile-name-display" style="font-family: var(--font-serif); font-size: 26px; font-weight: 800; margin-top: 16px; letter-spacing: -0.5px;">User</h1>
-            </div>
 
-            <div class="section-header" style="margin-top: 0;">
-                <div class="section-title">Combustion & Burn Analytics</div>
-            </div>
-            <!-- Analytics Dashboard -->
-            <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border-subtle); display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div>
-                    <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Inventory Turnover</div>
-                    <div style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 4px;">4.2 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">/ wk</span></div>
-                </div>
-                <div>
-                    <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Est. Humidor Value</div>
-                    <div style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--leather); margin-top: 4px;">$450.00</div>
-                </div>
-            </div>
-
-            <div class="log-card">
-                <div class="log-header">
-                    <div>
-                        <div class="log-title">Palate Mapping</div>
-                        <div class="log-meta">Based on highest rated logs</div>
+                <div class="log-card">
+                    <div class="log-header">
+                        <div>
+                            <div class="log-title">Palate Mapping</div>
+                            <div class="log-meta">Based on highest rated logs</div>
+                        </div>
+                        <i class="fa-solid fa-chart-pie" style="color: var(--gold);"></i>
                     </div>
-                    <i class="fa-solid fa-chart-pie" style="color: var(--gold);"></i>
-                </div>
-                <div style="display: flex; gap: 8px; margin-top: 10px;">
-                    <span class="badge badge-indigo">70% Maduro</span>
-                    <span class="badge badge-amber">Earthy Notes</span>
-                </div>
-            </div>
-
-            <div class="log-card">
-                <div class="log-header">
-                    <div>
-                        <div class="log-title">Optimal Mechanics</div>
-                        <div class="log-meta">Highest rated combo</div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <span class="badge badge-indigo">70% Maduro</span>
+                        <span class="badge badge-amber">Earthy Notes</span>
                     </div>
-                    <i class="fa-solid fa-gear" style="color: var(--leather);"></i>
                 </div>
-                <div style="display: flex; gap: 8px; margin-top: 10px;">
-                    <span class="badge badge-rose">60 Ring Gauge</span>
-                    <span class="badge badge-mint">Crown Cut</span>
-                </div>
-            </div>
 
-        </section>
+                <div class="log-card">
+                    <div class="log-header">
+                        <div>
+                            <div class="log-title">Optimal Mechanics</div>
+                            <div class="log-meta">Highest rated combo</div>
+                        </div>
+                        <i class="fa-solid fa-gear" style="color: var(--leather);"></i>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <span class="badge badge-rose">60 Ring Gauge</span>
+                        <span class="badge badge-mint">Crown Cut</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" style="background: rgba(225, 90, 90, 0.1); color: var(--danger); box-shadow: none; margin-top: 32px; width: 100%;" onclick="handleLogout()">
+                    <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
+                </button>
+
+            </section>
+
+        </div> <!-- END LAYER 3 CONTAINER -->
 
         <!-- FLOATING BOTTOM DOCK -->
         <div class="bottom-dock-wrapper">
@@ -557,9 +561,12 @@
     let isVaultEditMode = false;
     let isJournalEditMode = false;
 
-    // Set Date
+    // Set Date Globally
     const dateOptions = { day: 'numeric', month: 'long' };
     document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('en-US', dateOptions);
+
+    // Globals
+    window.currentUserName = "User";
 
     // --- AVATAR UPLOAD LOGIC ---
     window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
@@ -576,14 +583,26 @@
         reader.readAsDataURL(file);
     };
 
-    // --- NAVIGATION TAB ROUTING ---
+        // --- NAVIGATION TAB ROUTING & DYNAMIC TITLE LOGIC ---
     window.switchTab = function(targetViewId, dockIndex) {
+        
+        // 1. Hide all sections
         document.querySelectorAll('.view-section').forEach(el => {
             el.classList.remove('active');
         });
+        
+        // 2. Show target section
         const targetView = document.getElementById(targetViewId);
         targetView.classList.add('active');
+        targetView.scrollTop = 0; 
+
+        // 3. Animate the ENTIRE Layer 3 Card
+        const layer3 = document.querySelector('.layer-3-container');
+        layer3.classList.remove('slide-anim');
+        void layer3.offsetWidth; // This triggers a browser reflow, resetting the animation to play again
+        layer3.classList.add('slide-anim');
         
+        // 4. Update bottom nav highlights
         document.querySelectorAll('.nav-item').forEach((el, index) => {
             if (dockIndex !== null && index === dockIndex) {
                 el.classList.add('active');
@@ -592,9 +611,39 @@
             }
         });
         
-        // This ensures the new tab opens at the very top, fixing the scroll bug
-        targetView.scrollTop = 0; 
-        window.scrollTo(0, 0);
+                // 4. Update Dynamic Title Shell
+        const greetingContainer = document.getElementById('greeting-container');
+        const titleEl = document.getElementById('dynamic-layer-2-title');
+        const subtitleEl = document.getElementById('dynamic-layer-2-subtitle');
+        
+        // Instantly hide and reset animation
+        greetingContainer.classList.remove('text-slide-up');
+        greetingContainer.style.opacity = 0; 
+
+        // Add a tiny delay to allow the text to swap out while hidden, then animate it up
+        setTimeout(() => {
+            if(dockIndex === 0) {
+                titleEl.innerHTML = `Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit;">${window.currentUserName}</span>.`;
+                subtitleEl.innerText = "Vault Overview";
+            } else if(dockIndex === 1) {
+                titleEl.innerText = "Humidor.";
+                subtitleEl.innerText = "Logistics & Storage";
+            } else if(dockIndex === 2) {
+                titleEl.innerText = "Journal.";
+                subtitleEl.innerText = "Tasting Ledger";
+            } else if(dockIndex === 3) {
+                titleEl.innerText = "Info.";
+                subtitleEl.innerText = "Discovery & Radar";
+            } else if(dockIndex === 4) {
+                titleEl.innerText = "Profile.";
+                subtitleEl.innerText = "Data & Analytics";
+            }
+            
+            // Remove inline opacity so the CSS animation can take control
+            greetingContainer.style.opacity = ''; 
+            void greetingContainer.offsetWidth; // Trigger browser reflow
+            greetingContainer.classList.add('text-slide-up');
+        }, 50);  
     };
 
     // --- ACCOUNT LOGIC ---
@@ -605,16 +654,19 @@
         
         if(!name) { name = "User"; } else { name = name.charAt(0).toUpperCase() + name.slice(1); }
         
-        document.getElementById('display-name').innerText = name;
-        document.getElementById('profile-name-display').innerText = name;
-
+        window.currentUserName = name;
+        
         const originalText = btnText.innerText;
         btnText.innerHTML = 'Authenticating...';
         loginBtn.style.pointerEvents = 'none';
         
         setTimeout(() => {
             document.getElementById('login-environment').classList.remove('active');
-            document.getElementById('main-environment').classList.add('active');
+            
+            const mainEnv = document.getElementById('main-environment');
+            mainEnv.style.display = 'flex';
+            mainEnv.classList.add('active');
+            
             switchTab('view-home', 0);
             btnText.innerHTML = originalText;
             loginBtn.style.pointerEvents = 'auto';
@@ -623,6 +675,7 @@
 
     window.handleLogout = function() {
         document.getElementById('main-environment').classList.remove('active');
+        document.getElementById('main-environment').style.display = 'none';
         document.getElementById('login-environment').classList.add('active');
         document.getElementById('login-name').value = ''; 
     };
@@ -632,7 +685,6 @@
         const favContainer = document.getElementById('home-favorites-list');
         const ratedCigars = humidorInventory.filter(c => c.rating);
         
-        // Update the Avg Rating Stat Box dynamically based on Humidor Ratings
         if (ratedCigars.length > 0) {
             const sum = ratedCigars.reduce((acc, curr) => acc + curr.rating, 0);
             document.getElementById('stat-avg').innerText = (sum / ratedCigars.length).toFixed(1);
@@ -699,7 +751,6 @@
 
         journalHistory.unshift(newLog); 
         
-        // Reset form
         document.getElementById('log-date').value = '';
         document.getElementById('log-brand').value = '';
         document.getElementById('log-vitola').selectedIndex = 0;
@@ -855,7 +906,7 @@
             countStat.innerText = '0';
             isVaultEditMode = false;
             document.getElementById('edit-vault-btn').innerText = "Edit";
-            renderFavorites(); // Update home screen favorites
+            renderFavorites(); 
             return;
         }
 
@@ -904,7 +955,7 @@
         list.innerHTML = html;
         countStat.innerText = humidorInventory.length; 
         
-        renderFavorites(); // Trigger the favorites render
+        renderFavorites(); 
     };
 
     window.toggleVaultEdit = function() {
