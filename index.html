@@ -39,8 +39,10 @@
         .app-environment { display: none; width: 100%; min-height: 100vh; flex-direction: column; }
         .app-environment.active { display: flex; }
 
+        /* --- VIEW SECTIONS (Fixed Display Glitch) --- */
         .view-section { flex-grow: 1; background: var(--bg-base); padding: max(20px, env(safe-area-inset-top)) 24px calc(110px + env(safe-area-inset-bottom)) 24px; display: none; animation: fadeIn 0.3s ease; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .view-section.active { display: block; }
+        #view-home.active { display: flex; flex-direction: column; padding: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- LOGIN SCREEN --- */
@@ -128,7 +130,7 @@
             <p class="login-subtitle">FROM THE FIRST LIGHT TO THE FINAL THIRD</p>
             <input type="text" id="login-name" class="editorial-input" placeholder="Enter your name" autocomplete="off">
             <button id="login-btn" class="btn-primary" onclick="handleAuth()">
-                <span id="btn-dynamic-text">Access Vault</span> <i class="fa-solid fa-arrow-right"></i>
+                <span id="btn-dynamic-text">Access Humidor</span> <i class="fa-solid fa-arrow-right"></i>
             </button>
         </div>
     </div>
@@ -136,7 +138,7 @@
     <div id="main-environment" class="app-environment">
         
         <!-- HOME SCREEN -->
-        <section id="view-home" class="view-section active" style="padding: 0; background: var(--bg-base); display: flex; flex-direction: column;">
+        <section id="view-home" class="view-section active">
             
             <!-- LAYER 1: HEADER (Midnight Slate Background) -->
             <div class="dash-header" style="padding: max(20px, env(safe-area-inset-top)) 24px 20px 24px; margin-bottom: 0; align-items: center;">
@@ -150,7 +152,7 @@
             <div style="background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%); border-top-left-radius: 40px; padding: 36px 24px 80px 24px; position: relative; border-top: 1px solid rgba(255,255,255,0.03); box-shadow: 0 -4px 20px rgba(0,0,0,0.5);">
                 <div class="greeting" style="margin-bottom: 0;">
                     Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit;">User</span>.<br>
-                    <span style="color: rgba(255, 255, 255, 0.5); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 8px;">Vault Overview</span>
+                    <span style="color: rgba(255, 255, 255, 0.5); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 8px;">Humidor Overview</span>
                 </div>
             </div>
 
@@ -160,8 +162,8 @@
                 <div class="stats-grid">
                     <div class="stat-box" onclick="switchTab('view-humidor', 1)">
                         <div class="stat-header">
-                            <p>In Vault</p>
-                            <i class="fa-solid fa-vault stat-icon"></i>
+                            <p>In Humidor</p>
+                            <i class="fa-solid fa-box stat-icon"></i>
                         </div>
                         <h2 id="stat-collection" style="color: var(--leather); text-shadow: 0 2px 8px rgba(176, 125, 70, 0.3);">0</h2>
                     </div>
@@ -194,7 +196,7 @@
                 <!-- FAVORITES BENTO BOX -->
                 <div class="section-header" style="margin-top: 24px;">
                     <div class="section-title">Favorites</div>
-                    <div class="section-link" onclick="switchTab('view-humidor', 1)">Vault</div>
+                    <div class="section-link" onclick="switchTab('view-humidor', 1)">Humidor</div>
                 </div>
                 
                 <div id="home-favorites-list">
@@ -309,7 +311,7 @@
                 <input type="number" id="vault-rating" class="form-input" placeholder="Rating (1-10)" min="1" max="10" step="0.25" style="margin-bottom: 0;">
             </div>
             
-            <button class="btn-primary" onclick="storeCigar()" style="margin-top: 16px;">Lock in Vault <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
+            <button class="btn-primary" onclick="storeCigar()" style="margin-top: 16px;">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
 
             <div class="section-header" style="margin-top: 32px;">
                 <div class="section-title">Aging Timeline</div>
@@ -318,8 +320,8 @@
 
             <div id="humidor-inventory-list" style="margin-bottom: 40px;">
                 <div class="empty-state">
-                    <i class="fa-solid fa-vault" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>Vault is currently empty</span>
+                    <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>Humidor is currently empty</span>
                 </div>
             </div>
         </section>
@@ -422,10 +424,10 @@
 
         </section>
 
-        <!-- RADAR (DISCOVERY & SOURCING) SCREEN -->
+        <!-- INFO (DISCOVERY & SOURCING) SCREEN -->
         <section id="view-radar" class="view-section">
             <div class="dash-header">
-                <div class="dash-date">Discovery<br><strong>Radar</strong></div>
+                <div class="dash-date">Discovery<br><strong>Info</strong></div>
             </div>
             
             <div class="section-header" style="margin-top: 0;">
@@ -456,7 +458,7 @@
             </div>
             <input type="text" class="form-input" placeholder="Search retailers for a specific box..." style="border-radius: 20px; padding-left: 20px;">
             <div class="empty-state" style="margin-top: 8px;">
-                <i class="fa-solid fa-satellite-dish" style="font-size: 20px; opacity: 0.3;"></i>
+                <i class="fa-solid fa-circle-info" style="font-size: 20px; opacity: 0.3;"></i>
                 <span>Awaiting search query</span>
             </div>
         </section>
@@ -487,7 +489,7 @@
                     <div style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 4px;">4.2 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">/ wk</span></div>
                 </div>
                 <div>
-                    <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Est. Vault Value</div>
+                    <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Est. Humidor Value</div>
                     <div style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--leather); margin-top: 4px;">$450.00</div>
                 </div>
             </div>
@@ -526,10 +528,10 @@
         <div class="bottom-dock-wrapper">
             <nav class="bottom-dock">
                 <div class="nav-item active" onclick="switchTab('view-home', 0)"><i class="fa-solid fa-house"></i><span>Home</span></div>
-                <div class="nav-item" onclick="switchTab('view-humidor', 1)"><i class="fa-solid fa-vault"></i><span>Vault</span></div>
-                <div class="nav-item" onclick="switchTab('view-journal', 2)"><i class="fa-solid fa-plus"></i><span>Log</span></div>
-                <div class="nav-item" onclick="switchTab('view-radar', 3)"><i class="fa-solid fa-satellite-dish"></i><span>Radar</span></div>
-                <div class="nav-item" onclick="switchTab('view-profile', 4)"><i class="fa-solid fa-chart-simple"></i><span>Data</span></div>
+                <div class="nav-item" onclick="switchTab('view-humidor', 1)"><i class="fa-solid fa-box"></i><span>Humidor</span></div>
+                <div class="nav-item" onclick="switchTab('view-journal', 2)"><i class="fa-solid fa-book-open"></i><span>Journal</span></div>
+                <div class="nav-item" onclick="switchTab('view-radar', 3)"><i class="fa-solid fa-circle-info"></i><span>Info</span></div>
+                <div class="nav-item" onclick="switchTab('view-profile', 4)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
             </nav>
         </div>
 
@@ -847,8 +849,8 @@
         if(humidorInventory.length === 0) {
             list.innerHTML = `
                 <div class="empty-state">
-                    <i class="fa-solid fa-vault" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>Vault is currently empty</span>
+                    <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>Humidor is currently empty</span>
                 </div>`;
             countStat.innerText = '0';
             isVaultEditMode = false;
@@ -920,7 +922,7 @@
     };
 
     window.removeCigar = function(id) {
-        if(confirm("Remove this cigar from your vault?")) {
+        if(confirm("Remove this cigar from your humidor?")) {
             humidorInventory = humidorInventory.filter(cigar => cigar.id !== id);
             renderHumidor();
         }
