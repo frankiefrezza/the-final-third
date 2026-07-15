@@ -211,7 +211,7 @@
         <div class="dash-header">
             <div style="text-align: center;">
                 <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
-                <strong style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Perdomo 10th Anniversary Champagne</strong>
+                <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
             </div>
         </div>
 
@@ -616,10 +616,10 @@
     // Globals for image uploads and registry
     let currentVaultImage = null;
     let currentLogImage = null;
-    window.imageRegistry = {}; // Safer way to map images to UI icons without crashing the DOM
+    window.imageRegistry = {}; 
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -638,6 +638,32 @@
 
     // Globals
     window.currentUserName = "User";
+
+    // --- DAY OF THE YEAR CALCULATION ---
+    function getDayOfYear() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = now - start;
+        const oneDay = 1000 * 60 * 60 * 24;
+        return Math.floor(diff / oneDay);
+    }
+
+    // --- DAILY ROSTER FETCHER ---
+    async function loadDailyCigar() {
+        const day = getDayOfYear();
+        const displayEl = document.getElementById('daily-cigar-display');
+        try {
+            const docRef = doc(db, "daily_roster", day.toString());
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                displayEl.innerText = docSnap.data().name;
+            } else {
+                displayEl.innerText = "Padrón 60th Anniversary Perfecto"; // Fallback if seeder hasn't run
+            }
+        } catch(e) {
+            displayEl.innerText = "Padrón 1964 Anniversary"; // Offline fallback
+        }
+    }
 
     // --- AUTO DATE INITIALIZATION ---
     function initializeDates() {
@@ -726,20 +752,28 @@
         setTimeout(() => { document.getElementById('lightbox-img').src = ""; }, 300);
     };
 
-    // --- AVATAR UPLOAD LOGIC ---
+    // --- CLOUD AVATAR UPLOAD LOGIC ---
     window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
     window.closeAvatarActionSheet = function(event) { document.getElementById('avatar-action-sheet').classList.remove('active'); };
 
-    window.handleAvatarUpload = function(event) {
+    window.handleAvatarUpload = async function(event) {
         const file = event.target.files[0];
         if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const base64Image = e.target.result;
-            document.getElementById('profile-avatar-img').src = base64Image;
-            localStorage.setItem('finalThirdAvatar', base64Image); // Persists across reloads
-        };
-        reader.readAsDataURL(file);
+        try {
+            // Compress avatar to avoid breaking database limits
+            const compressedBase64 = await window.compressImage(file);
+            
+            // Instantly update UI and save to local cache
+            document.getElementById('profile-avatar-img').src = compressedBase64;
+            localStorage.setItem('finalThirdAvatar', compressedBase64); 
+            
+            // Securely save to Firestore Users collection
+            if (auth.currentUser) {
+                await setDoc(doc(db, "users", auth.currentUser.uid), { avatar: compressedBase64 }, { merge: true });
+            }
+        } catch (error) {
+            alert("Failed to process profile picture.");
+        }
     };
 
     // --- USERNAME EDIT LOGIC ---
@@ -783,6 +817,10 @@
             const journalQ = query(collection(db, "journal"), where("uid", "==", user.uid));
             const journalSnaps = await getDocs(journalQ);
             journalSnaps.forEach(docSnap => batch.delete(docSnap.ref));
+            
+            // Delete user cloud avatar 
+            const userDocRef = doc(db, "users", user.uid);
+            batch.delete(userDocRef);
             
             await batch.commit();
 
@@ -915,7 +953,7 @@
     let unsubscribeHumidor = null;
     let unsubscribeJournal = null;
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
             document.getElementById('login-environment').classList.remove('active');
             document.getElementById('main-environment').style.display = 'flex';
@@ -923,17 +961,33 @@
             
             window.currentUserName = user.displayName || user.email.split('@')[0]; 
             
-            // Auto inject current dates so iOS never sees a blank box
+            // Execute automated UI loaders
             initializeDates();
+            loadDailyCigar();
             
-            // Update Profile Screen UI
+            // Update Profile Screen Text
             document.getElementById('profile-display-name').innerText = window.currentUserName;
             document.getElementById('profile-display-email').innerText = user.email;
 
-            // Load saved avatar 
-            const savedAvatar = localStorage.getItem('finalThirdAvatar');
-            if(savedAvatar) {
-                document.getElementById('profile-avatar-img').src = savedAvatar;
+            // Instantly load local avatar for speed
+            const localAvatar = localStorage.getItem('finalThirdAvatar');
+            if(localAvatar) {
+                document.getElementById('profile-avatar-img').src = localAvatar;
+            }
+
+            // Fetch from cloud to ensure cross-device sync
+            try {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if(userDoc.exists() && userDoc.data().avatar) {
+                    const cloudAvatar = userDoc.data().avatar;
+                    document.getElementById('profile-avatar-img').src = cloudAvatar;
+                    localStorage.setItem('finalThirdAvatar', cloudAvatar); // Update local cache
+                } else if (localAvatar) {
+                    // If cloud is empty but local exists, securely push it to Firebase
+                    setDoc(doc(db, "users", user.uid), { avatar: localAvatar }, { merge: true });
+                }
+            } catch(e) { 
+                console.error("Avatar sync error", e); 
             }
             
             switchTab('view-home', 0);
