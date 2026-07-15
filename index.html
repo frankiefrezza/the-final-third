@@ -561,6 +561,40 @@
     let isVaultEditMode = false;
     let isJournalEditMode = false;
 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyChMrxW41yXgQkqFEqe0DxGFwjp_QdriYE",
+  authDomain: "finalthird-6628e.firebaseapp.com",
+  projectId: "finalthird-6628e",
+  storageBucket: "finalthird-6628e.firebasestorage.app",
+  messagingSenderId: "658511952829",
+  appId: "1:658511952829:web:96f277790007a890cc30d4",
+  measurementId: "G-9N9VGTTX3G"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Listen to Humidor Collection
+    onSnapshot(query(collection(db, "humidor"), orderBy("acquiredDate", "desc")), (snapshot) => {
+        humidorInventory = [];
+        snapshot.forEach((doc) => {
+            humidorInventory.push({ id: doc.id, ...doc.data() });
+        });
+        renderHumidor();
+    });
+
+    // Listen to Journal Collection
+    onSnapshot(query(collection(db, "journal"), orderBy("date", "desc")), (snapshot) => {
+        journalHistory = [];
+        snapshot.forEach((doc) => {
+            journalHistory.push({ id: doc.id, ...doc.data() });
+        });
+        renderJournal();
+    });
+
     // Set Date Globally
     const dateOptions = { day: 'numeric', month: 'long' };
     document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('en-US', dateOptions);
@@ -722,8 +756,8 @@
         favContainer.innerHTML = html;
     };
 
-    // --- JOURNAL ENGINE LOGIC ---
-    window.logSmoke = function() {
+        // --- JOURNAL ENGINE LOGIC ---
+    window.logSmoke = async function() {
         const date = document.getElementById('log-date').value;
         const brand = document.getElementById('log-brand').value;
         const vitola = document.getElementById('log-vitola').value;
@@ -737,7 +771,6 @@
         if(!brand) { alert("Please enter the brand to log."); return; }
 
         const newLog = {
-            id: Date.now(),
             date: date || new Date().toISOString().split('T')[0],
             brand,
             vitola: vitola || "Unknown",
@@ -749,19 +782,21 @@
             notes: notes || "No notes."
         };
 
-        journalHistory.unshift(newLog); 
-        
-        document.getElementById('log-date').value = '';
-        document.getElementById('log-brand').value = '';
-        document.getElementById('log-vitola').selectedIndex = 0;
-        document.getElementById('log-ring-gauge').value = '';
-        document.getElementById('log-wrapper').selectedIndex = 0;
-        document.getElementById('log-cut').selectedIndex = 0;
-        document.getElementById('log-light').selectedIndex = 0;
-        document.getElementById('log-pairing').value = '';
-        document.getElementById('log-notes').value = '';
-
-        renderJournal();
+        try {
+            await addDoc(collection(db, "journal"), newLog);
+            
+            document.getElementById('log-date').value = '';
+            document.getElementById('log-brand').value = '';
+            document.getElementById('log-vitola').selectedIndex = 0;
+            document.getElementById('log-ring-gauge').value = '';
+            document.getElementById('log-wrapper').selectedIndex = 0;
+            document.getElementById('log-cut').selectedIndex = 0;
+            document.getElementById('log-light').selectedIndex = 0;
+            document.getElementById('log-pairing').value = '';
+            document.getElementById('log-notes').value = '';
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
     };
 
     window.renderJournal = function() {
@@ -792,7 +827,7 @@
             let rightContent = `<div class="badge badge-amber">${log.date}</div>`;
             
             if (isJournalEditMode) {
-                rightContent = `<button onclick="removeJournalLog(${log.id})" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;">Remove</button>`;
+                rightContent = `<button onclick="removeJournalLog('${log.id}')" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;">Remove</button>`;
             }
 
             html += `
@@ -849,15 +884,14 @@
         renderJournal();
     };
 
-    window.removeJournalLog = function(id) {
+        window.removeJournalLog = async function(id) {
         if(confirm("Remove this log from your journal?")) {
-            journalHistory = journalHistory.filter(log => log.id !== id);
-            renderJournal();
+            await deleteDoc(doc(db, "journal", id));
         }
     };
 
     // --- AGING ENGINE LOGIC ---
-    window.storeCigar = function() {
+    window.storeCigar = async function() {
         const brand = document.getElementById('vault-brand').value;
         const vitola = document.getElementById('vault-vitola').value;
         const ring = document.getElementById('vault-ring-gauge').value;
@@ -869,7 +903,6 @@
         if(!brand || !acquiredDate) { alert("Please enter the brand and date acquired."); return; }
 
         const newCigar = {
-            id: Date.now(),
             brand,
             vitola: vitola || "Unknown",
             ring: ring || "-",
@@ -879,18 +912,21 @@
             acquiredDate: new Date(acquiredDate + 'T00:00:00').getTime() 
         };
 
-        humidorInventory.unshift(newCigar); 
-        
-        document.getElementById('vault-brand').value = '';
-        document.getElementById('vault-ring-gauge').value = '';
-        document.getElementById('vault-date').value = '';
-        document.getElementById('vault-rating').value = '';
-        document.getElementById('vault-vitola').selectedIndex = 0;
-        document.getElementById('vault-wrapper').selectedIndex = 0;
-        document.getElementById('vault-target').value = "6";
+        try {
+            await addDoc(collection(db, "humidor"), newCigar);
+            
+            document.getElementById('vault-brand').value = '';
+            document.getElementById('vault-ring-gauge').value = '';
+            document.getElementById('vault-date').value = '';
+            document.getElementById('vault-rating').value = '';
+            document.getElementById('vault-vitola').selectedIndex = 0;
+            document.getElementById('vault-wrapper').selectedIndex = 0;
+            document.getElementById('vault-target').value = "6";
 
-        renderHumidor();
-        document.getElementById('edit-vault-btn').scrollIntoView({behavior: 'smooth', block: 'start'});
+            document.getElementById('edit-vault-btn').scrollIntoView({behavior: 'smooth', block: 'start'});
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
     };
 
     window.renderHumidor = function() {
@@ -929,7 +965,7 @@
             
             let rightContent = `<div class="badge ${badgeClass}">${statusText}</div>`;
             if (isVaultEditMode) {
-                rightContent = `<button onclick="removeCigar(${cigar.id})" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;">Remove</button>`;
+                rightContent = `<button onclick="removeCigar('${cigar.id}')" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;">Remove</button>`;
             }
 
             let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
@@ -972,10 +1008,9 @@
         renderHumidor();
     };
 
-    window.removeCigar = function(id) {
+        window.removeCigar = async function(id) {
         if(confirm("Remove this cigar from your humidor?")) {
-            humidorInventory = humidorInventory.filter(cigar => cigar.id !== id);
-            renderHumidor();
+            await deleteDoc(doc(db, "humidor", id));
         }
     };
 
