@@ -190,16 +190,13 @@
                 <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
                 <strong style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Perdomo 10th Anniversary Champagne</strong>
             </div>
-            <div class="header-actions" style="position: absolute; right: 24px;">
-                <div class="avatar-wrap" onclick="switchTab('view-profile', 4)"><img src="" class="avatar-small" id="home-avatar"></div>
-            </div>
         </div>
 
         <!-- LAYER 2: DYNAMIC TITLE LAYER -->
         <div style="background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%); border-top-left-radius: 40px; padding: 28px 24px 76px 24px; position: relative; border-top: 1px solid rgba(255,255,255,0.03); box-shadow: 0 -4px 20px rgba(0,0,0,0.5); z-index: 5;">
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800;">
-                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit;">User</span>.
+                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">User</span><i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>.
                 </span>
                 <span id="dynamic-layer-2-subtitle" style="color: rgba(255, 255, 255, 0.5); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; display: block; font-family: var(--font-sans);">Vault Overview</span>
             </div>
@@ -232,7 +229,7 @@
                             <p>Alerts</p>
                             <i class="fa-solid fa-bell stat-icon"></i>
                         </div>
-                        <h2 id="stat-alerts">2</h2>
+                        <h2 id="stat-alerts">0</h2>
                     </div>
                     
                     <div class="stat-box" onclick="switchTab('view-profile', 4)">
@@ -471,6 +468,8 @@
                             <i class="fa-solid fa-camera" style="font-size: 14px;"></i>
                         </div>
                     </div>
+                    <div id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 16px;">User</div>
+                    <div id="profile-display-email" style="font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 4px;">user@email.com</div>
                 </div>
 
                 <div class="section-header" style="margin-top: 0;">
@@ -604,9 +603,23 @@
         const reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('profile-avatar-img').src = e.target.result;
-            document.getElementById('home-avatar').src = e.target.result;
         };
         reader.readAsDataURL(file);
+    };
+
+    // --- USERNAME EDIT LOGIC ---
+    window.editUsername = async function() {
+        const newName = prompt("Enter your new username:", window.currentUserName);
+        if (newName && newName.trim() !== "" && newName.trim() !== window.currentUserName) {
+            try {
+                await updateProfile(auth.currentUser, { displayName: newName.trim() });
+                window.currentUserName = newName.trim();
+                document.getElementById('display-name').innerText = window.currentUserName;
+                document.getElementById('profile-display-name').innerText = window.currentUserName;
+            } catch (error) {
+                alert("Failed to update username: " + error.message);
+            }
+        }
     };
 
     // --- DELETE ACCOUNT LOGIC ---
@@ -680,7 +693,7 @@
 
         setTimeout(() => {
             if(dockIndex === 0) {
-                titleEl.innerHTML = `Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit;">${window.currentUserName}</span>.`;
+                titleEl.innerHTML = `Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">${window.currentUserName}</span><i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>.`;
                 subtitleEl.innerText = "Vault Overview";
             } else if(dockIndex === 1) {
                 titleEl.innerText = "Humidor.";
@@ -774,6 +787,11 @@
             document.getElementById('main-environment').classList.add('active');
             
             window.currentUserName = user.displayName || user.email.split('@')[0]; 
+            
+            // Update Profile Screen UI
+            document.getElementById('profile-display-name').innerText = window.currentUserName;
+            document.getElementById('profile-display-email').innerText = user.email;
+            
             switchTab('view-home', 0);
 
             document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
@@ -1096,6 +1114,7 @@
                     <span>Humidor is currently empty</span>
                 </div>`;
             countStat.innerText = '0';
+            document.getElementById('stat-alerts').innerText = '0';
             isVaultEditMode = false;
             document.getElementById('edit-vault-btn').innerText = "Edit";
             
@@ -1112,6 +1131,7 @@
         const now = new Date().getTime();
         let totalValue = 0;
         let totalAgedDays = 0;
+        let readyAlertsCount = 0;
 
         humidorInventory.forEach(cigar => {
             const msPerDay = 1000 * 60 * 60 * 24;
@@ -1130,6 +1150,7 @@
             if (progress < 0) progress = 0; 
 
             let isReady = progress >= 100;
+            if (isReady) readyAlertsCount++;
             
             let badgeClass = isReady ? 'badge-mint' : 'badge-amber';
             let statusText = isReady ? 'Ready' : 'Aging';
@@ -1161,6 +1182,7 @@
 
         list.innerHTML = html;
         countStat.innerText = humidorInventory.length; 
+        document.getElementById('stat-alerts').innerText = readyAlertsCount;
         
         let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
         document.getElementById('stat-avg-aging').innerHTML = `${avgDays} <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
