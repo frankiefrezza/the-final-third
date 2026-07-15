@@ -299,7 +299,10 @@
 
                 <div style="display: flex; gap: 12px; margin-bottom: 16px;">
                     <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; flex: 1;">
-                    <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
+                    <div style="position: relative; display: flex; align-items: center; width: 95px;">
+                        <span style="position: absolute; left: 12px; font-size: 10px; font-weight: 800; color: var(--text-dim); pointer-events: none;">QTY</span>
+                        <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 100%; padding: 16px 8px 16px 38px; text-align: center;">
+                    </div>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
@@ -1511,7 +1514,7 @@
         const brand = document.getElementById('vault-brand').value;
         const qtyVal = document.getElementById('vault-quantity').value;
         const vitola = document.getElementById('vault-vitola').value;
-        const ring = document.getElementById('vault-ring-gauge').value;
+        const ring = document.getElementById('vault-ring-gauge') ? document.getElementById('vault-ring-gauge').value : "-";
         const wrapper = document.getElementById('vault-wrapper').value;
         const priceVal = document.getElementById('vault-price').value;
         const acquiredDate = document.getElementById('vault-date').value;
@@ -1550,7 +1553,7 @@
             
             document.getElementById('vault-brand').value = '';
             document.getElementById('vault-quantity').value = '1';
-            document.getElementById('vault-ring-gauge').value = '';
+            if(document.getElementById('vault-ring-gauge')) document.getElementById('vault-ring-gauge').value = '';
             document.getElementById('vault-price').value = '';
             document.getElementById('vault-rating').selectedIndex = 0;
             document.getElementById('vault-vitola').selectedIndex = 0;
