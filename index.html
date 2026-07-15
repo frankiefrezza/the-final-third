@@ -744,8 +744,7 @@
         document.getElementById('log-date').value = todayStr;
     }
 
-    // --- HTML5 CANVAS IMAGE COMPRESSION ---
-    // Safely shrinks 5MB phone photos down to < 150KB for Firebase text storage
+    // --- HTML5 CANVAS IMAGE COMPRESSORS ---
     window.compressImage = function(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -771,6 +770,38 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     resolve(canvas.toDataURL('image/jpeg', 0.7)); // 70% JPEG quality
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    window.compressAvatar = function(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 400; // Small for tight avatar DB payload
+                    const MAX_HEIGHT = 400;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6)); // 60% JPEG quality
                 };
                 img.onerror = error => reject(error);
             };
@@ -824,18 +855,19 @@
         if(!file) return;
         try {
             // Compress avatar to avoid breaking database limits
-            const compressedBase64 = await window.compressImage(file);
+            const compressedBase64 = await window.compressAvatar(file);
             
             // Instantly update UI and save to local cache
             document.getElementById('profile-avatar-img').src = compressedBase64;
             localStorage.setItem('finalThirdAvatar', compressedBase64); 
             
-            // Securely save to Firestore Users collection
+            // Securely save to Firestore Users collection silently in the background
             if (auth.currentUser) {
                 await setDoc(doc(db, "users", auth.currentUser.uid), { avatar: compressedBase64 }, { merge: true });
             }
         } catch (error) {
-            alert("Failed to process profile picture.");
+            // Silently log errors to the console instead of bothering the user
+            console.error("Avatar upload failed:", error);
         }
     };
 
@@ -1047,10 +1079,10 @@
                     localStorage.setItem('finalThirdAvatar', cloudAvatar); // Update local cache
                 } else if (localAvatar) {
                     // If cloud is empty but local exists, securely push it to Firebase
-                    setDoc(doc(db, "users", user.uid), { avatar: localAvatar }, { merge: true });
+                    await setDoc(doc(db, "users", user.uid), { avatar: localAvatar }, { merge: true });
                 }
             } catch(e) { 
-                console.error("Avatar sync error", e); 
+                console.error("Avatar sync error. Check Firebase Rules.", e); 
             }
             
             switchTab('view-home', 0);
