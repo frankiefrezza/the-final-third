@@ -297,12 +297,17 @@
                     <div class="section-title">Store New Acquisition</div>
                 </div>
 
+                <!-- ROW 1: Brand & AI Scan -->
                 <div style="display: flex; gap: 12px; margin-bottom: 16px;">
                     <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; flex: 1;">
-                    <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
+                    <input type="file" id="ai-scan-upload" accept="image/*" capture="environment" style="display: none;" onchange="executeAIScan(event)">
+                    <button type="button" id="ai-scan-btn" class="btn-secondary" style="margin-bottom: 0; padding: 0 16px; width: auto; color: var(--gold); border-color: var(--gold); background: rgba(212, 175, 55, 0.1);" onclick="document.getElementById('ai-scan-upload').click()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> AI Scan
+                    </button>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <!-- ROW 2: Vitola & Wrapper -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
                     <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
                         <option value="" disabled selected>Vitola</option>
                         <optgroup label="Parejo (Straight)">
@@ -333,9 +338,7 @@
                             <option value="Chisel">Chisel</option>
                         </optgroup>
                     </select>
-                    <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    
                     <select id="vault-wrapper" class="form-input form-select" style="margin-bottom: 0;">
                         <option value="" disabled selected>Wrapper</option>
                         <option value="Connecticut">Connecticut</option>
@@ -349,22 +352,22 @@
                         <option value="Broadleaf">Broadleaf</option>
                         <option value="Rosado">Rosado</option>
                     </select>
-                    <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
                 </div>
                 
-                <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
-                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
-                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
-                    </div>
-                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
-                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
-                    </div>
-                </div>
+                <!-- Hidden Ring Gauge to preserve Javascript model integrity -->
+                <input type="hidden" id="vault-ring-gauge" value="-">
                 
-                <div style="margin-top: 16px; margin-bottom: 16px;">
-                    <select id="vault-rating" class="form-input form-select" style="margin-bottom: 0;">
+                <!-- ROW 3: Price, Qty, Rating -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 12px; margin-bottom: 16px;">
+                    <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0; padding: 16px 8px; text-align: center;">
+                    
+                    <!-- Updated QTY with Label Container -->
+                    <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                        <span style="position: absolute; left: 12px; font-size: 11px; font-weight: 800; color: var(--text-dim); pointer-events: none;">QTY</span>
+                        <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; padding: 16px 8px 16px 36px; text-align: center; width: 100%;">
+                    </div>
+
+                    <select id="vault-rating" class="form-input form-select" style="margin-bottom: 0; padding: 16px 8px; background-position: right 8px top 50%;">
                         <option value="" disabled selected>Rating (1-10)</option>
                         <option value="10">10.00</option>
                         <option value="9.75">9.75</option>
@@ -404,6 +407,18 @@
                         <option value="1.25">1.25</option>
                         <option value="1">1.00</option>
                     </select>
+                </div>
+
+                <!-- ROW 4: Dates -->
+                <div style="display: flex; gap: 12px; margin-bottom: 16px; width: 100%;">
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
+                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                    </div>
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
+                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                    </div>
                 </div>
 
                 <!-- Hidden Input and Visual Upload Button -->
@@ -868,6 +883,45 @@
             }
         } catch (error) {
             alert("Error processing image.");
+        }
+    };
+
+    // --- AI SCAN ENGINE (GEMINI ROUTED VIA VERCEL SERVERLESS) ---
+    window.executeAIScan = async function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const scanBtn = document.getElementById('ai-scan-btn');
+        const originalBtnHTML = scanBtn.innerHTML;
+        scanBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning...';
+        scanBtn.style.pointerEvents = 'none';
+
+        try {
+            // 1. Compress image & isolate Base64 string
+            const base64Full = await window.compressImage(file);
+            const base64Data = base64Full.split(',')[1]; 
+
+            // 2. Query secure backend endpoint rather than raw Google payload
+            const response = await fetch('/api/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ base64Data })
+            });
+
+            if (!response.ok) throw new Error("Serverless API Error");
+
+            // 3. Populate UI Fields
+            const aiResult = await response.json();
+            const fullCigarName = `${aiResult.brand} ${aiResult.line}`.trim();
+            document.getElementById('vault-brand').value = fullCigarName;
+
+        } catch (error) {
+            console.error("AI Scan Error:", error);
+            alert("Band recognition failed. Please enter the brand manually.");
+        } finally {
+            scanBtn.innerHTML = originalBtnHTML;
+            scanBtn.style.pointerEvents = 'auto';
+            event.target.value = ''; 
         }
     };
 
@@ -1511,7 +1565,7 @@
         const brand = document.getElementById('vault-brand').value;
         const qtyVal = document.getElementById('vault-quantity').value;
         const vitola = document.getElementById('vault-vitola').value;
-        const ring = document.getElementById('vault-ring-gauge').value;
+        const ring = document.getElementById('vault-ring-gauge') ? document.getElementById('vault-ring-gauge').value : "-";
         const wrapper = document.getElementById('vault-wrapper').value;
         const priceVal = document.getElementById('vault-price').value;
         const acquiredDate = document.getElementById('vault-date').value;
@@ -1550,7 +1604,7 @@
             
             document.getElementById('vault-brand').value = '';
             document.getElementById('vault-quantity').value = '1';
-            document.getElementById('vault-ring-gauge').value = '';
+            if(document.getElementById('vault-ring-gauge')) document.getElementById('vault-ring-gauge').value = '-';
             document.getElementById('vault-price').value = '';
             document.getElementById('vault-rating').selectedIndex = 0;
             document.getElementById('vault-vitola').selectedIndex = 0;
