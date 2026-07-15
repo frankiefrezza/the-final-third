@@ -17,19 +17,19 @@
     <style>
         /* --- CSS VARIABLES (NAVY SLATE & WALNUT THEME) --- */
         :root {
-            --bg-base: #0B0F19; /* Midnight Slate */
-            --surface-1: #131A2A; /* Charcoal Navy */
-            --surface-2: #1E293B; /* Lighter Slate */
+            --bg-base: #0B0F19;
+            --surface-1: #131A2A;
+            --surface-2: #1E293B;
             --surface-glass: rgba(19, 26, 42, 0.85);
             
-            --text-main: #F8FAFC; /* Cool Off-White */
-            --text-dim: #94A3B8; /* Cool Gray */
+            --text-main: #F8FAFC;
+            --text-dim: #94A3B8;
             --border-subtle: #2A3441;
             
-            --walnut: #5C4033; /* Deep Wood */
-            --leather: #B07D46; /* Tanned Leather Accent */
+            --walnut: #5C4033;
+            --leather: #B07D46;
             --gold: #D4AF37;
-            --danger: #E15A5A; /* Muted Crimson */
+            --danger: #E15A5A;
             
             --font-sans: 'Inter', -apple-system, sans-serif;
             --font-serif: 'Playfair Display', Georgia, serif;
@@ -116,7 +116,7 @@
         .timeline-footer { font-family: var(--font-mono); display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-dim); }
 
         /* --- FORMS & INPUTS --- */
-        .form-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s; }
+        .form-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s; box-sizing: border-box; }
         .form-input:focus { border-color: var(--leather); }
         .form-input::placeholder { color: var(--text-dim); }
         .form-select { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%20fill%3D%22none%22%20stroke%3D%22%2394A3B8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 16px auto; }
@@ -191,7 +191,7 @@
                 <strong style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Perdomo 10th Anniversary Champagne</strong>
             </div>
             <div class="header-actions" style="position: absolute; right: 24px;">
-                <div class="avatar-wrap" onclick="switchTab('view-profile', 4)"><img src="" class="avatar-small" id="home-avatar"></div>
+                <div class="avatar-wrap" onclick="switchTab('view-profile', 4)"><img src="" class="avatar-small" id="home-avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;"></div>
             </div>
         </div>
 
@@ -328,14 +328,14 @@
                     <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
                 </div>
                 
-                <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-top: 16px;">
-                    <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
                         <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
-                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 16px 10px; font-size: 12px; letter-spacing: -0.5px; width: 100%;">
+                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
                     </div>
-                    <div style="display: flex; flex-direction: column;">
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
                         <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
-                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 16px 10px; font-size: 12px; letter-spacing: -0.5px; width: 100%;">
+                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
                     </div>
                 </div>
                 
@@ -605,8 +605,10 @@
         if(!file) return;
         const reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById('profile-avatar-img').src = e.target.result;
-            document.getElementById('home-avatar').src = e.target.result;
+            const base64Image = e.target.result;
+            document.getElementById('profile-avatar-img').src = base64Image;
+            document.getElementById('home-avatar').src = base64Image;
+            localStorage.setItem('finalThirdAvatar', base64Image); // Persists across reloads
         };
         reader.readAsDataURL(file);
     };
@@ -795,21 +797,31 @@
             // Update Profile Screen UI
             document.getElementById('profile-display-name').innerText = window.currentUserName;
             document.getElementById('profile-display-email').innerText = user.email;
+
+            // Load saved avatar 
+            const savedAvatar = localStorage.getItem('finalThirdAvatar');
+            if(savedAvatar) {
+                document.getElementById('profile-avatar-img').src = savedAvatar;
+                document.getElementById('home-avatar').src = savedAvatar;
+            }
             
             switchTab('view-home', 0);
 
             document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
             document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
 
-            unsubscribeHumidor = onSnapshot(query(collection(db, "humidor"), where("uid", "==", user.uid), orderBy("acquiredDate", "desc")), (snapshot) => {
+            // Fixed queries to avoid Firebase composite index crashes
+            unsubscribeHumidor = onSnapshot(query(collection(db, "humidor"), where("uid", "==", user.uid)), (snapshot) => {
                 humidorInventory = [];
                 snapshot.forEach((doc) => { humidorInventory.push({ id: doc.id, ...doc.data() }); });
+                humidorInventory.sort((a, b) => b.acquiredDate - a.acquiredDate); // JS Sorting Fix
                 renderHumidor();
             });
 
-            unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid), orderBy("date", "desc")), (snapshot) => {
+            unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid)), (snapshot) => {
                 journalHistory = [];
                 snapshot.forEach((doc) => { journalHistory.push({ id: doc.id, ...doc.data() }); });
+                journalHistory.sort((a, b) => new Date(b.date) - new Date(a.date)); // JS Sorting Fix
                 renderJournal();
             });
 
@@ -1076,6 +1088,9 @@
 
         if(!brand || !acquiredDate || !targetDate) { alert("Please enter the brand, date acquired, and target peak date."); return; }
 
+        const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
+        const targetTime = new Date(targetDate + 'T00:00:00').getTime();
+
         const newCigar = {
             uid: auth.currentUser.uid,
             brand,
@@ -1083,9 +1098,9 @@
             ring: ring || "-",
             wrapper: wrapper || "Unknown",
             price: priceVal ? parseFloat(priceVal) : null,
-            targetDate: new Date(targetDate + 'T00:00:00').getTime(),
+            targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, // Fallback safety
             rating: ratingVal ? parseFloat(ratingVal) : null,
-            acquiredDate: new Date(acquiredDate + 'T00:00:00').getTime() 
+            acquiredDate: isNaN(acqTime) ? Date.now() : acqTime // Fallback safety
         };
 
         try {
