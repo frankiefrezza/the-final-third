@@ -42,13 +42,19 @@
         /* --- LOGIN SCREEN --- */
         #login-environment { justify-content: center; align-items: center; padding: 40px 24px; text-align: center; background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%); }
         .login-subtitle { color: var(--text-dim); font-size: 11px; margin-bottom: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
-        .editorial-input { width: 100%; background: var(--surface-1); border: 2px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); padding: 18px 20px; font-size: 16px; font-weight: 600; text-align: center; outline: none; margin-bottom: 24px; transition: border 0.3s; font-family: var(--font-sans); }
+        .editorial-input { width: 100%; background: var(--surface-1); border: 2px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); padding: 18px 20px; font-size: 16px; font-weight: 600; text-align: center; outline: none; margin-bottom: 16px; transition: border 0.3s; font-family: var(--font-sans); }
         .editorial-input:focus { border-color: var(--leather); }
         .btn-primary { width: 100%; background: var(--leather); color: #0B0F19; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); letter-spacing: 0.5px; }
         .btn-primary:active { transform: scale(0.98); background: #966938; }
 
+        .auth-view { display: none; width: 100%; max-width: 400px; }
+        .auth-view.active { display: block; }
+        .auth-link { color: var(--leather); font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; margin-top: 16px; display: inline-block; }
+        .auth-link:hover { text-decoration: underline; }
+        .auth-flex-links { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding: 0 8px; }
+
         /* --- PERSISTENT HEADER (LAYER 1) --- */
-        .dash-header { display: flex; justify-content: space-between; align-items: center; padding: max(20px, env(safe-area-inset-top)) 24px 16px 24px; z-index: 10; }
+        .dash-header { display: flex; justify-content: center; align-items: center; padding: max(20px, env(safe-area-inset-top)) 24px 16px 24px; z-index: 10; position: relative; }
         .avatar-wrap { position: relative; width: 40px; height: 40px; cursor: pointer; }
         .avatar-small { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--surface-1); background: var(--surface-2); }
 
@@ -58,11 +64,11 @@
         /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
         .layer-3-container { background: var(--surface-1); border-top-left-radius: 40px; margin-top: -40px; position: relative; flex-grow: 1; border-top: 1px solid rgba(255,255,255,0.05); box-shadow: 0 -8px 24px rgba(0,0,0,0.6); overflow: hidden; z-index: 15; }
 
-                /* --- VIEW SECTIONS (Static Content, Animated Container) --- */
+        /* --- VIEW SECTIONS (Static Content, Animated Container) --- */
         .view-section { position: absolute; top: 0; bottom: 0; left: 0; right: 0; padding: 32px 24px calc(110px + env(safe-area-inset-bottom)) 24px; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .view-section.active { display: block; }
         
-                /* --- VIEW SECTIONS & ANIMATIONS --- */
+        /* --- VIEW SECTIONS & ANIMATIONS --- */
         .layer-3-container.slide-anim { animation: cardSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
         @keyframes cardSlide { 
@@ -139,10 +145,36 @@
         <div style="width: 100%; max-width: 400px; margin-top: 20px;">
             <img src="final-third-logo.png" alt="Final Third Logo" style="width: 120%; max-width: 120%; height: auto; margin: 0 0 4px -10%; display: block; filter: drop-shadow(0 0 35px rgba(0, 0, 0, 0.95));">
             <p class="login-subtitle">FROM THE FIRST LIGHT TO THE FINAL THIRD</p>
-            <input type="text" id="login-name" class="editorial-input" placeholder="Enter your name" autocomplete="off">
-            <button id="login-btn" class="btn-primary" onclick="handleAuth()">
-                <span id="btn-dynamic-text">Log In</span> <i class="fa-solid fa-arrow-right"></i>
-            </button>
+            
+            <!-- View 1: Sign In -->
+            <div id="auth-signin" class="auth-view active">
+                <input type="email" id="signin-email" class="editorial-input" placeholder="Email address" autocomplete="off">
+                <input type="password" id="signin-password" class="editorial-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
+                <button id="signin-btn" class="btn-primary" onclick="handleLogin()">Log In <i class="fa-solid fa-arrow-right"></i></button>
+                <div class="auth-flex-links">
+                    <span class="auth-link" onclick="showAuthView('reset')">Forgot Password?</span>
+                    <span class="auth-link" onclick="showAuthView('signup')">Create Account</span>
+                </div>
+            </div>
+
+            <!-- View 2: Sign Up -->
+            <div id="auth-signup" class="auth-view">
+                <input type="text" id="signup-username" class="editorial-input" placeholder="Choose a Username" autocomplete="off">
+                <input type="email" id="signup-email" class="editorial-input" placeholder="Email address" autocomplete="off">
+                <input type="password" id="signup-password" class="editorial-input" placeholder="Password" autocomplete="off">
+                <input type="password" id="signup-confirm" class="editorial-input" placeholder="Confirm Password" autocomplete="off" style="margin-bottom: 24px;">
+                <button id="signup-btn" class="btn-primary" onclick="handleSignUp()">Register <i class="fa-solid fa-user-plus"></i></button>
+                <span class="auth-link" style="display: block; margin-top: 24px;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
+            </div>
+
+            <!-- View 3: Password Reset -->
+            <div id="auth-reset" class="auth-view">
+                <p style="color: var(--text-main); font-size: 14px; margin-bottom: 20px; font-weight: 600;">Enter your email to receive a reset link.</p>
+                <input type="email" id="reset-email" class="editorial-input" placeholder="Email address" autocomplete="off" style="margin-bottom: 24px;">
+                <button id="reset-btn" class="btn-primary" onclick="handleResetPassword()">Send Link <i class="fa-solid fa-envelope"></i></button>
+                <span class="auth-link" style="display: block; margin-top: 24px;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
+            </div>
+
         </div>
     </div>
 
@@ -151,16 +183,16 @@
         
         <!-- LAYER 1: PERSISTENT HEADER -->
         <div class="dash-header">
-            <div>
-                <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8;">TODAY</span><br>
-                <strong id="current-date-display" style="margin-top: 2px; font-size: 20px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Date</strong>
+            <div style="text-align: center;">
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
+                <strong style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Perdomo 10th Anniversary Champagne</strong>
             </div>
-            <div class="header-actions">
+            <div class="header-actions" style="position: absolute; right: 24px;">
                 <div class="avatar-wrap" onclick="switchTab('view-profile', 4)"><img src="" class="avatar-small" id="home-avatar"></div>
             </div>
         </div>
 
-                <!-- LAYER 2: DYNAMIC TITLE LAYER -->
+        <!-- LAYER 2: DYNAMIC TITLE LAYER -->
         <div style="background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%); border-top-left-radius: 40px; padding: 28px 24px 76px 24px; position: relative; border-top: 1px solid rgba(255,255,255,0.03); box-shadow: 0 -4px 20px rgba(0,0,0,0.5); z-index: 5;">
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800;">
@@ -238,27 +270,8 @@
             <!-- HUMIDOR / SUPPLY CHAIN SCREEN -->
             <section id="view-humidor" class="view-section">
                 
-                <!-- Predictive Logistics Module -->
-                <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; margin-bottom: 24px; border: 1px solid var(--border-subtle);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                        <span style="font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;">Supply Chain Health</span>
-                        <i class="fa-solid fa-satellite-dish" style="color: var(--leather);"></i>
-                    </div>
-                    <div style="display: flex; gap: 12px;">
-                        <div style="flex: 1; background: var(--surface-2); padding: 12px; border-radius: 12px; text-align: center;">
-                            <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase;">Boveda Tracker</div>
-                            <div style="font-size: 13px; font-weight: 700; color: var(--gold);">Replace in 14 Days</div>
-                        </div>
-                        <div style="flex: 1; background: var(--surface-2); padding: 12px; border-radius: 12px; text-align: center;">
-                            <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase;">Seasoning</div>
-                            <div style="font-size: 13px; font-weight: 700; color: var(--walnut);">Optimal Info</div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="section-header" style="margin-top: 0;">
                     <div class="section-title">Store New Acquisition</div>
-                    <div class="badge badge-indigo" style="cursor: pointer;" onclick="alert('Camera AI Interface Pending Native Build.')"><i class="fa-solid fa-camera"></i> AI Scan</div>
                 </div>
 
                 <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)">
@@ -309,14 +322,21 @@
                         <option value="Broadleaf">Broadleaf</option>
                         <option value="Rosado">Rosado</option>
                     </select>
-                    <select id="vault-target" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="3">Peak: 3 Mos</option>
-                        <option value="6" selected>Peak: 6 Mos</option>
-                        <option value="12">Peak: 1 Year</option>
-                    </select>
+                    <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
                 </div>
+                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                    <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
+                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak Date</label>
+                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0;">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 16px;">
                     <input type="number" id="vault-rating" class="form-input" placeholder="Rating (1-10)" min="1" max="10" step="0.25" style="margin-bottom: 0;">
                 </div>
                 
@@ -431,37 +451,10 @@
 
             <!-- INFO (DISCOVERY & SOURCING) SCREEN -->
             <section id="view-radar" class="view-section">
-                
-                <div class="section-header" style="margin-top: 0;">
-                    <div class="section-title">Restock Alerts</div>
-                </div>
-                <!-- Predictive Logistics: Restock Warnings -->
-                <div class="log-card" style="border-left: 4px solid var(--danger);">
-                    <div class="log-header">
-                        <div>
-                            <div class="log-title">Oliva Serie V Melanio</div>
-                            <div class="log-meta" style="font-family: var(--font-mono);">Burn Rate: 2.5 / wk</div>
-                        </div>
-                        <div class="badge badge-rose">1 Left</div>
-                    </div>
-                </div>
-                <div class="log-card" style="border-left: 4px solid var(--gold);">
-                    <div class="log-header">
-                        <div>
-                            <div class="log-title">Perdomo Champagne 10th Anniv</div>
-                            <div class="log-meta" style="font-family: var(--font-mono);">Burn Rate: 1.2 / wk</div>
-                        </div>
-                        <div class="badge badge-mint">3 Left</div>
-                    </div>
-                </div>
-
-                <div class="section-header" style="margin-top: 32px;">
-                    <div class="section-title">Live Price Aggregation</div>
-                </div>
-                <input type="text" class="form-input" placeholder="Search retailers for a specific box..." style="border-radius: 20px; padding-left: 20px;">
-                <div class="empty-state" style="margin-top: 8px;">
-                    <i class="fa-solid fa-circle-info" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>Awaiting search query</span>
+                <div class="empty-state" style="margin-top: 50%; border: none; box-shadow: none;">
+                    <i class="fa-solid fa-person-digging" style="font-size: 40px; opacity: 0.3; margin-bottom: 12px; color: var(--gold);"></i>
+                    <span style="font-size: 16px; color: var(--text-main); font-weight: 800;">UNDER CONSTRUCTION</span>
+                    <span style="font-size: 12px; margin-top: 4px;">Check back later for new features.</span>
                 </div>
             </section>
 
@@ -483,12 +476,12 @@
                 <!-- Analytics Dashboard -->
                 <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border-subtle); display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div>
-                        <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Inventory Turnover</div>
-                        <div style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 4px;">4.2 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">/ wk</span></div>
+                        <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Average Aging</div>
+                        <div id="stat-avg-aging" style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 4px;">0 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span></div>
                     </div>
                     <div>
                         <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Est. Humidor Value</div>
-                        <div style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--leather); margin-top: 4px;">$450.00</div>
+                        <div id="stat-humidor-value" style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--leather); margin-top: 4px;">$0.00</div>
                     </div>
                 </div>
 
@@ -496,13 +489,12 @@
                     <div class="log-header">
                         <div>
                             <div class="log-title">Palate Mapping</div>
-                            <div class="log-meta">Based on highest rated logs</div>
+                            <div class="log-meta">Based on humidor inventory</div>
                         </div>
                         <i class="fa-solid fa-chart-pie" style="color: var(--gold);"></i>
                     </div>
                     <div style="display: flex; gap: 8px; margin-top: 10px;">
-                        <span class="badge badge-indigo">70% Maduro</span>
-                        <span class="badge badge-amber">Earthy Notes</span>
+                        <span class="badge badge-indigo" id="profile-wrapper-stat">N/A</span>
                     </div>
                 </div>
 
@@ -510,19 +502,24 @@
                     <div class="log-header">
                         <div>
                             <div class="log-title">Optimal Mechanics</div>
-                            <div class="log-meta">Highest rated combo</div>
+                            <div class="log-meta">Most common logged options</div>
                         </div>
                         <i class="fa-solid fa-gear" style="color: var(--leather);"></i>
                     </div>
-                    <div style="display: flex; gap: 8px; margin-top: 10px;">
-                        <span class="badge badge-rose">60 Ring Gauge</span>
-                        <span class="badge badge-mint">Crown Cut</span>
+                    <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                        <span class="badge badge-rose" id="profile-mechanics-ring">N/A Gauge</span>
+                        <span class="badge badge-mint" id="profile-mechanics-cut">N/A Cut</span>
+                        <span class="badge badge-amber" id="profile-mechanics-light">N/A Light</span>
                     </div>
                 </div>
 
                 <button class="btn-primary" style="background: rgba(225, 90, 90, 0.1); color: var(--danger); box-shadow: none; margin-top: 32px; width: 100%;" onclick="handleLogout()">
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
                 </button>
+                
+                <div style="text-align: center; margin-top: 16px;">
+                    <span style="color: var(--danger); font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: underline; opacity: 0.8;" onclick="openDeleteActionSheet()">Delete Account</span>
+                </div>
 
             </section>
 
@@ -554,6 +551,18 @@
     </div>
 </div>
 
+<!-- DELETE ACCOUNT MODAL -->
+<div id="delete-action-sheet" class="action-sheet-overlay" onclick="closeDeleteActionSheet(event)">
+    <div class="action-sheet" onclick="event.stopPropagation()">
+        <div style="text-align: center; margin-bottom: 16px; font-size: 18px; font-weight: 800; color: var(--danger);">Delete Account</div>
+        <p style="text-align: center; font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.4;">Warning: This will permanently erase your entire Humidor and Journal history. This cannot be undone. Please confirm your credentials.</p>
+        <input type="email" id="delete-email" class="form-input" placeholder="Email address" autocomplete="off">
+        <input type="password" id="delete-password" class="form-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
+        <button class="action-btn" style="background: var(--danger); color: white; margin-bottom: 12px;" onclick="handleDeleteAccount()"><i class="fa-solid fa-trash"></i> Permanently Delete</button>
+        <button class="action-btn cancel" onclick="closeDeleteActionSheet()">Cancel</button>
+    </div>
+</div>
+
 <script type="module">
 
     let humidorInventory = [];
@@ -562,42 +571,22 @@
     let isJournalEditMode = false;
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyChMrxW41yXgQkqFEqe0DxGFwjp_QdriYE",
-  authDomain: "finalthird-6628e.firebaseapp.com",
-  projectId: "finalthird-6628e",
-  storageBucket: "finalthird-6628e.firebasestorage.app",
-  messagingSenderId: "658511952829",
-  appId: "1:658511952829:web:96f277790007a890cc30d4",
-  measurementId: "G-9N9VGTTX3G"
-};
+      apiKey: "AIzaSyChMrxW41yXgQkqFEqe0DxGFwjp_QdriYE",
+      authDomain: "finalthird-6628e.firebaseapp.com",
+      projectId: "finalthird-6628e",
+      storageBucket: "finalthird-6628e.firebasestorage.app",
+      messagingSenderId: "658511952829",
+      appId: "1:658511952829:web:96f277790007a890cc30d4",
+      measurementId: "G-9N9VGTTX3G"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
-    // Listen to Humidor Collection
-    onSnapshot(query(collection(db, "humidor"), orderBy("acquiredDate", "desc")), (snapshot) => {
-        humidorInventory = [];
-        snapshot.forEach((doc) => {
-            humidorInventory.push({ id: doc.id, ...doc.data() });
-        });
-        renderHumidor();
-    });
-
-    // Listen to Journal Collection
-    onSnapshot(query(collection(db, "journal"), orderBy("date", "desc")), (snapshot) => {
-        journalHistory = [];
-        snapshot.forEach((doc) => {
-            journalHistory.push({ id: doc.id, ...doc.data() });
-        });
-        renderJournal();
-    });
-
-    // Set Date Globally
-    const dateOptions = { day: 'numeric', month: 'long' };
-    document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('en-US', dateOptions);
+    const auth = getAuth(app);
 
     // Globals
     window.currentUserName = "User";
@@ -617,26 +606,60 @@
         reader.readAsDataURL(file);
     };
 
-        // --- NAVIGATION TAB ROUTING & DYNAMIC TITLE LOGIC ---
-    window.switchTab = function(targetViewId, dockIndex) {
+    // --- DELETE ACCOUNT LOGIC ---
+    window.openDeleteActionSheet = function() { document.getElementById('delete-action-sheet').classList.add('active'); };
+    window.closeDeleteActionSheet = function(event) { document.getElementById('delete-action-sheet').classList.remove('active'); };
+
+    window.handleDeleteAccount = async function() {
+        const email = document.getElementById('delete-email').value;
+        const password = document.getElementById('delete-password').value;
         
-        // 1. Hide all sections
+        if (!email || !password) return alert("Please enter email and password to confirm deletion.");
+        if (!confirm("Are you absolutely sure? All of your logs and humidor data will be permanently wiped.")) return;
+
+        const user = auth.currentUser;
+        const credential = EmailAuthProvider.credential(email, password);
+
+        try {
+            await reauthenticateWithCredential(user, credential);
+            
+            // Delete all user documents via batch
+            const batch = writeBatch(db);
+            const humidorQ = query(collection(db, "humidor"), where("uid", "==", user.uid));
+            const humidorSnaps = await getDocs(humidorQ);
+            humidorSnaps.forEach(docSnap => batch.delete(docSnap.ref));
+            
+            const journalQ = query(collection(db, "journal"), where("uid", "==", user.uid));
+            const journalSnaps = await getDocs(journalQ);
+            journalSnaps.forEach(docSnap => batch.delete(docSnap.ref));
+            
+            await batch.commit();
+
+            // Delete auth user
+            await deleteUser(user);
+            
+            alert("Account and all associated data have been permanently erased.");
+            closeDeleteActionSheet();
+        } catch (error) {
+            alert("Deletion failed: " + error.message);
+        }
+    };
+
+    // --- NAVIGATION TAB ROUTING & DYNAMIC TITLE LOGIC ---
+    window.switchTab = function(targetViewId, dockIndex) {
         document.querySelectorAll('.view-section').forEach(el => {
             el.classList.remove('active');
         });
         
-        // 2. Show target section
         const targetView = document.getElementById(targetViewId);
         targetView.classList.add('active');
         targetView.scrollTop = 0; 
 
-        // 3. Animate the ENTIRE Layer 3 Card
         const layer3 = document.querySelector('.layer-3-container');
         layer3.classList.remove('slide-anim');
-        void layer3.offsetWidth; // This triggers a browser reflow, resetting the animation to play again
+        void layer3.offsetWidth; 
         layer3.classList.add('slide-anim');
         
-        // 4. Update bottom nav highlights
         document.querySelectorAll('.nav-item').forEach((el, index) => {
             if (dockIndex !== null && index === dockIndex) {
                 el.classList.add('active');
@@ -645,16 +668,13 @@
             }
         });
         
-                // 4. Update Dynamic Title Shell
         const greetingContainer = document.getElementById('greeting-container');
         const titleEl = document.getElementById('dynamic-layer-2-title');
         const subtitleEl = document.getElementById('dynamic-layer-2-subtitle');
         
-        // Instantly hide and reset animation
         greetingContainer.classList.remove('text-slide-up');
         greetingContainer.style.opacity = 0; 
 
-        // Add a tiny delay to allow the text to swap out while hidden, then animate it up
         setTimeout(() => {
             if(dockIndex === 0) {
                 titleEl.innerHTML = `Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit;">${window.currentUserName}</span>.`;
@@ -673,46 +693,120 @@
                 subtitleEl.innerText = "Data & Analytics";
             }
             
-            // Remove inline opacity so the CSS animation can take control
             greetingContainer.style.opacity = ''; 
-            void greetingContainer.offsetWidth; // Trigger browser reflow
+            void greetingContainer.offsetWidth; 
             greetingContainer.classList.add('text-slide-up');
         }, 50);  
     };
 
     // --- ACCOUNT LOGIC ---
-    window.handleAuth = function() {
-        let name = document.getElementById('login-name').value.trim();
-        const loginBtn = document.getElementById('login-btn');
-        const btnText = document.getElementById('btn-dynamic-text');
-        
-        if(!name) { name = "User"; } else { name = name.charAt(0).toUpperCase() + name.slice(1); }
-        
-        window.currentUserName = name;
-        
-        const originalText = btnText.innerText;
-        btnText.innerHTML = 'Authenticating...';
-        loginBtn.style.pointerEvents = 'none';
-        
-        setTimeout(() => {
-            document.getElementById('login-environment').classList.remove('active');
-            
-            const mainEnv = document.getElementById('main-environment');
-            mainEnv.style.display = 'flex';
-            mainEnv.classList.add('active');
-            
-            switchTab('view-home', 0);
-            btnText.innerHTML = originalText;
-            loginBtn.style.pointerEvents = 'auto';
-        }, 500);
+    window.showAuthView = function(viewId) {
+        document.querySelectorAll('.auth-view').forEach(el => el.classList.remove('active'));
+        document.getElementById('auth-' + viewId).classList.add('active');
     };
 
-    window.handleLogout = function() {
-        document.getElementById('main-environment').classList.remove('active');
-        document.getElementById('main-environment').style.display = 'none';
-        document.getElementById('login-environment').classList.add('active');
-        document.getElementById('login-name').value = ''; 
+    window.handleLogin = async function() {
+        const email = document.getElementById('signin-email').value;
+        const password = document.getElementById('signin-password').value;
+        if(!email || !password) return alert("Please enter email and password.");
+        
+        document.getElementById('signin-btn').innerHTML = 'Logging In...';
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+            alert("Login failed: " + error.message);
+            document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
+        }
     };
+
+    window.handleSignUp = async function() {
+        const username = document.getElementById('signup-username').value.trim();
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const confirm = document.getElementById('signup-confirm').value;
+        
+        if(!username || !email || !password) return alert("Please fill in all fields.");
+        if(password !== confirm) return alert("Passwords do not match.");
+        
+        document.getElementById('signup-btn').innerHTML = 'Registering...';
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(userCredential.user, { displayName: username });
+            window.currentUserName = username;
+        } catch (error) {
+            alert("Sign up failed: " + error.message);
+            document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
+        }
+    };
+
+    window.handleResetPassword = async function() {
+        const email = document.getElementById('reset-email').value;
+        if(!email) return alert("Please enter your email address.");
+        
+        document.getElementById('reset-btn').innerHTML = 'Sending...';
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert("Password reset email sent! Check your inbox.");
+            showAuthView('signin');
+            document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
+            document.getElementById('reset-email').value = '';
+        } catch (error) {
+            alert("Reset failed: " + error.message);
+            document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
+        }
+    };
+
+    window.handleLogout = async function() {
+        await signOut(auth);
+    };
+
+    // Global Observer & Listeners
+    let unsubscribeHumidor = null;
+    let unsubscribeJournal = null;
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('login-environment').classList.remove('active');
+            document.getElementById('main-environment').style.display = 'flex';
+            document.getElementById('main-environment').classList.add('active');
+            
+            window.currentUserName = user.displayName || user.email.split('@')[0]; 
+            switchTab('view-home', 0);
+
+            document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
+            document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
+
+            unsubscribeHumidor = onSnapshot(query(collection(db, "humidor"), where("uid", "==", user.uid), orderBy("acquiredDate", "desc")), (snapshot) => {
+                humidorInventory = [];
+                snapshot.forEach((doc) => { humidorInventory.push({ id: doc.id, ...doc.data() }); });
+                renderHumidor();
+            });
+
+            unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid), orderBy("date", "desc")), (snapshot) => {
+                journalHistory = [];
+                snapshot.forEach((doc) => { journalHistory.push({ id: doc.id, ...doc.data() }); });
+                renderJournal();
+            });
+
+        } else {
+            document.getElementById('main-environment').classList.remove('active');
+            document.getElementById('main-environment').style.display = 'none';
+            document.getElementById('login-environment').classList.add('active');
+            showAuthView('signin');
+            
+            document.getElementById('signin-email').value = '';
+            document.getElementById('signin-password').value = '';
+            document.getElementById('signup-username').value = '';
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-password').value = '';
+            document.getElementById('signup-confirm').value = '';
+            document.getElementById('delete-email').value = '';
+            document.getElementById('delete-password').value = '';
+            
+            if(unsubscribeHumidor) unsubscribeHumidor();
+            if(unsubscribeJournal) unsubscribeJournal();
+        }
+    });
 
     // --- FAVORITES ENGINE LOGIC ---
     window.renderFavorites = function() {
@@ -756,7 +850,7 @@
         favContainer.innerHTML = html;
     };
 
-        // --- JOURNAL ENGINE LOGIC ---
+    // --- JOURNAL ENGINE LOGIC ---
     window.logSmoke = async function() {
         const date = document.getElementById('log-date').value;
         const brand = document.getElementById('log-brand').value;
@@ -771,6 +865,7 @@
         if(!brand) { alert("Please enter the brand to log."); return; }
 
         const newLog = {
+            uid: auth.currentUser.uid,
             date: date || new Date().toISOString().split('T')[0],
             brand,
             vitola: vitola || "Unknown",
@@ -819,6 +914,12 @@
             isJournalEditMode = false;
             document.getElementById('edit-journal-btn').innerText = "Edit";
             document.getElementById('edit-journal-btn').style.color = "var(--leather)";
+            
+            // Clear Profile Optimal Mechanics Stats
+            document.getElementById('profile-mechanics-ring').innerText = "N/A Gauge";
+            document.getElementById('profile-mechanics-cut').innerText = "N/A Cut";
+            document.getElementById('profile-mechanics-light').innerText = "N/A Light";
+            
             return;
         }
 
@@ -868,6 +969,38 @@
         homeList.innerHTML = homeHtml;
 
         countStat.innerText = journalHistory.length; 
+        
+        // --- Optimal Mechanics Profile Logic ---
+        const ringBadge = document.getElementById('profile-mechanics-ring');
+        const cutBadge = document.getElementById('profile-mechanics-cut');
+        const lightBadge = document.getElementById('profile-mechanics-light');
+
+        const ringCounts = {};
+        const cutCounts = {};
+        const lightCounts = {};
+        
+        journalHistory.forEach(log => {
+            if(log.ring && log.ring !== "-") ringCounts[log.ring] = (ringCounts[log.ring] || 0) + 1;
+            if(log.cut && log.cut !== "N/A") cutCounts[log.cut] = (cutCounts[log.cut] || 0) + 1;
+            if(log.light && log.light !== "N/A") lightCounts[log.light] = (lightCounts[log.light] || 0) + 1;
+        });
+
+        const getTop = (counts, defaultStr) => {
+            let top = defaultStr;
+            let max = 0;
+            for (const [key, count] of Object.entries(counts)) {
+                if (count > max) { max = count; top = key; }
+            }
+            return top;
+        };
+
+        const topRing = getTop(ringCounts, 'N/A');
+        const topCut = getTop(cutCounts, 'N/A Cut');
+        const topLight = getTop(lightCounts, 'N/A Light');
+
+        ringBadge.innerText = topRing === 'N/A' ? 'N/A Gauge' : `${topRing} Ring`;
+        cutBadge.innerText = topCut;
+        lightBadge.innerText = topLight;
     };
 
     window.toggleJournalEdit = function() {
@@ -884,30 +1017,48 @@
         renderJournal();
     };
 
-        window.removeJournalLog = async function(id) {
+    window.removeJournalLog = async function(id) {
         if(confirm("Remove this log from your journal?")) {
             await deleteDoc(doc(db, "journal", id));
         }
     };
 
     // --- AGING ENGINE LOGIC ---
+    
+    // Auto-calculate 7 days target peak date
+    document.getElementById('vault-date').addEventListener('change', function(e) {
+        if (!e.target.value) return;
+        const acquired = new Date(e.target.value + 'T00:00:00');
+        acquired.setDate(acquired.getDate() + 7);
+        const minTargetStr = acquired.toISOString().split('T')[0];
+        document.getElementById('vault-target-date').min = minTargetStr;
+        
+        const currentTarget = document.getElementById('vault-target-date').value;
+        if (!currentTarget || new Date(currentTarget + 'T00:00:00') < acquired) {
+            document.getElementById('vault-target-date').value = minTargetStr;
+        }
+    });
+
     window.storeCigar = async function() {
         const brand = document.getElementById('vault-brand').value;
         const vitola = document.getElementById('vault-vitola').value;
         const ring = document.getElementById('vault-ring-gauge').value;
         const wrapper = document.getElementById('vault-wrapper').value;
-        const targetMonths = document.getElementById('vault-target').value;
+        const priceVal = document.getElementById('vault-price').value;
         const acquiredDate = document.getElementById('vault-date').value;
+        const targetDate = document.getElementById('vault-target-date').value;
         const ratingVal = document.getElementById('vault-rating').value;
 
-        if(!brand || !acquiredDate) { alert("Please enter the brand and date acquired."); return; }
+        if(!brand || !acquiredDate || !targetDate) { alert("Please enter the brand, date acquired, and target peak date."); return; }
 
         const newCigar = {
+            uid: auth.currentUser.uid,
             brand,
             vitola: vitola || "Unknown",
             ring: ring || "-",
             wrapper: wrapper || "Unknown",
-            targetMonths: parseInt(targetMonths),
+            price: priceVal ? parseFloat(priceVal) : null,
+            targetDate: new Date(targetDate + 'T00:00:00').getTime(),
             rating: ratingVal ? parseFloat(ratingVal) : null,
             acquiredDate: new Date(acquiredDate + 'T00:00:00').getTime() 
         };
@@ -917,11 +1068,13 @@
             
             document.getElementById('vault-brand').value = '';
             document.getElementById('vault-ring-gauge').value = '';
+            document.getElementById('vault-price').value = '';
             document.getElementById('vault-date').value = '';
+            document.getElementById('vault-target-date').value = '';
+            document.getElementById('vault-target-date').min = '';
             document.getElementById('vault-rating').value = '';
             document.getElementById('vault-vitola').selectedIndex = 0;
             document.getElementById('vault-wrapper').selectedIndex = 0;
-            document.getElementById('vault-target').value = "6";
 
             document.getElementById('edit-vault-btn').scrollIntoView({behavior: 'smooth', block: 'start'});
         } catch (e) {
@@ -942,19 +1095,34 @@
             countStat.innerText = '0';
             isVaultEditMode = false;
             document.getElementById('edit-vault-btn').innerText = "Edit";
+            
+            // Clear Profile Humidor Stats
+            document.getElementById('stat-avg-aging').innerHTML = `0 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
+            document.getElementById('stat-humidor-value').innerText = `$0.00`;
+            document.getElementById('profile-wrapper-stat').innerText = "N/A";
+            
             renderFavorites(); 
             return;
         }
 
         let html = '';
         const now = new Date().getTime();
+        let totalValue = 0;
+        let totalAgedDays = 0;
 
         humidorInventory.forEach(cigar => {
             const msPerDay = 1000 * 60 * 60 * 24;
-            const daysAged = Math.floor((now - cigar.acquiredDate) / msPerDay);
-            const targetDays = cigar.targetMonths * 30; 
             
-            let progress = (daysAged / targetDays) * 100;
+            let daysAged = Math.floor((now - cigar.acquiredDate) / msPerDay);
+            if (daysAged < 0) daysAged = 0; 
+            
+            totalAgedDays += daysAged;
+            totalValue += (cigar.price || 0);
+
+            let totalTargetDays = Math.floor((cigar.targetDate - cigar.acquiredDate) / msPerDay);
+            if (totalTargetDays <= 0) totalTargetDays = 1; 
+            
+            let progress = (daysAged / totalTargetDays) * 100;
             if (progress > 100) progress = 100;
             if (progress < 0) progress = 0; 
 
@@ -982,14 +1150,46 @@
                 </div>
                 <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
                 <div class="timeline-footer">
-                    <span>Aged: ${daysAged < 0 ? 0 : daysAged} Days</span>
-                    <span>Target: ${targetDays} Days</span>
+                    <span>Aged: ${daysAged} Days</span>
+                    <span>Target: ${totalTargetDays} Days</span>
                 </div>
             </div>`;
         });
 
         list.innerHTML = html;
         countStat.innerText = humidorInventory.length; 
+        
+        let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
+        document.getElementById('stat-avg-aging').innerHTML = `${avgDays} <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
+        document.getElementById('stat-humidor-value').innerText = `$${totalValue.toFixed(2)}`;
+        
+        // --- Palate Mapping Profile Logic ---
+        const wrapperBadge = document.getElementById('profile-wrapper-stat');
+        const wrapperCounts = {};
+        let maxCount = 0;
+        let topWrapper = 'Unknown';
+        let totalValid = 0;
+
+        humidorInventory.forEach(cigar => {
+            if(cigar.wrapper && cigar.wrapper !== "Unknown") {
+                wrapperCounts[cigar.wrapper] = (wrapperCounts[cigar.wrapper] || 0) + 1;
+                totalValid++;
+            }
+        });
+
+        for (const [wrapper, count] of Object.entries(wrapperCounts)) {
+            if (count > maxCount) {
+                maxCount = count;
+                topWrapper = wrapper;
+            }
+        }
+
+        if(totalValid > 0) {
+            const pct = Math.round((maxCount / totalValid) * 100);
+            wrapperBadge.innerText = `${pct}% ${topWrapper}`;
+        } else {
+            wrapperBadge.innerText = "N/A";
+        }
         
         renderFavorites(); 
     };
@@ -1008,7 +1208,7 @@
         renderHumidor();
     };
 
-        window.removeCigar = async function(id) {
+    window.removeCigar = async function(id) {
         if(confirm("Remove this cigar from your humidor?")) {
             await deleteDoc(doc(db, "humidor", id));
         }
