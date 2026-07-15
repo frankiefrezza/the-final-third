@@ -297,7 +297,11 @@
                     <div class="section-title">Store New Acquisition</div>
                 </div>
 
-                <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)">
+                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                    <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; flex: 1;">
+                    <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
+                </div>
+                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
                         <option value="" disabled selected>Vitola</option>
@@ -369,7 +373,7 @@
                     <i class="fa-solid fa-camera"></i> Add Picture
                 </button>
                 
-                <button class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
+                <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
 
                 <div class="section-header" style="margin-top: 32px;">
                     <div class="section-title">Aging Timeline</div>
@@ -469,7 +473,7 @@
                     <i class="fa-solid fa-camera"></i> Add Picture
                 </button>
 
-                <button class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button>
+                <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button>
 
                 <div class="section-header" style="margin-top: 32px;">
                     <div class="section-title">Journal History</div>
@@ -484,12 +488,69 @@
 
             </section>
 
-            <!-- INFO (DISCOVERY & SOURCING) SCREEN -->
+            <!-- UPDATES / VERSION HISTORY SCREEN -->
             <section id="view-radar" class="view-section">
-                <div class="empty-state" style="margin-top: 50%; border: none; box-shadow: none;">
-                    <i class="fa-solid fa-person-digging" style="font-size: 40px; opacity: 0.3; margin-bottom: 12px; color: var(--gold);"></i>
-                    <span style="font-size: 16px; color: var(--text-main); font-weight: 800;">UNDER CONSTRUCTION</span>
-                    <span style="font-size: 12px; margin-top: 4px;">Check back later for new features.</span>
+                <div class="section-header" style="margin-top: 0;">
+                    <div class="section-title">Release Notes</div>
+                    <div class="badge badge-mint">Version Update</div>
+                </div>
+
+                <div class="log-card" style="margin-bottom: 24px;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-title" style="font-size: 18px;">Version Update</div>
+                            <div class="log-meta">Latest Features & Improvements</div>
+                        </div>
+                    </div>
+                    
+                    <p style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 20px;">This update includes several new features and improvements designed to enhance your experience with The Final Third.</p>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cloud" style="color: var(--leather);"></i> Cloud Sync</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Your profile and journal are now securely stored in the cloud. Simply log in from any device to access your data wherever you are.</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-calendar-day" style="color: var(--leather);"></i> Daily Cigar Suggestion</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new featured cigar is displayed at the top of the home screen each day. With a library of 365 cigars, you'll receive a different recommendation every day throughout the year.</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-user-pen" style="color: var(--leather);"></i> Custom Nickname</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now edit your nickname directly from the Welcome screen, making it easier to personalize your profile.</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cubes" style="color: var(--leather);"></i> Quantity Tracking</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new Quantity field has been added, allowing you to keep track of how many cigars you have for each entry in your humidor.</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hourglass-half" style="color: var(--leather);"></i> Improved Aging Tracking</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Added Date Acquired and Peak Aging Date fields when adding a cigar. The Peak Aging Date requires a minimum of seven days after the acquisition date to promote realistic aging timelines.</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-camera" style="color: var(--leather);"></i> Photo Attachments</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now attach photos to Humidor and Journal entries. Entries containing photos will display an image indicator, making them easy to identify while browsing your collection.</div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-pen-to-square" style="color: var(--leather);"></i> Edit Entries</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">An Edit button has been added below the Remove button in both the Humidor and Journal sections. You can now update existing entries without having to delete and recreate them.</div>
+                    </div>
+
+                    <div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-simple" style="color: var(--leather);"></i> Enhanced Profile Statistics</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 8px;">The Profile page now automatically generates statistics based on your Humidor and Journal entries, including:</div>
+                        <ul style="font-size: 13px; color: var(--text-dim); line-height: 1.5; padding-left: 24px; margin-bottom: 8px;">
+                            <li style="margin-bottom: 4px;">Average Humidor Cost</li>
+                            <li style="margin-bottom: 4px;">Average Aging Time</li>
+                            <li style="margin-bottom: 4px;">Favorite Cut</li>
+                            <li style="margin-bottom: 4px;">Favorite Lighting Method</li>
+                        </ul>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">These statistics update automatically as you continue to build your collection and journal your experiences.</div>
+                    </div>
                 </div>
             </section>
 
@@ -568,7 +629,7 @@
                 <div class="nav-item active" onclick="switchTab('view-home', 0)"><i class="fa-solid fa-house"></i><span>Home</span></div>
                 <div class="nav-item" onclick="switchTab('view-humidor', 1)"><i class="fa-solid fa-box"></i><span>Humidor</span></div>
                 <div class="nav-item" onclick="switchTab('view-journal', 2)"><i class="fa-solid fa-book-open"></i><span>Journal</span></div>
-                <div class="nav-item" onclick="switchTab('view-radar', 3)"><i class="fa-solid fa-circle-info"></i><span>Info</span></div>
+                <div class="nav-item" onclick="switchTab('view-radar', 3)"><i class="fa-solid fa-bullhorn"></i><span>Updates</span></div>
                 <div class="nav-item" onclick="switchTab('view-profile', 4)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
             </nav>
         </div>
@@ -612,6 +673,8 @@
     let journalHistory = [];
     let isVaultEditMode = false;
     let isJournalEditMode = false;
+    let editingVaultId = null;
+    let editingJournalId = null;
     
     // Globals for image uploads and registry
     let currentVaultImage = null;
@@ -619,7 +682,7 @@
     window.imageRegistry = {}; 
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -875,8 +938,8 @@
                 titleEl.innerText = "Journal.";
                 subtitleEl.innerText = "Tasting Ledger";
             } else if(dockIndex === 3) {
-                titleEl.innerText = "Info.";
-                subtitleEl.innerText = "Discovery & Radar";
+                titleEl.innerText = "Updates.";
+                subtitleEl.innerText = "Release Notes & News";
             } else if(dockIndex === 4) {
                 titleEl.innerText = "Profile.";
                 subtitleEl.innerText = "Data & Analytics";
@@ -1073,6 +1136,43 @@
     };
 
     // --- JOURNAL ENGINE LOGIC ---
+    window.editJournalLog = function(id) {
+        const log = journalHistory.find(l => l.id === id);
+        if(!log) return;
+
+        editingJournalId = id;
+        document.getElementById('log-date').value = log.date || '';
+        document.getElementById('log-brand').value = log.brand || '';
+        document.getElementById('log-vitola').value = log.vitola || '';
+        document.getElementById('log-ring-gauge').value = log.ring !== '-' ? log.ring : '';
+        document.getElementById('log-wrapper').value = log.wrapper || '';
+        document.getElementById('log-cut').value = log.cut !== 'N/A' ? log.cut : '';
+        document.getElementById('log-light').value = log.light !== 'N/A' ? log.light : '';
+        document.getElementById('log-pairing').value = log.pairing !== 'None' ? log.pairing : '';
+        document.getElementById('log-notes').value = log.notes !== 'No notes.' ? log.notes : '';
+
+        currentLogImage = log.image || null;
+        const photoBtn = document.getElementById('log-photo-btn');
+        if(currentLogImage) {
+            photoBtn.classList.add('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+        } else {
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        }
+
+        const submitBtn = document.getElementById('journal-submit-btn');
+        submitBtn.innerHTML = 'Update Ledger <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = 'var(--gold)';
+        
+        isJournalEditMode = false;
+        document.getElementById('edit-journal-btn').innerText = "Edit";
+        document.getElementById('edit-journal-btn').style.color = "var(--leather)";
+        renderJournal();
+
+        document.getElementById('view-journal').scrollTop = 0;
+    };
+
     window.logSmoke = async function() {
         const date = document.getElementById('log-date').value;
         const brand = document.getElementById('log-brand').value;
@@ -1101,7 +1201,15 @@
         };
 
         try {
-            await addDoc(collection(db, "journal"), newLog);
+            if (editingJournalId) {
+                await updateDoc(doc(db, "journal", editingJournalId), newLog);
+                editingJournalId = null;
+                const submitBtn = document.getElementById('journal-submit-btn');
+                submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+                submitBtn.style.background = 'var(--leather)';
+            } else {
+                await addDoc(collection(db, "journal"), newLog);
+            }
             
             document.getElementById('log-brand').value = '';
             document.getElementById('log-vitola').selectedIndex = 0;
@@ -1162,7 +1270,11 @@
             let rightContent = `<div class="badge badge-amber">${log.date}</div>`;
             
             if (isJournalEditMode) {
-                rightContent = `<button onclick="removeJournalLog('${log.id}')" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;">Remove</button>`;
+                rightContent = `
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button onclick="removeJournalLog('${log.id}')" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 800; text-transform: uppercase;">Remove</button>
+                    <button onclick="editJournalLog('${log.id}')" style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 800; text-transform: uppercase;">Edit</button>
+                </div>`;
             }
 
             // Register image and build icon if a photo exists
@@ -1281,8 +1393,52 @@
         }
     });
 
+    window.editCigar = function(id) {
+        const cigar = humidorInventory.find(c => c.id === id);
+        if(!cigar) return;
+
+        editingVaultId = id;
+        document.getElementById('vault-brand').value = cigar.brand || '';
+        document.getElementById('vault-quantity').value = cigar.quantity || 1;
+        document.getElementById('vault-vitola').value = cigar.vitola || '';
+        document.getElementById('vault-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
+        document.getElementById('vault-wrapper').value = cigar.wrapper || '';
+        document.getElementById('vault-price').value = cigar.price || '';
+        
+        if (cigar.acquiredDate) {
+            document.getElementById('vault-date').value = new Date(cigar.acquiredDate).toISOString().split('T')[0];
+        }
+        if (cigar.targetDate) {
+            document.getElementById('vault-target-date').value = new Date(cigar.targetDate).toISOString().split('T')[0];
+        }
+        
+        document.getElementById('vault-rating').value = cigar.rating || '';
+        
+        currentVaultImage = cigar.image || null;
+        const photoBtn = document.getElementById('vault-photo-btn');
+        if(currentVaultImage) {
+            photoBtn.classList.add('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+        } else {
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        }
+
+        const submitBtn = document.getElementById('vault-submit-btn');
+        submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = 'var(--gold)';
+        
+        isVaultEditMode = false;
+        document.getElementById('edit-vault-btn').innerText = "Edit";
+        document.getElementById('edit-vault-btn').style.color = "var(--leather)";
+        renderHumidor();
+
+        document.getElementById('view-humidor').scrollTop = 0;
+    };
+
     window.storeCigar = async function() {
         const brand = document.getElementById('vault-brand').value;
+        const qtyVal = document.getElementById('vault-quantity').value;
         const vitola = document.getElementById('vault-vitola').value;
         const ring = document.getElementById('vault-ring-gauge').value;
         const wrapper = document.getElementById('vault-wrapper').value;
@@ -1299,6 +1455,7 @@
         const newCigar = {
             uid: auth.currentUser.uid,
             brand,
+            quantity: parseInt(qtyVal) || 1,
             vitola: vitola || "Unknown",
             ring: ring || "-",
             wrapper: wrapper || "Unknown",
@@ -1310,9 +1467,18 @@
         };
 
         try {
-            await addDoc(collection(db, "humidor"), newCigar);
+            if (editingVaultId) {
+                await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
+                editingVaultId = null;
+                const submitBtn = document.getElementById('vault-submit-btn');
+                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+                submitBtn.style.background = 'var(--leather)';
+            } else {
+                await addDoc(collection(db, "humidor"), newCigar);
+            }
             
             document.getElementById('vault-brand').value = '';
+            document.getElementById('vault-quantity').value = '1';
             document.getElementById('vault-ring-gauge').value = '';
             document.getElementById('vault-price').value = '';
             document.getElementById('vault-rating').value = '';
@@ -1364,15 +1530,18 @@
         let totalValue = 0;
         let totalAgedDays = 0;
         let readyAlertsCount = 0;
+        let totalQuantity = 0;
 
         humidorInventory.forEach(cigar => {
             const msPerDay = 1000 * 60 * 60 * 24;
+            const cigarQty = cigar.quantity || 1;
+            totalQuantity += cigarQty;
             
             let daysAged = Math.floor((now - cigar.acquiredDate) / msPerDay);
             if (daysAged < 0) daysAged = 0; 
             
             totalAgedDays += daysAged;
-            totalValue += (cigar.price || 0);
+            totalValue += ((cigar.price || 0) * cigarQty);
 
             let totalTargetDays = Math.floor((cigar.targetDate - cigar.acquiredDate) / msPerDay);
             if (totalTargetDays <= 0) totalTargetDays = 1; 
@@ -1382,14 +1551,18 @@
             if (progress < 0) progress = 0; 
 
             let isReady = progress >= 100;
-            if (isReady) readyAlertsCount++;
+            if (isReady) readyAlertsCount += cigarQty;
             
             let badgeClass = isReady ? 'badge-mint' : 'badge-amber';
             let statusText = isReady ? 'Ready' : 'Aging';
             
             let rightContent = `<div class="badge ${badgeClass}">${statusText}</div>`;
             if (isVaultEditMode) {
-                rightContent = `<button onclick="removeCigar('${cigar.id}')" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;">Remove</button>`;
+                rightContent = `
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button onclick="removeCigar('${cigar.id}')" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 800; text-transform: uppercase;">Remove</button>
+                    <button onclick="editCigar('${cigar.id}')" style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 800; text-transform: uppercase;">Edit</button>
+                </div>`;
             }
 
             let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
@@ -1403,9 +1576,11 @@
 
             let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
             
+            let qtyBadge = `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-cubes" style="margin-right: 4px;"></i> QTY: ${cigarQty}</span>`;
+            
             let attributesRow = '';
-            if (ratingBadge || imageBadge) {
-                attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${ratingBadge}${imageBadge}</div>`;
+            if (qtyBadge || ratingBadge || imageBadge) {
+                attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${ratingBadge}${imageBadge}</div>`;
             }
 
             html += `
@@ -1427,7 +1602,7 @@
         });
 
         list.innerHTML = html;
-        countStat.innerText = humidorInventory.length; 
+        countStat.innerText = totalQuantity; 
         document.getElementById('stat-alerts').innerText = readyAlertsCount;
         
         let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
