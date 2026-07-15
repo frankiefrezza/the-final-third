@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>The Final Third</title>
-    <!-- App Icon -->
-    <link rel="icon" type="image/png" href="app-icon.png">
-    <link rel="apple-touch-icon" href="app-icon.png">
+    
+    <!-- App Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
@@ -37,7 +39,7 @@
         /* --- GLOBAL RESET --- */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        body { font-family: var(--font-sans); background-color: var(--surface-2); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; min-height: 100dvh; }
+        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; min-height: 100dvh; }
         #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); min-height: 100vh; min-height: 100dvh; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.15); }
         .app-environment { display: none; width: 100%; min-height: 100vh; flex-direction: column; }
         .app-environment.active { display: flex; }
@@ -58,8 +60,6 @@
 
         /* --- PERSISTENT HEADER (LAYER 1) --- */
         .dash-header { display: flex; justify-content: center; align-items: center; padding: max(20px, env(safe-area-inset-top)) 24px 16px 24px; z-index: 10; position: relative; }
-        .avatar-wrap { position: relative; width: 40px; height: 40px; cursor: pointer; }
-        .avatar-small { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--surface-1); background: var(--surface-2); }
 
         /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
@@ -189,9 +189,6 @@
             <div style="text-align: center;">
                 <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
                 <strong style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Perdomo 10th Anniversary Champagne</strong>
-            </div>
-            <div class="header-actions" style="position: absolute; right: 24px;">
-                <div class="avatar-wrap" onclick="switchTab('view-profile', 4)"><img src="" class="avatar-small" id="home-avatar"></div>
             </div>
         </div>
 
@@ -466,9 +463,9 @@
                 
                 <div style="text-align: center; margin-bottom: 32px;">
                     <div style="position: relative; display: inline-block; cursor: pointer;" onclick="openAvatarActionSheet()">
-                        <img id="profile-avatar-img" src="" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
-                        <div style="position: absolute; bottom: 0; right: 0; background: var(--leather); color: #0B0F19; border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--surface-1);">
-                            <i class="fa-solid fa-camera" style="font-size: 12px;"></i>
+                        <img id="profile-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
+                        <div style="position: absolute; bottom: 5px; right: 5px; background: var(--leather); color: #0B0F19; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--surface-1);">
+                            <i class="fa-solid fa-camera" style="font-size: 14px;"></i>
                         </div>
                     </div>
                 </div>
@@ -604,7 +601,6 @@
         const reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('profile-avatar-img').src = e.target.result;
-            document.getElementById('home-avatar').src = e.target.result;
         };
         reader.readAsDataURL(file);
     };
