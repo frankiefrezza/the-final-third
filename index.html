@@ -51,6 +51,9 @@
         .editorial-input:focus { border-color: var(--leather); }
         .btn-primary { width: 100%; background: var(--leather); color: #0B0F19; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); letter-spacing: 0.5px; }
         .btn-primary:active { transform: scale(0.98); background: #966938; }
+        
+        .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 16px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
+        .btn-secondary.attached { background: rgba(176, 125, 70, 0.1); color: var(--leather); border-color: var(--leather); border-style: solid; }
 
         .auth-view { display: none; width: 100%; max-width: 400px; }
         .auth-view.active { display: block; }
@@ -135,13 +138,18 @@
         .nav-item span { font-size: 10px; font-weight: 700; margin-top: 4px; }
         .nav-item.active { color: var(--leather); background: rgba(176, 125, 70, 0.15); }
 
-        /* Action Sheet */
-        .action-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(11,15,25,0.6); backdrop-filter: blur(5px); z-index: 2000; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        /* Action Sheet & Modals */
+        .action-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(11,15,25,0.8); backdrop-filter: blur(5px); z-index: 2000; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .action-sheet-overlay.active { opacity: 1; pointer-events: auto; }
         .action-sheet { background: var(--surface-1); border-radius: 28px 28px 0 0; padding: 24px 24px max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); border-top: 1px solid var(--border-subtle); }
         .action-sheet-overlay.active .action-sheet { transform: translateY(0); }
         .action-btn { width: 100%; background: var(--surface-2); color: var(--text-main); padding: 18px; font-size: 15px; font-weight: 700; font-family: var(--font-sans); border-radius: 16px; margin-bottom: 12px; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
         .action-btn.cancel { background: transparent; color: var(--danger); margin-bottom: 0; margin-top: 4px; }
+
+        /* Photo Lightbox specific styling */
+        #lightbox-overlay { justify-content: center; align-items: center; padding: 24px; z-index: 3000; }
+        #lightbox-img { max-width: 100%; max-height: 80vh; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); object-fit: contain; }
+        .lightbox-close { position: absolute; top: max(24px, env(safe-area-inset-top)); right: 24px; background: var(--surface-1); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5); border: 1px solid var(--border-subtle); }
 
     </style>
 </head>
@@ -189,14 +197,11 @@
     <!-- MAIN APP SHELL -->
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
-        <!-- LAYER 1: PERSISTENT HEADER -->
+        <!-- LAYER 1: PERSISTENT HEADER (Avatar Removed) -->
         <div class="dash-header">
             <div style="text-align: center;">
                 <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
                 <strong style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Perdomo 10th Anniversary Champagne</strong>
-            </div>
-            <div class="header-actions" style="position: absolute; right: 24px;">
-                <div class="avatar-wrap" onclick="switchTab('view-profile', 4)"><img src="" class="avatar-small" id="home-avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;"></div>
             </div>
         </div>
 
@@ -333,22 +338,28 @@
                     <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
-                    <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
                         <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
-                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; width: 100%;">
+                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
                     </div>
-                    <div style="display: flex; flex-direction: column;">
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
                         <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
-                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; width: 100%;">
+                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
                     </div>
                 </div>
                 
-                <div style="margin-top: 16px;">
+                <div style="margin-top: 16px; margin-bottom: 16px;">
                     <input type="number" id="vault-rating" class="form-input" placeholder="Rating (1-10)" min="1" max="10" step="0.25" style="margin-bottom: 0;">
                 </div>
+
+                <!-- Hidden Input and Visual Upload Button -->
+                <input type="file" id="vault-image-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleCigarImageUpload(event, 'vault')">
+                <button id="vault-photo-btn" class="btn-secondary" onclick="document.getElementById('vault-image-upload').click()">
+                    <i class="fa-solid fa-camera"></i> Add Picture
+                </button>
                 
-                <button class="btn-primary" onclick="storeCigar()" style="margin-top: 16px;">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
+                <button class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
 
                 <div class="section-header" style="margin-top: 32px;">
                     <div class="section-title">Aging Timeline</div>
@@ -440,8 +451,14 @@
                     <input type="text" id="log-pairing" class="form-input" placeholder="Pairing (e.g., Keto Bourbon)" style="margin-bottom: 0;">
                 </div>
 
-                <textarea id="log-notes" class="form-input" placeholder="Tasting notes for the final third..." rows="3" style="resize: none; margin-top: 16px;"></textarea>
+                <textarea id="log-notes" class="form-input" placeholder="Tasting notes for the final third..." rows="3" style="resize: none; margin-top: 16px; margin-bottom: 16px;"></textarea>
                 
+                <!-- Hidden Input and Visual Upload Button -->
+                <input type="file" id="log-image-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleCigarImageUpload(event, 'journal')">
+                <button id="log-photo-btn" class="btn-secondary" onclick="document.getElementById('log-image-upload').click()">
+                    <i class="fa-solid fa-camera"></i> Add Picture
+                </button>
+
                 <button class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button>
 
                 <div class="section-header" style="margin-top: 32px;">
@@ -573,12 +590,23 @@
     </div>
 </div>
 
+<!-- CIGAR PHOTO LIGHTBOX MODAL -->
+<div id="lightbox-overlay" class="action-sheet-overlay" onclick="closeLightbox(event)">
+    <div class="lightbox-close" onclick="closeLightbox(event)"><i class="fa-solid fa-xmark"></i></div>
+    <img id="lightbox-img" src="" onclick="event.stopPropagation()">
+</div>
+
 <script type="module">
 
     let humidorInventory = [];
     let journalHistory = [];
     let isVaultEditMode = false;
     let isJournalEditMode = false;
+    
+    // Globals for image uploads and registry
+    let currentVaultImage = null;
+    let currentLogImage = null;
+    window.imageRegistry = {}; // Safer way to map images to UI icons without crashing the DOM
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -617,6 +645,77 @@
         document.getElementById('log-date').value = todayStr;
     }
 
+    // --- HTML5 CANVAS IMAGE COMPRESSION ---
+    // Safely shrinks 5MB phone photos down to < 150KB for Firebase text storage
+    window.compressImage = function(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1000;
+                    const MAX_HEIGHT = 1000;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // 70% JPEG quality
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    // --- CIGAR IMAGE UPLOAD HANDLER ---
+    window.handleCigarImageUpload = async function(event, type) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            const compressedBase64 = await window.compressImage(file);
+            if (type === 'vault') {
+                currentVaultImage = compressedBase64;
+                const btn = document.getElementById('vault-photo-btn');
+                btn.classList.add('attached');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+            } else if (type === 'journal') {
+                currentLogImage = compressedBase64;
+                const btn = document.getElementById('log-photo-btn');
+                btn.classList.add('attached');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+            }
+        } catch (error) {
+            alert("Error processing image.");
+        }
+    };
+
+    // --- LIGHTBOX ENGINE ---
+    window.openLightbox = function(docId) {
+        const base64Str = window.imageRegistry[docId];
+        if(base64Str) {
+            document.getElementById('lightbox-img').src = base64Str;
+            document.getElementById('lightbox-overlay').classList.add('active');
+        }
+    };
+
+    window.closeLightbox = function(event) {
+        document.getElementById('lightbox-overlay').classList.remove('active');
+        setTimeout(() => { document.getElementById('lightbox-img').src = ""; }, 300);
+    };
+
     // --- AVATAR UPLOAD LOGIC ---
     window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
     window.closeAvatarActionSheet = function(event) { document.getElementById('avatar-action-sheet').classList.remove('active'); };
@@ -628,7 +727,6 @@
         reader.onload = function(e) {
             const base64Image = e.target.result;
             document.getElementById('profile-avatar-img').src = base64Image;
-            document.getElementById('home-avatar').src = base64Image;
             localStorage.setItem('finalThirdAvatar', base64Image); // Persists across reloads
         };
         reader.readAsDataURL(file);
@@ -826,7 +924,6 @@
             const savedAvatar = localStorage.getItem('finalThirdAvatar');
             if(savedAvatar) {
                 document.getElementById('profile-avatar-img').src = savedAvatar;
-                document.getElementById('home-avatar').src = savedAvatar;
             }
             
             switchTab('view-home', 0);
@@ -935,7 +1032,8 @@
             cut: cut || "N/A",
             light: light || "N/A",
             pairing: pairing || "None",
-            notes: notes || "No notes."
+            notes: notes || "No notes.",
+            image: currentLogImage // Attached compressed image string
         };
 
         try {
@@ -949,6 +1047,13 @@
             document.getElementById('log-light').selectedIndex = 0;
             document.getElementById('log-pairing').value = '';
             document.getElementById('log-notes').value = '';
+            
+            // Reset photo button
+            currentLogImage = null;
+            document.getElementById('log-image-upload').value = "";
+            const photoBtn = document.getElementById('log-photo-btn');
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
             
             // Re-initialize date instead of clearing
             const today = new Date().toISOString().split('T')[0];
@@ -996,11 +1101,18 @@
                 rightContent = `<button onclick="removeJournalLog('${log.id}')" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;">Remove</button>`;
             }
 
+            // Register image and build icon if a photo exists
+            let imageIcon = '';
+            if(log.image) {
+                window.imageRegistry[log.id] = log.image;
+                imageIcon = `<span onclick="openLightbox('${log.id}')" style="cursor: pointer; display: inline-block; padding: 2px 6px; background: rgba(212, 175, 55, 0.15); border-radius: 6px; margin-left: 8px; vertical-align: middle;"><i class="fa-solid fa-camera" style="color: var(--gold); font-size: 11px;"></i></span>`;
+            }
+
             html += `
             <div class="log-card">
                 <div class="log-header">
                     <div>
-                        <div class="log-title">${log.brand}</div>
+                        <div class="log-title" style="display: flex; align-items: center;">${log.brand} ${imageIcon}</div>
                         <div class="log-meta">${log.vitola} • <span style="font-family: var(--font-mono);">${log.ring} Ring</span> • ${log.wrapper}</div>
                     </div>
                     ${rightContent}
@@ -1128,7 +1240,8 @@
             price: priceVal ? parseFloat(priceVal) : null,
             targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, // Fallback safety
             rating: ratingVal ? parseFloat(ratingVal) : null,
-            acquiredDate: isNaN(acqTime) ? Date.now() : acqTime // Fallback safety
+            acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, // Fallback safety
+            image: currentVaultImage // Attached compressed image string
         };
 
         try {
@@ -1140,6 +1253,13 @@
             document.getElementById('vault-rating').value = '';
             document.getElementById('vault-vitola').selectedIndex = 0;
             document.getElementById('vault-wrapper').selectedIndex = 0;
+            
+            // Reset photo button
+            currentVaultImage = null;
+            document.getElementById('vault-image-upload').value = "";
+            const photoBtn = document.getElementById('vault-photo-btn');
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
             
             // Re-initialize dates instead of clearing them
             initializeDates();
@@ -1208,13 +1328,21 @@
             }
 
             let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
+            
+            // Register image and build icon if a photo exists
+            let imageIcon = '';
+            if(cigar.image) {
+                window.imageRegistry[cigar.id] = cigar.image;
+                imageIcon = `<span onclick="openLightbox('${cigar.id}')" style="cursor: pointer; display: inline-block; padding: 2px 6px; background: rgba(212, 175, 55, 0.15); border-radius: 6px; margin-left: 8px; vertical-align: middle;"><i class="fa-solid fa-camera" style="color: var(--gold); font-size: 11px;"></i></span>`;
+            }
+
             let ratingHtml = cigar.rating ? `<span style="font-family: var(--font-mono); font-size: 13px; color: var(--gold); margin-left: 8px; font-weight: 700;"><i class="fa-solid fa-star" style="font-size: 10px; margin-right: 2px;"></i>${cigar.rating}</span>` : '';
 
             html += `
             <div class="log-card">
                 <div class="log-header">
                     <div>
-                        <div class="log-title">${cigar.brand} ${ratingHtml}</div>
+                        <div class="log-title" style="display: flex; align-items: center;">${cigar.brand} ${ratingHtml} ${imageIcon}</div>
                         <div class="log-meta">${cigar.vitola} • <span style="font-family: var(--font-mono);">${cigar.ring} Ring</span> • ${cigar.wrapper}</div>
                     </div>
                     ${rightContent}
