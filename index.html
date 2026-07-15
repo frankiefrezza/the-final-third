@@ -190,6 +190,9 @@
                 <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
                 <strong style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Perdomo 10th Anniversary Champagne</strong>
             </div>
+            <div class="header-actions" style="position: absolute; right: 24px;">
+                <div class="avatar-wrap" onclick="switchTab('view-profile', 4)"><img src="" class="avatar-small" id="home-avatar"></div>
+            </div>
         </div>
 
         <!-- LAYER 2: DYNAMIC TITLE LAYER -->
@@ -325,14 +328,14 @@
                     <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                    <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; gap: 12px; margin-top: 16px;">
+                    <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
                         <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
-                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0;">
+                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 16px 12px; font-size: 13px;">
                     </div>
-                    <div style="display: flex; flex-direction: column;">
-                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak Date</label>
-                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0;">
+                    <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
+                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 16px 12px; font-size: 13px;">
                     </div>
                 </div>
                 
@@ -601,6 +604,7 @@
         const reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('profile-avatar-img').src = e.target.result;
+            document.getElementById('home-avatar').src = e.target.result;
         };
         reader.readAsDataURL(file);
     };
