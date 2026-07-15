@@ -219,7 +219,7 @@
         <div style="background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%); border-top-left-radius: 40px; padding: 28px 24px 76px 24px; position: relative; border-top: 1px solid rgba(255,255,255,0.03); box-shadow: 0 -4px 20px rgba(0,0,0,0.5); z-index: 5;">
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800;">
-                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">User</span><i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>.
+                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">User</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
                 </span>
                 <span id="dynamic-layer-2-subtitle" style="color: rgba(255, 255, 255, 0.5); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; display: block; font-family: var(--font-sans);">Vault Overview</span>
             </div>
@@ -364,7 +364,46 @@
                 </div>
                 
                 <div style="margin-top: 16px; margin-bottom: 16px;">
-                    <input type="number" id="vault-rating" class="form-input" placeholder="Rating (1-10)" min="1" max="10" step="0.25" style="margin-bottom: 0;">
+                    <select id="vault-rating" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Rating (1-10)</option>
+                        <option value="10">10.00</option>
+                        <option value="9.75">9.75</option>
+                        <option value="9.5">9.50</option>
+                        <option value="9.25">9.25</option>
+                        <option value="9">9.00</option>
+                        <option value="8.75">8.75</option>
+                        <option value="8.5">8.50</option>
+                        <option value="8.25">8.25</option>
+                        <option value="8">8.00</option>
+                        <option value="7.75">7.75</option>
+                        <option value="7.5">7.50</option>
+                        <option value="7.25">7.25</option>
+                        <option value="7">7.00</option>
+                        <option value="6.75">6.75</option>
+                        <option value="6.5">6.50</option>
+                        <option value="6.25">6.25</option>
+                        <option value="6">6.00</option>
+                        <option value="5.75">5.75</option>
+                        <option value="5.5">5.50</option>
+                        <option value="5.25">5.25</option>
+                        <option value="5">5.00</option>
+                        <option value="4.75">4.75</option>
+                        <option value="4.5">4.50</option>
+                        <option value="4.25">4.25</option>
+                        <option value="4">4.00</option>
+                        <option value="3.75">3.75</option>
+                        <option value="3.5">3.50</option>
+                        <option value="3.25">3.25</option>
+                        <option value="3">3.00</option>
+                        <option value="2.75">2.75</option>
+                        <option value="2.5">2.50</option>
+                        <option value="2.25">2.25</option>
+                        <option value="2">2.00</option>
+                        <option value="1.75">1.75</option>
+                        <option value="1.5">1.50</option>
+                        <option value="1.25">1.25</option>
+                        <option value="1">1.00</option>
+                    </select>
                 </div>
 
                 <!-- Hidden Input and Visual Upload Button -->
@@ -961,7 +1000,7 @@
 
         setTimeout(() => {
             if(dockIndex === 0) {
-                titleEl.innerHTML = `Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">${window.currentUserName}</span><i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>.`;
+                titleEl.innerHTML = `Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">${window.currentUserName}</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>`;
                 subtitleEl.innerText = "Vault Overview";
             } else if(dockIndex === 1) {
                 titleEl.innerText = "Humidor.";
@@ -1513,7 +1552,7 @@
             document.getElementById('vault-quantity').value = '1';
             document.getElementById('vault-ring-gauge').value = '';
             document.getElementById('vault-price').value = '';
-            document.getElementById('vault-rating').value = '';
+            document.getElementById('vault-rating').selectedIndex = 0;
             document.getElementById('vault-vitola').selectedIndex = 0;
             document.getElementById('vault-wrapper').selectedIndex = 0;
             
