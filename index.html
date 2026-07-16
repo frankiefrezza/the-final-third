@@ -103,7 +103,7 @@
         .stat-icon { font-size: 14px; color: var(--text-dim); opacity: 0.4; }
 
         /* --- CARDS & LISTS --- */
-        .log-card { background: var(--surface-1); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; position: relative; }
+        .log-card { background: var(--surface-1); border-radius: 16px; padding: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; position: relative; }
         .log-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 12px; }
         .log-title { font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); line-height: 1.3; margin-bottom: 4px; }
         .log-meta { font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
@@ -117,6 +117,49 @@
         .progress-track { width: 100%; height: 6px; background: var(--surface-2); border-radius: 10px; overflow: hidden; margin-top: 14px; margin-bottom: 8px; }
         .progress-fill { height: 100%; background: var(--leather); border-radius: 10px; transition: width 0.5s ease; }
         .timeline-footer { font-family: var(--font-mono); display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-dim); }
+
+        /* --- SWIPE TO ACTION ENGINE --- */
+        .swipe-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            background: var(--surface-2); 
+            overflow: hidden;
+        }
+        .swipe-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            z-index: 1;
+        }
+        .swipe-action-btn {
+            width: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            font-weight: 800;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .swipe-action-btn:active { opacity: 0.8; }
+        .swipe-action-edit { background: var(--gold); color: #0B0F19; }
+        .swipe-action-delete { background: var(--danger); }
+        .swipe-front {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
         /* --- FORMS & INPUTS --- */
         .form-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s; box-sizing: border-box; }
@@ -150,6 +193,17 @@
         #lightbox-overlay { justify-content: center; align-items: center; padding: 24px; z-index: 3000; }
         #lightbox-img { max-width: 100%; max-height: 80vh; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); object-fit: contain; }
         .lightbox-close { position: absolute; top: max(24px, env(safe-area-inset-top)); right: 24px; background: var(--surface-1); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5); border: 1px solid var(--border-subtle); }
+        
+        /* --- CIGAR REVIEW MODAL --- */
+        .modal-overlay { display: none; position: fixed; z-index: 2500; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(11, 15, 25, 0.8); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background-color: var(--surface-1); padding: 24px; border-radius: 24px; width: 85%; max-width: 350px; color: var(--text-main); text-align: center; box-shadow: 0px 10px 40px rgba(0,0,0,0.6); font-family: var(--font-sans); border: 1px solid var(--border-subtle); position: relative; }
+        .close-modal { position: absolute; top: 16px; right: 20px; color: var(--text-dim); font-size: 24px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
+        .close-modal:hover { color: var(--text-main); }
+        .modal-subtitle { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
+        .modal-text { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
+        .modal-btn { display: block; background-color: var(--leather); color: #0B0F19; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); transition: transform 0.2s; }
+        .modal-btn:active { transform: scale(0.98); }
 
     </style>
 </head>
@@ -209,7 +263,7 @@
         
         <!-- LAYER 1: PERSISTENT HEADER -->
         <div class="dash-header">
-            <div style="text-align: center;">
+            <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
                 <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
                 <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
             </div>
@@ -414,9 +468,9 @@
                 
                 <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
 
+                <!-- Swiped-To-Action Refactor removes Edit header button -->
                 <div class="section-header" style="margin-top: 32px;">
                     <div class="section-title">Aging Timeline</div>
-                    <div id="edit-vault-btn" style="color: var(--leather); font-weight: 800; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;" onclick="toggleVaultEdit()">Edit</div>
                 </div>
 
                 <div id="humidor-inventory-list" style="margin-bottom: 40px;">
@@ -514,11 +568,11 @@
 
                 <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button>
 
+                <!-- Swiped-To-Action Refactor removes Edit header button -->
                 <div class="section-header" style="margin-top: 32px;">
                     <div class="section-title">Journal History</div>
-                    <div id="edit-journal-btn" style="color: var(--leather); font-weight: 800; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;" onclick="toggleJournalEdit()">Edit</div>
                 </div>
-                <div id="journal-history-list">
+                <div id="journal-history-list" style="margin-bottom: 40px;">
                     <div class="empty-state">
                         <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
                         <span>No smokes logged yet</span>
@@ -531,7 +585,7 @@
             <section id="view-radar" class="view-section">
                 <div class="section-header" style="margin-top: 0;">
                     <div class="section-title">Release Notes</div>
-                    <div class="badge badge-mint">Version Update 1.0.5</div>
+                    <div class="badge badge-mint">Version Update 1.0.6</div>
                 </div>
 
                 <div class="log-card" style="margin-bottom: 24px;">
@@ -541,53 +595,16 @@
                         </div>
                     </div>
                     
-                    <p style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 20px;">This update includes several new features and improvements designed to enhance your experience with The Final Third.</p>
+                    <p style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 20px;">This update introduces a premium, native navigation experience tailored for iOS devices.</p>
 
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cloud" style="color: var(--leather);"></i> Cloud Sync</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Your profile and journal are now securely stored in the cloud. Simply log in from any device to access your data wherever you are.</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Swipe to Action</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">We have completely removed the clunky edit buttons. You can now intuitively swipe left on any entry in your Humidor or Journal to seamlessly reveal the Edit and Remove tools.</div>
                     </div>
-
+                    
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-calendar-day" style="color: var(--leather);"></i> Daily Cigar Suggestion</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new featured cigar is displayed at the top of the home screen each day. With a library of 365 cigars, you'll receive a different recommendation every day throughout the year.</div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-user-pen" style="color: var(--leather);"></i> Custom Nickname</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now edit your nickname directly from the Welcome screen, making it easier to personalize your profile.</div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cubes" style="color: var(--leather);"></i> Quantity Tracking</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new Quantity field has been added, allowing you to keep track of how many cigars you have for each entry in your humidor.</div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hourglass-half" style="color: var(--leather);"></i> Improved Aging Tracking</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Added Date Acquired and Peak Aging Date fields when adding a cigar. The Peak Aging Date requires a minimum of seven days after the acquisition date to promote realistic aging timelines.</div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-camera" style="color: var(--leather);"></i> Photo Attachments</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now attach photos to Humidor and Journal entries. Entries containing photos will display an image indicator, making them easy to identify while browsing your collection.</div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-pen-to-square" style="color: var(--leather);"></i> Edit Entries</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">An Edit button has been added below the Remove button in both the Humidor and Journal sections. You can now update existing entries without having to delete and recreate them.</div>
-                    </div>
-
-                    <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-simple" style="color: var(--leather);"></i> Enhanced Profile Statistics</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 8px;">The Profile page now automatically generates statistics based on your Humidor and Journal entries, including:</div>
-                        <ul style="font-size: 13px; color: var(--text-dim); line-height: 1.5; padding-left: 24px; margin-bottom: 8px;">
-                            <li style="margin-bottom: 4px;">Average Humidor Cost</li>
-                            <li style="margin-bottom: 4px;">Average Aging Time</li>
-                            <li style="margin-bottom: 4px;">Favorite Cut</li>
-                            <li style="margin-bottom: 4px;">Favorite Lighting Method</li>
-                        </ul>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">These statistics update automatically as you continue to build your collection and journal your experiences.</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Dynamic External Reviews</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Tapping the Daily Selection at the top of your screen will now bring up a custom prompt, routing you directly to industry reviews and ratings.</div>
                     </div>
                 </div>
             </section>
@@ -653,7 +670,7 @@
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
                 </button>
                 
-                <div style="text-align: center; margin-top: 16px;">
+                <div style="text-align: center; margin-top: 16px; margin-bottom: 40px;">
                     <span style="color: var(--danger); font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: underline; opacity: 0.8;" onclick="openDeleteActionSheet()">Delete Account</span>
                 </div>
 
@@ -705,12 +722,24 @@
     <img id="lightbox-img" src="" onclick="event.stopPropagation()">
 </div>
 
+<!-- CIGAR REVIEW MODAL -->
+<div id="cigar-modal" class="modal-overlay" onclick="closeCigarModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-modal" onclick="closeCigarModal(event)">&times;</span>
+        <p class="modal-subtitle">TODAY'S SELECTION</p>
+        <h2 id="modal-cigar-name" style="margin-bottom: 12px; font-family: var(--font-serif); font-size: 22px;">Loading...</h2>
+        <p class="modal-text">To view detailed tasting notes and scores from industry experts, check the external review archives.</p>
+        
+        <a id="modal-review-btn" href="#" target="_blank" class="modal-btn">
+            Read Reviews
+        </a>
+    </div>
+</div>
+
 <script type="module">
 
     let humidorInventory = [];
     let journalHistory = [];
-    let isVaultEditMode = false;
-    let isJournalEditMode = false;
     let editingVaultId = null;
     let editingJournalId = null;
     
@@ -718,6 +747,98 @@
     let currentVaultImage = null;
     let currentLogImage = null;
     window.imageRegistry = {}; 
+
+    // --- SWIPE TO REVEAL ENGINE ---
+    window.activeSwipeCard = null;
+    let swipeStartX = null;
+    let swipeStartY = null;
+    let isSwiping = false;
+    const maxSwipe = -140; // Total width of the two revealed buttons
+
+    window.closeAllSwipes = function() {
+        if (window.activeSwipeCard) {
+            window.activeSwipeCard.style.transform = `translateX(0px)`;
+            window.activeSwipeCard = null;
+        }
+    };
+
+    document.addEventListener('touchstart', (e) => {
+        const swipeFront = e.target.closest('.swipe-front');
+        
+        // If clicking anywhere else, snap the currently open card shut
+        if (window.activeSwipeCard && window.activeSwipeCard !== swipeFront) {
+            window.closeAllSwipes();
+        }
+
+        if (!swipeFront) return;
+
+        swipeStartX = e.touches[0].clientX;
+        swipeStartY = e.touches[0].clientY;
+        isSwiping = false;
+        
+        // Remove animation smoothing while finger is physically dragging
+        swipeFront.style.transition = 'none';
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        const swipeFront = e.target.closest('.swipe-front');
+        if (!swipeFront || swipeStartX === null) return;
+
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        const diffX = currentX - swipeStartX;
+        const diffY = currentY - swipeStartY;
+
+        // Determine if they are swiping horizontally vs scrolling the page vertically
+        if (!isSwiping) {
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+                isSwiping = true;
+            } else if (Math.abs(diffY) > 10) {
+                swipeStartX = null; 
+                return;
+            }
+        }
+
+        if (isSwiping) {
+            if (e.cancelable) e.preventDefault(); // Lock vertical scroll
+            
+            let moveX = diffX;
+            if (window.activeSwipeCard === swipeFront) {
+                moveX = maxSwipe + diffX; // Account for already being open
+            }
+            
+            if (moveX > 0) moveX = 0; // Prevent swiping right past the edge
+            if (moveX < maxSwipe - 20) moveX = maxSwipe - 20; // Add elastic resistance
+            
+            swipeFront.style.transform = `translateX(${moveX}px)`;
+        }
+    }, { passive: false });
+
+    document.addEventListener('touchend', (e) => {
+        const swipeFront = e.target.closest('.swipe-front');
+        if (!swipeFront || swipeStartX === null) return;
+
+        // Restore animation smoothing for the snap
+        swipeFront.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+        
+        let currentX = 0;
+        const transformMatrix = window.getComputedStyle(swipeFront).getPropertyValue('transform');
+        if (transformMatrix !== 'none') {
+            currentX = parseInt(transformMatrix.split(',')[4].trim());
+        }
+
+        // Snap open if dragged more than halfway, else snap shut
+        if (currentX < (maxSwipe / 2)) {
+            swipeFront.style.transform = `translateX(${maxSwipe}px)`;
+            window.activeSwipeCard = swipeFront;
+        } else {
+            swipeFront.style.transform = `translateX(0px)`;
+            window.activeSwipeCard = null;
+        }
+
+        swipeStartX = null;
+        isSwiping = false;
+    });
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -765,6 +886,33 @@
             displayEl.innerText = "Padrón 1964 Anniversary"; // Offline fallback
         }
     }
+
+    // --- CIGAR REVIEW MODAL LOGIC ---
+    window.openCigarModal = function() {
+        const displayEl = document.getElementById('daily-cigar-display');
+        const todaysCigar = displayEl.innerText;
+        
+        // Prevent opening if the name hasn't loaded yet
+        if (todaysCigar === "Loading...") return;
+        
+        const modalTitle = document.getElementById("modal-cigar-name");
+        const modalReviewBtn = document.getElementById("modal-review-btn");
+        
+        // Build the targeted URL
+        const searchQuery = encodeURIComponent(`${todaysCigar} review site:halfwheel.com OR site:cigaraficionado.com`);
+        const reviewUrl = `https://www.google.com/search?q=${searchQuery}`;
+        
+        // Inject the data into the modal
+        modalTitle.innerText = todaysCigar;
+        modalReviewBtn.href = reviewUrl;
+        
+        // Show the modal
+        document.getElementById('cigar-modal').classList.add('active');
+    };
+
+    window.closeCigarModal = function(event) {
+        document.getElementById('cigar-modal').classList.remove('active');
+    };
 
     // --- AUTO DATE INITIALIZATION ---
     function initializeDates() {
@@ -1207,6 +1355,8 @@
 
     // --- JOURNAL ENGINE LOGIC ---
     window.editJournalLog = function(id) {
+        window.closeAllSwipes(); // Snap card closed when edit is clicked
+        
         const log = journalHistory.find(l => l.id === id);
         if(!log) return;
 
@@ -1235,11 +1385,6 @@
         submitBtn.innerHTML = 'Update Ledger <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
         submitBtn.style.background = 'var(--gold)';
         
-        isJournalEditMode = false;
-        document.getElementById('edit-journal-btn').innerText = "Edit";
-        document.getElementById('edit-journal-btn').style.color = "var(--leather)";
-        renderJournal();
-
         document.getElementById('view-journal').scrollTop = 0;
     };
 
@@ -1311,6 +1456,8 @@
         const homeList = document.getElementById('home-recent-list');
         const countStat = document.getElementById('stat-smoked'); 
         
+        window.activeSwipeCard = null; // Reset on re-render
+
         if(journalHistory.length === 0) {
             journalList.innerHTML = `
                 <div class="empty-state">
@@ -1323,9 +1470,6 @@
                     <span>No recent logs</span>
                 </div>`;
             countStat.innerText = '0';
-            isJournalEditMode = false;
-            document.getElementById('edit-journal-btn').innerText = "Edit";
-            document.getElementById('edit-journal-btn').style.color = "var(--leather)";
             
             // Clear Profile Optimal Mechanics Stats
             document.getElementById('profile-mechanics-ring').innerText = "N/A Gauge";
@@ -1337,16 +1481,6 @@
 
         let html = '';
         journalHistory.forEach(log => {
-            let rightContent = `<div class="badge badge-amber">${log.date}</div>`;
-            
-            if (isJournalEditMode) {
-                rightContent = `
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button onclick="removeJournalLog('${log.id}')" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 800; text-transform: uppercase;">Remove</button>
-                    <button onclick="editJournalLog('${log.id}')" style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 800; text-transform: uppercase;">Edit</button>
-                </div>`;
-            }
-
             // Register image and build icon if a photo exists
             let imageBadge = '';
             if(log.image) {
@@ -1355,23 +1489,34 @@
             }
 
             html += `
-            <div class="log-card">
-                <div class="log-header">
-                    <div style="flex: 1; padding-right: 12px;">
-                        <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${log.brand}</div>
-                        <div class="log-meta">${log.vitola} • <span style="font-family: var(--font-mono);">${log.ring}</span> • ${log.wrapper}</div>
+            <div class="swipe-container">
+                <div class="swipe-actions">
+                    <button class="swipe-action-btn swipe-action-edit" onclick="editJournalLog('${log.id}')">
+                        <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                    </button>
+                    <button class="swipe-action-btn swipe-action-delete" onclick="removeJournalLog('${log.id}')">
+                        <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                    </button>
+                </div>
+                
+                <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
+                    <div class="log-header">
+                        <div style="flex: 1; padding-right: 12px;">
+                            <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${log.brand}</div>
+                            <div class="log-meta">${log.vitola} • <span style="font-family: var(--font-mono);">${log.ring}</span> • ${log.wrapper}</div>
+                        </div>
+                        <div class="badge badge-amber">${log.date}</div>
                     </div>
-                    ${rightContent}
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 4px; flex-wrap: wrap;">
+                        <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-scissors" style="margin-right: 4px; color: var(--leather);"></i> ${log.cut}</span>
+                        <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-fire" style="margin-right: 4px; color: var(--gold);"></i> ${log.light}</span>
+                        <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-martini-glass" style="margin-right: 4px; color: var(--walnut);"></i> ${log.pairing}</span>
+                        ${imageBadge}
+                    </div>
+                    
+                    <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; font-style: italic;">"${log.notes}"</div>
                 </div>
-                
-                <div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 4px; flex-wrap: wrap;">
-                    <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-scissors" style="margin-right: 4px; color: var(--leather);"></i> ${log.cut}</span>
-                    <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-fire" style="margin-right: 4px; color: var(--gold);"></i> ${log.light}</span>
-                    <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-martini-glass" style="margin-right: 4px; color: var(--walnut);"></i> ${log.pairing}</span>
-                    ${imageBadge}
-                </div>
-                
-                <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; font-style: italic;">"${log.notes}"</div>
             </div>`;
         });
 
@@ -1427,21 +1572,8 @@
         lightBadge.innerText = topLight;
     };
 
-    window.toggleJournalEdit = function() {
-        if(journalHistory.length === 0) { alert("Your journal is empty."); return; }
-        isJournalEditMode = !isJournalEditMode;
-        const editBtn = document.getElementById('edit-journal-btn');
-        if(isJournalEditMode) {
-            editBtn.innerText = "Done";
-            editBtn.style.color = "var(--danger)";
-        } else {
-            editBtn.innerText = "Edit";
-            editBtn.style.color = "var(--leather)";
-        }
-        renderJournal();
-    };
-
     window.removeJournalLog = async function(id) {
+        window.closeAllSwipes();
         if(confirm("Remove this log from your journal?")) {
             await deleteDoc(doc(db, "journal", id));
         }
@@ -1464,6 +1596,8 @@
     });
 
     window.editCigar = function(id) {
+        window.closeAllSwipes(); // Snap card closed when edit is clicked
+        
         const cigar = humidorInventory.find(c => c.id === id);
         if(!cigar) return;
 
@@ -1497,11 +1631,6 @@
         const submitBtn = document.getElementById('vault-submit-btn');
         submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
         submitBtn.style.background = 'var(--gold)';
-        
-        isVaultEditMode = false;
-        document.getElementById('edit-vault-btn').innerText = "Edit";
-        document.getElementById('edit-vault-btn').style.color = "var(--leather)";
-        renderHumidor();
 
         document.getElementById('view-humidor').scrollTop = 0;
     };
@@ -1565,7 +1694,6 @@
             // Re-initialize dates instead of clearing them
             initializeDates();
 
-            document.getElementById('edit-vault-btn').scrollIntoView({behavior: 'smooth', block: 'start'});
         } catch (e) {
             console.error("Error adding document: ", e);
         }
@@ -1575,6 +1703,8 @@
         const list = document.getElementById('humidor-inventory-list');
         const countStat = document.getElementById('stat-collection'); 
         
+        window.activeSwipeCard = null; // Reset on re-render
+
         if(humidorInventory.length === 0) {
             list.innerHTML = `
                 <div class="empty-state">
@@ -1583,8 +1713,6 @@
                 </div>`;
             countStat.innerText = '0';
             document.getElementById('stat-alerts').innerText = '0';
-            isVaultEditMode = false;
-            document.getElementById('edit-vault-btn').innerText = "Edit";
             
             // Clear Profile Humidor Stats
             document.getElementById('stat-avg-aging').innerHTML = `0 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
@@ -1625,15 +1753,6 @@
             
             let badgeClass = isReady ? 'badge-mint' : 'badge-amber';
             let statusText = isReady ? 'Ready' : 'Aging';
-            
-            let rightContent = `<div class="badge ${badgeClass}">${statusText}</div>`;
-            if (isVaultEditMode) {
-                rightContent = `
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button onclick="removeCigar('${cigar.id}')" style="background: rgba(225, 90, 90, 0.15); border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 800; text-transform: uppercase;">Remove</button>
-                    <button onclick="editCigar('${cigar.id}')" style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 800; text-transform: uppercase;">Edit</button>
-                </div>`;
-            }
 
             let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
             
@@ -1654,19 +1773,30 @@
             }
 
             html += `
-            <div class="log-card">
-                <div class="log-header">
-                    <div style="flex: 1; padding-right: 12px;">
-                        <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${cigar.brand}</div>
-                        <div class="log-meta">${cigar.vitola} • <span style="font-family: var(--font-mono);">${cigar.ring}</span> • ${cigar.wrapper}</div>
-                    </div>
-                    ${rightContent}
+            <div class="swipe-container">
+                <div class="swipe-actions">
+                    <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
+                        <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                    </button>
+                    <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
+                        <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                    </button>
                 </div>
-                ${attributesRow}
-                <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
-                <div class="timeline-footer">
-                    <span>Aged: ${daysAged} Days</span>
-                    <span>Target: ${totalTargetDays} Days</span>
+                
+                <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
+                    <div class="log-header">
+                        <div style="flex: 1; padding-right: 12px;">
+                            <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${cigar.brand}</div>
+                            <div class="log-meta">${cigar.vitola} • <span style="font-family: var(--font-mono);">${cigar.ring}</span> • ${cigar.wrapper}</div>
+                        </div>
+                        <div class="badge ${badgeClass}">${statusText}</div>
+                    </div>
+                    ${attributesRow}
+                    <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
+                    <div class="timeline-footer">
+                        <span>Aged: ${daysAged} Days</span>
+                        <span>Target: ${totalTargetDays} Days</span>
+                    </div>
                 </div>
             </div>`;
         });
@@ -1710,21 +1840,8 @@
         renderFavorites(); 
     };
 
-    window.toggleVaultEdit = function() {
-        if(humidorInventory.length === 0) { alert("Your aging vault is empty."); return; }
-        isVaultEditMode = !isVaultEditMode;
-        const editBtn = document.getElementById('edit-vault-btn');
-        if(isVaultEditMode) {
-            editBtn.innerText = "Done";
-            editBtn.style.color = "var(--danger)";
-        } else {
-            editBtn.innerText = "Edit";
-            editBtn.style.color = "var(--leather)";
-        }
-        renderHumidor();
-    };
-
     window.removeCigar = async function(id) {
+        window.closeAllSwipes();
         if(confirm("Remove this cigar from your humidor?")) {
             await deleteDoc(doc(db, "humidor", id));
         }
