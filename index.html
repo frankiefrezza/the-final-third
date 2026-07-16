@@ -126,10 +126,12 @@
             border-radius: 16px;
             background: var(--surface-2); 
             overflow: hidden;
-            /* Webkit mask forces iOS Safari to respect border-radius and stops red corner bleed */
             transform: translateZ(0); 
             -webkit-transform: translateZ(0);
             isolation: isolate;
+            /* Allows mouse interaction */
+            user-select: none;
+            -webkit-user-select: none;
         }
         .swipe-actions {
             position: absolute;
@@ -138,7 +140,6 @@
             bottom: 0;
             display: flex;
             z-index: 1;
-            /* Hidden by default to completely prevent border bleed */
             opacity: 0; 
             transition: opacity 0.2s ease;
         }
@@ -170,9 +171,11 @@
             position: relative;
             z-index: 2;
             width: 100%;
-            /* Bouncy, premium Apple-style transition */
             transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05); 
+            /* Changes cursor for desktop users so they know they can drag */
+            cursor: grab;
         }
+        .swipe-front:active { cursor: grabbing; }
 
         /* --- FORMS & INPUTS --- */
         .form-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s; box-sizing: border-box; }
@@ -279,7 +282,6 @@
             <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
                 <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
                 <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
-                <!-- New visual prompt for the Daily Selection -->
                 <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
             </div>
         </div>
@@ -608,11 +610,11 @@
                         </div>
                     </div>
                     
-                    <p style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 20px;">This update introduces a premium, native navigation experience tailored for iOS devices.</p>
+                    <p style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 20px;">This update introduces a premium, native navigation experience tailored for cross-device support.</p>
 
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Swipe to Action</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">We have completely removed the clunky edit buttons. You can now intuitively swipe left on any entry in your Humidor or Journal to seamlessly reveal the Edit and Remove tools.</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Swipe to Action Engine</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">We have completely removed the clunky edit buttons. You can now intuitively swipe left or drag any entry in your Humidor or Journal to seamlessly reveal the Edit and Remove tools across both touchscreens and computer mice.</div>
                     </div>
                     
                     <div style="margin-bottom: 16px;">
@@ -761,12 +763,13 @@
     let currentLogImage = null;
     window.imageRegistry = {}; 
 
-    // --- SWIPE TO REVEAL ENGINE ---
+    // --- UNIFIED SWIPE TO REVEAL ENGINE (TOUCH + DESKTOP) ---
     window.activeSwipeCard = null;
     let swipeStartX = null;
     let swipeStartY = null;
     let isSwiping = false;
-    const maxSwipe = -140; // Total width of the two revealed buttons
+    let isDragging = false; 
+    const maxSwipe = -140; 
 
     window.closeAllSwipes = function() {
         if (window.activeSwipeCard) {
@@ -778,7 +781,7 @@
         }
     };
 
-    document.addEventListener('touchstart', (e) => {
+    function handleDragStart(e) {
         // PREVENT CLOSING IF TAPPING A BUTTON: This fixes the Edit button bug
         if (e.target.closest('.swipe-actions')) return; 
         
@@ -790,20 +793,24 @@
 
         if (!swipeFront) return;
 
-        swipeStartX = e.touches[0].clientX;
-        swipeStartY = e.touches[0].clientY;
+        isDragging = true;
+        // Determine if mouse or touch
+        swipeStartX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        swipeStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         isSwiping = false;
         
         swipeFront.style.transition = 'none';
-        swipeFront.parentElement.classList.add('is-swiping'); // Triggers opacity 1 on buttons
-    }, { passive: true });
+        swipeFront.parentElement.classList.add('is-swiping'); 
+    }
 
-    document.addEventListener('touchmove', (e) => {
+    function handleDragMove(e) {
+        if (!isDragging) return;
+        
         const swipeFront = e.target.closest('.swipe-front');
         if (!swipeFront || swipeStartX === null) return;
 
-        const currentX = e.touches[0].clientX;
-        const currentY = e.touches[0].clientY;
+        const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         const diffX = currentX - swipeStartX;
         const diffY = currentY - swipeStartY;
 
@@ -812,6 +819,7 @@
                 isSwiping = true;
             } else if (Math.abs(diffY) > 10) {
                 swipeStartX = null; 
+                isDragging = false;
                 swipeFront.parentElement.classList.remove('is-swiping');
                 return;
             }
@@ -825,21 +833,24 @@
                 moveX = maxSwipe + diffX; 
             }
             
-            // Add elastic bouncy resistance at edges
+            // Premium bouncy elastic resistance at edges
             if (moveX > 0) moveX = moveX * 0.2; 
             if (moveX < maxSwipe) moveX = maxSwipe + ((moveX - maxSwipe) * 0.2); 
             
             swipeFront.style.transform = `translateX(${moveX}px)`;
         }
-    }, { passive: false });
+    }
 
-    document.addEventListener('touchend', (e) => {
-        if (e.target.closest('.swipe-actions')) return; // Ignore if they clicked an action
+    function handleDragEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        if (e.target && e.target.closest && e.target.closest('.swipe-actions')) return; 
 
-        const swipeFront = e.target.closest('.swipe-front');
+        const swipeFront = e.target ? e.target.closest('.swipe-front') : null;
         if (!swipeFront || swipeStartX === null) return;
 
-        // Restore animation smoothing for the snap
+        // Restore bounce animation smoothing for the snap
         swipeFront.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05)';
         swipeFront.parentElement.classList.remove('is-swiping');
         
@@ -853,16 +864,27 @@
         if (currentX < (maxSwipe / 2)) {
             swipeFront.style.transform = `translateX(${maxSwipe}px)`;
             window.activeSwipeCard = swipeFront;
-            swipeFront.parentElement.classList.add('is-open'); // Keeps buttons visible
+            swipeFront.parentElement.classList.add('is-open'); 
         } else {
             swipeFront.style.transform = `translateX(0px)`;
             window.activeSwipeCard = null;
-            swipeFront.parentElement.classList.remove('is-open'); // Hides buttons cleanly
+            swipeFront.parentElement.classList.remove('is-open'); 
         }
 
         swipeStartX = null;
         isSwiping = false;
-    });
+    }
+
+    // Connect Touch Screen Listeners
+    document.addEventListener('touchstart', handleDragStart, { passive: true });
+    document.addEventListener('touchmove', handleDragMove, { passive: false });
+    document.addEventListener('touchend', handleDragEnd);
+    
+    // Connect Desktop Mouse Listeners
+    document.addEventListener('mousedown', handleDragStart);
+    document.addEventListener('mousemove', handleDragMove);
+    document.addEventListener('mouseup', handleDragEnd);
+    document.addEventListener('mouseleave', handleDragEnd); // Catch cursor leaving window
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
