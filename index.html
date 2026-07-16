@@ -2,2511 +2,1990 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Seeder | The Final Third</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>The Final Third</title>
+    
+    <!-- App Icons -->
+<link rel="icon" type="image/png" href="app-icon.png">
+<link rel="apple-touch-icon" href="app-icon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        // Check local storage immediately to prevent a white/dark flash of unstyled content
+        const savedTheme = localStorage.getItem('finalThirdTheme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0B0F19;
-            color: #F8FAFC;
+        /* --- DEFAULT DARK THEME (NAVY SLATE) --- */
+        :root {
+            --bg-base: #0B0F19;
+            --bg-gradient-start: #1E293B;
+            --bg-gradient-end: #0B0F19;
+            --layer2-grad-start: #27374D;
+            --layer2-grad-end: #131A2A;
+            --surface-1: #131A2A;
+            --surface-2: #1E293B;
+            --surface-glass: rgba(19, 26, 42, 0.85);
+            
+            --text-main: #F8FAFC;
+            --text-dim: #94A3B8;
+            --border-subtle: #2A3441;
+            
+            --walnut: #5C4033;
+            --leather: #B07D46;
+            --gold: #D4AF37;
+            --danger: #E15A5A;
+
+            --btn-leather: #B07D46; /* Base for main buttons */
+            --btn-gold: #D4AF37;    /* Base for edit swipe button */
+            
+            --shadow-subtle: rgba(0,0,0,0.2);
+            --shadow-strong: rgba(0,0,0,0.5);
+            --shadow-layer3: rgba(0,0,0,0.6);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --overlay-bg: rgba(11, 15, 25, 0.8);
+            --stat-bg-end: #0F141E;
+            
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-serif: 'Playfair Display', Georgia, serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        /* --- LIGHT THEME (PREMIUM PARCHMENT & ESPRESSO) --- */
+        [data-theme="light"] {
+            --bg-base: #F7F5F0; 
+            --bg-gradient-start: #FFFFFF;
+            --bg-gradient-end: #EBE7DF;
+            --layer2-grad-start: #FFFFFF;
+            --layer2-grad-end: #F0EDE4;
+            --surface-1: #FFFFFF;
+            --surface-2: #F0EDE4;
+            --surface-glass: rgba(255, 255, 255, 0.85);
+            
+            --text-main: #1A1C23; 
+            --text-dim: #6B7280;
+            --border-subtle: #E2DDD3;
+
+            --btn-leather: #C29662; /* Lighter, softer tan for primary buttons */
+            --btn-gold: #E5C768;    /* Lighter gold for swipe edit button */
+            
+            --shadow-subtle: rgba(0,0,0,0.04);
+            --shadow-strong: rgba(0,0,0,0.08);
+            --shadow-layer3: rgba(0,0,0,0.06);
+            --glass-border: rgba(0, 0, 0, 0.04);
+            --overlay-bg: rgba(26, 28, 35, 0.6);
+            --stat-bg-end: #F7F5F0;
+        }
+
+        /* --- GLOBAL RESET --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; min-height: 100dvh; transition: background-color 0.3s; }
+        #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); min-height: 100vh; min-height: 100dvh; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px var(--shadow-strong); transition: background-color 0.3s; }
+        .app-environment { display: none; width: 100%; min-height: 100vh; flex-direction: column; }
+        .app-environment.active { display: flex; }
+
+        /* App Logo dynamically inverts for light mode to stay visible */
+        .app-logo { width: 120%; max-width: 120%; height: auto; margin: 0 0 4px -10%; display: block; filter: drop-shadow(0 0 35px var(--shadow-strong)); transition: filter 0.3s; }
+        [data-theme="light"] .app-logo { filter: invert(1) brightness(0.2) drop-shadow(0 0 20px rgba(0,0,0,0.05)); }
+
+        /* --- LOGIN SCREEN --- */
+        #login-environment { justify-content: center; align-items: center; padding: 40px 24px; text-align: center; background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%); }
+        .login-subtitle { color: var(--text-dim); font-size: 11px; margin-bottom: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
+        .editorial-input { width: 100%; background: var(--surface-1); border: 2px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); padding: 18px 20px; font-size: 16px; font-weight: 600; text-align: center; outline: none; margin-bottom: 16px; transition: border 0.3s; font-family: var(--font-sans); }
+        .editorial-input:focus { border-color: var(--leather); }
+        .btn-primary { width: 100%; background: var(--btn-leather); color: #0B0F19; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); letter-spacing: 0.5px; }
+        .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+        
+        .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 16px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
+        .btn-secondary.attached { background: rgba(176, 125, 70, 0.1); color: var(--leather); border-color: var(--leather); border-style: solid; }
+
+        .auth-view { display: none; width: 100%; max-width: 400px; }
+        .auth-view.active { display: block; }
+        .auth-link { color: var(--leather); font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; margin-top: 16px; display: inline-block; }
+        .auth-link:hover { text-decoration: underline; }
+        .auth-flex-links { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding: 0 8px; }
+
+        /* --- PERSISTENT HEADER (LAYER 1) --- */
+        .dash-header { display: flex; justify-content: center; align-items: center; padding: max(20px, env(safe-area-inset-top)) 24px 16px 24px; z-index: 10; position: relative; }
+
+        /* --- DYNAMIC TITLE (LAYER 2) --- */
+        .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
+        
+        /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
+        .layer-3-container { background: var(--surface-1); border-top-left-radius: 40px; margin-top: -40px; position: relative; flex-grow: 1; border-top: 1px solid var(--glass-border); box-shadow: 0 -8px 24px var(--shadow-layer3); overflow: hidden; z-index: 15; transition: background-color 0.3s; }
+
+        /* --- VIEW SECTIONS (Static Content, Animated Container) --- */
+        .view-section { position: absolute; top: 0; bottom: 0; left: 0; right: 0; padding: 32px 24px calc(110px + env(safe-area-inset-bottom)) 24px; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .view-section.active { display: block; }
+        
+        /* --- VIEW SECTIONS & ANIMATIONS --- */
+        .layer-3-container.slide-anim { animation: cardSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes cardSlide { 
+            0% { opacity: 0; transform: translateY(60px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
+
+        .greeting.text-slide-up { animation: textSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes textSlideUp { 
+            0% { opacity: 0; transform: translateY(15px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
+
+        .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; margin-top: 32px; }
+        .section-title { font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main); }
+        .section-link { font-size: 13px; font-weight: 800; color: var(--leather); cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* --- HOME ELEMENTS --- */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .stat-box { background: linear-gradient(145deg, var(--surface-1) 0%, var(--stat-bg-end) 100%); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 1px solid var(--border-subtle); cursor: pointer; box-shadow: 0 4px 12px var(--shadow-subtle); transition: transform 0.2s, border-color 0.2s; min-height: 110px; }
+        .stat-box:active { transform: scale(0.98); border-color: var(--leather); }
+        .stat-header { display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 12px; }
+        .stat-box h2 { font-family: var(--font-mono); font-size: 36px; font-weight: 700; color: var(--text-main); line-height: 1; text-shadow: 0 2px 8px var(--shadow-subtle); margin: 0; }
+        .stat-box p { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin: 0; }
+        .stat-icon { font-size: 14px; color: var(--text-dim); opacity: 0.4; }
+
+        /* --- CARDS & LISTS --- */
+        .log-card { background: var(--surface-1); border-radius: 16px; padding: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; position: relative; transition: background-color 0.3s; }
+        .log-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 12px; }
+        .log-title { font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); line-height: 1.3; margin-bottom: 4px; }
+        .log-meta { font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
+        .badge { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; white-space: nowrap; }
+        
+        .badge-indigo { background: rgba(176, 125, 70, 0.15); color: var(--leather); }
+        .badge-mint { background: rgba(212, 175, 55, 0.15); color: var(--gold); }
+        .badge-rose { background: rgba(225, 90, 90, 0.15); color: var(--danger); }
+        .badge-amber { background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); }
+        
+        .progress-track { width: 100%; height: 6px; background: var(--surface-2); border-radius: 10px; overflow: hidden; margin-top: 14px; margin-bottom: 8px; }
+        .progress-fill { height: 100%; background: var(--leather); border-radius: 10px; transition: width 0.5s ease; }
+        .timeline-footer { font-family: var(--font-mono); display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-dim); }
+
+        /* --- SWIPE TO ACTION ENGINE --- */
+        .swipe-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            background: var(--surface-2); 
+            overflow: hidden;
+            transform: translateZ(0); 
+            -webkit-transform: translateZ(0);
+            isolation: isolate;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .swipe-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            z-index: 1;
+            opacity: 0; 
+            transition: opacity 0.2s ease;
+        }
+        .swipe-container.is-swiping .swipe-actions,
+        .swipe-container.is-open .swipe-actions {
+            opacity: 1;
+        }
+        .swipe-action-btn {
+            width: 70px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: #131A2A;
-            padding: 40px;
-            border-radius: 16px;
-            border: 1px solid #2A3441;
-            text-align: center;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        button {
-            background: #B07D46;
-            color: #0B0F19;
-            border: none;
-            padding: 16px 32px;
-            font-size: 16px;
+            align-items: center;
+            gap: 6px;
+            color: white;
             font-weight: 800;
-            border-radius: 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
             cursor: pointer;
-            margin-top: 24px;
-            transition: transform 0.2s;
+            transition: background-color 0.3s, opacity 0.2s;
         }
-        button:active {
-            transform: scale(0.95);
+        .swipe-action-btn:active { opacity: 0.8; }
+        .swipe-action-edit { background: var(--btn-gold); color: #0B0F19; }
+        .swipe-action-delete { background: var(--danger); }
+        
+        .swipe-front {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05); 
+            cursor: grab;
         }
-        #status {
-            margin-top: 20px;
-            font-family: monospace;
-            color: #94A3B8;
-        }
+        .swipe-front:active { cursor: grabbing; }
+
+        /* --- FORMS & INPUTS --- */
+        .form-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s, background-color 0.3s; box-sizing: border-box; }
+        .form-input:focus { border-color: var(--leather); }
+        .form-input::placeholder { color: var(--text-dim); }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%20fill%3D%22none%22%20stroke%3D%22%2394A3B8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 16px auto; }
+        
+        /* DATE INPUT SPECIFIC FIXES FOR iOS */
+        input[type="date"].form-input { min-height: 54px; -webkit-appearance: none; padding: 14px 16px; align-items: center; }
+        input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+        
+        /* Invert the calendar icon dynamically based on theme */
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); opacity: 1; transition: filter 0.3s; }
+        [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.3); }
+
+        .empty-state { background: var(--surface-2); border: 1px solid var(--border-subtle); box-shadow: inset 0 2px 10px var(--shadow-subtle); text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; font-weight: 700; border-radius: 16px; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: background-color 0.3s; }
+
+        /* --- FLOATING BOTTOM DOCK --- */
+        .bottom-dock-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; background: linear-gradient(to top, var(--bg-base) 40%, rgba(11, 15, 25, 0) 100%); padding-top: 40px; pointer-events: none; transition: background 0.3s; }
+        [data-theme="light"] .bottom-dock-wrapper { background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); }
+        .bottom-dock { width: calc(100% - 48px); max-width: 390px; background: var(--surface-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; margin-bottom: max(20px, env(safe-area-inset-bottom)); box-shadow: 0 10px 30px var(--shadow-strong); pointer-events: auto; }
+        .nav-item { color: var(--text-dim); font-size: 20px; cursor: pointer; position: relative; width: 54px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.2s; border-radius: 16px; }
+        .nav-item span { font-size: 10px; font-weight: 700; margin-top: 4px; }
+        .nav-item.active { color: var(--leather); background: rgba(176, 125, 70, 0.15); }
+
+        /* Action Sheet & Modals */
+        .action-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--overlay-bg); backdrop-filter: blur(5px); z-index: 2000; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .action-sheet-overlay.active { opacity: 1; pointer-events: auto; }
+        .action-sheet { background: var(--surface-1); border-radius: 28px 28px 0 0; padding: 24px 24px max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s; border-top: 1px solid var(--border-subtle); }
+        .action-sheet-overlay.active .action-sheet { transform: translateY(0); }
+        .action-btn { width: 100%; background: var(--surface-2); color: var(--text-main); padding: 18px; font-size: 15px; font-weight: 700; font-family: var(--font-sans); border-radius: 16px; margin-bottom: 12px; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
+        .action-btn.cancel { background: transparent; color: var(--danger); margin-bottom: 0; margin-top: 4px; }
+
+        /* Photo Lightbox specific styling */
+        #lightbox-overlay { justify-content: center; align-items: center; padding: 24px; z-index: 3000; }
+        #lightbox-img { max-width: 100%; max-height: 80vh; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); object-fit: contain; }
+        .lightbox-close { position: absolute; top: max(24px, env(safe-area-inset-top)); right: 24px; background: var(--surface-1); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px var(--shadow-strong); border: 1px solid var(--border-subtle); }
+        
+        /* --- CIGAR REVIEW MODAL --- */
+        .modal-overlay { display: none; position: fixed; z-index: 2500; left: 0; top: 0; width: 100%; height: 100%; background-color: var(--overlay-bg); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background-color: var(--surface-1); padding: 24px; border-radius: 24px; width: 85%; max-width: 350px; color: var(--text-main); text-align: center; box-shadow: 0px 10px 40px var(--shadow-strong); font-family: var(--font-sans); border: 1px solid var(--border-subtle); position: relative; transition: background-color 0.3s; }
+        .close-modal { position: absolute; top: 16px; right: 20px; color: var(--text-dim); font-size: 24px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
+        .close-modal:hover { color: var(--text-main); }
+        .modal-subtitle { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
+        .modal-text { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
+        .modal-btn { display: block; background-color: var(--btn-leather); color: #0B0F19; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); transition: transform 0.2s, background-color 0.3s; }
+        .modal-btn:active { transform: scale(0.98); }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Library Seeder</h2>
-        <p style="color: #94A3B8; line-height: 1.5;">Click the button below to parse the brand array and push it to the <strong>app_data/cigar_library</strong> document in Firestore.</p>
-        <button onclick="seedCigarLibrary()">Execute Seed</button>
-        <div id="status">Waiting to start...</div>
+<div id="app-container">
+
+    <div id="login-environment" class="app-environment active">
+        <div style="width: 100%; max-width: 400px; margin-top: 20px;">
+            
+            <!-- BETA WARNING BANNER -->
+            <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 14px; padding: 14px 16px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <i class="fa-solid fa-code-pull-request" style="color: var(--gold); margin-top: 2px; font-size: 14px;"></i>
+                <div>
+                    <div style="color: var(--gold); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Beta Release</div>
+                    <div style="color: var(--text-dim); font-size: 12px; line-height: 1.4; font-weight: 600;">The app is in active development. Certain features may not function as intended while we build.</div>
+                </div>
+            </div>
+
+            <img src="final-third-logo.png" class="app-logo" alt="Final Third Logo">
+            <p class="login-subtitle">FROM THE FIRST LIGHT TO THE FINAL THIRD</p>
+            
+            <!-- View 1: Sign In -->
+            <div id="auth-signin" class="auth-view active">
+                <input type="email" id="signin-email" class="editorial-input" placeholder="Email address" autocomplete="off">
+                <input type="password" id="signin-password" class="editorial-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
+                <button id="signin-btn" class="btn-primary" onclick="handleLogin()">Log In <i class="fa-solid fa-arrow-right"></i></button>
+                <div class="auth-flex-links">
+                    <span class="auth-link" onclick="showAuthView('reset')">Forgot Password?</span>
+                    <span class="auth-link" onclick="showAuthView('signup')">Create Account</span>
+                </div>
+            </div>
+
+            <!-- View 2: Sign Up -->
+            <div id="auth-signup" class="auth-view">
+                <input type="text" id="signup-username" class="editorial-input" placeholder="Choose a Username" autocomplete="off">
+                <input type="email" id="signup-email" class="editorial-input" placeholder="Email address" autocomplete="off">
+                <input type="password" id="signup-password" class="editorial-input" placeholder="Password" autocomplete="off">
+                <input type="password" id="signup-confirm" class="editorial-input" placeholder="Confirm Password" autocomplete="off" style="margin-bottom: 24px;">
+                <button id="signup-btn" class="btn-primary" onclick="handleSignUp()">Register <i class="fa-solid fa-user-plus"></i></button>
+                <span class="auth-link" style="display: block; margin-top: 24px;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
+            </div>
+
+            <!-- View 3: Password Reset -->
+            <div id="auth-reset" class="auth-view">
+                <p style="color: var(--text-main); font-size: 14px; margin-bottom: 20px; font-weight: 600;">Enter your email to receive a reset link.</p>
+                <input type="email" id="reset-email" class="editorial-input" placeholder="Email address" autocomplete="off" style="margin-bottom: 24px;">
+                <button id="reset-btn" class="btn-primary" onclick="handleResetPassword()">Send Link <i class="fa-solid fa-envelope"></i></button>
+                <span class="auth-link" style="display: block; margin-top: 24px;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
+            </div>
+
+        </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <!-- MAIN APP SHELL -->
+    <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
+        
+        <!-- LAYER 1: PERSISTENT HEADER -->
+        <div class="dash-header">
+            <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
+                <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
+                <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
+            </div>
+        </div>
 
-        // Your Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyChMrxW41yXgQkqFEqe0DxGFwjp_QdriYE",
-            authDomain: "finalthird-6628e.firebaseapp.com",
-            projectId: "finalthird-6628e",
-            storageBucket: "finalthird-6628e.firebasestorage.app",
-            messagingSenderId: "658511952829",
-            appId: "1:658511952829:web:96f277790007a890cc30d4",
-            measurementId: "G-9N9VGTTX3G"
-        };
+        <!-- LAYER 2: DYNAMIC TITLE LAYER -->
+        <div style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-top-left-radius: 40px; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--glass-border); box-shadow: 0 -4px 20px var(--shadow-strong); z-index: 5;">
+            <div class="greeting" id="greeting-container">
+                <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800; color: var(--text-main);">
+                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">User</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
+                </span>
+                <span id="dynamic-layer-2-subtitle" style="color: var(--text-dim); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; display: block; font-family: var(--font-sans);">Vault Overview</span>
+            </div>
+        </div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        <!-- LAYER 3: PERSISTENT CONTENT CONTAINER -->
+        <div class="layer-3-container">
+            
+            <!-- HOME SCREEN -->
+            <section id="view-home" class="view-section active">
+                <div class="stats-grid">
+                    <div class="stat-box" onclick="switchTab('view-humidor', 1)">
+                        <div class="stat-header">
+                            <p>In Humidor</p>
+                            <i class="fa-solid fa-box stat-icon"></i>
+                        </div>
+                        <h2 id="stat-collection" style="color: var(--leather); text-shadow: 0 2px 8px var(--shadow-subtle);">0</h2>
+                    </div>
+                    
+                    <div class="stat-box" onclick="switchTab('view-journal', 2)">
+                        <div class="stat-header">
+                            <p>Smoked</p>
+                            <i class="fa-solid fa-fire stat-icon"></i>
+                        </div>
+                        <h2 id="stat-smoked">0</h2>
+                    </div>
+                    
+                    <div class="stat-box" onclick="switchTab('view-radar', 3)">
+                        <div class="stat-header">
+                            <p>Alerts</p>
+                            <i class="fa-solid fa-bell stat-icon"></i>
+                        </div>
+                        <h2 id="stat-alerts">0</h2>
+                    </div>
+                    
+                    <div class="stat-box" onclick="switchTab('view-profile', 4)">
+                        <div class="stat-header">
+                            <p>Avg Rating</p>
+                            <i class="fa-solid fa-star stat-icon"></i>
+                        </div>
+                        <h2 id="stat-avg">0.0</h2>
+                    </div>
+                </div>
 
-        window.seedCigarLibrary = async function() {
-            const statusDiv = document.getElementById('status');
-            statusDiv.style.color = "#D4AF37";
-            statusDiv.innerText = "Processing array...";
+                <!-- FAVORITES BENTO BOX -->
+                <div class="section-header" style="margin-top: 24px;">
+                    <div class="section-title">Favorites</div>
+                    <div class="section-link" onclick="switchTab('view-humidor', 1)">Humidor</div>
+                </div>
+                
+                <div id="home-favorites-list">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-star" style="font-size: 20px; opacity: 0.3;"></i>
+                        <span>No rated cigars</span>
+                    </div>
+                </div>
 
-            // PASTE YOUR PARSED RTF LIST HERE
-            const rawCigarText = `
-                A. Flores 1975 Gran Reserva 
-A. Flores 1975 Serie Privada 
-A. Flores 1975 Connecticut Valley Reserve 
-A. Flores El Criollito
-A. Flores AFR-75 
-A. Flores Flores y Rodriguez 10th Anniversary
-A. Flores Flores y Rodriguez Cabinet Seleccion 
-A. Flores Flores y Rodriguez 18th Anniversary
-A. Flores El Trovador
-ACID 1400cc
-ACID Atom
-ACID Blondie
-ACID Cold Infusion
-ACID Deep Dish
-ACID Extra Ordinary Larry
-ACID Gold
-ACID Holy Madness
-ACID Induktion
-ACID Kuba Kuba
-ACID Kuba Kuba Maduro
-ACID Kuba Arte
-ACID Liquid
-ACID Nasty
-ACID One
-ACID Opus
-ACID Roam
-ACID Toast
-ACID Wafe
-ADVentura The Conqueror
-ADVentura The Explorer
-ADVentura The Navigator
-ADVentura The Queen
-ADVentura The Royal Salute
-ADVentura The King
-ADVentura The Barbarroja
-ADVentura The Warrior
-ADVentura The Cream
-ADVentura The MISSion
-ADVentura The Legend
-ADVentura The Ancestor
-ADVentura The Master
-ADVentura The Fine Tune
-ADVentura The Porthos
-ADVentura The Aramis
-ADVentura The Athos
-ADVentura The D'Artagnan
-Aganorsa Leaf The Conqueror
-Aganorsa Leaf The Explorer
-Aganorsa Leaf The Navigator
-Aganorsa Leaf The Queen
-Aganorsa Leaf The Royal Salute
-Aganorsa Leaf The King
-Aganorsa Leaf The Barbarroja
-Aganorsa Leaf The Warrior
-Aganorsa Leaf The Cream
-Aganorsa Leaf The MISSion
-Aganorsa Leaf The Legend
-Aganorsa Leaf The Ancestor
-Aganorsa Leaf The Master
-Aganorsa Leaf The Fine Tune
-Aganorsa Leaf The Porthos
-Aganorsa Leaf The Aramis
-Aganorsa Leaf The Athos
-Aganorsa Leaf The D'Artagnan
-Aging Room Core 
-Aging Room F55 
-Aging Room M356
-Aging Room Quattro 
-Aging Room Bin No. 1
-Aging Room Small Batch 
-Aging Room Solera
-Aging Room Rare Collection
-Aging Room Fortissimo
-Aging Room Mezzano
-Agio Balmoral Anejo 18
-Agio Balmoral Anejo XO
-Agio Balmoral Royal Selection
-Agio Mehari's
-Agio Panter
-Agio Schimmelpenninck
-AJ Fernandez Bellas Artes 
-AJ Fernandez Días de Gloria 
-AJ Fernandez Diesel
-AJ Fernandez Enclave 
-AJ Fernandez La Gran Llave
-AJ Fernandez Last Call 
-AJ Fernandez Man O' War 
-AJ Fernandez New World 
-AJ Fernandez Ramon Allones (by AJ Fernandez)
-AJ Fernandez San Lotano 
-AJ Fernandez Viva La Vida
-Al Capone Sweets (Cognac-dipped)
-Al Capone Jamaican Blaze (Rum-dipped)
-Al Capone Blues
-Al Capone Gold (Natural)
-Al Capone Menthol
-Aladino Cameroon
-Aladino Classic
-Aladino Corojo
-Aladino Corojo Reserva
-Aladino Elegante
-Aladino Habano
-Aladino Sumatra
-Alec & Bradley Gatekeeper
-Alec & Bradley Koji
-Alec & Bradley Moral Compass
-Alec & Bradley Punks
-Alec & Bradley Shipwreck
-Alec & Bradley The Gatekeeper (Series)
-Alec & Bradley The Koji
-Alec & Bradley The Punks
-Alec & Bradley The Shipwreck
-Alec Bradley American Classic
-Alec Bradley American Sun Grown
-Alec Bradley Black Market
-Alec Bradley Black Market Esteli
-Alec Bradley Black Market Filthy Hooligan
-Alec Bradley Black Market Illicit
-Alec Bradley Blind Faith
-Alec Bradley Dirty Rat
-Alec Bradley Gatekeeper
-Alec Bradley Koji
-Alec Bradley Magic Toast
-Alec Bradley Maxx
-Alec Bradley Medellin
-Alec Bradley Mundial
-Alec Bradley Nica Puro
-Alec Bradley Overture
-Alec Bradley Prensado
-Alec Bradley Prensado Lost Art
-Alec Bradley Project 40
-Alec Bradley Project 40 Maduro
-Alec Bradley Rational
-Alec Bradley Sanctum
-Alec Bradley Tempus
-Alec Bradley Tempus Maduro
-Alec Bradley Texas Lancero
-Alec Bradley Vice Press
-Alec Bradley Fine & Rare (Limited Editions)
-Alfonso Gran Selección
-Alfonso Añejo
-Alfonso Extra Añejo
-All Saints Dedication
-All Saints St. Francis
-All Saints St. Jude
-All Saints Solamente
-All Saints Vici
-All Saints Bring It!
-All Saints Karma
-All Saints St. Peter
-Ambrosia Clove Tiki
-Ambrosia Mother Earth
-Ambrosia Nectar
-Ambrosia Spice
-Ambrosia Venom
-Amendola Family Cannoli
-Amendola Family Signature Series 
-Amendola Family The Don
-Amendola Family The Family Tree
-Amendola Family The Cream
-Amendola Family The Artista
-Amendola Family The Gold Series
-Amendola Family The Vitali
-Antonio Fermín Robusto
-Antonio Fermín Toro
-Antonio Fermín Torpedo
-Antonio Fermín Gran Toro
-Antonio y Cleopatra Grenadiers
-Antonio y Cleopatra Panatela
-Antonio y Cleopatra Cheroot
-Antonio y Cleopatra Belvedere
-Arganese CL3 
-Arganese Habano
-Arganese Oscuro
-Arganese Sun Grown
-Arganese Presidente
-Arganese Don Juan
-Argyle (by Holt's)
-Artesano Del Tobacco Viva La Vida
-Artesano Del Tobacco Viva La Vida Club 500
-Artesano Del Tobacco Viva La Vida Jester
-Artesano Del Tobacco El Pulpo 
-Artista Series
-Artista Midnight 
-Artista Harvest 
-Artista Buffalo TEN
-Artista Natural
-Artista Habano
-Artista Cimarron
-Artista Davinia
-Artista Fuertes
-Artista Paperboy
-Arturo Fuente Gran Reserva 
-Arturo Fuente Hemingway 
-Arturo Fuente Don Carlos 
-Arturo Fuente Don Carlos Personal Reserve
-Arturo Fuente Don Carlos Edición de Aniversario
-Arturo Fuente Fuente Fuente OpusX 
-Arturo Fuente OpusX Lost City
-Arturo Fuente OpusX Angel’s Share
-Arturo Fuente OpusX Oro Oscuro
-Arturo Fuente OpusX 20th Anniversary
-Arturo Fuente Casa Cuba
-Arturo Fuente Fuente Fuente OpusX 22 
-Arturo Fuente Fuente Fuente OpusX Rare Black
-Arturo Fuente Anejo 
-Arturo Fuente Destino al Siglo
-Arturo Fuente Queen B
-Arturo Fuente Work of Art
-Arturo Fuente 8-5-8 Rosado Sun Grown
-Arturo Fuente Magnum R 
-Arturo Fuente Sun Grown Specialty Lines 
-Arturo Fuente Curly Head 
-Arturo Fuente Brevas Royale
-Arturo Fuente Flor Fina 8-5-8 
-Ashton Classic 
-Ashton Cabinet 
-Ashton Heritage Puro Sol 
-Ashton Aged Maduro 
-Ashton Symmetry
-Ashton Virgin Sun Grown (VSG)
-Ashton Estate Sun Grown (ESG)
-Ashton San Cristobal 
-Asylum 13
-Asylum 13 Arabian Nights
-Asylum 13 Authentic Corojo
-Asylum 13 Connecticut
-Asylum 13 Cool Brew
-Asylum 13 Medulla Oblongata
-Asylum 13 Ogre
-Asylum 867 (Auntie, Midnight Oil, Zero)
-Asylum April Fools
-Asylum Insidious
-Asylum Lobotomy
-Asylum Pandemonium
-Asylum PCA Exclusive
-Asylum Premium
-Asylum Schizo
-Asylum Sensorium
-Asylum Signature
-Asylum Split Personality
-Asylum Straight Jacket
-Atabey Benditos
-Atabey Brujos
-Atabey Delirios
-Atabey Dioses
-Atabey Divinos
-Atabey Duendes
-Atabey Hechizos
-Atabey Idolos
-Atabey Misticos
-Atabey Ritos
-Atabey Sabios
-Atabey Spiritus
-Atabey Black (Delirios)
-Atlas World Select 
-Atlas Classic
-Atlas Vertigo
-Ave Maria (Original)
-Ave Maria Argentum
-Ave Maria Dark Knight
-Ave Maria Divinia
-Ave Maria Excalibur
-Ave Maria Holy Grail
-Ave Maria Immaculata
-Ave Maria Lionheart
-Ave Maria Reconquista
-Avanti Anisette
-Avanti Bourbon
-Avanti Cherry
-Avanti Continental (Anisette)
-Avanti Estilo Café Mocha
-Avanti Licorice
-Avanti Original (Unflavored)
-Avanti Vanilla
-AVO Classic
-AVO Classic Maduro
-AVO Heritage
-AVO Improvisation Series
-AVO Maduro
-AVO Nicaragua
-AVO Regional Editions
-AVO Syncro Fogata
-AVO Syncro Nicaragua
-AVO Syncro Ritmo
-AVO Syncro South America Ritmo
-AVO Traveler's Edition
-AVO Domaine
-AVO XO
-AVO Seasons Limited Edition
-Ace Prime Luciano Cigars 
-Ace Prime Fiat Lux
-Ace Prime Foreign Affair
-Ace Prime Luciano The Dreamer
-Ace Prime Maria Lucia
-Ace Prime Mas Igneus
-Ace Prime M.X.S. 
-Ace Prime Pichardo 
-Ace Prime The Machinist
-Ace Prime The Resilient
-Ace Prime The Sergeant
-Ace Prime Tiago Familia Elegida
-Ace Prime Underrated
-Ace Prime Y Panda
-American Viking Box-Pressed Rebellion
-American Viking Dama Valada
-American Viking Liga Zebra
-American Viking Obrigado
-American Viking Rico Barato
-American Viking The Filthy Viking
-American Viking Unkillable
-Artesano Del Tobacco Viva La Vida
-Artesano Del Tobacco Viva La Vida Club 500
-Artesano Del Tobacco Viva La Vida Jester
-Artesano Del Tobacco El Pulpo
-Artesano Del Tobacco El Pulpo Cigars by AJ Fernandez
-Astral Talanga Valley Selection 
-Astral Beso
-Astral Besos
-Astral Favorito
-Astral Grand Reserve Vintage 1996 
-Astral Grand Reserve Vintage 1992
-Astral Maduro
-Astral Phoenix
-Atlas Cigars 
-Atlas World Select 
-Atlas Classic
-Angel Cuesta (Original)
-Angel Cuesta Shade
-Antonio Fermin El Templo
-Antonio Fermin Finca
-Aristoff Gold
-Aristoff Platinum
-Baccarat The Game (The Classic/Original line)
-Baccarat Connecticut
-Baccarat Maduro
-Baccarat Limited Edition (e.g., Anniversary editions)
-Backwoods Original (Wild n Mild)
-Backwoods Honey
-Backwoods Honey Berry
-Backwoods Honey Bourbon
-Backwoods Sweet Aromatic
-Backwoods Russian Cream
-Backwoods Dark Stout
-Backwoods Banana
-Backwoods Black Russian
-Backwoods Cognac XO
-Backwoods Black n Sweet Aromatic
-Backwoods Vanilla
-Bahia Blu
-Bahia Brazil
-Bahia Gold
-Bahia Maduro
-Bahia Red
-Bahia Sunset
-Bahia Sumatra
-Balmoral Anejo 18
-Balmoral Anejo XO 
-Balmoral Royal Selection 
-Balmoral Dominican Selection 
-Balmoral Serie Signaturas 
-Bandolero Serie C
-Bandolero Serie S
-Bandolero Serie T
-Bandolero Firecracker
-Baracoa Gordito
-Baracoa Robusto
-Baracoa Toro
-Baracoa Torpedo
-Baracoa Gigante
-Baracoa Churchill
-Baracoa Robusto Box Press
-Baracoa Toro Box Press
-Baracoa Torpedo Box Press
-Barrington House Guaranteed Jamaican Founder's Series
-Barrington House Guaranteed Jamaican Heritage Series
-Barrington House Harvill
-Barrington House Pride of Jamaica
-Barrington House Pride of Jamaica Crystals
-Barrington House Santa Cruz Puro
-Barrington House Santa Cruz Pirates
-Barrington House Fundadores
-Bentley Green Rare Rosado Churchill
-Bentley Green Rare Rosado Corona
-Bentley Green Rare Rosado Robusto
-Bentley Green Rare Rosado Toro
-Bentley White Connecticut Churchill
-Bentley White Connecticut Corona
-Bentley White Connecticut Robusto
-Bentley White Connecticut Toro
-Bidwell Blend® Café Corojo
-Bidwell Blend® Ishi™ Maduro
-Big Easy Maduro
-Big Easy Natural
-Big Easy Triple Dipped Cognac
-Big Papi by David Ortiz Original
-Big Papi by David Ortiz Black Edition
-Black & Mild Original
-Black & Mild Mild
-Black & Mild Wine
-Black & Mild Jazz
-Black & Mild Wood Tip
-Black & Mild Filter Tip
-Black & Mild Casino
-Black & Mild Royale
-Black & Mild Sweets
-Black & Mild Cream
-Black & Mild Peach
-Black & Mild Apple
-Black Label Trading Co. Bishops Blend
-Black Label Trading Co. Coffin Nails
-Black Label Trading Co. Deliverance Nocturne
-Black Label Trading Co. Eletto
-Black Label Trading Co. La Madonna Negra
-Black Label Trading Co. Last Rites
-Black Label Trading Co. Lawless
-Black Label Trading Co. Macabre
-Black Label Trading Co. Memento Mori
-Black Label Trading Co. Morphine
-Black Label Trading Co. Orthodox
-Black Label Trading Co. Porcelain
-Black Label Trading Co. Royalty
-Black Label Trading Co. Salvation
-Black Label Trading Co. Santa Muerte
-Black Label Trading Co. Super Deluxe
-Black Label Trading Co. Viaticum
-Black Ops Berserker
-Black Ops Connecticut
-Black Ops Habano
-Black Ops Maduro
-Black Ops Rubicon
-Black Works Studio Aumakua
-Black Works Studio Avispa
-Black Works Studio Boondock
-Black Works Studio Green Hornet
-Black Works Studio Hawaii Hornet
-Black Works Studio Hawaiian Tiger
-Black Works Studio Hyena
-Black Works Studio Intergalactic Event Horizon
-Black Works Studio Killer Bee
-Black Works Studio NBK
-Black Works Studio Paper Crane
-Black Works Studio Rorschach
-Black Works Studio Syndustry
-Black Works Studio The Five Temples
-Black Works Studio The Hornet
-Black Works Studio Tigersaurus
-Black Works Studio Tooth and Bear
-Blackbird Cactus Wren
-Blackbird Crow
-Blackbird Cuco
-Blackbird Finch
-Blackbird Glitch
-Blackbird Hawk
-Blackbird Idalia 108
-Blackbird Jackdaw
-Blackbird Meadowlark
-Blackbird Nest Connecticut
-Blackbird Nest Maduro
-Blackbird Rook
-Blackbird Superb
-Blackbird Unkind
-Blackstone Cherry
-Blackstone Mild
-Blackstone Peach
-Blackstone Vanilla
-Blackstone Wine
-Bolivar Belicosos Finos
-Bolivar Cofradia
-Bolivar Cofradia Oscuro
-Bolivar Gold Medal
-Bolivar Libertadores
-Bolivar Lonsdales
-Bolivar Regentes
-Bolivar Royal Coronas
-Bolivar Short Bolivar
-Bolivar Soberano
-Bolivar Super Coronas
-Bolivar Supremas
-Brick House Bricktoberfest
-Brick House Ciento Por Ciento
-Brick House Classic
-Brick House Double Connecticut
-Buffalo Trace Explorers
-Buffalo Trace Limited Edition
-Buffalo Trace Special F
-Byron 1850
-Byron 19th Century
-Byron 20th Century
-Byron 21st Century
-Cain Daytona
-Cain F
-Cain Nub
-Caldwell Anastasia
-Caldwell Blind Man's Bluff
-Caldwell Eastern Standard
-Caldwell Eastern Standard Midnight Express
-Caldwell Hit & Run
-Caldwell King is Dead
-Caldwell Long Live the King
-Caldwell Lost & Found
-Caldwell Midnight Express
-Caldwell Savages
-Caldwell Sevilla
-Caldwell The Last Tsar
-Camacho American Barrel-Aged
-Camacho Broadleaf
-Camacho BXP
-Camacho Corojo
-Camacho Coyolar
-Camacho Criollo
-Camacho Diploma
-Camacho Ecuador
-Camacho Factory Unleashed
-Camacho Liberty
-Camacho Nicaragua
-Camacho Nicaraguan Barrel-Aged
-Camacho Powerband
-Camacho Shellback
-Camacho Triple Maduro
-CAO Amazon Basin
-CAO America
-CAO America 250th Anniversary
-CAO Arcana
-CAO Bones
-CAO Brazilia
-CAO BX3
-CAO Colombia
-CAO Consigliere
-CAO Fasa Noche
-CAO Fasa Sol
-CAO Fasa Sombra
-CAO Flathead
-CAO Flathead Speed Shop
-CAO Flathead Steel Horse
-CAO Flavours
-CAO Gold
-CAO talia
-CAO Mortal Coil
-CAO MX2
-CAO Nicaragua
-CAO Orellana
-CAO OSA Sol
-CAO Pilón
-CAO Pilón Añejo
-CAO Session
-CAO Surplus
-CAO Vision
-CAO Zócalo
-Casa Cuba Divine Inspiration
-Casa Cuba Doble Cinco
-Casa Cuba Doble Cuatro
-Casa Cuba Doble Seis
-Casa Cuba Doble Tres
-Casa Fernandez Aganorsa Leaf Aniversario
-Casa Fernandez Aganorsa Leaf Signature Selection
-Casa Fernandez Aganorsa Leaf Validacion
-Casa Fernandez Arsenio
-Casa Fernandez Casa Fernandez Aganorsa Corojo
-Casa Fernandez Casa Fernandez Aganorsa
-Casa Fernandez Casa Fernandez Miami
-Casa Fernandez Casa Fernandez Miami Aniversario
-Casa Fernandez Casa Fernandez Miami Reserva
-Casa Fernandez Guardian of the Farm
-Casa Fernandez JFR
-Casa Fernandez JFR Lunatic
-Casa Fernandez JFR XT
-Casa Fernandez New Cuba
-Casa Magna Colorado
-Casa Magna Connecticut
-Casa Magna Domus Magnus
-Casa Magna Jalapa Claro
-Casa Magna Liga F
-Casa Magna Oscuro
-Casa Magna XV Anniversary
-Cavalier Genève Black Series
-Cavalier Genève Black Series II
-Cavalier Genève BII Viso Jalapa
-Cavalier Genève Inner Circle
-Cavalier Genève Inner Circle Domaine Rouge
-Cavalier Genève Limited Edition
-Cavalier Genève Project Broadleaf
-Cavalier Genève Prospektor
-Cavalier Genève Tres Delincuentes
-Cavalier Genève White Series
-Chillin' Moose Bull Moose
-Chillin' Moose Bull Moose Habano
-Chillin' Moose Shady Moose
-Chillin' Moose Too
-Chogui Dos77
-Chogui Dos77 Corojo
-Chogui Heart Breaker
-Chogui Papa Chogüí
-Chogui Primera Edición
-Cohiba Behike
-Cohiba Black
-Cohiba Blue
-Cohiba C8
-Cohiba Clásica
-Cohiba Línea 1492
-Cohiba Macassar
-Cohiba Maduro 5
-Cohiba Red Dot
-Cohiba Riviera
-Cohiba Royale
-Cohiba Rubicon
-Cohiba Serie M
-Cohiba Spectre
-Cohiba Weller
-Cojimar 25th Anniversary
-Cojimar Blue Moon Vanilla
-Cojimar Boozy Orange Whiskey
-Cojimar Cappuccino Coffee
-Cojimar Chocolate Mint
-Cojimar Gold Reserve Cognac
-Cojimar Havana Cognac
-Cojimar Havana
-Cojimar Lola Sweet
-Cojimar Lost Cherry
-Cojimar Red Moon Raspberry
-Cojimar Rio Honey Blueberry
-Cojimar Rum
-Cojimar Tropical Mango Papaya
-Cojimar Truffle Chocolate
-Cojimar White Orchid Vanilla
-Crown Heads Azul y Oro
-Crown Heads Belgian Blue
-Crown Heads Blood Medicine
-Crown Heads Broadway
-Crown Heads CHC Serie E
-Crown Heads Coroneta
-Crown Heads Court Reserve XVIII
-Crown Heads Four Kicks
-Crown Heads Four Kicks Black Belt Buckle
-Crown Heads Four Kicks Capa Especial
-Crown Heads Four Kicks Mule Kick
-Crown Heads Headley Grange
-Crown Heads Jericho Hill
-Crown Heads Juarez
-Crown Heads La Coalición
-Crown Heads La Imperiosa
-Crown Heads La Vereda
-Crown Heads Las Calaveras
-Crown Heads Le Carême
-Crown Heads Le Pâtissier
-Crown Heads Luminosa
-Crown Heads Mil Días
-Crown Heads Mil Días Maduro
-Crown Heads Moonflower
-Crown Heads Mother Church
-Crown Heads Tennessee Waltz
-Crown Heads The Lost Angel
-Crown Heads Thunderkiss
-Crown Heads Yellow Rose
-Crux Bull & Bear
-Crux Du Connoisseur
-Crux Epicure
-Crux Guild
-Crux Limitada
-Crux Marblehead
-Crux Passport
-Cuban Stock Chubbys
-Cuban Stock Classic
-Cuban Stock Delicioso
-Cuban Stock Everyday Joe
-Cuban Stock Exquisito Double Capa
-Cuban Stock Exquisito Limitado
-Cuban Stock Extra
-Cuban Stock Gran Almirante
-Cuban Stock Reserve
-Cuban Stock Royal Selection
-Cuban Stock Special Blend
-Cuban Stock Triumph
-Cuban Stock White Label
-Cuesta-Rey Cabinet Selection
-Cuesta-Rey Centenario
-Cuesta-Rey Centro Fino
-Cupido Classic
-Cupido Criollo
-Cupido Knuckles
-Cupido Negro
-Cupido Tuxedo
-Curivari Achilles
-Curivari Aristocrat
-Curivari Buenaventura
-Curivari Buenaventura Cremas
-Curivari Buenaventura Picadores
-Curivari Buenaventura Pralines
-Curivari Cafe
-Curivari Cafe Noir
-Curivari Cicero
-Curivari El Gran Rey
-Curivari Gloria de Leon
-Curivari Reserva Limitada
-Curivari Seleccion Privada
-Curivari Socrates
-Daniel Marshall 24kt Gold
-Daniel Marshall Black Label
-Daniel Marshall Red Label
-Daniel Marshall White Label
-Daniel Marshall XXXV Anniversary
-Daniel Marshall XXXVIII Anniversary
-Dannemann Artist Line
-Dannemann Aymores
-Dannemann Collofino
-Dannemann Coronel
-Dannemann Hasillo
-Dannemann Imperiale
-Dannemann Menor
-Dannemann Mini
-Dannemann Moods
-Dannemann Pierrot
-Dannemann Samba
-Dannemann Speciale
-Davidoff Aniversario
-Davidoff Colorado Claro
-Davidoff Escurio
-Davidoff Grand Cru
-Davidoff Millennium
-Davidoff Nicaragua
-Davidoff Primeros
-Davidoff Royal Release
-Davidoff Signature
-Davidoff Winston Churchill
-Davidoff Winston Churchill The Late Hour
-Davidoff Yamasá
-Deadwood Buenas Noches
-Deadwood Crazy Alice
-Deadwood Dominicana
-Deadwood Fat Bottom Betty
-Deadwood Leather Rose
-Deadwood Sweet Jane
-Deadwood The Girl With No Name
-De Leon Clásico
-De Leon Criollo
-De Leon Divino
-De Leon Etiqueta Negra
-De Leon Magno
-De Leon Nativo
-De Leon Short Filler
-Defiance The Guardian
-Defiance The Instigator
-Defiance The Renegade
-Defiance The Sentry
-Delicioso 565
-Delicioso Alpine Mint Chocolate
-Delicioso American Bourbon
-Delicioso Black Forest Cherry
-Delicioso Blue Sea Blueberry
-Delicioso Cafe Coffee
-Delicioso Carnaval
-Delicioso Coco Beach
-Delicioso Cool Breeze Tequila
-Delicioso Cuban Bee Honey
-Delicioso Cuban Espresso
-Delicioso Elevation
-Delicioso French Cognac
-Delicioso Green Label Mint
-Delicioso Morning Joe
-Delicioso Nightcap
-Delicioso Piña Colada
-Delicioso Rum
-Delicioso Swiss Chocolate
-Delicioso The English Gin
-Delicioso The Russian Vodka
-Delicioso Vandella Vanilla
-Delicioso Whisky
-Delicioso Wild Berry
-Diamond Crown Black Diamond
-Diamond Crown Classic
-Diamond Crown Julius Caeser
-Diamond Crown Maximus
-Diesel Atonement
-Diesel Crucible
-Diesel Delirium
-Diesel Disciple
-Diesel Estelí Puro
-Diesel Fool's Errand
-Diesel Grind
-Diesel Hair of the Dog
-Diesel Heart of Darkness
-Diesel Rage
-Diesel Shorty
-Diesel Sunday Gravy
-Diesel Unholy Cocktail
-Diesel Unlimited
-Diesel Vintage Series
-Diesel Whiskey Row
-Diesel Whiskey Row Founder's Collection
-Diesel Whiskey Row Sherry Cask
-Diesel Wicked
-Don Carlos Eye of the Shark
-Don Carlos Personal Reserve
-Don Carlos Presidente
-Don Carlos Selection No. 2
-Don Carlos Selection No. 3
-Don Carlos Selection No. 4
-Don Carlos Shark
-Don Carlos The Man
-Don Diego Aniversario
-Don Diego Classic
-Don Diego Fuerte
-Don Diego Royal Selección
-Don Lino Africa
-Don Lino Clasico
-Don Lino Corojo
-Don Lino Grand Reserva
-Don Pepin Garcia 10th Anniversary
-Don Pepin Garcia Blue Label (Original)
-Don Pepin Garcia Black Edition
-Don Pepin Garcia Cuban Classic (Black Label)
-Don Pepin Garcia El Centurion
-Don Pepin Garcia El Centurion H-2K-CT
-Don Pepin Garcia Jaime Garcia Reserva Especial
-Don Pepin Garcia Las Antillas
-Don Pepin Garcia My Father
-Don Pepin Garcia Series JJ
-Drew Estate 20 Acre Farm
-Drew Estate Blackened (M81 and S84)
-Drew Estate Chateau Real
-Drew Estate Factory Smokes
-Drew Estate Florida Sun Grown (FSG)
-Drew Estate Herrera Esteli 
-Drew Estate Isla del Sol
-Drew Estate Java (by Drew Estate)
-Drew Estate Kentucky Fire Cured (KFC)
-Drew Estate Liga Privada 
-Drew Estate Pappy Van Winkle 
-Drew Estate Tabak Especial 
-Drew Estate Undercrown 
-Dunhill Aged Cigars
-Dunhill Signed Range
-Dunhill 1907 by Dunhill
-Dunhill Heritage
-Dunhill Heritage Maduro
-Dunhill Mi Dominicana
-Dutch Masters 227 Benedict
-Dutch Masters Berry Fusion
-Dutch Masters Blue Dream Fusion
-Dutch Masters Blue Razz
-Dutch Masters Chocolate
-Dutch Masters Cognac
-Dutch Masters Corona De Luxe
-Dutch Masters Crème (Russian Cream)
-Dutch Masters Dutch Blend
-Dutch Masters Gold Fusion
-Dutch Masters Grape
-Dutch Masters Green
-Dutch Masters Honey Fusion
-Dutch Masters Honey Sports
-Dutch Masters Irish Fusion
-Dutch Masters Java Fusion
-Dutch Masters Leaf 
-Dutch Masters OG Fusion
-Dutch Masters Palma
-Dutch Masters Panetela
-Dutch Masters Platinum Fusion
-Dutch Masters President
-Dutch Masters Royal Haze
-Dutch Masters Silver Fusion
-Dutch Masters Strawberry
-Dutch Masters Sunset Dream
-Dutch Masters Sweet Fusion
-Dutch Masters Tropical
-Dutch Masters Vanilla
-Dutch Masters White Grape
-Dutch Masters Wine
-E.P. Carrillo Allegiance
-E.P. Carrillo Dusk
-E.P. Carrillo Elencos
-E.P. Carrillo Encore
-E.P. Carrillo Inch 
-E.P. Carrillo Inch Nicaragua
-E.P. Carrillo New Wave Connecticut
-E.P. Carrillo Pledge
-E.P. Carrillo Platinum
-E.P. Carrillo Seleccion Oscuro
-E.P. Carrillo The Essence 
-El Septimo 1905
-El Septimo Alexander III
-El Septimo Classic
-El Septimo Emperor
-El Septimo Exception
-El Septimo Executive
-El Septimo Falcon
-El Septimo Gold
-El Septimo Humidor Selection
-El Septimo Imperial
-El Septimo King
-El Septimo Luxury
-El Septimo Napoleon
-El Septimo Phantom
-El Septimo Quantum
-El Septimo Sacred Arts
-El Septimo Saint Louis
-El Septimo Tuxedo
-El Septimo Voodoo
-El Septimo White Collection
-El Titan de Bronze Redemption
-El Titan de Bronze Resurrection
-El Titan de Bronze The Ghost
-Emilio AF Series
-Emilio Cavatina
-Emilio Grimalkin
-Emilio HZ
-Emilio La Musa
-Emilio Mia Desi
-Emilio Suave
-Encore (by E.P. Carrillo) Majestic
-Encore (by E.P. Carrillo) El Primero
-Encore (by E.P. Carrillo) Celestial
-Encore (by E.P. Carrillo) Valientes
-Espinosa 601 
-Espinosa BackChannel
-Espinosa Bamboozled
-Espinosa Crema
-Espinosa Curve
-Espinosa FVK
-Espinosa Knuckle Sandwich 
-Espinosa La Bomba 
-Espinosa Las 6 Provincias
-Espinosa Laranja 
-Espinosa Murcielago
-Espinosa Off Limits
-Espinosa Reggae 
-Espinosa Sensei's Sensational Sarsaparilla
-Espinosa Spicy Mon
-Espinosa The Alibi
-Espinosa The Cremo
-Espinosa Warzone
-Esteban Carreras 10th Anniversary
-Esteban Carreras Bloodline
-Esteban Carreras Chupacabra 
-Esteban Carreras Covenant
-Esteban Carreras Devil's Hand
-Esteban Carreras Dragon's Blood
-Esteban Carreras Habano 2000
-Esteban Carreras High Life
-Esteban Carreras James Dean
-Esteban Carreras Mr. Brownstone
-Esteban Carreras Nice Guy
-Esteban Carreras Persian King
-Esteban Carreras Queen Bee
-Esteban Carreras Rico Sauvin
-Esteban Carreras Unforgiven
-Excalibur 1066
-Excalibur Black
-Excalibur Cameroon
-Excalibur Original 
-Excalibur Solar 
-Ezra Zion All My Ex's
-Ezra Zion Blessed
-Ezra Zion Cake
-Ezra Zion Coffee Ice Cream
-Ezra Zion Cookies & Cream
-Ezra Zion Eminence
-Ezra Zion FHK
-Ezra Zion Honor
-Ezra Zion Inception
-Ezra Zion Iron Throne
-Ezra Zion Jamais Vu
-Ezra Zion Last Rites
-Ezra Zion Nomad 
-Ezra Zion Tantrum
-Ezra Zion The Brass Knuckle
-Falto El Artisan
-Falto La Pureza
-Falto Maduro
-Falto Maduro Especial
-Falto Monumento
-Falto Reserve
-Falto Seleccion Especial
-Fonseca Arana
-Fonseca Classic
-Fonseca Cosaco
-Fonseca Delicias
-Fonseca Edicion Limitada
-Fonseca Habana
-Fonseca KDT Cadetes
-Fonseca Natural
-Fonseca No. 1
-Fonseca Vintage
-Foundation Cigar Company Charter Oak 
-Foundation Cigar Company El Güegüense 
-Foundation Cigar Company Highclere Castle 
-Foundation Cigar Company Menelik
-Foundation Cigar Company Metapa
-Foundation Cigar Company Olmec 
-Foundation Cigar Company Tabernacle
-Foundation Cigar Company Upsetters
-Four Kicks Capa Especial
-Four Kicks Mule Kick (Limited Edition)
-Fratello Arlequin
-Fratello Bianco
-Fratello Blu
-Fratello Boxer
-Fratello Classico
-Fratello Commander
-Fratello Concealed Carry
-Fratello Devil's Triangle
-Fratello Firecracker
-Fratello Navetta
-Fratello Navetta Inverso
-Fratello Oro
-Fratello Padrino
-Fratello Sorella
-Fratello The Texan
-Fuente Fuente OpusX 8-8-8
-Fuente Fuente OpusX Angel's Share
-Fuente Fuente OpusX BBMF
-Fuente Fuente OpusX ForbiddenX
-Fuente Fuente OpusX Fuente Fuente (Original)
-Fuente Fuente OpusX King Power
-Fuente Fuente OpusX Lost City
-Fuente Fuente OpusX Magnum OCF
-Fuente Fuente OpusX Oro Oscuro
-Fuente Fuente OpusX PerfecXion 
-Fuente Fuente OpusX Rare Black
-Fuente Fuente OpusX Reserva d'Chateau
-Fuente Fuente OpusX Rosado Oscuro
-Fuente Fuente OpusX Scorpio
-Fuente Fuente OpusX Super Belicoso
-Fuente Fuente OpusX Taurus the Bull
-G.A.R. Deli
-G.A.R. Opium
-G.A.R. Presidential
-G.A.R. Red
-G.A.R. White
-God of Fire Carlito 2004
-God of Fire Carlito 2005
-God of Fire Carlito 2006 
-God of Fire Carlito 2007
-God of Fire Don Carlos 1998
-God of Fire Don Carlos 2000
-God of Fire Don Carlos 2003
-God of Fire Don Carlos 2004
-God of Fire Don Carlos 2005
-God of Fire Don Carlos 2006
-God of Fire Don Carlos 2007
-God of Fire Serie B
-God of Fire Serie Aniversario 
-Gran Habano 10th Anniversary 
-Gran Habano 3 Siglos
-Gran Habano Azteca
-Gran Habano Corojo #5
-Gran Habano Gran Reserva #3
-Gran Habano Gran Reserva #5
-Gran Habano Habano #3
-Gran Habano Imperial
-Gran Habano La Conquista
-Gran Habano Maduro #1
-Gran Habano Persian King
-Gran Habano Zulu Zulu
-Graycliff 10 Year Vintage
-Graycliff 1666
-Graycliff 30 Year Vintage
-Graycliff Cabinet Selection
-Graycliff Crystal
-Graycliff Double Espresso
-Graycliff Emerald
-Graycliff Espresso
-Graycliff G2
-Graycliff Heritage
-Graycliff Ivory
-Graycliff Professionale
-Graycliff Silver Selection
-Guantanamera Cristales
-Guantanamera Decimo
-Guantanamera Minutos
-Guantanamera Puritos
-Guardian of the Farm Apollo
-Guardian of the Farm Campeon
-Guardian of the Farm Cerberus
-Guardian of the Farm JJ (Justo Joven)
-Guardian of the Farm Nightwatch
-Gurkha 125th Anniversary
-Gurkha Ancient Warrior
-Gurkha Assassin
-Gurkha Beauty
-Gurkha Beast
-Gurkha Black Dragon
-Gurkha Cellar Reserve 12 Year
-Gurkha Cellar Reserve 15 Year
-Gurkha Cellar Reserve 18 Year
-Gurkha Cellar Reserve 21 Year
-Gurkha Centurian
-Gurkha Cognac
-Gurkha Crest
-Gurkha Evil
-Gurkha Ghost
-Gurkha Grand Reserve
-Gurkha Heritage
-Gurkha His Majesty's Reserve
-Gurkha Legend
-Gurkha Master Select
-Gurkha Ninja
-Gurkha Royal Challenge
-Gurkha Seduction
-Gurkha Shaggy
-Gurkha Symphony
-Gurkha Titan
-Gurkha Treinta
-Gurkha Vintage Shaggy
-Gurkha Widow Maker
-Gurkha Warlord
-Gurkha XO
-H. Upmann 1844 Anejo
-H. Upmann 1844 Reserve
-H. Upmann Banker
-H. Upmann Connoisseur
-H. Upmann Coronas Major
-H. Upmann Coronas Junior
-H. Upmann Half Corona
-H. Upmann Legacy
-H. Upmann Magnum 
-H. Upmann Media Nacion
-H. Upmann Monarcas
-H. Upmann Nicaragua
-H. Upmann No. 2
-H. Upmann Petite Coronas
-H. Upmann Royal Robusto
-H. Upmann Sir Winston
-H. Upmann Vintage Cameroon
- Henry Clay Classic
- Henry Clay War Hawk
- Henry Clay Tattoo
- Henry Clay Stalk Cut
- Henry Clay Breixal
- Henry Clay War Warrior
-Hoyo de Monterrey Epicure No. 1
-Hoyo de Monterrey Epicure No. 2
-Hoyo de Monterrey Epicure Especial
-Hoyo de Monterrey Epicure de Luxe
-Hoyo de Monterrey De Luxe 
-Hoyo de Monterrey Du Depute
-Hoyo de Monterrey Du Maire
-Hoyo de Monterrey Du Prince
-Hoyo de Monterrey San Juan
-Hoyo de Monterrey Monterreys
-Hoyo de Monterrey Petit Robusto
-Hoyo de Monterrey Coronas
-Hoyo de Monterrey Double Coronas
-Hoyo de Monterrey Excalibur 
-Hoyo de Monterrey Dark Sumatra 
-Hoyo de Monterrey Governor's 
-Hoyo de Monterrey La Amistad 
-Hoyo de Monterrey Silver 
-Hoyo de Monterrey Repujado 
-HVC 500 Aniversarios
-HVC Cerro 
-HVC Cerro Natural
-HVC Edición Especial 2015
-HVC Havana City
-HVC Hot Cake
-HVC Hot Cake Fresh Out The Oven
-HVC Hot Cake Golden Line Connecticut
-HVC La Decoracion
-HVC La Rosa 520
-HVC Pan Caliente
-HVC Seleccion No. 1
-HVC Serie A
-HVC Vieja Cosecha No. 2
-Icons Lucide
-Icons Phosphor Icons
-Icons Tabler Icons
-Icons Heroicons
-Icons Remix Icon
-Icons Iconoir
-Icons Material Symbols
-Icons Font Awesome
-Icons Ionicons
-Icons Radix Icons
-Icons Hugeicons
-Icons Lineicons
-Illusione 88
-Illusione Allegria
-Illusione Cruzado
-Illusione CT
-Illusione ECCJ
-Illusione Epernay
-Illusione Fume d'Amour
-Illusione Garagiste
-Illusione Gigantes
-Illusione Group of Five
-Illusione Haut 10
-Illusione OneOff
-Illusione Original Documents
-Illusione PIV
-Illusione Rothchildes
-Illusione Singulare
-Illusione Slam
-Illusione TAA
-Illusione Ultra
-Imperial Tobacco
-Imperial Court
-Imperial Crown
-Imperial Gold
-Imperial Jade
-Imperial Reserve
-Imperial Series
-Imperial Selection
-Imperial Signature
-Intemperance BA XXI
-Intemperance EC XVIII
-Intemperance Volstead 1920
-Intemperance Whiskey Rebellion 1794
-Java Latte
-Java Mint
-Java Red
-Jericho Hill .44S
-Jericho Hill Jack Brown
-Jericho Hill LBV
-Jericho Hill OBS
-Jericho Hill Willy Lee
-Jose L. Piedra Brevas
-Jose L. Piedra Cazadores
-Jose L. Piedra Conservas
-Jose L. Piedra Cremas
-Jose L. Piedra Petit Cazadores
-Joya de Nicaragua Antaño 1970
-Joya de Nicaragua Antaño CT
-Joya de Nicaragua Antaño Dark Corojo
-Joya de Nicaragua Antaño Gran Reserva
-Joya de Nicaragua Black
-Joya de Nicaragua Cabinetta
-Joya de Nicaragua Clásico
-Joya de Nicaragua Clásico Medio Siglo
-Joya de Nicaragua Cinco Décadas
-Joya de Nicaragua Cuatro Cinco
-Joya de Nicaragua Número 1
-Joya de Nicaragua Rosalones
-Joya de Nicaragua Silver
-Joya de Nicaragua Valley of the UMG
-Juan Lopez Selección No. 1
-Juan Lopez Selección No. 2
-Juan Lopez Selección Especial
-Juan Lopez Campanas
-Juan Lopez Maximos
-Juarez Chihuahua
-Juarez Jack Brown
-Juarez Mini-Dozer
-Juarez OBS
-Juarez Shots
-Juarez Willy Lee
-Kafka 1904
-Kafka 1915
-Kafka 1924
-Kentucky Fire Cured
-Kentucky Fire Cured Sweets
-Kentucky Fire Cured Swamp Thang
-Kentucky Fire Cured Swamp Rat
-Kings Kings of the Past
-Kings Kingsman
-Kings Kings Selection
-Knuckle Sandwich Connecticut
-Knuckle Sandwich Habano
-Knuckle Sandwich Maduro
-Knuckle Sandwich Chef's Choice
-Knuckle Sandwich 55
-Knuckle Sandwich Prix Fixe
-La Aroma de Cuba Connecticut
-La Aroma de Cuba Edición Especial
-La Aroma de Cuba Mi Amor
-La Aroma de Cuba Mi Amor Reserva
-La Aroma de Cuba Noblesse
-La Aroma de Cuba Pasión
-La Aurora 100 Años
-La Aurora 107
-La Aurora 107 Nicaragua
-La Aurora 107 Ecuador
-La Aurora 107 Maduro
-La Aurora 115th Anniversary
-La Aurora ADN Dominicano
-La Aurora Barrel Aged
-La Aurora Cameroon 1903
-La Aurora Connecticut 1987
-La Aurora Corojo 1962
-La Aurora Escogidos
-La Aurora Fernando Leon
-La Aurora Guillermo Leon
-La Aurora Maduro 1985
-La Aurora Preferidos 
-La Aurora Puro Vintage
-La Boheme Encantador
-La Boheme Isabela
-La Boheme Miami
-La Boheme Pittore
-La Careme Belicosos Finos
-La Careme Canonazo
-La Careme Cosacos
-La Careme Hermosos No. 1
-La Careme LE 2017
-La Careme LE 2018
-La Careme LE 2019
-La Careme LE 2020
-La Careme LE 2021
-La Colmena Amado No. 44
-La Colmena Reina
-La Colmena Unico Especial
-La Colmena Black Honey
-La Flor Dominicana 1994
-La Flor Dominicana 25th Anniversary
-La Flor Dominicana Andalusian Bull
-La Flor Dominicana Capitulo II
-La Flor Dominicana Cameroon Cabinet
-La Flor Dominicana Coronado
-La Flor Dominicana Double Ligero
-La Flor Dominicana Double Press
-La Flor Dominicana Factory Press
-La Flor Dominicana Golden Bull
-La Flor Dominicana La Nox
-La Flor Dominicana Ligero
-La Flor Dominicana Limitado
-La Flor Dominicana Los Statos Deluxe
-La Flor Dominicana Maltes
-La Flor Dominicana Mysterioso
-La Flor Dominicana Oro
-La Flor Dominicana Suave
-La Flor Dominicana TAA
-La Flor Dominicana Air Bender
-La Galera Habano
-La Galera Chaveta
-La Galera 1936 Box Pressed
-La Galera Anemoi
-La Galera Imperial Jade
-La Galera Oro
-La Galera TAA Exclusive
-La Gloria Cubana Serie R
-La Gloria Cubana Serie R Maduro
-La Gloria Cubana Serie R Estelí
-La Gloria Cubana Serie R Black
-La Gloria Cubana Artesanos de Tabaqueros
-La Gloria Cubana Artesanos Retro Especiale
-La Gloria Cubana Classic
-La Gloria Cubana Wavell
-La Gloria Cubana Spanish Press
-La Gloria Cubana Gilded Elite
-La Gloria Cubana Trunk Show
-La Gloria Cubana Estelí
-La Gloria Cubana Serie S
-La Gloria Cubana Medio Tiempo
-La Gloria Cubana Criollo de Oro
-La Herencia Cubana CORE
-La Herencia Cubana Oscuro Fuerte
-La Herencia Cubana Brasileña
-La Herencia Cubana CORE Corojo
-La Imperiosa Magicos
-La Imperiosa Dukes
-La Imperiosa Lancero
-La Palina Classic
-La Palina Family Series 
-La Palina Goldie
-La Palina Illumination
-La Palina Kill Bill
-La Palina Maduro 1896
-La Palina Mr. Sam
-La Palina Red Label
-La Palina White Label
-La Palina Bronze Label
-La Palina Black Label
-La Palina Fuego Verde
-La Palina El Diario
-La Palina Bill's Blend
-La Perla Habana Black Pearl Morado
-La Perla Habana Black Pearl Rojo
-La Perla Habana Black Pearl Oro
-La Perla Habana Black Pearl Cobre
-La Perla Habana White Pearl
-La Perla Habana 1515
-La Perla Habana Dos Capas
-La Vereda No. 1
-La Vereda No. 2
-La Vereda No. 3
-L'Atelier LAT 52
-L'Atelier LAT 54
-L'Atelier LAT 56
-L'Atelier Extension de la Racine
-L'Atelier MAD 44
-L'Atelier Selection Speciale
-L'Atelier Travailleurs
-L'Atelier Surrogates 
-Latitude Zero Signature
-Latitude Zero Ex
-Latitude Zero Los Rios
-Liga Privada No. 9
-Liga Privada T52
-Liga Privada Único Serie 
-Liga Privada H99 
-Liga Privada 10 Anniversario
-Liga Privada Undercrown 
-Long Live the King Mad Mofo
-Long Live the King Harem
-Long Live the King 11th Anniversary
-Long Live the King Manzanita
-Long Live the King Belicose
-Long Live the King Panama Custom
-Lost & Found Pepper Cream Soda
-Lost & Found Spam Artist
-Lost & Found Holy Brail
-Lost & Found Blind Man's Bluff (by Caldwell)
-Lost & Found Instant Classic
-Lost & Found ForeverFresh
-Lost & Found One Night Stand
-Lost & Found Cream Machine
-Lost & Found Swollen Cock
-Lost & Found Death Penalty
-Lost & Found Cookie Monster
-Lost & Found Give Me Your Lunch Money
-Macanudo Café
-Macanudo Maduro
-Macanudo Inspirado White
-Macanudo Inspirado Orange
-Macanudo Inspirado Black
-Macanudo Inspirado Red
-Macanudo Inspirado Green
-Macanudo Inspirado Tercio-Aged
-Macanudo Estate Reserve
-Macanudo Vintage 1968
-Macanudo Vintage 1979
-Macanudo Vintage 1984
-Macanudo Vintage 1993
-Macanudo Gold Label
-Macanudo Cru Royale
-Macanudo Hyde Park
-Macanudo Hampton Court
-Macanudo Ascots
-Made Man M1911 A1 
-Made Man Model 19 
-Made Man Model 870 
-Made Man SMG 1928 
-Made Man MK2 
-Man O' War Ruination
-Man O' War Virtue
-Man O' War Armada
-Man O' War Puro Authentico
-Man O' War Dark Aged Maduro
-Man O' War Abomination
-Man O' War Valkyrie
-Man O' War 10th Anniversary
-Man O' War Last Stand
-Man O' War Dark Horse
-Matilde Renacer
-Matilde Quadrata
-Matilde Oscura
-Matilde Serena
-Matilde Limited Selection 2016
-Matilde Limited Selection 2017
-Matilde Allegria
-Matilde San Andrés
-Micallef "a" 
-Micallef Black 
-Micallef Blue 
-Micallef Red 
-Micallef Purple 
-Micallef Green 
-Micallef White 
-Micallef #2 / 660 
-Micallef Connecticut 
-Micallef Experiencia La Crema 
-Micallef Herencia Habano 
-Micallef Herencia Maduro 
-Micallef Leyenda 
-Micallef Migdalia 
-Micallef Reata 
-Micallef Reserva 
-Micallef Torcedores 
-Montecristo Línea Clásica 
-Montecristo Línea Edmundo 
-Montecristo Línea Open 
-Montecristo Línea 1935 
-Montecristo Media Corona
-Montecristo Petit No. 2
-Montecristo Classic Series
-Montecristo White Series
-Montecristo White Series Vintage Connecticut
-Montecristo Platinum Series
-Montecristo Epic
-Montecristo Epic Vintage 12
-Montecristo 1935 Anniversary Nicaragua
-Montecristo 1935 Anniversary Edicion Diamante
-Montecristo Monte by Montecristo
-Montecristo Monte by Montecristo AJ Fernandez
-Montecristo Espada by Montecristo
-Montecristo Espada Signature
-Montecristo Espada Oscuro
-Montecristo Espada Conquistador
-Montecristo Nicaragua
-Montecristo 90th Anniversary
-Montecristo Bardstown
-Montecristo M
-Montecristo Media Noche
-Montecristo Pilotico Pepe Mendez
-My Father (Original)
-My Father Le Bijou 1922
-My Father The Judge
-My Father La Opulencia
-My Father Flor de Las Antillas
-My Father Flor de Las Antillas Maduro
-My Father La Antiguedad
-My Father La Gran Oferta
-My Father La Promesa
-My Father Connecticut
-My Father Fonseca
-My Father Fonseca Mexico Edition
-My Father La Lealtad
-My Father Garcia & Garcia
-My Father Vegas Cubanas
-My Father Jaime Garcia Reserva Especial
-My Father Don Pepin Garcia Original (Blue Label)
-My Father Don Pepin Garcia Cuban Classic (Black Label)
-My Father Don Pepin Garcia Series JJ
-My Father Don Pepin Garcia E.R.H.
-My Father Don Pepin Garcia 20th Anniversary
-My Father El Centurion
-My Father El Centurion H-2K-CT
-My Father Tabacos Baez Serie SF
-Nat Cicco Aniversario 1965 Liga No. 4
-Nat Cicco Casino Real
-Nat Cicco Cuban Legends
-Nat Cicco Elephant Ears
-Nat Cicco HHB Classic
-Nat Cicco HHB Gold
-Nat Cicco Original Rejects
-New World Oscuro (Original)
-New World Puro Especial
-New World Cameroon
-New World Dorado
-New World Decenio
-Nobel Petit Sumatra
-Nobel Petit Dominican
-Nobel Petit White Sumatra
-Nub  Single Roast 
-Nub  Double Roast 
-Nub  Triple Roast 
-Nub  Cain Nub 
-Nub  Cain F Nub
-Nub  Cain FF Nub
-Nub  Cain Daytona Nub
-Nub  Cain Connecticut Nub
-Nub  Nub Dub 
-Nub  Nub Plus 
-Nub  Oliva Serie V Nub
-Nub  Oliva Serie V Melanio Nub
-Old Henry (Original)
-Old Henry Gold Label
-Old Henry Pure Breed
-Old Henry Fumadores
-Oliva Serie V
-Oliva Serie V Melanio
-Oliva Serie V Melanio Maduro
-Oliva Serie O
-Oliva Serie O Maduro
-Oliva Serie G
-Oliva Serie G Maduro
-Oliva Connecticut Reserve
-Oliva Master Blends 3
-Oliva Gilberto Oliva Reserva
-Oliva Gilberto Oliva Reserva Blanc
-Oliva Flor de Oliva 
-Oliva Cain 
-Ortega Serie D 
-Ortega Cubao
-Ortega Wild Bunch 
-Ortega Cubano
-Ortega El Conejito 
-Ortega Minis
-Oscar Valladares 2012 by Oscar
-Oscar Valladares Altar Q
-Oscar Valladares Big Johnny
-Oscar Valladares Ciseron Edition
-Oscar Valladares Heaven & Hell 
-Oscar Valladares Island Jim
-Oscar Valladares Leaf by Oscar 
-Oscar Valladares McFly
-Oscar Valladares Raw Dog
-Oscar Valladares Super Fly 
-Oscar Valladares The Oscar 
-Oscar Valladares Wild Hunter
-O.S.O.K. (One Shot One Kill) Cabron
-O.S.O.K. (One Shot One Kill) Cabroncito
-O.S.O.K. (One Shot One Kill) Callejero
-O.S.O.K. (One Shot One Kill) Desmadroso
-O.S.O.K. (One Shot One Kill) Travieso
-O.S.O.K. (One Shot One Kill) Carbon
-O.S.O.K. (One Shot One Kill) Lancero
-O.S.O.K. (One Shot One Kill) Filero
-O.S.O.K. (One Shot One Kill) Chingon
-O.S.O.K. (One Shot One Kill) Trucha
-Padrón Series
-Padrón 1964 Anniversary Series
-Padrón Serie 1926 No. 1
-Padrón Serie 1926 No. 2
-Padrón Serie 1926 No. 6
-Padrón Serie 1926 No. 9
-Padrón Serie 1926 No. 35
-Padrón Serie 1926 No. 47
-Padrón Serie 1926 No. 90
-Padrón Serie 1926 40th Anniversary
-Padrón Serie 1926 75th Anniversary
-Padrón Serie 1926 80th Anniversary
-Padrón Family Reserve 44 Years
-Padrón Family Reserve 45 Years
-Padrón Family Reserve 46 Years
-Padrón Family Reserve 50 Years
-Padrón Family Reserve 85 Years
-Padrón Family Reserve 50th Anniversary ("The Hammer")
-Padrón Damaso No. 8
-Padrón Damaso No. 12
-Padrón Damaso No. 15
-Padrón Damaso No. 17
-Padrón Damaso No. 32
-Padrón Damaso No. 34
-Padrón Black
-Partagás Classic
-Partagás Black Label
-Partagás Cortado
-Partagás Valle Verde
-Partagás Y Nada Más Santiago
-Partagás Y Nada Más Cibao 
-Partagás Línea Clásica
-Partagás Serie D
-Partagás Serie E
-Partagás Serie P
-Partagás Línea Maduro
-Partagás Línea Maestra
-Partagás Añejados
-Partagás Ediciones Limitadas
-Partagás Reserva
-Partagás Gran Reserva
-Partagás La Casa del Habano Exclusives
-Partagás Habanos Specialist Exclusives 
-Paul Garmirian Gourmet Series
-Paul Garmirian Gourmet Series II
-Paul Garmirian Gourmet Series III (30th Anniversary)
-Paul Garmirian 15th Anniversary
-Paul Garmirian 20th Anniversary
-Paul Garmirian 25th Anniversary
-Paul Garmirian 30th Anniversary
-Paul Garmirian 35th Anniversary
-Paul Garmirian Gourmet Series Soiree
-Paul Garmirian Gourmet Series Reserva Exclusiva
-Paul Garmirian Gourmet Series 
-Paul Garmirian Artisan's Selection
-Paul Garmirian Artisan's Passion 
-Perdomo Legacy
-Perdomo 30th Anniversary
-Perdomo Double Aged 12-Year Vintage
-Perdomo 20th Anniversary
-Perdomo Champagne 10th Anniversary
-Perdomo Habano Bourbon Barrel-Aged
-Perdomo Lot 23
-Perdomo Fresco
-Perdomo Estate Selección Vintage
-Perdomo Small Batch Series
-Perdomo Special Craft Series
-Perdomo Factory Tour Blend
-Perdomo Inmenso Seventy 
-Phillies Blunt
-Phillies Titan
-Phillies Perfecto
-Phillies Panatella
-Phillies Cheroot
-Phillies Cigarillos
-Phillies Filtered Cigars
-Phillies Black Max
-Phillies Sweet
-Phillies Tip
-Phillies Mexicali Slim
-Phillies Mini Blunt
-Phillies Finest 
-Pichardo Clásico 
-Pichardo Reserva Familiar 
-Pichardo Reserva Familiar San Andrés 
-Pinar del Río (PDR) 1878
-Pinar del Rio (PDR) A. Flores 1975 Serie Privada
-Pinar del Rio (PDR) A. Flores Gran Reserva
-Pinar del Rio (PDR) A. Flores AFR-75
-Pinar del Rio (PDR) El Criollito
-Pinar del Rio (PDR) El Trovador
-Pinar del Rio (PDR) Flores y Rodriguez
-Pinar del Rio (PDR) Connecticut Valley Reserve
-Pinar del Rio (PDR) Small Batch Reserve
-Pinar del Rio (PDR) Capa Habano
-Pinar del Rio (PDR) Capa Oscura
-Pinar del Rio (PDR) A Crop
-Pinar del Rio (PDR) Reserva Limitada
-Pinar del Rio (PDR) Reserva Superior
-Pinar del Rio (PDR) Clasico
-Pinar del Rio (PDR) Obsidian
-Pinar del Rio (PDR) El Vinyet 
-Plasencia Alma Fuerte
-Plasencia Alma Fuerte Colorado Claro
-Plasencia Alma del Campo
-Plasencia Alma del Fuego
-Plasencia Alma del Cielo
-Plasencia Reserva Original
-Plasencia Reserva 1898
-Plasencia Cosecha 146
-Plasencia Cosecha 149
-Plasencia Cosecha 151
-Plasencia Year of the Rabbit
-Plasencia Year of the Dragon
-Plasencia Year of the Horse
-Plasencia Year of the Ox
-Plasencia Year of the Tiger
-Plasencia Year of the Snake
-Plasencia Sixto Collection
-Plasencia Hexágono Collection
-Plasencia Plasencia 5
-Plasencia Triunfal 
-Por Larrañaga Clásicos
-Por Larrañaga Picadores
-Por Larrañaga Galanes
-Por Larrañaga Montecarlo
-Por Larrañaga Petit Coronas
-Por Larrañaga Panetelas
-Por Larrañaga Petit Cetros
-Por Larrañaga Picadores LCDH
-Por Larrañaga Magnificos (Regional Edition)
-Por Larrañaga Robusto de Larrañaga (Regional Edition)
-Por Larrañaga Belicosos Extra (Regional Edition)
-Por Larrañaga Encantos (Regional Edition)
-Por Larrañaga Valiosos (Regional Edition)
-Por Larrañaga Los Andes (Regional Edition)
-Por Larrañaga Opera (Regional Edition)
-Punch Clásico
-Punch Signature
-Punch Rare Corojo
-Punch Rare Corojo 25th Anniversary
-Punch Gran Puro
-Punch Gran Puro Nicaragua
-Punch Grand Cru
-Punch Deluxe
-Punch Diablo
-Punch Golden Era
-Punch Knuckle Buster Habano
-Punch Knuckle Buster Maduro
-Punch Knuckle Buster Shade
-Punch Mr. Punch 
-Quesada Reserva Privada
-Quesada Reserva Privada Oscuro
-Quesada Reserva Privada Barberpole
-Quesada 1974
-Quesada Tributo
-Quesada Oktoberfest
-Quesada Keg
-Quesada España
-Quesada 40th Anniversary
-Quesada 70th Anniversary
-Quesada Petites
-Quesada Suspiro 
-Quintero Favoritos
-Quintero Favoritos Tubos
-Quintero Petit Quintero
-Quintero Londres Extra
-Quintero Brevas
-Quintero Nacionales
-Quintero Panetelas
-Quintero Tubulares 
-Quintero y Hno Favoritos
-Quintero y Hno Favoritos Tubos
-Quintero y Hno Petit Quintero
-Quintero y Hno Londres Extra
-Quintero y Hno Brevas
-Quintero y Hno Nacionales
-Quintero y Hno Panetelas
-Quintero y Hno Tubulares 
-Quorum ClassicQuorum Shade
-Ramon Allones Specially Selected
-Ramon Allones Gigantes
-Ramon Allones Small Club Coronas
-Ramon Allones Allones No. 2 (Limited Edition)
-Ramon Allones Absolutos (Limited Edition)
-Ramon Allones Private Stock 230
-Ramon Allones Allones Extra (Limited Edition)
-Ramon Allones 8-9-8
-Ramon Allones Belicosos
-Ramon Allones Selección Suprema
-Ramon Allones Eminencia
-Ramon Allones Estupendo
-Ramon Allones Gran Robusto
-Ramon Allones Especial de Allones
-Ramon Allones Phoenicios
-Ramon Allones Grande
-Ramon Allones Celestial Fino
-Ramon Allones Petit Únicos
-Ramon Allones Beritus
-Ramon Allones Patagón 
-Regius Black Label
-Regius Claro
-Regius Exclusivo USA Blue
-Regius Exclusivo USA Red
-Regius Exclusivo USA White
-Regius Damaris
-Regius Orchant Selección
-Regius Serie Limitada 
-Rene Julio IV
-Rene Perlas
-Rene Perlita 
-Rey del Mundo (also El Rey del Mundo) Appointment Brazil
-Rey del Mundo (also El Rey del Mundo) Appointment Cameroon
-Rey del Mundo (also El Rey del Mundo) Shade Grown
-Rey del Mundo (also El Rey del Mundo) Classic
-Rey del Mundo (also El Rey del Mundo) Oscuro
-Rey del Mundo (also El Rey del Mundo) King of the World 
-Rey del Mundo (also El Rey del Mundo) Choix Supreme
-Rey del Mundo (also El Rey del Mundo) Demi Tasse
-Rey del Mundo (also El Rey del Mundo) Royal Series (La Casa del Habano Exclusive) 
-Ritual Conquistador Natural
-Ritual Virrey Poderoso
-Ritual Virrey Intrigante
-Ritual nca Amazónico
-Ritual Inca Delicioso
-Rocky Patel A.L.R.
-Rocky Patel A.L.R. Second Edition
-Rocky Patel A.L.R. Third Edition
-Rocky Patel Aged Limited Rare
-Rocky Patel Dark Star
-Rocky Patel Decade
-Rocky Patel Disciple
-Rocky Patel Emerald
-Rocky Patel Fifty
-Rocky Patel Grand Reserve
-Rocky Patel Hamlet
-Rocky Patel Java
-Rocky Patel Java Latte
-Rocky Patel Java Mint
-Rocky Patel LB1
-Rocky Patel Number 6
-Rocky Patel Olde World Reserve
-Rocky Patel Quarter Century
-Rocky Patel Sixty
-Rocky Patel The Edge
-Rocky Patel The Edge 20th Anniversary
-Rocky Patel The Edge Corojo
-Rocky Patel The Edge Habano
-Rocky Patel The Edge 
-Rocky Patel The Edge Lite
-Rocky Patel Vintage 1990
-Rocky Patel Vintage 1992
-Rocky Patel Vintage 1999
-Rocky Patel White Label
-Rocky Patel White Label Maduro
-Rocky Patel White Label Connecticut
-Rocky Patel White Label Habano
-Rocky Patel Freedom
-Rocky Patel Gold Label
-Rocky Patel Royale
-Rocky Patel Prohibition
-Rocky Patel Mulligans
-Rocky Patel Winter Collection
-Rocky Patel Tavicusa
-Rocky Patel Conviction
-Rocky Patel DBS
-Rocky Patel Gold Toro Tube
-Rocky Patel Cargo
-Rocky Patel Seed to Smoke
-Rocky Patel Fifteenth Anniversary
-Rocky Patel Twentieth Anniversary
-Rocky Patel Fifteenth Anniversary Cameroon
-Rocky Patel Fifty-Five
-Rocky Patel Forty
-Rocky Patel Burn
-Rocky Patel Catch 22
-Rocky Patel Honduran Classic
-Rocky Patel Vintage Factory Select
-Rocky Patel Freedom Connecticut
-Rocky Patel Freedom Maduro
-Rocky Patel Freedom Habano
-Rocky Patel World Championship Series
-Rocky Patel Mulligans Eagle Reserve
-Rocky Patel Conviction Gold Label
-Rocky Patel Emerald Sixty 
-Rodriguez Primera Clase
-Rodriguez Reserva Privada
-Rodriguez Series 84
-Rodriguez Series 84 Maduro
-Rodriguez Vintage 1925 Series 
-Rojas Bluebonnets
-Rojas Breakfast Tacos
-Rojas Street Tacos Barbacoa
-Rojas Street Tacos Carnitas
-Rojas Street Tacos Al Pastor
-Rojas Cinco de Mayo
-Rojas Los Tejanos
-Rojas Statement
-Rojas Gallo Pinto
-Rojas Dark Sumatra
-Rojas Super Salomon
-Rojas Nicaragua
-Rojas Q Biche
-Rojas Don Alfredo
-Rojas JRojas Gold
-Rojas 5H4
-Rojas Quiet Morning 
-Romeo y Julieta 1875
-Romeo y Julieta Reserve
-Romeo y Julieta Reserva Real
-Romeo y Julieta Reserva Real Maduro
-Romeo by Romeo y Julieta
-Romeo y Julieta Vintage
-Romeo y Julieta Aniversario
-Romeo Añejo
-Romeo y Julieta Línea de Oro
-Romeo y Julieta Wide Churchill
-Romeo y Julieta Short Churchill
-Romeo y Julieta Petit Churchill
-Romeo y Julieta Romeo No. 1
-Romeo y Julieta Romeo No. 2
-Romeo y Julieta Romeo No. 3
-Romeo y Julieta Mille Fleurs
-Romeo y Julieta Petit Royales
-Romeo y Julieta Romeo de Luxe
-Romeo y Julieta Exhibición No. 3
-Romeo y Julieta Exhibición No. 4
-Romeo y Julieta Exhibición No. 5
-Romeo y Julieta Cedros de Luxe No. 1
-Romeo y Julieta Cedros de Luxe No. 2
-Romeo y Julieta Cedros de Luxe No. 3
-Romeo y Julieta Belicosos
-Romeo y Julieta Cazadores
-Romeo y Julieta Sports Largos
-Romeo y Julieta Coronitas en Cedro
-Romeo y Julieta Club Kings
-Romeo y Julieta Capuletos (Limited Edition)
-Romeo y Julieta Hidalgos (LCDH Exclusive)
-Romeo y Julieta Maravillas 8 (LCDH Exclusive) 
-Romacraft (RoMa Craft Tobac) Aquitaine 
-Romacraft (RoMa Craft Tobac) Baka
-Romacraft (RoMa Craft Tobac) CroMagnon
-Romacraft (RoMa Craft Tobac) CroMagnon Aquitaine
-Romacraft (RoMa Craft Tobac) CroMagnon PA Broadleaf
-Romacraft (RoMa Craft Tobac) Intemperance BA XXI
-Romacraft (RoMa Craft Tobac) Intemperance EC XVIII
-Romacraft (RoMa Craft Tobac) Intemperance Whiskey Rebellion 1794
-Romacraft (RoMa Craft Tobac) Intemperance Volstead VO 1920
-Romacraft (RoMa Craft Tobac) La Maestranza
-Romacraft (RoMa Craft Tobac) Neanderthal
-Romacraft (RoMa Craft Tobac) WunderLust
-Romacraft (RoMa Craft Tobac) CRAFT
-Romacraft (RoMa Craft Tobac) Weaselitos
-Romacraft (RoMa Craft Tobac) Black Irish (Limited Release)
-Royal Agio Balmoral
-Royal Agio Agio
-Royal Agio Mehari's
-Royal Agio Panter
-Royal Agio De Huifkar
-Royal Agio San Pedro de Macorís
-Royal Agio Wintermans
-Royal Agio Colts
-Royal Agio Balmoral Añejo XO
-Royal Agio Balmoral Serie Signaturas
-Royal Agio Balmoral Dominican Selection
-Royal Agio Balmoral Royal Selection
-Royal Agio Balmoral Collection Series
-Saint Luis Rey Reserva Especial
-Saint Luis Rey Serie G
-Saint Luis Rey Natural Broadleaf
-Saint Luis Rey Carenas
-Saint Luis Rey Eiroa 30th Anniversary 
-Saint Luis Rey Regios
-Saint Luis Rey Tesoros
-Saint Luis Rey Double Coronas
-Saint Luis Rey España Exclusivo (Regional Edition) 
-Saga Blend No. 7
-Saga Solaz
-Saga Short Tales
-Saga Golden Age
-Saga Golden Age Yamasá
-Saga Ámbar 
-San Cristobal Elegancia
-San Cristobal Revelation
-San Cristobal Quintessence 
-San Cristobal El Príncipe
-San Cristobal La Punta
-San Cristobal La Fuerza
-San Cristobal El Morro
-San Cristobal Mercaderes
-San Cristobal Oficios
-San Cristobal Murallas
-San Cristobal Prado 
-Santa Damiana Classic
-Santa Damiana Selección Especial
-Santa Damiana Gold Edition
-Santa Damiana 30 Aniversario 
-Sosa 60 by Sosa
-Sosa Auric Perfectum
-Sosa Box Pressed 
-Sosa Box Pressed Spiced Habano
-Sosa Classic Habano
-Sosa Classic 
-Sosa Exclusive Series 
-Sosa Family Selection
-Sosa Imperio Cubano Miami Natural
-Sosa Imperio Cubano Miami 
-Sosa Limitado
-Sosa Limitado 50th Anniversary
-Sosa Macabi by Sosa
-Sosa Santa Julia
-Sosa Super Selection
-Sosa Third Harvest
-Sosa Underground Habano
-Southern Draw Firethorn
-Southern Draw Kudzu
-Southern Draw Rose of Sharon
-Southern Draw Jacob's Ladder
-Southern Draw Jacob's Ladder Brimstone
-Southern Draw Cedrus
-Southern Draw QuickDraw 
-Southern Draw QuickDraw Pennsylvania
-Southern Draw QuickDraw Habano
-Southern Draw Desert Rose
-Southern Draw Kudzu Lustrum
-Southern Draw Ignite
-Southern Draw Manzanita
-Southern Draw 300 Hands
-Southern Draw 300 Manos
-Southern Draw Morning Glory
-Southern Draw Evening Primrose
-Southern Draw Decennium 
-Surrogates Animal Cracker
-Surrogates Bone Crusher
-Surrogates Skull Breaker
-Surrogates Tramp Stamp
-Surrogates Crystal Baller
-Surrogates 7th Sam
-Surrogates Big Ten
-Surrogates Cracker Crumbs
-Surrogates Satin Glove
-Surrogates Eight Baller
-Surrogates Closing Time
-Surrogates Back Line 
-Tabak Especial Dulce
-Tabak Especial Negra
-Tabak Especial Café con Leche (Limited Edition)
-Tabak Especial Café Corretto (Limited Edition)
-Tabak Especial Red Eye (Limited Edition) 
-Tatuaje Selección de Cazador (Brown Label)
-Tatuaje Reserva
-Tatuaje Reserva Broadleaf
-Tatuaje Reserva SW
-Tatuaje Reserva Miami
-Tatuaje Reserva Nicaragua
-Tatuaje Black Label
-Tatuaje Havana VI
-Tatuaje Cabaiguan
-Tatuaje Cabaiguan Guapos
-Tatuaje Fausto
-Tatuaje Avión
-Tatuaje La Riqueza
-Tatuaje El Triunfador
-Tatuaje Ambos Mundos
-Tatuaje La Casita Criolla
-Tatuaje Verocu
-Tatuaje Tattoo
-Tatuaje Nuevitas
-Tatuaje Series P
-Tatuaje Negociant
-Tatuaje 15th Anniversary
-Tatuaje Cojonú
-Tatuaje Monster Series
-Tatuaje Monster Mash
-Tatuaje Pudgy Monsters
-Tatuaje Little Monsters
-Tatuaje TAA Exclusive
-Tatuaje Limited Series
-Tatuaje RC Series
-Tatuaje L'Atelier La Union
-Tatuaje Tuxtla
-Tatuaje Pork Tenderloin
-Tatuaje Pork Chop
-Tatuaje Meatball
-Tatuaje Belle Encre
-Tatuaje Cabiguan WCD
-Tatuaje Black Petit Lancero 
-Te-Amo Clásico
-Te-Amo WSS (World Selection Series)
-Te-Amo Atelier
-Te-Amo Revolution
-Te-Amo Original San Andrés Valley Cigar
-Te-Amo Andrea's 
-The Tabernacle
-The Tabernacle Broadleaf
-The Tabernacle Havana Seed CT No. 142
-The Tabernacle Knight Commander
-The Tabernacle David & Goliath 
-Toraño Casa Toraño
-Toraño Exodus 1959
-Toraño Exodus 1959 Gold
-Toraño Exodus 1959 Silver
-Toraño Exodus 1959 50 Years
-Toraño Vault
-Toraño Master
-Toraño Signature
-Toraño Reserva Decadencia
-Toraño Noventa
-Toraño Salutem
-Toraño Virtuoso
-Toraño Loyal
-Toraño Dominico
-Toraño Single Region Series
-Toraño Carlos Toraño Reserva Selecta
-Toraño Carlos Toraño Collection
-Toraño Casa Toraño 
-Toraño Reserva 1916
-Toscano Master Aged Collection
-Toscano Originale
-Toscano Garibaldi
-Toscano Modigliani
-Toscano Classico
-Toscano Extravecchio
-Toscano Antico
-Toscano Terre
-Toscano Antica Riserva
-Toscano Toscanello
-Toscano Toscanello Speciale
-Toscano Toscanello Aroma Caffè
-Toscano Toscanello Aroma Vaniglia
-Toscano Toscanello Aroma Cioccolato
-Toscano Toscanello Aroma Limoncello
-Toscano Toscanello Rosso Caffè Macchiato
-Toscano Toscanello Hazelnut Raffinato
-Toscano Maestro Allegro
-Toscano Maestro Concerto
-Toscano Maestro Sinfonia
-Toscano Brenta 
-The Traveler Habano
-The Traveler First Class
-The Traveler America
-The Traveler Africa
-The Traveler Asia 
-Trinidad
-Trinidad Espiritu Series No. 1
-Trinidad Espiritu Series No. 2
-Trinidad Espiritu Series No. 3
-Trinidad Espiritu Miami Edition
-Trinidad Santiago
-Trinidad Havana Reserve 
-Trinidad Fundadores
-Trinidad Reyes
-Trinidad Coloniales
-Trinidad Ingenios
-Trinidad Vigía
-Trinidad Topes
-Trinidad Media Luna
-Trinidad Esmeralda
-Trinidad La Trova
-Trinidad Casilda
-Trinidad Cabildos (Edición Limitada)
-Trinidad Villa 
-Trinidad Corcel (Year of the Horse)
-Trinidad Short Robusto T
-Trinidad Topes Edición Limitada
-Trinidad Robustos Extra (Limited Release) 
-Two Guys Abuelo
-Two Guys Dos Hombres
-Two Guys Dos Hombres Cabinet
-Two Guys Garofalo
-Two Guys Garofalo La Famiglia
-Two Guys La Gianna
-Two Guys La Gianna Angelic
-Two Guys United
-Two Guys Buffalo TEN
-Two Guys Classic 
-Ugly Coyote Original
-Ugly Coyote Berry
-Ugly Coyote Cherry
-Ugly Coyote Chocolate
-Ugly Coyote Honey
-Ugly Coyote Honey Berry
-Ugly Coyote Vanilla
-Ugly Coyote Black
-Ugly Coyote Green
-Ugly Coyote Raw 
-Undercrown 10
-Undercrown Dojo Dogma
-Undercrown Flying Pig
-Undercrown ShadyXX 
-Upmann (H. Upmann) 1844 Classic
-Upmann (H. Upmann) 1844 Reserve
-Upmann (H. Upmann) 1844 Añejo
-Upmann (H. Upmann) AJ Fernandez
-Upmann (H. Upmann) Hispaniola by Jose Mendez
-Upmann (H. Upmann) Legacy
-Upmann (H. Upmann) Vintage Cameroon
-Upmann (H. Upmann) The Banker
-Upmann (H. Upmann) Nicaragua by AJ Fernandez
-Upmann (H. Upmann) Reserve Maduro
-Upmann (H. Upmann) Connecticut
-Upmann (H. Upmann) The Banker DayTrader
-Upmann (H. Upmann) The Banker Arbitrage
-Upmann (H. Upmann) The Banker Currency
-Upmann (H. Upmann) The Banker Annuity 
-Upmann (H. Upmann) Half Corona
-Upmann (H. Upmann) Epicures
-Upmann (H. Upmann) Coronas Junior
-Upmann (H. Upmann) Coronas Major
-Upmann (H. Upmann) Coronas Minor
-Upmann (H. Upmann) Petit Coronas
-Upmann (H. Upmann) Regalias
-Upmann (H. Upmann) Magnum 46
-Upmann (H. Upmann) Magnum 50
-Upmann (H. Upmann) Magnum 54
-Upmann (H. Upmann) Magnum 56
-Upmann (H. Upmann) Magnum Finite
-Upmann (H. Upmann) Connoisseur No. 1
-Upmann (H. Upmann) Connoisseur No. 2
-Upmann (H. Upmann) Connossieur A
-Upmann (H. Upmann) Connossieur B
-Upmann (H. Upmann) Sir Winston
-Upmann (H. Upmann) Royal Robustos
-Upmann (H. Upmann) Noellas
-Upmann (H. Upmann) Majestic
-Upmann (H. Upmann) Monarchs
-Upmann (H. Upmann) Super Magnum
-Upmann (H. Upmann) Robustos Anejados
-Valacari Neoclassic
-Valacari Neoclassic Connecticut
-Valacari Nobility
-Valacari Lumineer
-Valacari Astronomia
-Valacari Decimus
-Valacari The Messenger
-Valacari Mark Series
-VegaFina Classic
-VegaFina Fortaleza 2
-VegaFina Nicaragua
-VegaFina 1998
-VegaFina Fusion
-VegaFina Year of the Rabbit
-VegaFina Year of the Dragon
-VegaFina Year of the Horse
-VegaFina Wonders Collection
-VegaFina Exclusivo USA
-VegaFina Inmenso
-VegaFina Limited Edition 
-Vegas de Santiago El Magnifico Heritage
-Vegas de Santiago El Unico D8
-Vegas de Santiago Don Luis Gold Label
-Vegas de Santiago El Mystico Chaman
-Vegas de Santiago El Puro Red Label
-Vegas de Santiago El Primero White Label 
-Vegas Robaina Famosos
-Vegas Robaina Unicos
-Vegas Robaina Don Alejandro
-Vegas Robaina Familiar
-Vegas Robaina Maestros
-Vegas Robaina Clasicos 
-Viaje Platino
-Viaje Oro
-Viaje Oro Reserva
-Viaje Exclusivo
-Viaje Exclusivo Nicaragua
-Viaje White Label
-Viaje Skull and Bones
-Viaje Stuffed Turkey
-Viaje Summerfest
-Viaje Holiday Blend
-Viaje Zombie
-Viaje Zombie Antidote
-Viaje C4
-Viaje TNT
-Viaje Satori
-Viaje Circa '45
-Viaje Fifty • Fifty
-Viaje Honey & Hand Grenades (HHG)
-Viaje Super Shot
-Viaje Double Edge Sword
-Viaje Collaboration Blend
-Viaje Craft Series
-Viaje Fifteen Plus Two and a Half Anniversary
-Viaje Birthday Blend
-Viaje Bird on a Branch
-Viaje Fireworks
-Viaje Late Harvest
-Viaje Chef's Cut
-Viaje The Crow
-Viaje Furiosa
-Viaje Pepper South
-Viaje Leaded
-Viaje LP Series
-Viaje Christmas Blend
-Viaje Skull & Bones WMD
-Viaje Skull & Bones MOAB
-Viaje Skull & Bones FOAB
-Viaje Skull & Bones Big Ivan
-Viaje Skull & Bones Fat Man
-Viaje Skull & Bones Little Boy 
-Victor Sinclair Clasicos
-Victor Sinclair Vintage
-Victor Sinclair Triple Corojo
-Victor Sinclair Connecticut Yankee
-Victor Sinclair Primeros
-Victor Sinclair Serie '55' White Label Connecticut
-Victor Sinclair Serie '55' Imperial Connecticut
-Victor Sinclair Serie '55' Imperial Habano
-Victor Sinclair Serie '55' Imperial Maduro
-Victor Sinclair Serie '55' Corojo
-Victor Sinclair Double Maduro
-Victor Sinclair Double Shots
-Victor Sinclair 20th Anniversary
-Victor Sinclair Anniversary Series 1989
-Victor Sinclair Bohemian Bamboo 
-Villiger 1888
-Villiger 125th Anniversary
-Villiger 1888 Nicaragua
-Villiger Cuellar Black Forest
-Villiger Cuellar Connecticut Kreme
-Villiger Cuellar Caribe
-Villiger Cuellar Cigar Factory
-Villiger Cuellar Colorado
-Villiger Cuellar Maduro
-Villiger Cuellar White Label
-Villiger Do Brasil
-Villiger Export
-Villiger Kiel
-Villiger La Capitana
-Villiger La Flor de Ynclan
-Villiger Miami
-Villiger Selecto
-Villiger Talanga
-Villiger TAA Exclusive
-Villiger Trill
-Villiger de Nicaragua
-Villiger Celebration
-Villiger Premium No. 7
-Villiger Original Krumme
-Villiger Mini
-Villiger Premium Sumatra
-Villiger Black Mini
-Villiger Green Mini
-Villiger Red Mini
-Villiger Blue Mini
-Villiger White Mini
-Vintage 1990
-Vintage 1992
-Vintage 1999
-Vintage 2003
-Vintage 2006 
-Warped La Colmena
-Warped Don Reynaldo
-Warped Serie Gran Reserva 1988 (GR88)
-Warped Maestro del Tiempo
-Warped Flor del Valle
-Warped La Hacienda
-Warped El Oso
-Warped Corto
-Warped Futuro
-Warped Guardian of the Farm
-Warped Guardian of the Farm Cerberus
-Warped Companion
-Warped Chinchalle
-Warped Lirio Rojo
-Warped Nicotina
-Warped New Day
-Warped Venture 1492
-Warped Sarto
-Warped Villa Sombra
-Warped Moon Garden
-Warped Eagles Descent
-Warped Isla del Cocodrilo
-Warped Cloud Hopper
-Warped La Relatos
-Warped Devil's Hands 
-West Tampa Tobacco Co. West Tampa White
-West Tampa Tobacco Co. West Tampa Black
-West Tampa Tobacco Co. West Tampa Red
-West Tampa Tobacco Co. Circle of Life
-West Tampa Tobacco Co. Devil Crab
-West Tampa Tobacco Co. Attic Series
-West Tampa Tobacco Co. Boliche Blvd.
-West Tampa Tobacco Co. Chef Rick 
-Wildfire The Single
-Wildfire The Revivalist
-Wildfire Artaois
-Wildfire Wanderer
-Wildfire The Intro
-Wildfire The Hook
-Wildfire B-Sides
-Wildfire Dead Drift
-Wildfire Fault Line 
-Year of the Rat
-Year of the Ox
-Year of the Tiger
-Year of the Rabbit
-Year of the Dragon
-Year of the Snake
-Year of the Horse
-Year of the Goat
-Year of the Monkey
-Year of the Rooster
-Year of the Dog
-Year of the Pig 
-Zino Nicaragua
-Zino Honduras
-Zino Platinum Scepter Series
-Zino Platinum Crown Series
-Zino Platinum Chubby Series
-Zino Platinum Exclusive Series
-Zino Platinum Z-Class
-Zino Red (Cigarillos)
-Zino Mini Cigarillos
-Zino Classic (discontinued) 
+                <div class="section-header" style="margin-top: 32px;">
+                    <div class="section-title">Recent Logs</div>
+                    <div class="section-link" onclick="switchTab('view-journal', 2)">See All</div>
+                </div>
+                
+                <div id="home-recent-list">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
+                        <span>No recent logs</span>
+                    </div>
+                </div>
+            </section>
 
+            <!-- HUMIDOR / SUPPLY CHAIN SCREEN -->
+            <section id="view-humidor" class="view-section">
+                
+                <div class="section-header" style="margin-top: 0;">
+                    <div class="section-title">Store New Acquisition</div>
+                </div>
 
-            `;
-const rawCigarList = rawCigarText.split('\n');
-            // Clean up any accidental duplicates or blank lines
-            const cleanList = [...new Set(rawCigarList.map(c => c.trim()).filter(c => c !== ""))];
+                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                    <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; flex: 1;">
+                    <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Vitola</option>
+                        <optgroup label="Parejo (Straight)">
+                            <option value="Petit Corona">Petit Corona</option>
+                            <option value="Corona">Corona</option>
+                            <option value="Corona Gorda">Corona Gorda</option>
+                            <option value="Lonsdale">Lonsdale</option>
+                            <option value="Panatela">Panatela</option>
+                            <option value="Lancero">Lancero</option>
+                            <option value="Rothschild">Rothschild</option>
+                            <option value="Robusto">Robusto</option>
+                            <option value="Petit Robusto">Petit Robusto</option>
+                            <option value="Toro">Toro</option>
+                            <option value="Gordo">Gordo</option>
+                            <option value="Churchill">Churchill</option>
+                            <option value="Double Corona">Double Corona</option>
+                            <option value="Presidente">Presidente</option>
+                            <option value="Gigante">Gigante</option>
+                        </optgroup>
+                        <optgroup label="Figurado (Shaped)">
+                            <option value="Belicoso">Belicoso</option>
+                            <option value="Torpedo">Torpedo</option>
+                            <option value="Pyramid">Pyramid</option>
+                            <option value="Perfecto">Perfecto</option>
+                            <option value="Salomon">Salomon</option>
+                            <option value="Diadema">Diadema</option>
+                            <option value="Culebra">Culebra</option>
+                            <option value="Chisel">Chisel</option>
+                        </optgroup>
+                    </select>
+                    <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <select id="vault-wrapper" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Wrapper</option>
+                        <option value="Connecticut">Connecticut</option>
+                        <option value="Corojo">Corojo</option>
+                        <option value="Habano">Habano</option>
+                        <option value="Maduro">Maduro</option>
+                        <option value="Oscuro">Oscuro</option>
+                        <option value="Cameroon">Cameroon</option>
+                        <option value="Candela">Candela</option>
+                        <option value="Sumatra">Sumatra</option>
+                        <option value="Broadleaf">Broadleaf</option>
+                        <option value="Rosado">Rosado</option>
+                    </select>
+                    <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
+                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                    </div>
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
+                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 16px; margin-bottom: 16px;">
+                    <select id="vault-rating" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Rating (1-10)</option>
+                        <option value="10">10.00</option>
+                        <option value="9.75">9.75</option>
+                        <option value="9.5">9.50</option>
+                        <option value="9.25">9.25</option>
+                        <option value="9">9.00</option>
+                        <option value="8.75">8.75</option>
+                        <option value="8.5">8.50</option>
+                        <option value="8.25">8.25</option>
+                        <option value="8">8.00</option>
+                        <option value="7.75">7.75</option>
+                        <option value="7.5">7.50</option>
+                        <option value="7.25">7.25</option>
+                        <option value="7">7.00</option>
+                        <option value="6.75">6.75</option>
+                        <option value="6.5">6.50</option>
+                        <option value="6.25">6.25</option>
+                        <option value="6">6.00</option>
+                        <option value="5.75">5.75</option>
+                        <option value="5.5">5.50</option>
+                        <option value="5.25">5.25</option>
+                        <option value="5">5.00</option>
+                        <option value="4.75">4.75</option>
+                        <option value="4.5">4.50</option>
+                        <option value="4.25">4.25</option>
+                        <option value="4">4.00</option>
+                        <option value="3.75">3.75</option>
+                        <option value="3.5">3.50</option>
+                        <option value="3.25">3.25</option>
+                        <option value="3">3.00</option>
+                        <option value="2.75">2.75</option>
+                        <option value="2.5">2.50</option>
+                        <option value="2.25">2.25</option>
+                        <option value="2">2.00</option>
+                        <option value="1.75">1.75</option>
+                        <option value="1.5">1.50</option>
+                        <option value="1.25">1.25</option>
+                        <option value="1">1.00</option>
+                    </select>
+                </div>
+
+                <!-- Hidden Input and Visual Upload Button -->
+                <input type="file" id="vault-image-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleCigarImageUpload(event, 'vault')">
+                <button id="vault-photo-btn" class="btn-secondary" onclick="document.getElementById('vault-image-upload').click()">
+                    <i class="fa-solid fa-camera"></i> Add Picture
+                </button>
+                
+                <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
+
+                <div class="section-header" style="margin-top: 32px;">
+                    <div class="section-title">Aging Timeline</div>
+                </div>
+
+                <div id="humidor-inventory-list" style="margin-bottom: 40px;">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
+                        <span>Humidor is currently empty</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- JOURNAL SCREEN -->
+            <section id="view-journal" class="view-section">
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                    <input type="date" id="log-date" class="form-input" style="margin-bottom: 0;">
+                    <input type="text" id="log-brand" class="form-input" placeholder="Brand & Line (e.g., Perdomo 10th Anniv)" style="margin-bottom: 0;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <select id="log-vitola" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Vitola</option>
+                        <optgroup label="Parejo (Straight)">
+                            <option value="Petit Corona">Petit Corona</option>
+                            <option value="Corona">Corona</option>
+                            <option value="Corona Gorda">Corona Gorda</option>
+                            <option value="Lonsdale">Lonsdale</option>
+                            <option value="Panatela">Panatela</option>
+                            <option value="Lancero">Lancero</option>
+                            <option value="Rothschild">Rothschild</option>
+                            <option value="Robusto">Robusto</option>
+                            <option value="Petit Robusto">Petit Robusto</option>
+                            <option value="Toro">Toro</option>
+                            <option value="Gordo">Gordo</option>
+                            <option value="Churchill">Churchill</option>
+                            <option value="Double Corona">Double Corona</option>
+                            <option value="Presidente">Presidente</option>
+                            <option value="Gigante">Gigante</option>
+                        </optgroup>
+                        <optgroup label="Figurado (Shaped)">
+                            <option value="Belicoso">Belicoso</option>
+                            <option value="Torpedo">Torpedo</option>
+                            <option value="Pyramid">Pyramid</option>
+                            <option value="Perfecto">Perfecto</option>
+                            <option value="Salomon">Salomon</option>
+                            <option value="Diadema">Diadema</option>
+                            <option value="Culebra">Culebra</option>
+                            <option value="Chisel">Chisel</option>
+                        </optgroup>
+                    </select>
+                    <input type="number" id="log-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <select id="log-wrapper" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Wrapper</option>
+                        <option value="Connecticut">Connecticut</option>
+                        <option value="Corojo">Corojo</option>
+                        <option value="Habano">Habano</option>
+                        <option value="Maduro">Maduro</option>
+                        <option value="Oscuro">Oscuro</option>
+                        <option value="Cameroon">Cameroon</option>
+                        <option value="Candela">Candela</option>
+                        <option value="Sumatra">Sumatra</option>
+                        <option value="Broadleaf">Broadleaf</option>
+                        <option value="Rosado">Rosado</option>
+                    </select>
+                    <select id="log-cut" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Cut Style</option>
+                        <option value="Straight Cut">Straight Cut</option>
+                        <option value="V-Cut">V-Cut</option>
+                        <option value="Crown Cut">Crown Cut</option>
+                        <option value="Punch">Punch</option>
+                    </select>
+                </div>
+
+                <!-- Mechanics Tracking & Pairings -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <select id="log-light" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Light Method</option>
+                        <option value="Torch Lighter">Torch Lighter</option>
+                        <option value="Soft Flame">Soft Flame</option>
+                        <option value="Cedar Spill">Cedar Spill</option>
+                        <option value="Matches">Matches</option>
+                    </select>
+                    <input type="text" id="log-pairing" class="form-input" placeholder="Pairing (e.g., Keto Bourbon)" style="margin-bottom: 0;">
+                </div>
+
+                <textarea id="log-notes" class="form-input" placeholder="Tasting notes for the final third..." rows="3" style="resize: none; margin-top: 16px; margin-bottom: 16px;"></textarea>
+                
+                <!-- Hidden Input and Visual Upload Button -->
+                <input type="file" id="log-image-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleCigarImageUpload(event, 'journal')">
+                <button id="log-photo-btn" class="btn-secondary" onclick="document.getElementById('log-image-upload').click()">
+                    <i class="fa-solid fa-camera"></i> Add Picture
+                </button>
+
+                <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button>
+
+                <div class="section-header" style="margin-top: 32px;">
+                    <div class="section-title">Journal History</div>
+                </div>
+                <div id="journal-history-list" style="margin-bottom: 40px;">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
+                        <span>No smokes logged yet</span>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- UPDATES / VERSION HISTORY SCREEN -->
+            <section id="view-radar" class="view-section">
+                <div class="section-header" style="margin-top: 0;">
+                    <div class="section-title">Release Notes</div>
+                </div>
+
+                <!-- Version 1.0.7 -->
+                <div class="log-card" style="margin-bottom: 24px;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Version Update 1.0.7</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Premium Light Mode</div>
+                        </div>
+                        <div class="badge badge-mint">Latest</div>
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-sun" style="color: var(--leather);"></i> The "Parchment & Espresso" Theme</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now toggle between our classic "Navy Slate & Walnut" dark mode and our new "Parchment & Espresso" light mode. Perfect for reading tasting notes in bright sunlight. Access the toggle in your Profile settings.</div>
+                    </div>
+                </div>
+
+                <!-- Version 1.0.6 -->
+                <div class="log-card" style="margin-bottom: 24px;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Version Update 1.0.6</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Native Gestures & Reviews</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Swipe to Action Engine</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">We have completely removed the clunky edit buttons. You can now intuitively swipe left or drag any entry in your Humidor or Journal to seamlessly reveal the Edit and Remove tools across both touchscreens and computer mice.</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Dynamic External Reviews</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Tapping the Daily Selection at the top of your screen will now bring up a custom prompt, routing you directly to industry reviews and ratings.</div>
+                    </div>
+                </div>
+
+                <!-- Version 1.0.5 -->
+                <div class="log-card" style="margin-bottom: 24px;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Version Update 1.0.5</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Cloud Sync & Advanced Tracking</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cloud" style="color: var(--leather);"></i> Cloud Sync</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Your profile and journal are now securely stored in the cloud. Simply log in from any device to access your data wherever you are.</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-calendar-day" style="color: var(--leather);"></i> Daily Cigar Suggestion</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new featured cigar is displayed at the top of the home screen each day. With a library of 365 cigars, you'll receive a different recommendation every day throughout the year.</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cubes" style="color: var(--leather);"></i> Quantity Tracking</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new Quantity field has been added, allowing you to keep track of how many cigars you have for each entry in your humidor.</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hourglass-half" style="color: var(--leather);"></i> Improved Aging Tracking</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Added Date Acquired and Peak Aging Date fields when adding a cigar. The Peak Aging Date requires a minimum of seven days after the acquisition date to promote realistic aging timelines.</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-camera" style="color: var(--leather);"></i> Photo Attachments</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now attach photos to Humidor and Journal entries. Entries containing photos will display an image indicator, making them easy to identify while browsing your collection.</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-simple" style="color: var(--leather);"></i> Enhanced Profile Statistics</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The Profile page now automatically generates statistics based on your Humidor and Journal entries, including Average Humidor Cost, Average Aging Time, Favorite Cut, and Favorite Light.</div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- PROFILE (DATA & ANALYTICS) SCREEN -->
+            <section id="view-profile" class="view-section">
+                
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <div style="position: relative; display: inline-block; cursor: pointer;" onclick="openAvatarActionSheet()">
+                        <img id="profile-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
+                        <div style="position: absolute; bottom: 5px; right: 5px; background: var(--leather); color: #0B0F19; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--surface-1);">
+                            <i class="fa-solid fa-camera" style="font-size: 14px;"></i>
+                        </div>
+                    </div>
+                    <div id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 16px;">User</div>
+                    <div id="profile-display-email" style="font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 4px;">user@email.com</div>
+                </div>
+
+                <div class="section-header" style="margin-top: 0;">
+                    <div class="section-title">Combustion & Burn Analytics</div>
+                </div>
+                <!-- Analytics Dashboard -->
+                <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border-subtle); display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Average Aging</div>
+                        <div id="stat-avg-aging" style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 4px;">0 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span></div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Est. Humidor Value</div>
+                        <div id="stat-humidor-value" style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--leather); margin-top: 4px;">$0.00</div>
+                    </div>
+                </div>
+
+                <div class="log-card">
+                    <div class="log-header">
+                        <div>
+                            <div class="log-title">Palate Mapping</div>
+                            <div class="log-meta">Based on humidor inventory</div>
+                        </div>
+                        <i class="fa-solid fa-chart-pie" style="color: var(--gold);"></i>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <span class="badge badge-indigo" id="profile-wrapper-stat">N/A</span>
+                    </div>
+                </div>
+
+                <div class="log-card">
+                    <div class="log-header">
+                        <div>
+                            <div class="log-title">Optimal Mechanics</div>
+                            <div class="log-meta">Most common logged options</div>
+                        </div>
+                        <i class="fa-solid fa-gear" style="color: var(--leather);"></i>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                        <span class="badge badge-rose" id="profile-mechanics-ring">N/A Gauge</span>
+                        <span class="badge badge-mint" id="profile-mechanics-cut">N/A Cut</span>
+                        <span class="badge badge-amber" id="profile-mechanics-light">N/A Light</span>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 32px; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleTheme()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: rgba(176, 125, 70, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                            <i id="theme-icon" class="fa-solid fa-moon"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Appearance</div>
+                            <div id="theme-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Dark Mode</div>
+                        </div>
+                    </div>
+                    <div style="background: var(--surface-2); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
+                        <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
+                    </div>
+                </div>
+
+                <button class="btn-primary" style="background: rgba(225, 90, 90, 0.1); color: var(--danger); box-shadow: none; width: 100%;" onclick="handleLogout()">
+                    <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
+                </button>
+                
+                <div style="text-align: center; margin-top: 16px; margin-bottom: 40px;">
+                    <span style="color: var(--danger); font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: underline; opacity: 0.8;" onclick="openDeleteActionSheet()">Delete Account</span>
+                </div>
+
+            </section>
+
+        </div> <!-- END LAYER 3 CONTAINER -->
+
+        <!-- FLOATING BOTTOM DOCK -->
+        <div class="bottom-dock-wrapper">
+            <nav class="bottom-dock">
+                <div class="nav-item active" onclick="switchTab('view-home', 0)"><i class="fa-solid fa-house"></i><span>Home</span></div>
+                <div class="nav-item" onclick="switchTab('view-humidor', 1)"><i class="fa-solid fa-box"></i><span>Humidor</span></div>
+                <div class="nav-item" onclick="switchTab('view-journal', 2)"><i class="fa-solid fa-book-open"></i><span>Journal</span></div>
+                <div class="nav-item" onclick="switchTab('view-radar', 3)"><i class="fa-solid fa-bullhorn"></i><span>Updates</span></div>
+                <div class="nav-item" onclick="switchTab('view-profile', 4)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
+            </nav>
+        </div>
+
+    </div> 
+</div>
+
+<!-- AVATAR MODAL -->
+<div id="avatar-action-sheet" class="action-sheet-overlay" onclick="closeAvatarActionSheet(event)">
+    <div class="action-sheet" onclick="event.stopPropagation()">
+        <div style="text-align: center; margin-bottom: 24px; font-size: 15px; font-weight: 700; color: var(--text-main);">Update Profile Picture</div>
+        <button class="action-btn" onclick="document.getElementById('camera-upload').click(); closeAvatarActionSheet();"><i class="fa-solid fa-camera"></i> Take Photo</button>
+        <button class="action-btn" onclick="document.getElementById('gallery-upload').click(); closeAvatarActionSheet();"><i class="fa-solid fa-image"></i> Upload from Photos</button>
+        <button class="action-btn cancel" onclick="closeAvatarActionSheet()">Cancel</button>
+        <input type="file" id="camera-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleAvatarUpload(event)">
+        <input type="file" id="gallery-upload" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+    </div>
+</div>
+
+<!-- DELETE ACCOUNT MODAL -->
+<div id="delete-action-sheet" class="action-sheet-overlay" onclick="closeDeleteActionSheet(event)">
+    <div class="action-sheet" onclick="event.stopPropagation()">
+        <div style="text-align: center; margin-bottom: 16px; font-size: 18px; font-weight: 800; color: var(--danger);">Delete Account</div>
+        <p style="text-align: center; font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.4;">Warning: This will permanently erase your entire Humidor and Journal history. This cannot be undone. Please confirm your credentials.</p>
+        <input type="email" id="delete-email" class="form-input" placeholder="Email address" autocomplete="off">
+        <input type="password" id="delete-password" class="form-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
+        <button class="action-btn" style="background: var(--danger); color: white; margin-bottom: 12px;" onclick="handleDeleteAccount()"><i class="fa-solid fa-trash"></i> Permanently Delete</button>
+        <button class="action-btn cancel" onclick="closeDeleteActionSheet()">Cancel</button>
+    </div>
+</div>
+
+<!-- CIGAR PHOTO LIGHTBOX MODAL -->
+<div id="lightbox-overlay" class="action-sheet-overlay" onclick="closeLightbox(event)">
+    <div class="lightbox-close" onclick="closeLightbox(event)"><i class="fa-solid fa-xmark"></i></div>
+    <img id="lightbox-img" src="" onclick="event.stopPropagation()">
+</div>
+
+<!-- CIGAR REVIEW MODAL -->
+<div id="cigar-modal" class="modal-overlay" onclick="closeCigarModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-modal" onclick="closeCigarModal(event)">&times;</span>
+        <p class="modal-subtitle">TODAY'S SELECTION</p>
+        <h2 id="modal-cigar-name" style="margin-bottom: 12px; font-family: var(--font-serif); font-size: 22px;">Loading...</h2>
+        <p class="modal-text">To view detailed tasting notes and scores from industry experts, check the external review archives.</p>
+        
+        <a id="modal-review-btn" href="#" target="_blank" class="modal-btn">
+            Read Reviews
+        </a>
+    </div>
+</div>
+
+<script type="module">
+
+    let humidorInventory = [];
+    let journalHistory = [];
+    let editingVaultId = null;
+    let editingJournalId = null;
+    
+    // Globals for image uploads and registry
+    let currentVaultImage = null;
+    let currentLogImage = null;
+    window.imageRegistry = {}; 
+
+    // --- THEME ENGINE ---
+    window.toggleTheme = function() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('finalThirdTheme', newTheme);
+        
+        window.updateThemeUI(newTheme);
+    };
+
+    window.updateThemeUI = function(theme) {
+        const icon = document.getElementById('theme-icon');
+        const text = document.getElementById('theme-text');
+        if (icon && text) {
+            if (theme === 'light') {
+                icon.className = 'fa-solid fa-sun';
+                text.innerText = 'Light Mode';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+                text.innerText = 'Dark Mode';
+            }
+        }
+    };
+
+    // --- UNIFIED SWIPE TO REVEAL ENGINE (TOUCH + DESKTOP) ---
+    window.activeSwipeCard = null;
+    let swipeStartX = null;
+    let swipeStartY = null;
+    let isSwiping = false;
+    let isDragging = false; 
+    const maxSwipe = -140; 
+
+    window.closeAllSwipes = function() {
+        if (window.activeSwipeCard) {
+            window.activeSwipeCard.style.transform = `translateX(0px)`;
+            if(window.activeSwipeCard.parentElement) {
+                window.activeSwipeCard.parentElement.classList.remove('is-open');
+            }
+            window.activeSwipeCard = null;
+        }
+    };
+
+    function handleDragStart(e) {
+        if (e.target.closest('.swipe-actions')) return; 
+        
+        const swipeFront = e.target.closest('.swipe-front');
+        
+        if (window.activeSwipeCard && window.activeSwipeCard !== swipeFront) {
+            window.closeAllSwipes();
+        }
+
+        if (!swipeFront) return;
+
+        isDragging = true;
+        swipeStartX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        swipeStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        isSwiping = false;
+        
+        swipeFront.style.transition = 'none';
+        swipeFront.parentElement.classList.add('is-swiping'); 
+    }
+
+    function handleDragMove(e) {
+        if (!isDragging) return;
+        
+        const swipeFront = e.target.closest('.swipe-front');
+        if (!swipeFront || swipeStartX === null) return;
+
+        const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        const diffX = currentX - swipeStartX;
+        const diffY = currentY - swipeStartY;
+
+        if (!isSwiping) {
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+                isSwiping = true;
+            } else if (Math.abs(diffY) > 10) {
+                swipeStartX = null; 
+                isDragging = false;
+                swipeFront.parentElement.classList.remove('is-swiping');
+                return;
+            }
+        }
+
+        if (isSwiping) {
+            if (e.cancelable) e.preventDefault(); 
+            
+            let moveX = diffX;
+            if (window.activeSwipeCard === swipeFront) {
+                moveX = maxSwipe + diffX; 
+            }
+            
+            if (moveX > 0) moveX = moveX * 0.2; 
+            if (moveX < maxSwipe) moveX = maxSwipe + ((moveX - maxSwipe) * 0.2); 
+            
+            swipeFront.style.transform = `translateX(${moveX}px)`;
+        }
+    }
+
+    function handleDragEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        if (e.target && e.target.closest && e.target.closest('.swipe-actions')) return; 
+
+        const swipeFront = e.target ? e.target.closest('.swipe-front') : null;
+        if (!swipeFront || swipeStartX === null) return;
+
+        swipeFront.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05)';
+        swipeFront.parentElement.classList.remove('is-swiping');
+        
+        let currentX = 0;
+        const transformMatrix = window.getComputedStyle(swipeFront).getPropertyValue('transform');
+        if (transformMatrix !== 'none') {
+            currentX = parseInt(transformMatrix.split(',')[4].trim());
+        }
+
+        if (currentX < (maxSwipe / 2)) {
+            swipeFront.style.transform = `translateX(${maxSwipe}px)`;
+            window.activeSwipeCard = swipeFront;
+            swipeFront.parentElement.classList.add('is-open'); 
+        } else {
+            swipeFront.style.transform = `translateX(0px)`;
+            window.activeSwipeCard = null;
+            swipeFront.parentElement.classList.remove('is-open'); 
+        }
+
+        swipeStartX = null;
+        isSwiping = false;
+    }
+
+    document.addEventListener('touchstart', handleDragStart, { passive: true });
+    document.addEventListener('touchmove', handleDragMove, { passive: false });
+    document.addEventListener('touchend', handleDragEnd);
+    
+    document.addEventListener('mousedown', handleDragStart);
+    document.addEventListener('mousemove', handleDragMove);
+    document.addEventListener('mouseup', handleDragEnd);
+    document.addEventListener('mouseleave', handleDragEnd); 
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyChMrxW41yXgQkqFEqe0DxGFwjp_QdriYE",
+      authDomain: "finalthird-6628e.firebaseapp.com",
+      projectId: "finalthird-6628e",
+      storageBucket: "finalthird-6628e.firebasestorage.app",
+      messagingSenderId: "658511952829",
+      appId: "1:658511952829:web:96f277790007a890cc30d4",
+      measurementId: "G-9N9VGTTX3G"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    window.currentUserName = "User";
+
+    function getDayOfYear() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = now - start;
+        const oneDay = 1000 * 60 * 60 * 24;
+        return Math.floor(diff / oneDay);
+    }
+
+    async function loadDailyCigar() {
+        const day = getDayOfYear();
+        const displayEl = document.getElementById('daily-cigar-display');
+        try {
+            const docRef = doc(db, "daily_roster", day.toString());
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                displayEl.innerText = docSnap.data().name;
+            } else {
+                displayEl.innerText = "Padrón 60th Anniversary Perfecto"; 
+            }
+        } catch(e) {
+            displayEl.innerText = "Padrón 1964 Anniversary"; 
+        }
+    }
+
+    window.openCigarModal = function() {
+        const displayEl = document.getElementById('daily-cigar-display');
+        const todaysCigar = displayEl.innerText;
+        
+        if (todaysCigar === "Loading...") return;
+        
+        const modalTitle = document.getElementById("modal-cigar-name");
+        const modalReviewBtn = document.getElementById("modal-review-btn");
+        
+        const searchQuery = encodeURIComponent(`${todaysCigar} review site:halfwheel.com OR site:cigaraficionado.com`);
+        const reviewUrl = `https://www.google.com/search?q=${searchQuery}`;
+        
+        modalTitle.innerText = todaysCigar;
+        modalReviewBtn.href = reviewUrl;
+        
+        document.getElementById('cigar-modal').classList.add('active');
+    };
+
+    window.closeCigarModal = function(event) {
+        document.getElementById('cigar-modal').classList.remove('active');
+    };
+
+    function initializeDates() {
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        
+        const target = new Date();
+        target.setDate(target.getDate() + 7);
+        const targetStr = target.toISOString().split('T')[0];
+
+        document.getElementById('vault-date').value = todayStr;
+        document.getElementById('vault-target-date').value = targetStr;
+        document.getElementById('vault-target-date').min = todayStr;
+        document.getElementById('log-date').value = todayStr;
+    }
+
+    window.compressImage = function(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1000;
+                    const MAX_HEIGHT = 1000;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7)); 
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    window.compressAvatar = function(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 400; 
+                    const MAX_HEIGHT = 400;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6)); 
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    window.handleCigarImageUpload = async function(event, type) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            const compressedBase64 = await window.compressImage(file);
+            if (type === 'vault') {
+                currentVaultImage = compressedBase64;
+                const btn = document.getElementById('vault-photo-btn');
+                btn.classList.add('attached');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+            } else if (type === 'journal') {
+                currentLogImage = compressedBase64;
+                const btn = document.getElementById('log-photo-btn');
+                btn.classList.add('attached');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+            }
+        } catch (error) {
+            alert("Error processing image.");
+        }
+    };
+
+    window.openLightbox = function(docId) {
+        const base64Str = window.imageRegistry[docId];
+        if(base64Str) {
+            document.getElementById('lightbox-img').src = base64Str;
+            document.getElementById('lightbox-overlay').classList.add('active');
+        }
+    };
+
+    window.closeLightbox = function(event) {
+        document.getElementById('lightbox-overlay').classList.remove('active');
+        setTimeout(() => { document.getElementById('lightbox-img').src = ""; }, 300);
+    };
+
+    window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
+    window.closeAvatarActionSheet = function(event) { document.getElementById('avatar-action-sheet').classList.remove('active'); };
+
+    window.handleAvatarUpload = async function(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+        try {
+            const compressedBase64 = await window.compressAvatar(file);
+            
+            document.getElementById('profile-avatar-img').src = compressedBase64;
+            localStorage.setItem('finalThirdAvatar', compressedBase64); 
+            
+            if (auth.currentUser) {
+                await setDoc(doc(db, "users", auth.currentUser.uid), { avatar: compressedBase64 }, { merge: true });
+            }
+        } catch (error) {
+            console.error("Avatar upload failed:", error);
+        }
+    };
+
+    window.editUsername = async function() {
+        const newName = prompt("Enter your new username:", window.currentUserName);
+        if (newName && newName.trim() !== "" && newName.trim() !== window.currentUserName) {
+            try {
+                await updateProfile(auth.currentUser, { displayName: newName.trim() });
+                window.currentUserName = newName.trim();
+                document.getElementById('display-name').innerText = window.currentUserName;
+                document.getElementById('profile-display-name').innerText = window.currentUserName;
+            } catch (error) {
+                alert("Failed to update username: " + error.message);
+            }
+        }
+    };
+
+    window.openDeleteActionSheet = function() { document.getElementById('delete-action-sheet').classList.add('active'); };
+    window.closeDeleteActionSheet = function(event) { document.getElementById('delete-action-sheet').classList.remove('active'); };
+
+    window.handleDeleteAccount = async function() {
+        const email = document.getElementById('delete-email').value;
+        const password = document.getElementById('delete-password').value;
+        
+        if (!email || !password) return alert("Please enter email and password to confirm deletion.");
+        if (!confirm("Are you absolutely sure? All of your logs and humidor data will be permanently wiped.")) return;
+
+        const user = auth.currentUser;
+        const credential = EmailAuthProvider.credential(email, password);
+
+        try {
+            await reauthenticateWithCredential(user, credential);
+            
+            const batch = writeBatch(db);
+            const humidorQ = query(collection(db, "humidor"), where("uid", "==", user.uid));
+            const humidorSnaps = await getDocs(humidorQ);
+            humidorSnaps.forEach(docSnap => batch.delete(docSnap.ref));
+            
+            const journalQ = query(collection(db, "journal"), where("uid", "==", user.uid));
+            const journalSnaps = await getDocs(journalQ);
+            journalSnaps.forEach(docSnap => batch.delete(docSnap.ref));
+            
+            const userDocRef = doc(db, "users", user.uid);
+            batch.delete(userDocRef);
+            
+            await batch.commit();
+
+            await deleteUser(user);
+            
+            alert("Account and all associated data have been permanently erased.");
+            closeDeleteActionSheet();
+        } catch (error) {
+            alert("Deletion failed: " + error.message);
+        }
+    };
+
+    window.switchTab = function(targetViewId, dockIndex) {
+        document.querySelectorAll('.view-section').forEach(el => {
+            el.classList.remove('active');
+        });
+        
+        const targetView = document.getElementById(targetViewId);
+        targetView.classList.add('active');
+        targetView.scrollTop = 0; 
+
+        const layer3 = document.querySelector('.layer-3-container');
+        layer3.classList.remove('slide-anim');
+        void layer3.offsetWidth; 
+        layer3.classList.add('slide-anim');
+        
+        document.querySelectorAll('.nav-item').forEach((el, index) => {
+            if (dockIndex !== null && index === dockIndex) {
+                el.classList.add('active');
+            } else {
+                el.classList.remove('active');
+            }
+        });
+        
+        const greetingContainer = document.getElementById('greeting-container');
+        const titleEl = document.getElementById('dynamic-layer-2-title');
+        const subtitleEl = document.getElementById('dynamic-layer-2-subtitle');
+        
+        greetingContainer.classList.remove('text-slide-up');
+        greetingContainer.style.opacity = 0; 
+
+        setTimeout(() => {
+            if(dockIndex === 0) {
+                titleEl.innerHTML = `Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">${window.currentUserName}</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>`;
+                subtitleEl.innerText = "Vault Overview";
+            } else if(dockIndex === 1) {
+                titleEl.innerText = "Humidor.";
+                subtitleEl.innerText = "Logistics & Storage";
+            } else if(dockIndex === 2) {
+                titleEl.innerText = "Journal.";
+                subtitleEl.innerText = "Tasting Ledger";
+            } else if(dockIndex === 3) {
+                titleEl.innerText = "Updates.";
+                subtitleEl.innerText = "Release Notes & News";
+            } else if(dockIndex === 4) {
+                titleEl.innerText = "Profile.";
+                subtitleEl.innerText = "Data & Analytics";
+            }
+            
+            greetingContainer.style.opacity = ''; 
+            void greetingContainer.offsetWidth; 
+            greetingContainer.classList.add('text-slide-up');
+        }, 50);  
+    };
+
+    window.showAuthView = function(viewId) {
+        document.querySelectorAll('.auth-view').forEach(el => el.classList.remove('active'));
+        document.getElementById('auth-' + viewId).classList.add('active');
+    };
+
+    window.handleLogin = async function() {
+        const email = document.getElementById('signin-email').value;
+        const password = document.getElementById('signin-password').value;
+        if(!email || !password) return alert("Please enter email and password.");
+        
+        document.getElementById('signin-btn').innerHTML = 'Logging In...';
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+            alert("Login failed: " + error.message);
+            document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
+        }
+    };
+
+    window.handleSignUp = async function() {
+        const username = document.getElementById('signup-username').value.trim();
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const confirm = document.getElementById('signup-confirm').value;
+        
+        if(!username || !email || !password) return alert("Please fill in all fields.");
+        if(password !== confirm) return alert("Passwords do not match.");
+        
+        document.getElementById('signup-btn').innerHTML = 'Registering...';
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(userCredential.user, { displayName: username });
+            window.currentUserName = username;
+        } catch (error) {
+            alert("Sign up failed: " + error.message);
+            document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
+        }
+    };
+
+    window.handleResetPassword = async function() {
+        const email = document.getElementById('reset-email').value;
+        if(!email) return alert("Please enter your email address.");
+        
+        document.getElementById('reset-btn').innerHTML = 'Sending...';
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert("Password reset email sent! Check your inbox.");
+            showAuthView('signin');
+            document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
+            document.getElementById('reset-email').value = '';
+        } catch (error) {
+            alert("Reset failed: " + error.message);
+            document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
+        }
+    };
+
+    window.handleLogout = async function() {
+        await signOut(auth);
+    };
+
+    let unsubscribeHumidor = null;
+    let unsubscribeJournal = null;
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            document.getElementById('login-environment').classList.remove('active');
+            document.getElementById('main-environment').style.display = 'flex';
+            document.getElementById('main-environment').classList.add('active');
+            
+            // Set correct theme UI right away
+            window.updateThemeUI(document.documentElement.getAttribute('data-theme'));
+            
+            window.currentUserName = user.displayName || user.email.split('@')[0]; 
+            
+            initializeDates();
+            loadDailyCigar();
+            
+            document.getElementById('profile-display-name').innerText = window.currentUserName;
+            document.getElementById('profile-display-email').innerText = user.email;
+
+            const localAvatar = localStorage.getItem('finalThirdAvatar');
+            if(localAvatar) {
+                document.getElementById('profile-avatar-img').src = localAvatar;
+            }
 
             try {
-                statusDiv.innerText = `Attempting to upload ${cleanList.length} brands...`;
-                
-                await setDoc(doc(db, "app_data", "cigar_library"), { 
-                    list: cleanList 
-                });
-                
-                statusDiv.style.color = "#4ade80"; // Success green
-                statusDiv.innerText = `Success! ${cleanList.length} brands seeded to the cloud.`;
-                
-            } catch (error) {
-                console.error("Error seeding library:", error);
-                statusDiv.style.color = "#E15A5A"; // Danger red
-                statusDiv.innerText = "Error: " + error.message;
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if(userDoc.exists() && userDoc.data().avatar) {
+                    const cloudAvatar = userDoc.data().avatar;
+                    document.getElementById('profile-avatar-img').src = cloudAvatar;
+                    localStorage.setItem('finalThirdAvatar', cloudAvatar); 
+                } else if (localAvatar) {
+                    await setDoc(doc(db, "users", user.uid), { avatar: localAvatar }, { merge: true });
+                }
+            } catch(e) { 
+                console.error("Avatar sync error. Check Firebase Rules.", e); 
             }
+            
+            switchTab('view-home', 0);
+
+            document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
+            document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
+
+            unsubscribeHumidor = onSnapshot(query(collection(db, "humidor"), where("uid", "==", user.uid)), (snapshot) => {
+                humidorInventory = [];
+                snapshot.forEach((doc) => { humidorInventory.push({ id: doc.id, ...doc.data() }); });
+                humidorInventory.sort((a, b) => b.acquiredDate - a.acquiredDate); 
+                renderHumidor();
+            });
+
+            unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid)), (snapshot) => {
+                journalHistory = [];
+                snapshot.forEach((doc) => { journalHistory.push({ id: doc.id, ...doc.data() }); });
+                journalHistory.sort((a, b) => new Date(b.date) - new Date(a.date)); 
+                renderJournal();
+            });
+
+        } else {
+            document.getElementById('main-environment').classList.remove('active');
+            document.getElementById('main-environment').style.display = 'none';
+            document.getElementById('login-environment').classList.add('active');
+            showAuthView('signin');
+            
+            document.getElementById('signin-email').value = '';
+            document.getElementById('signin-password').value = '';
+            document.getElementById('signup-username').value = '';
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-password').value = '';
+            document.getElementById('signup-confirm').value = '';
+            document.getElementById('delete-email').value = '';
+            document.getElementById('delete-password').value = '';
+            
+            if(unsubscribeHumidor) unsubscribeHumidor();
+            if(unsubscribeJournal) unsubscribeJournal();
+        }
+    });
+
+    window.renderFavorites = function() {
+        const favContainer = document.getElementById('home-favorites-list');
+        const ratedCigars = humidorInventory.filter(c => c.rating);
+        
+        if (ratedCigars.length > 0) {
+            const sum = ratedCigars.reduce((acc, curr) => acc + curr.rating, 0);
+            document.getElementById('stat-avg').innerText = (sum / ratedCigars.length).toFixed(1);
+        } else {
+            document.getElementById('stat-avg').innerText = "0.0";
+        }
+
+        const sorted = ratedCigars.sort((a,b) => b.rating - a.rating).slice(0, 5);
+
+        if (sorted.length === 0) {
+            favContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-star" style="font-size: 20px; opacity: 0.3;"></i>
+                <span>No rated cigars</span>
+            </div>`;
+            return;
+        }
+
+        let html = '<div style="background: var(--surface-1); border-radius: 20px; padding: 8px 20px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px var(--shadow-subtle);">';
+        sorted.forEach((cigar, index) => {
+            const borderStr = index < sorted.length - 1 ? 'border-bottom: 1px solid var(--glass-border);' : '';
+            html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; ${borderStr}">
+                <div>
+                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${cigar.brand}</div>
+                    <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${cigar.vitola} • ${cigar.wrapper}</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; background: rgba(176, 125, 70, 0.1); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(176, 125, 70, 0.2);">
+                    <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
+                    <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--leather); line-height: 1;">${cigar.rating.toFixed(2)}</span>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+        favContainer.innerHTML = html;
+    };
+
+    window.editJournalLog = function(id) {
+        window.closeAllSwipes(); 
+        
+        const log = journalHistory.find(l => l.id === id);
+        if(!log) return;
+
+        editingJournalId = id;
+        document.getElementById('log-date').value = log.date || '';
+        document.getElementById('log-brand').value = log.brand || '';
+        document.getElementById('log-vitola').value = log.vitola || '';
+        document.getElementById('log-ring-gauge').value = log.ring !== '-' ? log.ring : '';
+        document.getElementById('log-wrapper').value = log.wrapper || '';
+        document.getElementById('log-cut').value = log.cut !== 'N/A' ? log.cut : '';
+        document.getElementById('log-light').value = log.light !== 'N/A' ? log.light : '';
+        document.getElementById('log-pairing').value = log.pairing !== 'None' ? log.pairing : '';
+        document.getElementById('log-notes').value = log.notes !== 'No notes.' ? log.notes : '';
+
+        currentLogImage = log.image || null;
+        const photoBtn = document.getElementById('log-photo-btn');
+        if(currentLogImage) {
+            photoBtn.classList.add('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+        } else {
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        }
+
+        const submitBtn = document.getElementById('journal-submit-btn');
+        submitBtn.innerHTML = 'Update Ledger <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = 'var(--gold)';
+        
+        document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.logSmoke = async function() {
+        const date = document.getElementById('log-date').value;
+        const brand = document.getElementById('log-brand').value;
+        const vitola = document.getElementById('log-vitola').value;
+        const ring = document.getElementById('log-ring-gauge').value;
+        const wrapper = document.getElementById('log-wrapper').value;
+        const cut = document.getElementById('log-cut').value;
+        const light = document.getElementById('log-light').value;
+        const pairing = document.getElementById('log-pairing').value;
+        const notes = document.getElementById('log-notes').value;
+
+        if(!brand) { alert("Please enter the brand to log."); return; }
+
+        const newLog = {
+            uid: auth.currentUser.uid,
+            date: date || new Date().toISOString().split('T')[0],
+            brand,
+            vitola: vitola || "Unknown",
+            ring: ring || "-",
+            wrapper: wrapper || "Unknown",
+            cut: cut || "N/A",
+            light: light || "N/A",
+            pairing: pairing || "None",
+            notes: notes || "No notes.",
+            image: currentLogImage 
         };
-    </script>
+
+        try {
+            if (editingJournalId) {
+                await updateDoc(doc(db, "journal", editingJournalId), newLog);
+                editingJournalId = null;
+                const submitBtn = document.getElementById('journal-submit-btn');
+                submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+                submitBtn.style.background = 'var(--btn-leather)';
+            } else {
+                await addDoc(collection(db, "journal"), newLog);
+            }
+            
+            document.getElementById('log-brand').value = '';
+            document.getElementById('log-vitola').selectedIndex = 0;
+            document.getElementById('log-ring-gauge').value = '';
+            document.getElementById('log-wrapper').selectedIndex = 0;
+            document.getElementById('log-cut').selectedIndex = 0;
+            document.getElementById('log-light').selectedIndex = 0;
+            document.getElementById('log-pairing').value = '';
+            document.getElementById('log-notes').value = '';
+            
+            currentLogImage = null;
+            document.getElementById('log-image-upload').value = "";
+            const photoBtn = document.getElementById('log-photo-btn');
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('log-date').value = today;
+            
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
+    };
+
+    window.renderJournal = function() {
+        const journalList = document.getElementById('journal-history-list');
+        const homeList = document.getElementById('home-recent-list');
+        const countStat = document.getElementById('stat-smoked'); 
+        
+        window.activeSwipeCard = null; 
+
+        if(journalHistory.length === 0) {
+            journalList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>No smokes logged yet</span>
+                </div>`;
+            homeList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>No recent logs</span>
+                </div>`;
+            countStat.innerText = '0';
+            
+            document.getElementById('profile-mechanics-ring').innerText = "N/A Gauge";
+            document.getElementById('profile-mechanics-cut').innerText = "N/A Cut";
+            document.getElementById('profile-mechanics-light').innerText = "N/A Light";
+            
+            return;
+        }
+
+        let html = '';
+        journalHistory.forEach(log => {
+            let imageBadge = '';
+            if(log.image) {
+                window.imageRegistry[log.id] = log.image;
+                imageBadge = `<span onclick="openLightbox('${log.id}')" style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</span>`;
+            }
+
+            html += `
+            <div class="swipe-container">
+                <div class="swipe-actions">
+                    <button class="swipe-action-btn swipe-action-edit" onclick="editJournalLog('${log.id}')">
+                        <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                    </button>
+                    <button class="swipe-action-btn swipe-action-delete" onclick="removeJournalLog('${log.id}')">
+                        <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                    </button>
+                </div>
+                
+                <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
+                    <div class="log-header">
+                        <div style="flex: 1; padding-right: 12px;">
+                            <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${log.brand}</div>
+                            <div class="log-meta">${log.vitola} • <span style="font-family: var(--font-mono);">${log.ring}</span> • ${log.wrapper}</div>
+                        </div>
+                        <div class="badge badge-amber">${log.date}</div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 4px; flex-wrap: wrap;">
+                        <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-scissors" style="margin-right: 4px; color: var(--leather);"></i> ${log.cut}</span>
+                        <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-fire" style="margin-right: 4px; color: var(--gold);"></i> ${log.light}</span>
+                        <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-martini-glass" style="margin-right: 4px; color: var(--walnut);"></i> ${log.pairing}</span>
+                        ${imageBadge}
+                    </div>
+                    
+                    <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; font-style: italic;">"${log.notes}"</div>
+                </div>
+            </div>`;
+        });
+
+        journalList.innerHTML = html;
+        
+        let homeHtml = '';
+        journalHistory.slice(0, 2).forEach(log => {
+            homeHtml += `
+            <div class="log-card" style="margin-bottom: 12px;">
+                <div class="log-header" style="margin-bottom: 0;">
+                    <div>
+                        <div class="log-title">${log.brand}</div>
+                        <div class="log-meta">${log.date}</div>
+                    </div>
+                    <div class="badge badge-indigo">Smoked</div>
+                </div>
+            </div>`;
+        });
+        homeList.innerHTML = homeHtml;
+
+        countStat.innerText = journalHistory.length; 
+        
+        const ringBadge = document.getElementById('profile-mechanics-ring');
+        const cutBadge = document.getElementById('profile-mechanics-cut');
+        const lightBadge = document.getElementById('profile-mechanics-light');
+
+        const ringCounts = {};
+        const cutCounts = {};
+        const lightCounts = {};
+        
+        journalHistory.forEach(log => {
+            if(log.ring && log.ring !== "-") ringCounts[log.ring] = (ringCounts[log.ring] || 0) + 1;
+            if(log.cut && log.cut !== "N/A") cutCounts[log.cut] = (cutCounts[log.cut] || 0) + 1;
+            if(log.light && log.light !== "N/A") lightCounts[log.light] = (lightCounts[log.light] || 0) + 1;
+        });
+
+        const getTop = (counts, defaultStr) => {
+            let top = defaultStr;
+            let max = 0;
+            for (const [key, count] of Object.entries(counts)) {
+                if (count > max) { max = count; top = key; }
+            }
+            return top;
+        };
+
+        const topRing = getTop(ringCounts, 'N/A');
+        const topCut = getTop(cutCounts, 'N/A Cut');
+        const topLight = getTop(lightCounts, 'N/A Light');
+
+        ringBadge.innerText = topRing === 'N/A' ? 'N/A Gauge' : `${topRing} Ring`;
+        cutBadge.innerText = topCut;
+        lightBadge.innerText = topLight;
+    };
+
+    window.removeJournalLog = async function(id) {
+        window.closeAllSwipes();
+        if(confirm("Remove this log from your journal?")) {
+            await deleteDoc(doc(db, "journal", id));
+        }
+    };
+
+    // --- AGING ENGINE LOGIC ---
+    
+    document.getElementById('vault-date').addEventListener('change', function(e) {
+        if (!e.target.value) return;
+        const acquired = new Date(e.target.value + 'T00:00:00');
+        acquired.setDate(acquired.getDate() + 7);
+        const minTargetStr = acquired.toISOString().split('T')[0];
+        document.getElementById('vault-target-date').min = minTargetStr;
+        
+        const currentTarget = document.getElementById('vault-target-date').value;
+        if (!currentTarget || new Date(currentTarget + 'T00:00:00') < acquired) {
+            document.getElementById('vault-target-date').value = minTargetStr;
+        }
+    });
+
+    window.editCigar = function(id) {
+        window.closeAllSwipes(); 
+        
+        const cigar = humidorInventory.find(c => c.id === id);
+        if(!cigar) return;
+
+        editingVaultId = id;
+        document.getElementById('vault-brand').value = cigar.brand || '';
+        document.getElementById('vault-quantity').value = cigar.quantity || 1;
+        document.getElementById('vault-vitola').value = cigar.vitola || '';
+        document.getElementById('vault-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
+        document.getElementById('vault-wrapper').value = cigar.wrapper || '';
+        document.getElementById('vault-price').value = cigar.price || '';
+        
+        if (cigar.acquiredDate) {
+            document.getElementById('vault-date').value = new Date(cigar.acquiredDate).toISOString().split('T')[0];
+        }
+        if (cigar.targetDate) {
+            document.getElementById('vault-target-date').value = new Date(cigar.targetDate).toISOString().split('T')[0];
+        }
+        
+        document.getElementById('vault-rating').value = cigar.rating || '';
+        
+        currentVaultImage = cigar.image || null;
+        const photoBtn = document.getElementById('vault-photo-btn');
+        if(currentVaultImage) {
+            photoBtn.classList.add('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+        } else {
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        }
+
+        const submitBtn = document.getElementById('vault-submit-btn');
+        submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = 'var(--gold)';
+
+        document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.storeCigar = async function() {
+        const brand = document.getElementById('vault-brand').value;
+        const qtyVal = document.getElementById('vault-quantity').value;
+        const vitola = document.getElementById('vault-vitola').value;
+        const ring = document.getElementById('vault-ring-gauge').value;
+        const wrapper = document.getElementById('vault-wrapper').value;
+        const priceVal = document.getElementById('vault-price').value;
+        const acquiredDate = document.getElementById('vault-date').value;
+        const targetDate = document.getElementById('vault-target-date').value;
+        const ratingVal = document.getElementById('vault-rating').value;
+
+        if(!brand || !acquiredDate || !targetDate) { alert("Please enter the brand, date acquired, and target peak date."); return; }
+
+        const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
+        const targetTime = new Date(targetDate + 'T00:00:00').getTime();
+
+        const newCigar = {
+            uid: auth.currentUser.uid,
+            brand,
+            quantity: parseInt(qtyVal) || 1,
+            vitola: vitola || "Unknown",
+            ring: ring || "-",
+            wrapper: wrapper || "Unknown",
+            price: priceVal ? parseFloat(priceVal) : null,
+            targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
+            rating: ratingVal ? parseFloat(ratingVal) : null,
+            acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
+            image: currentVaultImage 
+        };
+
+        try {
+            if (editingVaultId) {
+                await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
+                editingVaultId = null;
+                const submitBtn = document.getElementById('vault-submit-btn');
+                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+                submitBtn.style.background = 'var(--btn-leather)';
+            } else {
+                await addDoc(collection(db, "humidor"), newCigar);
+            }
+            
+            document.getElementById('vault-brand').value = '';
+            document.getElementById('vault-quantity').value = '1';
+            document.getElementById('vault-ring-gauge').value = '';
+            document.getElementById('vault-price').value = '';
+            document.getElementById('vault-rating').selectedIndex = 0;
+            document.getElementById('vault-vitola').selectedIndex = 0;
+            document.getElementById('vault-wrapper').selectedIndex = 0;
+            
+            currentVaultImage = null;
+            document.getElementById('vault-image-upload').value = "";
+            const photoBtn = document.getElementById('vault-photo-btn');
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+            
+            initializeDates();
+
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
+    };
+
+    window.renderHumidor = function() {
+        const list = document.getElementById('humidor-inventory-list');
+        const countStat = document.getElementById('stat-collection'); 
+        
+        window.activeSwipeCard = null; 
+
+        if(humidorInventory.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>Humidor is currently empty</span>
+                </div>`;
+            countStat.innerText = '0';
+            document.getElementById('stat-alerts').innerText = '0';
+            
+            document.getElementById('stat-avg-aging').innerHTML = `0 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
+            document.getElementById('stat-humidor-value').innerText = `$0.00`;
+            document.getElementById('profile-wrapper-stat').innerText = "N/A";
+            
+            renderFavorites(); 
+            return;
+        }
+
+        let html = '';
+        const now = new Date().getTime();
+        let totalValue = 0;
+        let totalAgedDays = 0;
+        let readyAlertsCount = 0;
+        let totalQuantity = 0;
+
+        humidorInventory.forEach(cigar => {
+            const msPerDay = 1000 * 60 * 60 * 24;
+            const cigarQty = cigar.quantity || 1;
+            totalQuantity += cigarQty;
+            
+            let daysAged = Math.floor((now - cigar.acquiredDate) / msPerDay);
+            if (daysAged < 0) daysAged = 0; 
+            
+            totalAgedDays += daysAged;
+            totalValue += ((cigar.price || 0) * cigarQty);
+
+            let totalTargetDays = Math.floor((cigar.targetDate - cigar.acquiredDate) / msPerDay);
+            if (totalTargetDays <= 0) totalTargetDays = 1; 
+            
+            let progress = (daysAged / totalTargetDays) * 100;
+            if (progress > 100) progress = 100;
+            if (progress < 0) progress = 0; 
+
+            let isReady = progress >= 100;
+            if (isReady) readyAlertsCount += cigarQty;
+            
+            let badgeClass = isReady ? 'badge-mint' : 'badge-amber';
+            let statusText = isReady ? 'Ready' : 'Aging';
+
+            let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
+            
+            let imageBadge = '';
+            if(cigar.image) {
+                window.imageRegistry[cigar.id] = cigar.image;
+                imageBadge = `<span onclick="openLightbox('${cigar.id}')" style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</span>`;
+            }
+
+            let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
+            
+            let qtyBadge = `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-cubes" style="margin-right: 4px;"></i> QTY: ${cigarQty}</span>`;
+            
+            let attributesRow = '';
+            if (qtyBadge || ratingBadge || imageBadge) {
+                attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${ratingBadge}${imageBadge}</div>`;
+            }
+
+            html += `
+            <div class="swipe-container">
+                <div class="swipe-actions">
+                    <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
+                        <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                    </button>
+                    <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
+                        <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                    </button>
+                </div>
+                
+                <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
+                    <div class="log-header">
+                        <div style="flex: 1; padding-right: 12px;">
+                            <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${cigar.brand}</div>
+                            <div class="log-meta">${cigar.vitola} • <span style="font-family: var(--font-mono);">${cigar.ring}</span> • ${cigar.wrapper}</div>
+                        </div>
+                        <div class="badge ${badgeClass}">${statusText}</div>
+                    </div>
+                    ${attributesRow}
+                    <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
+                    <div class="timeline-footer">
+                        <span>Aged: ${daysAged} Days</span>
+                        <span>Target: ${totalTargetDays} Days</span>
+                    </div>
+                </div>
+            </div>`;
+        });
+
+        list.innerHTML = html;
+        countStat.innerText = totalQuantity; 
+        document.getElementById('stat-alerts').innerText = readyAlertsCount;
+        
+        let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
+        document.getElementById('stat-avg-aging').innerHTML = `${avgDays} <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
+        document.getElementById('stat-humidor-value').innerText = `$${totalValue.toFixed(2)}`;
+        
+        const wrapperBadge = document.getElementById('profile-wrapper-stat');
+        const wrapperCounts = {};
+        let maxCount = 0;
+        let topWrapper = 'Unknown';
+        let totalValid = 0;
+
+        humidorInventory.forEach(cigar => {
+            if(cigar.wrapper && cigar.wrapper !== "Unknown") {
+                wrapperCounts[cigar.wrapper] = (wrapperCounts[cigar.wrapper] || 0) + 1;
+                totalValid++;
+            }
+        });
+
+        for (const [wrapper, count] of Object.entries(wrapperCounts)) {
+            if (count > maxCount) {
+                maxCount = count;
+                topWrapper = wrapper;
+            }
+        }
+
+        if(totalValid > 0) {
+            const pct = Math.round((maxCount / totalValid) * 100);
+            wrapperBadge.innerText = `${pct}% ${topWrapper}`;
+        } else {
+            wrapperBadge.innerText = "N/A";
+        }
+        
+        renderFavorites(); 
+    };
+
+    window.removeCigar = async function(id) {
+        window.closeAllSwipes();
+        if(confirm("Remove this cigar from your humidor?")) {
+            await deleteDoc(doc(db, "humidor", id));
+        }
+    };
+
+</script>
+
 </body>
 </html>
