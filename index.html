@@ -126,6 +126,10 @@
             border-radius: 16px;
             background: var(--surface-2); 
             overflow: hidden;
+            /* Webkit mask forces iOS Safari to respect border-radius and stops red corner bleed */
+            transform: translateZ(0); 
+            -webkit-transform: translateZ(0);
+            isolation: isolate;
         }
         .swipe-actions {
             position: absolute;
@@ -134,6 +138,13 @@
             bottom: 0;
             display: flex;
             z-index: 1;
+            /* Hidden by default to completely prevent border bleed */
+            opacity: 0; 
+            transition: opacity 0.2s ease;
+        }
+        .swipe-container.is-swiping .swipe-actions,
+        .swipe-container.is-open .swipe-actions {
+            opacity: 1;
         }
         .swipe-action-btn {
             width: 70px;
@@ -154,11 +165,13 @@
         .swipe-action-btn:active { opacity: 0.8; }
         .swipe-action-edit { background: var(--gold); color: #0B0F19; }
         .swipe-action-delete { background: var(--danger); }
+        
         .swipe-front {
             position: relative;
             z-index: 2;
             width: 100%;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            /* Bouncy, premium Apple-style transition */
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05); 
         }
 
         /* --- FORMS & INPUTS --- */
@@ -266,6 +279,8 @@
             <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
                 <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
                 <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 16px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
+                <!-- New visual prompt for the Daily Selection -->
+                <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
             </div>
         </div>
 
@@ -468,7 +483,6 @@
                 
                 <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
 
-                <!-- Swiped-To-Action Refactor removes Edit header button -->
                 <div class="section-header" style="margin-top: 32px;">
                     <div class="section-title">Aging Timeline</div>
                 </div>
@@ -568,7 +582,6 @@
 
                 <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button>
 
-                <!-- Swiped-To-Action Refactor removes Edit header button -->
                 <div class="section-header" style="margin-top: 32px;">
                     <div class="section-title">Journal History</div>
                 </div>
@@ -758,14 +771,19 @@
     window.closeAllSwipes = function() {
         if (window.activeSwipeCard) {
             window.activeSwipeCard.style.transform = `translateX(0px)`;
+            if(window.activeSwipeCard.parentElement) {
+                window.activeSwipeCard.parentElement.classList.remove('is-open');
+            }
             window.activeSwipeCard = null;
         }
     };
 
     document.addEventListener('touchstart', (e) => {
+        // PREVENT CLOSING IF TAPPING A BUTTON: This fixes the Edit button bug
+        if (e.target.closest('.swipe-actions')) return; 
+        
         const swipeFront = e.target.closest('.swipe-front');
         
-        // If clicking anywhere else, snap the currently open card shut
         if (window.activeSwipeCard && window.activeSwipeCard !== swipeFront) {
             window.closeAllSwipes();
         }
@@ -776,8 +794,8 @@
         swipeStartY = e.touches[0].clientY;
         isSwiping = false;
         
-        // Remove animation smoothing while finger is physically dragging
         swipeFront.style.transition = 'none';
+        swipeFront.parentElement.classList.add('is-swiping'); // Triggers opacity 1 on buttons
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
@@ -789,12 +807,12 @@
         const diffX = currentX - swipeStartX;
         const diffY = currentY - swipeStartY;
 
-        // Determine if they are swiping horizontally vs scrolling the page vertically
         if (!isSwiping) {
             if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
                 isSwiping = true;
             } else if (Math.abs(diffY) > 10) {
                 swipeStartX = null; 
+                swipeFront.parentElement.classList.remove('is-swiping');
                 return;
             }
         }
@@ -804,22 +822,26 @@
             
             let moveX = diffX;
             if (window.activeSwipeCard === swipeFront) {
-                moveX = maxSwipe + diffX; // Account for already being open
+                moveX = maxSwipe + diffX; 
             }
             
-            if (moveX > 0) moveX = 0; // Prevent swiping right past the edge
-            if (moveX < maxSwipe - 20) moveX = maxSwipe - 20; // Add elastic resistance
+            // Add elastic bouncy resistance at edges
+            if (moveX > 0) moveX = moveX * 0.2; 
+            if (moveX < maxSwipe) moveX = maxSwipe + ((moveX - maxSwipe) * 0.2); 
             
             swipeFront.style.transform = `translateX(${moveX}px)`;
         }
     }, { passive: false });
 
     document.addEventListener('touchend', (e) => {
+        if (e.target.closest('.swipe-actions')) return; // Ignore if they clicked an action
+
         const swipeFront = e.target.closest('.swipe-front');
         if (!swipeFront || swipeStartX === null) return;
 
         // Restore animation smoothing for the snap
-        swipeFront.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+        swipeFront.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05)';
+        swipeFront.parentElement.classList.remove('is-swiping');
         
         let currentX = 0;
         const transformMatrix = window.getComputedStyle(swipeFront).getPropertyValue('transform');
@@ -831,9 +853,11 @@
         if (currentX < (maxSwipe / 2)) {
             swipeFront.style.transform = `translateX(${maxSwipe}px)`;
             window.activeSwipeCard = swipeFront;
+            swipeFront.parentElement.classList.add('is-open'); // Keeps buttons visible
         } else {
             swipeFront.style.transform = `translateX(0px)`;
             window.activeSwipeCard = null;
+            swipeFront.parentElement.classList.remove('is-open'); // Hides buttons cleanly
         }
 
         swipeStartX = null;
@@ -1355,7 +1379,7 @@
 
     // --- JOURNAL ENGINE LOGIC ---
     window.editJournalLog = function(id) {
-        window.closeAllSwipes(); // Snap card closed when edit is clicked
+        window.closeAllSwipes(); // Snap card closed
         
         const log = journalHistory.find(l => l.id === id);
         if(!log) return;
@@ -1385,7 +1409,8 @@
         submitBtn.innerHTML = 'Update Ledger <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
         submitBtn.style.background = 'var(--gold)';
         
-        document.getElementById('view-journal').scrollTop = 0;
+        // Smoothly scroll the user back to the top so they know where they are
+        document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.logSmoke = async function() {
@@ -1412,7 +1437,7 @@
             light: light || "N/A",
             pairing: pairing || "None",
             notes: notes || "No notes.",
-            image: currentLogImage // Attached compressed image string
+            image: currentLogImage 
         };
 
         try {
@@ -1435,14 +1460,12 @@
             document.getElementById('log-pairing').value = '';
             document.getElementById('log-notes').value = '';
             
-            // Reset photo button
             currentLogImage = null;
             document.getElementById('log-image-upload').value = "";
             const photoBtn = document.getElementById('log-photo-btn');
             photoBtn.classList.remove('attached');
             photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
             
-            // Re-initialize date instead of clearing
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('log-date').value = today;
             
@@ -1471,7 +1494,6 @@
                 </div>`;
             countStat.innerText = '0';
             
-            // Clear Profile Optimal Mechanics Stats
             document.getElementById('profile-mechanics-ring').innerText = "N/A Gauge";
             document.getElementById('profile-mechanics-cut').innerText = "N/A Cut";
             document.getElementById('profile-mechanics-light').innerText = "N/A Light";
@@ -1481,7 +1503,6 @@
 
         let html = '';
         journalHistory.forEach(log => {
-            // Register image and build icon if a photo exists
             let imageBadge = '';
             if(log.image) {
                 window.imageRegistry[log.id] = log.image;
@@ -1539,7 +1560,6 @@
 
         countStat.innerText = journalHistory.length; 
         
-        // --- Optimal Mechanics Profile Logic ---
         const ringBadge = document.getElementById('profile-mechanics-ring');
         const cutBadge = document.getElementById('profile-mechanics-cut');
         const lightBadge = document.getElementById('profile-mechanics-light');
@@ -1581,7 +1601,6 @@
 
     // --- AGING ENGINE LOGIC ---
     
-    // Auto-calculate 7 days target peak date
     document.getElementById('vault-date').addEventListener('change', function(e) {
         if (!e.target.value) return;
         const acquired = new Date(e.target.value + 'T00:00:00');
@@ -1596,7 +1615,7 @@
     });
 
     window.editCigar = function(id) {
-        window.closeAllSwipes(); // Snap card closed when edit is clicked
+        window.closeAllSwipes(); // Snap card closed
         
         const cigar = humidorInventory.find(c => c.id === id);
         if(!cigar) return;
@@ -1632,7 +1651,8 @@
         submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
         submitBtn.style.background = 'var(--gold)';
 
-        document.getElementById('view-humidor').scrollTop = 0;
+        // Smoothly scroll the user back to the top
+        document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.storeCigar = async function() {
@@ -1659,10 +1679,10 @@
             ring: ring || "-",
             wrapper: wrapper || "Unknown",
             price: priceVal ? parseFloat(priceVal) : null,
-            targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, // Fallback safety
+            targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
             rating: ratingVal ? parseFloat(ratingVal) : null,
-            acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, // Fallback safety
-            image: currentVaultImage // Attached compressed image string
+            acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
+            image: currentVaultImage 
         };
 
         try {
@@ -1684,14 +1704,12 @@
             document.getElementById('vault-vitola').selectedIndex = 0;
             document.getElementById('vault-wrapper').selectedIndex = 0;
             
-            // Reset photo button
             currentVaultImage = null;
             document.getElementById('vault-image-upload').value = "";
             const photoBtn = document.getElementById('vault-photo-btn');
             photoBtn.classList.remove('attached');
             photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
             
-            // Re-initialize dates instead of clearing them
             initializeDates();
 
         } catch (e) {
@@ -1714,7 +1732,6 @@
             countStat.innerText = '0';
             document.getElementById('stat-alerts').innerText = '0';
             
-            // Clear Profile Humidor Stats
             document.getElementById('stat-avg-aging').innerHTML = `0 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
             document.getElementById('stat-humidor-value').innerText = `$0.00`;
             document.getElementById('profile-wrapper-stat').innerText = "N/A";
@@ -1756,7 +1773,6 @@
 
             let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
             
-            // Register image and build icon if a photo exists
             let imageBadge = '';
             if(cigar.image) {
                 window.imageRegistry[cigar.id] = cigar.image;
@@ -1809,7 +1825,6 @@
         document.getElementById('stat-avg-aging').innerHTML = `${avgDays} <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
         document.getElementById('stat-humidor-value').innerText = `$${totalValue.toFixed(2)}`;
         
-        // --- Palate Mapping Profile Logic ---
         const wrapperBadge = document.getElementById('profile-wrapper-stat');
         const wrapperCounts = {};
         let maxCount = 0;
