@@ -215,8 +215,8 @@
             </div>
         </div>
 
-        <!-- LAYER 2: DYNAMIC TITLE LAYER -->
-        <div style="background: linear-gradient(135deg, #1E293B 0%, #0B0F19 100%); border-top-left-radius: 40px; padding: 28px 24px 76px 24px; position: relative; border-top: 1px solid rgba(255,255,255,0.03); box-shadow: 0 -4px 20px rgba(0,0,0,0.5); z-index: 5;">
+                <!-- LAYER 2: DYNAMIC TITLE LAYER -->
+        <div style="background: linear-gradient(135deg, #27374D 0%, #131A2A 100%); border-top-left-radius: 40px; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid rgba(255,255,255,0.05); box-shadow: 0 -4px 20px rgba(0,0,0,0.5); z-index: 5;">
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800;">
                     Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">User</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
@@ -299,10 +299,7 @@
 
                 <div style="display: flex; gap: 12px; margin-bottom: 16px;">
                     <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; flex: 1;">
-                    <div style="position: relative; display: flex; align-items: center; width: 95px;">
-                        <span style="position: absolute; left: 12px; font-size: 10px; font-weight: 800; color: var(--text-dim); pointer-events: none;">QTY</span>
-                        <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 100%; padding: 16px 8px 16px 38px; text-align: center;">
-                    </div>
+                    <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
@@ -534,13 +531,12 @@
             <section id="view-radar" class="view-section">
                 <div class="section-header" style="margin-top: 0;">
                     <div class="section-title">Release Notes</div>
-                    <div class="badge badge-mint">Version Update</div>
+                    <div class="badge badge-mint">Version Update 1.0.5</div>
                 </div>
 
                 <div class="log-card" style="margin-bottom: 24px;">
                     <div class="log-header" style="margin-bottom: 16px;">
                         <div>
-                            <div class="log-title" style="font-size: 18px;">Version Update</div>
                             <div class="log-meta">Latest Features & Improvements</div>
                         </div>
                     </div>
@@ -1514,7 +1510,7 @@
         const brand = document.getElementById('vault-brand').value;
         const qtyVal = document.getElementById('vault-quantity').value;
         const vitola = document.getElementById('vault-vitola').value;
-        const ring = document.getElementById('vault-ring-gauge') ? document.getElementById('vault-ring-gauge').value : "-";
+        const ring = document.getElementById('vault-ring-gauge').value;
         const wrapper = document.getElementById('vault-wrapper').value;
         const priceVal = document.getElementById('vault-price').value;
         const acquiredDate = document.getElementById('vault-date').value;
@@ -1553,7 +1549,7 @@
             
             document.getElementById('vault-brand').value = '';
             document.getElementById('vault-quantity').value = '1';
-            if(document.getElementById('vault-ring-gauge')) document.getElementById('vault-ring-gauge').value = '';
+            document.getElementById('vault-ring-gauge').value = '';
             document.getElementById('vault-price').value = '';
             document.getElementById('vault-rating').selectedIndex = 0;
             document.getElementById('vault-vitola').selectedIndex = 0;
