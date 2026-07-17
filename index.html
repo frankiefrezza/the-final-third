@@ -52,9 +52,9 @@
             --stat-bg-end: #0F141E;
             
             --font-sans: 'Inter', -apple-system, sans-serif;
-    --font-serif: 'DM Serif Display', Georgia, serif;
-    --font-mono: 'JetBrains Mono', monospace;
-}
+            --font-serif: 'DM Serif Display', Georgia, serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
 
         /* --- LIGHT THEME (PREMIUM PARCHMENT & ESPRESSO) --- */
         [data-theme="light"] {
@@ -113,11 +113,10 @@
 
         /* --- PERSISTENT HEADER (LAYER 1) --- */
         .dash-header {
-    text-align: center;
-    padding: 20px 16px;
-    /* This is the new spotlight line: */
-    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 65%);
-}
+            text-align: center;
+            padding: 20px 16px;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 65%);
+        }
 
         /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
@@ -145,41 +144,40 @@
         }
 
         .section-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 20px; 
-    margin-top: 36px; 
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.15); /* Faint gold dividing line */
-}
-.section-title { 
-    font-family: var(--font-serif); 
-    font-size: 22px; 
-    font-weight: 400; /* DM Serif Display looks best un-bolded */
-    color: var(--text-main); 
-    position: relative;
-    padding-left: 14px;
-}
-/* Creates a stylish vertical "Cigar Band" accent next to the title */
-.section-title::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 10%;
-    height: 80%;
-    width: 4px;
-    background: var(--leather);
-    border-radius: 4px;
-}
-.section-link { 
-    font-size: 11px; 
-    font-weight: 800; 
-    color: var(--gold); 
-    cursor: pointer; 
-    text-transform: uppercase; 
-    letter-spacing: 1px; 
-}
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            margin-top: 36px; 
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .section-title { 
+            font-family: var(--font-serif); 
+            font-size: 22px; 
+            font-weight: 400;
+            color: var(--text-main); 
+            position: relative;
+            padding-left: 14px;
+        }
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10%;
+            height: 80%;
+            width: 4px;
+            background: var(--leather);
+            border-radius: 4px;
+        }
+        .section-link { 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--gold); 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
 
         /* --- HOME ELEMENTS --- */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
@@ -257,7 +255,6 @@
             color: #0B0F19; 
             position: relative; 
         }
-        /* Fade gradient bridging the swipe button into the background */
         .swipe-action-edit::before {
             content: '';
             position: absolute;
@@ -290,11 +287,49 @@
         input[type="date"].form-input { min-height: 54px; -webkit-appearance: none; padding: 14px 16px; align-items: center; }
         input[type="date"]::-webkit-date-and-time-value { text-align: left; }
         
-        /* Invert the calendar icon dynamically based on theme */
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); opacity: 1; transition: filter 0.3s; }
         [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.3); }
 
         .empty-state { background: var(--surface-2); border: 1px solid var(--border-subtle); box-shadow: inset 0 2px 10px var(--shadow-subtle); text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; font-weight: 700; border-radius: 16px; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: background-color 0.3s; }
+
+        /* --- CUSTOM AUTOCOMPLETE DROPDOWN --- */
+        .autocomplete-wrapper {
+            position: relative;
+            flex: 1;
+            width: 100%;
+        }
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface-1);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            margin-top: 4px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 30px var(--shadow-strong);
+        }
+        .autocomplete-item {
+            padding: 14px 20px;
+            color: var(--text-main);
+            font-size: 14px;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background-color 0.2s;
+        }
+        .autocomplete-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 14px 14px;
+        }
+        .autocomplete-item:active {
+            background: var(--surface-2);
+        }
 
         /* --- FLOATING BOTTOM DOCK --- */
         .bottom-dock-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; background: linear-gradient(to top, var(--bg-base) 40%, rgba(11, 15, 25, 0) 100%); padding-top: 40px; pointer-events: none; transition: background 0.3s; }
@@ -487,7 +522,6 @@
                     </div>
                 </div>
 
-
                 <!-- FAVORITES BENTO BOX -->
                 <div class="section-header" style="margin-top: 24px;">
                     <div class="section-title">Favorites</div>
@@ -522,7 +556,10 @@
                 </div>
 
                 <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-                    <input type="text" id="vault-brand" class="form-input" list="brand-list" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; flex: 1;">
+                    <div class="autocomplete-wrapper" style="flex: 1;">
+                        <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; width: 100%;" autocomplete="off">
+                        <div id="vault-autocomplete" class="autocomplete-dropdown"></div>
+                    </div>
                     <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
                 </div>
                 
@@ -655,7 +692,11 @@
                 
                 <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
                     <input type="date" id="log-date" class="form-input" style="margin-bottom: 0;">
-                    <input type="text" id="log-brand" class="form-input" list="brand-list" placeholder="Brand & Line (e.g., Perdomo 10th Anniv)" style="margin-bottom: 0;">
+                    
+                    <div class="autocomplete-wrapper">
+                        <input type="text" id="log-brand" class="form-input" placeholder="Brand & Line (e.g., Perdomo 10th Anniv)" style="margin-bottom: 0; width: 100%;" autocomplete="off">
+                        <div id="log-autocomplete" class="autocomplete-dropdown"></div>
+                    </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
@@ -1000,8 +1041,6 @@
     </div>
 </div>
 
-<datalist id="brand-list"></datalist>
-
 <script type="module">
 
     let humidorInventory = [];
@@ -1059,7 +1098,6 @@
     };
 
     function handleDragStart(e) {
-        // Updated to ignore the new view-photo-badge class for the lightbox fix
         if (e.target.closest('.swipe-actions') || e.target.closest('.view-photo-badge')) return; 
         
         const swipeFront = e.target.closest('.swipe-front');
@@ -1161,7 +1199,7 @@
     import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // FIREBASE CONFIGURATION (Using the newer 'the-final-third' project credentials)
+    // FIREBASE CONFIGURATION 
     const firebaseConfig = {
         apiKey: "AIzaSyBdJ-ctGph_yGm4rdyAmPYYZR2QqWNBLxc",
         authDomain: "the-final-third.firebaseapp.com",
@@ -1202,25 +1240,15 @@
         }
     }
 
-    // UPDATED FUNCTION: Attach directly to the existing datalist
-        async function loadBrandLibrary() {
+    // --- CUSTOM AUTOCOMPLETE LOGIC ---
+    window.brandLibrary = [];
+
+    async function loadBrandLibrary() {
         try {
-            // Pointing specifically to the app_data collection and cigar_library document
             const libraryDoc = await getDoc(doc(db, "app_data", "cigar_library"));
             
             if (libraryDoc.exists()) {
-                // IMPORTANT: Changed from .brands to .list to match your database
-                const brands = libraryDoc.data().list || [];
-                const dataList = document.getElementById('brand-list');
-                
-                // Clear it out just in case it runs twice
-                dataList.innerHTML = ''; 
-                
-                brands.forEach(brand => {
-                    const option = document.createElement('option');
-                    option.value = brand;
-                    dataList.appendChild(option);
-                });
+                window.brandLibrary = libraryDoc.data().list || [];
             } else {
                 console.warn("Brand library not found in this database!");
             }
@@ -1228,6 +1256,53 @@
             console.error("Failed to load brand library:", error);
         }
     }
+
+    function setupAutocomplete(inputId, dropdownId) {
+        const input = document.getElementById(inputId);
+        const dropdown = document.getElementById(dropdownId);
+
+        input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            dropdown.innerHTML = '';
+            
+            if (!val) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            const matches = window.brandLibrary.filter(brand => 
+                brand.toLowerCase().includes(val)
+            );
+
+            if (matches.length > 0) {
+                matches.forEach(match => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    div.innerText = match;
+                    
+                    div.onclick = function() {
+                        input.value = match;
+                        dropdown.style.display = 'none';
+                    };
+                    dropdown.appendChild(div);
+                });
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target !== input && e.target !== dropdown) {
+                dropdown.style.display = 'none';
+            }
+        });
+    }
+
+    // Initialize custom autocomplete listeners
+    setupAutocomplete('vault-brand', 'vault-autocomplete');
+    setupAutocomplete('log-brand', 'log-autocomplete');
+
 
     window.openCigarModal = function() {
         const displayEl = document.getElementById('daily-cigar-display');
@@ -1251,7 +1326,7 @@
         document.getElementById('cigar-modal').classList.remove('active');
     };
 
-        // --- TIMELINE MODAL LOGIC ---
+    // --- TIMELINE MODAL LOGIC ---
     window.openTimelineModal = function() {
         const listContainer = document.getElementById('timeline-modal-list');
         
@@ -1264,7 +1339,6 @@
         const now = new Date().getTime();
         let html = '';
 
-        // Sort cigars by oldest (longest aged) first
         const sortedInventory = [...humidorInventory].sort((a, b) => a.acquiredDate - b.acquiredDate);
 
         sortedInventory.forEach(cigar => {
@@ -1602,14 +1676,13 @@
             document.getElementById('main-environment').style.display = 'flex';
             document.getElementById('main-environment').classList.add('active');
             
-            // Set correct theme UI right away
             window.updateThemeUI(document.documentElement.getAttribute('data-theme'));
             
             window.currentUserName = user.displayName || user.email.split('@')[0]; 
             
             initializeDates();
             loadDailyCigar();
-            loadBrandLibrary(); // Brand library is now fetched upon successful login
+            loadBrandLibrary(); 
             
             document.getElementById('profile-display-name').innerText = window.currentUserName;
             document.getElementById('profile-display-email').innerText = user.email;
@@ -1839,7 +1912,6 @@
             let imageBadge = '';
             if(log.image) {
                 window.imageRegistry[log.id] = log.image;
-                // Changed from <span> to <button> and injected touch/mouse isolation events to fix the double tap bug
                 imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
             }
 
@@ -2081,28 +2153,28 @@
         let totalQuantity = 0;
 
         // --- NEW AGING CALCULATOR ---
-let tier1 = 0; // 0-30
-let tier2 = 0; // 31-90
-let tier3 = 0; // 91-180
-let tier4 = 0; // 180+
+        let tier1 = 0; // 0-30
+        let tier2 = 0; // 31-90
+        let tier3 = 0; // 91-180
+        let tier4 = 0; // 180+
 
-humidorInventory.forEach(c => {
-    let days = Math.floor((now - c.acquiredDate) / (1000 * 60 * 60 * 24));
-    if (days < 0) days = 0;
-    
-    let qty = c.quantity || 1;
-    
-    if (days <= 30) tier1 += qty;
-    else if (days <= 90) tier2 += qty;
-    else if (days <= 180) tier3 += qty;
-    else tier4 += qty;
-});
+        humidorInventory.forEach(c => {
+            let days = Math.floor((now - c.acquiredDate) / (1000 * 60 * 60 * 24));
+            if (days < 0) days = 0;
+            
+            let qty = c.quantity || 1;
+            
+            if (days <= 30) tier1 += qty;
+            else if (days <= 90) tier2 += qty;
+            else if (days <= 180) tier3 += qty;
+            else tier4 += qty;
+        });
 
-document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
-document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
-document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
-document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
-// ----------------------------
+        document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
+        // ----------------------------
 
         humidorInventory.forEach(cigar => {
             const msPerDay = 1000 * 60 * 60 * 24;
@@ -2133,7 +2205,6 @@ document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1
             let imageBadge = '';
             if(cigar.image) {
                 window.imageRegistry[cigar.id] = cigar.image;
-                // Changed from <span> to <button> and injected touch/mouse isolation events to fix the double tap bug
                 imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
             }
 
