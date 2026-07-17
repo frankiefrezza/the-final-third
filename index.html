@@ -11,7 +11,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
@@ -52,7 +52,7 @@
             --stat-bg-end: #0F141E;
             
             --font-sans: 'Inter', -apple-system, sans-serif;
-    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-serif: 'DM Serif Display', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 }
 
@@ -144,9 +144,42 @@
             100% { opacity: 1; transform: translateY(0); } 
         }
 
-        .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; margin-top: 32px; }
-        .section-title { font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main); }
-        .section-link { font-size: 13px; font-weight: 800; color: var(--leather); cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+    margin-top: 36px; 
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15); /* Faint gold dividing line */
+}
+.section-title { 
+    font-family: var(--font-serif); 
+    font-size: 22px; 
+    font-weight: 400; /* DM Serif Display looks best un-bolded */
+    color: var(--text-main); 
+    position: relative;
+    padding-left: 14px;
+}
+/* Creates a stylish vertical "Cigar Band" accent next to the title */
+.section-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10%;
+    height: 80%;
+    width: 4px;
+    background: var(--leather);
+    border-radius: 4px;
+}
+.section-link { 
+    font-size: 11px; 
+    font-weight: 800; 
+    color: var(--gold); 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+}
 
         /* --- HOME ELEMENTS --- */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
@@ -292,7 +325,7 @@
         .close-modal:hover { color: var(--text-main); }
         .modal-subtitle { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
         .modal-text { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
-        .modal-btn { display: block; background-color: var(--btn-leather); color: #0B0F19; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); transition: transform 0.2s, background-color 0.3s; }
+        .modal-btn { display: block; background-color: var(--btn-leather); color: #0B0F19; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); transition: transform 0.2s, background-color 0.3s; border: none; cursor: pointer; }
         .modal-btn:active { transform: scale(0.98); }
 
     </style>
@@ -408,6 +441,52 @@
                         <h2 id="stat-avg">0.0</h2>
                     </div>
                 </div>
+
+                 <!-- AGING OVERVIEW -->
+                <div class="log-card" style="margin-bottom: 24px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-leaf" style="color: var(--leather);"></i>
+                            <div style="font-size: 12px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;">Aging Overview</div>
+                        </div>
+                        <div class="section-link" style="font-size: 10px;" onclick="openTimelineModal()">See Full Timeline <i class="fa-solid fa-chevron-right" style="margin-left: 4px;"></i></div>
+                    </div>
+
+                    <!-- Segmented Timeline Bar -->
+                    <div style="display: flex; align-items: center; width: 100%; height: 4px; border-radius: 2px; margin-bottom: 16px; position: relative;">
+                        <!-- Track Segments -->
+                        <div style="flex: 1; background: #4ADE80; height: 100%;"></div>
+                        <div style="width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-1);"></div>
+                        <div style="flex: 1.5; background: #FACC15; height: 100%;"></div>
+                        <div style="width: 8px; height: 8px; background: #FACC15; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-1);"></div>
+                        <div style="flex: 1; background: #F97316; height: 100%;"></div>
+                        <div style="width: 8px; height: 8px; background: #F97316; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-1);"></div>
+                        <div style="flex: 1; background: #EF4444; height: 100%; position: relative;">
+                            <div style="position: absolute; right: 20px; top: -2px; width: 4px; height: 8px; background: #EF4444; border-radius: 2px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Labels -->
+                    <div style="display: flex; justify-content: space-between; text-align: left;">
+                        <div style="flex: 1;">
+                            <div style="color: #4ADE80; font-size: 11px; font-weight: 700; text-transform: uppercase;">0-30 Days</div>
+                            <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-1">0 cigars</div>
+                        </div>
+                        <div style="flex: 1.5; padding-left: 10px;">
+                            <div style="color: #FACC15; font-size: 11px; font-weight: 700; text-transform: uppercase;">31-90 Days</div>
+                            <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-2">0 cigars</div>
+                        </div>
+                        <div style="flex: 1; padding-left: 10px;">
+                            <div style="color: #F97316; font-size: 11px; font-weight: 700; text-transform: uppercase;">91-180 Days</div>
+                            <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-3">0 cigars</div>
+                        </div>
+                        <div style="flex: 0.8; padding-left: 10px;">
+                            <div style="color: #EF4444; font-size: 11px; font-weight: 700; text-transform: uppercase;">180+ Days</div>
+                            <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-4">0 cigars</div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <!-- FAVORITES BENTO BOX -->
                 <div class="section-header" style="margin-top: 24px;">
@@ -656,7 +735,7 @@
                     <i class="fa-solid fa-camera"></i> Add Picture
                 </button>
 
-                <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button>
+                <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button> 
 
                 <div class="section-header" style="margin-top: 32px;">
                     <div class="section-title">Journal History</div>
@@ -676,6 +755,25 @@
                     <div class="section-title">Release Notes</div>
                 </div>
 
+                <!-- Version 1.0.8 -->
+                <div class="log-card" style="margin-bottom: 24px;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Version Update 1.0.8</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Typography & UI Enhancements</div>
+                        </div>
+                        <div class="badge badge-mint">Latest</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-gantt" style="color: var(--leather);"></i> Interactive Aging Timeline</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Integrated a new visual aging timeline overview on the home dashboard, allowing you to instantly track the maturation stages of your collection across 30, 90, and 180+ day tiers.</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-font" style="color: var(--leather);"></i> DM Serif Display</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Updated the main typography to DM Serif Display, providing a cleaner, more premium editorial interface across the entire application.</div>
+                    </div>
+                </div>
+
                 <!-- Version 1.0.7 -->
                 <div class="log-card" style="margin-bottom: 24px;">
                     <div class="log-header" style="margin-bottom: 16px;">
@@ -683,7 +781,6 @@
                             <div class="log-meta">Version Update 1.0.7</div>
                             <div class="log-title" style="font-size: 14px; margin-top: 4px;">Premium Light Mode</div>
                         </div>
-                        <div class="badge badge-mint">Latest</div>
                     </div>
                     <div style="margin-bottom: 8px;">
                         <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-sun" style="color: var(--leather);"></i> The "Parchment & Espresso" Theme</div>
@@ -885,6 +982,21 @@
         <a id="modal-review-btn" href="#" target="_blank" class="modal-btn">
             Google Search Results
         </a>
+    </div>
+</div>
+
+<!-- FULL TIMELINE MODAL -->
+<div id="timeline-modal" class="modal-overlay" onclick="closeTimelineModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-height: 80vh; display: flex; flex-direction: column; padding: 24px 16px;">
+        <span class="close-modal" onclick="closeTimelineModal(event)">&times;</span>
+        <p class="modal-subtitle">HUMIDOR INVENTORY</p>
+        <h2 style="margin-bottom: 20px; font-family: var(--font-serif); font-size: 22px;">Full Aging Timeline</h2>
+        
+        <div id="timeline-modal-list" style="overflow-y: auto; text-align: left; padding-right: 4px; flex: 1;">
+            <!-- Javascript will inject the list of cigars here -->
+        </div>
+        
+        <button class="modal-btn" style="margin-top: 20px; width: 100%;" onclick="closeTimelineModal(event)">Close</button>
     </div>
 </div>
 
@@ -1137,6 +1249,49 @@
 
     window.closeCigarModal = function(event) {
         document.getElementById('cigar-modal').classList.remove('active');
+    };
+
+        // --- TIMELINE MODAL LOGIC ---
+    window.openTimelineModal = function() {
+        const listContainer = document.getElementById('timeline-modal-list');
+        
+        if (!humidorInventory || humidorInventory.length === 0) {
+            listContainer.innerHTML = `<div class="empty-state" style="margin-top: 12px; padding: 20px;"><i class="fa-solid fa-leaf" style="opacity: 0.3;"></i><span>No cigars currently aging</span></div>`;
+            document.getElementById('timeline-modal').classList.add('active');
+            return;
+        }
+
+        const now = new Date().getTime();
+        let html = '';
+
+        // Sort cigars by oldest (longest aged) first
+        const sortedInventory = [...humidorInventory].sort((a, b) => a.acquiredDate - b.acquiredDate);
+
+        sortedInventory.forEach(cigar => {
+            let daysAged = Math.floor((now - cigar.acquiredDate) / (1000 * 60 * 60 * 24));
+            if (daysAged < 0) daysAged = 0;
+            
+            let qty = cigar.quantity || 1;
+            
+            html += `
+            <div style="background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-family: var(--font-serif); font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.2;">${cigar.brand}</div>
+                    <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${cigar.vitola} • Qty: ${qty}</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="color: var(--leather); font-family: var(--font-mono); font-size: 16px; font-weight: 700;">${daysAged}</div>
+                    <div style="font-size: 9px; text-transform: uppercase; font-weight: 800; color: var(--text-dim); letter-spacing: 0.5px;">Days</div>
+                </div>
+            </div>`;
+        });
+
+        listContainer.innerHTML = html;
+        document.getElementById('timeline-modal').classList.add('active');
+    };
+
+    window.closeTimelineModal = function(event) {
+        document.getElementById('timeline-modal').classList.remove('active');
     };
 
     function initializeDates() {
@@ -1924,6 +2079,30 @@
         let totalAgedDays = 0;
         let readyAlertsCount = 0;
         let totalQuantity = 0;
+
+        // --- NEW AGING CALCULATOR ---
+let tier1 = 0; // 0-30
+let tier2 = 0; // 31-90
+let tier3 = 0; // 91-180
+let tier4 = 0; // 180+
+
+humidorInventory.forEach(c => {
+    let days = Math.floor((now - c.acquiredDate) / (1000 * 60 * 60 * 24));
+    if (days < 0) days = 0;
+    
+    let qty = c.quantity || 1;
+    
+    if (days <= 30) tier1 += qty;
+    else if (days <= 90) tier2 += qty;
+    else if (days <= 180) tier3 += qty;
+    else tier4 += qty;
+});
+
+document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
+document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
+document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
+document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
+// ----------------------------
 
         humidorInventory.forEach(cigar => {
             const msPerDay = 1000 * 60 * 60 * 24;
