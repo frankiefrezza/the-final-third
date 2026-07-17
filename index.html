@@ -1068,28 +1068,32 @@
         }
     }
 
-    // UPDATED FUNCTION: Fetching from a Collection
-async function loadBrandLibrary() {
-    try {
-        // NOTE: Replace "cigar_library" if your seeded collection has a different name
-        const querySnapshot = await getDocs(collection(db, "cigar_library"));
-        const dataList = document.getElementById('brand-list');
-        
-        // Clear it out just in case it runs twice
-        dataList.innerHTML = ''; 
-        
-        querySnapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const option = document.createElement('option');
+    // UPDATED FUNCTION: Attach directly to the existing datalist
+        async function loadBrandLibrary() {
+        try {
+            // Pointing specifically to the app_data collection and cigar_library document
+            const libraryDoc = await getDoc(doc(db, "app_data", "cigar_library"));
             
-            // NOTE: Replace "brand" with the exact field name used in your seeded data (e.g., "name")
-            option.value = data.brand; 
-            dataList.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Failed to load brand library:", error);
+            if (libraryDoc.exists()) {
+                // IMPORTANT: Changed from .brands to .list to match your database
+                const brands = libraryDoc.data().list || [];
+                const dataList = document.getElementById('brand-list');
+                
+                // Clear it out just in case it runs twice
+                dataList.innerHTML = ''; 
+                
+                brands.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand;
+                    dataList.appendChild(option);
+                });
+            } else {
+                console.warn("Brand library not found in this database!");
+            }
+        } catch (error) {
+            console.error("Failed to load brand library:", error);
+        }
     }
-}
 
     window.openCigarModal = function() {
         const displayEl = document.getElementById('daily-cigar-display');
