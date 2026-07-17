@@ -112,7 +112,12 @@
         .auth-flex-links { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding: 0 8px; }
 
         /* --- PERSISTENT HEADER (LAYER 1) --- */
-        .dash-header { display: flex; justify-content: center; align-items: center; padding: max(20px, env(safe-area-inset-top)) 24px 16px 24px; z-index: 10; position: relative; }
+        .dash-header {
+    text-align: center;
+    padding: 20px 16px;
+    /* This is the new spotlight line: */
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 65%);
+}
 
         /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
