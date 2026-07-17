@@ -213,7 +213,24 @@
             transition: background-color 0.3s, opacity 0.2s;
         }
         .swipe-action-btn:active { opacity: 0.8; }
-        .swipe-action-edit { background: var(--btn-gold); color: #0B0F19; }
+        
+        .swipe-action-edit { 
+            background: var(--btn-gold); 
+            color: #0B0F19; 
+            position: relative; 
+        }
+        /* Fade gradient bridging the swipe button into the background */
+        .swipe-action-edit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 100%;
+            width: 150px; 
+            background: linear-gradient(to right, transparent, var(--btn-gold));
+            pointer-events: none;
+        }
+        
         .swipe-action-delete { background: var(--danger); }
         
         .swipe-front {
@@ -861,7 +878,7 @@
         <p class="modal-text">To view detailed tasting notes and scores from industry experts, check the external review archives.</p>
         
         <a id="modal-review-btn" href="#" target="_blank" class="modal-btn">
-            Read Reviews
+            Google Search Results
         </a>
     </div>
 </div>
@@ -1662,8 +1679,8 @@
             let imageBadge = '';
             if(log.image) {
                 window.imageRegistry[log.id] = log.image;
-                // Added class="view-photo-badge" to ensure swipe engine ignores this element
-                imageBadge = `<span class="view-photo-badge" onclick="openLightbox('${log.id}')" style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</span>`;
+                // Changed from <span> to <button> and injected touch/mouse isolation events to fix the double tap bug
+                imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
             }
 
             html += `
@@ -1932,8 +1949,8 @@
             let imageBadge = '';
             if(cigar.image) {
                 window.imageRegistry[cigar.id] = cigar.image;
-                // Added class="view-photo-badge" to ensure swipe engine ignores this element
-                imageBadge = `<span class="view-photo-badge" onclick="openLightbox('${cigar.id}')" style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</span>`;
+                // Changed from <span> to <button> and injected touch/mouse isolation events to fix the double tap bug
+                imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
             }
 
             let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
