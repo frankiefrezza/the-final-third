@@ -1069,12 +1069,14 @@
     }
 
     // UPDATED FUNCTION: Attach directly to the existing datalist
-    async function loadBrandLibrary() {
+        async function loadBrandLibrary() {
         try {
+            // Pointing specifically to the app_data collection and cigar_library document
             const libraryDoc = await getDoc(doc(db, "app_data", "cigar_library"));
             
             if (libraryDoc.exists()) {
-                const brands = libraryDoc.data().brands || [];
+                // IMPORTANT: Changed from .brands to .list to match your database
+                const brands = libraryDoc.data().list || [];
                 const dataList = document.getElementById('brand-list');
                 
                 // Clear it out just in case it runs twice
