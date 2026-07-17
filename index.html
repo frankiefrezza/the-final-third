@@ -6,8 +6,8 @@
     <title>The Final Third</title>
     
     <!-- App Icons -->
-<link rel="icon" type="image/png" href="app-icon.png">
-<link rel="apple-touch-icon" href="app-icon.png">
+    <link rel="icon" type="image/png" href="app-icon.png">
+    <link rel="apple-touch-icon" href="app-icon.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -421,7 +421,7 @@
                 </div>
 
                 <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-                    <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; flex: 1;">
+                    <input type="text" id="vault-brand" class="form-input" list="brand-list" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; flex: 1;">
                     <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
                 </div>
                 
@@ -554,7 +554,7 @@
                 
                 <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
                     <input type="date" id="log-date" class="form-input" style="margin-bottom: 0;">
-                    <input type="text" id="log-brand" class="form-input" placeholder="Brand & Line (e.g., Perdomo 10th Anniv)" style="margin-bottom: 0;">
+                    <input type="text" id="log-brand" class="form-input" list="brand-list" placeholder="Brand & Line (e.g., Perdomo 10th Anniv)" style="margin-bottom: 0;">
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
@@ -866,6 +866,8 @@
     </div>
 </div>
 
+<datalist id="brand-list"></datalist>
+
 <script type="module">
 
     let humidorInventory = [];
@@ -923,7 +925,8 @@
     };
 
     function handleDragStart(e) {
-        if (e.target.closest('.swipe-actions')) return; 
+        // Updated to ignore the new view-photo-badge class for the lightbox fix
+        if (e.target.closest('.swipe-actions') || e.target.closest('.view-photo-badge')) return; 
         
         const swipeFront = e.target.closest('.swipe-front');
         
@@ -1024,14 +1027,15 @@
     import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+    // FIREBASE CONFIGURATION (Using the newer 'the-final-third' project credentials)
     const firebaseConfig = {
-      apiKey: "AIzaSyChMrxW41yXgQkqFEqe0DxGFwjp_QdriYE",
-      authDomain: "finalthird-6628e.firebaseapp.com",
-      projectId: "finalthird-6628e",
-      storageBucket: "finalthird-6628e.firebasestorage.app",
-      messagingSenderId: "658511952829",
-      appId: "1:658511952829:web:96f277790007a890cc30d4",
-      measurementId: "G-9N9VGTTX3G"
+        apiKey: "AIzaSyBdJ-ctGph_yGm4rdyAmPYYZR2QqWNBLxc",
+        authDomain: "the-final-third.firebaseapp.com",
+        projectId: "the-final-third",
+        storageBucket: "the-final-third.firebasestorage.app",
+        messagingSenderId: "686549768886",
+        appId: "1:686549768886:web:a0af4ee205001503f4e417",
+        measurementId: "G-JESSM5976P"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -1063,6 +1067,29 @@
             displayEl.innerText = "Padrón 1964 Anniversary"; 
         }
     }
+
+    // UPDATED FUNCTION: Fetching from a Collection
+async function loadBrandLibrary() {
+    try {
+        // NOTE: Replace "cigar_library" if your seeded collection has a different name
+        const querySnapshot = await getDocs(collection(db, "cigar_library"));
+        const dataList = document.getElementById('brand-list');
+        
+        // Clear it out just in case it runs twice
+        dataList.innerHTML = ''; 
+        
+        querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const option = document.createElement('option');
+            
+            // NOTE: Replace "brand" with the exact field name used in your seeded data (e.g., "name")
+            option.value = data.brand; 
+            dataList.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Failed to load brand library:", error);
+    }
+}
 
     window.openCigarModal = function() {
         const displayEl = document.getElementById('daily-cigar-display');
@@ -1401,6 +1428,7 @@
             
             initializeDates();
             loadDailyCigar();
+            loadBrandLibrary(); // Brand library is now fetched upon successful login
             
             document.getElementById('profile-display-name').innerText = window.currentUserName;
             document.getElementById('profile-display-email').innerText = user.email;
@@ -1630,7 +1658,8 @@
             let imageBadge = '';
             if(log.image) {
                 window.imageRegistry[log.id] = log.image;
-                imageBadge = `<span onclick="openLightbox('${log.id}')" style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</span>`;
+                // Added class="view-photo-badge" to ensure swipe engine ignores this element
+                imageBadge = `<span class="view-photo-badge" onclick="openLightbox('${log.id}')" style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</span>`;
             }
 
             html += `
@@ -1899,7 +1928,8 @@
             let imageBadge = '';
             if(cigar.image) {
                 window.imageRegistry[cigar.id] = cigar.image;
-                imageBadge = `<span onclick="openLightbox('${cigar.id}')" style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</span>`;
+                // Added class="view-photo-badge" to ensure swipe engine ignores this element
+                imageBadge = `<span class="view-photo-badge" onclick="openLightbox('${cigar.id}')" style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</span>`;
             }
 
             let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
