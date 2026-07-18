@@ -529,38 +529,32 @@
                             <i class="fa-solid fa-leaf" style="color: var(--leather);"></i>
                             <div style="font-size: 12px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;">Aging Overview</div>
                         </div>
-                        <div class="section-link" style="font-size: 10px;" onclick="openTimelineModal()">See Full Timeline <i class="fa-solid fa-chevron-right" style="margin-left: 4px;"></i></div>
+                        <div class="section-link" style="font-size: 10px;" onclick="openTimelineModal('all')">See Full Timeline <i class="fa-solid fa-chevron-right" style="margin-left: 4px;"></i></div>
                     </div>
 
-                    <!-- Segmented Timeline Bar -->
-                    <div style="display: flex; align-items: center; width: 100%; height: 4px; border-radius: 2px; margin-bottom: 16px; position: relative;">
-                        <!-- Track Segments -->
-                        <div style="flex: 1; background: #4ADE80; height: 100%;"></div>
-                        <div style="width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-1);"></div>
-                        <div style="flex: 1.5; background: #FACC15; height: 100%;"></div>
-                        <div style="width: 8px; height: 8px; background: #FACC15; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-1);"></div>
-                        <div style="flex: 1; background: #F97316; height: 100%;"></div>
-                        <div style="width: 8px; height: 8px; background: #F97316; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-1);"></div>
-                        <div style="flex: 1; background: #EF4444; height: 100%; position: relative;">
-                            <div style="position: absolute; right: 1px; top: -2px; width: 4px; height: 8px; background: #EF4444; border-radius: 2px;"></div>
-                        </div>
+                    <!-- Dynamic Proportional Timeline Bar -->
+                    <div id="aging-progress-bar" style="display: flex; width: 100%; height: 8px; border-radius: 4px; margin-bottom: 16px; overflow: hidden; background: var(--surface-2); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);">
+                        <div id="bar-tier-1" style="width: 25%; background: #4ADE80; transition: width 0.5s ease;"></div>
+                        <div id="bar-tier-2" style="width: 25%; background: #FACC15; transition: width 0.5s ease;"></div>
+                        <div id="bar-tier-3" style="width: 25%; background: #F97316; transition: width 0.5s ease;"></div>
+                        <div id="bar-tier-4" style="width: 25%; background: #EF4444; transition: width 0.5s ease;"></div>
                     </div>
 
-                    <!-- Timeline Labels -->
-                    <div style="display: flex; justify-content: space-between; text-align: left;">
-                        <div style="flex: 1;">
+                    <!-- Timeline Labels (Grid Method & Interactive) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1.1fr 1fr 0.9fr; text-align: left; gap: 8px;">
+                        <div id="label-tier-1" onclick="openTimelineModal('tier1')" style="cursor: pointer; transition: opacity 0.3s;">
                             <div style="color: #4ADE80; font-size: 11px; font-weight: 700; text-transform: uppercase;">0-30 Days</div>
                             <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-1">0 cigars</div>
                         </div>
-                        <div style="flex: 1.5; padding-left: 10px;">
+                        <div id="label-tier-2" onclick="openTimelineModal('tier2')" style="cursor: pointer; transition: opacity 0.3s;">
                             <div style="color: #FACC15; font-size: 11px; font-weight: 700; text-transform: uppercase;">31-90 Days</div>
                             <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-2">0 cigars</div>
                         </div>
-                        <div style="flex: 1; padding-left: 10px;">
+                        <div id="label-tier-3" onclick="openTimelineModal('tier3')" style="cursor: pointer; transition: opacity 0.3s;">
                             <div style="color: #F97316; font-size: 11px; font-weight: 700; text-transform: uppercase;">91-180 Days</div>
                             <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-3">0 cigars</div>
                         </div>
-                        <div style="flex: 0.8; padding-left: 10px;">
+                        <div id="label-tier-4" onclick="openTimelineModal('tier4')" style="cursor: pointer; transition: opacity 0.3s;">
                             <div style="color: #EF4444; font-size: 11px; font-weight: 700; text-transform: uppercase;">180+ Days</div>
                             <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-4">0 cigars</div>
                         </div>
@@ -1076,7 +1070,7 @@
     <div class="modal-content" onclick="event.stopPropagation()" style="max-height: 80vh; display: flex; flex-direction: column; padding: 24px 16px;">
         <span class="close-modal" onclick="closeTimelineModal(event)">&times;</span>
         <p class="modal-subtitle">HUMIDOR INVENTORY</p>
-        <h2 style="margin-bottom: 20px; font-family: var(--font-serif); font-size: 22px;">Full Aging Timeline</h2>
+        <h2 id="timeline-modal-title" style="margin-bottom: 20px; font-family: var(--font-serif); font-size: 22px;">Full Aging Timeline</h2>
         
         <div id="timeline-modal-list" style="overflow-y: auto; text-align: left; padding-right: 4px; flex: 1;">
             <!-- Javascript will inject the list of cigars here -->
@@ -1371,9 +1365,10 @@
         document.getElementById('cigar-modal').classList.remove('active');
     };
 
-    // --- TIMELINE MODAL LOGIC ---
-    window.openTimelineModal = function() {
+    // --- TIMELINE MODAL LOGIC (UPDATED WITH TIER FILTERING) ---
+    window.openTimelineModal = function(filterTier = 'all') {
         const listContainer = document.getElementById('timeline-modal-list');
+        const modalTitle = document.getElementById('timeline-modal-title');
         
         if (!humidorInventory || humidorInventory.length === 0) {
             listContainer.innerHTML = `<div class="empty-state" style="margin-top: 12px; padding: 20px;"><i class="fa-solid fa-leaf" style="opacity: 0.3;"></i><span>No cigars currently aging</span></div>`;
@@ -1385,25 +1380,47 @@
         let html = '';
 
         const sortedInventory = [...humidorInventory].sort((a, b) => a.acquiredDate - b.acquiredDate);
+        let filteredInventory = [];
+        
+        let titleText = "Full Aging Timeline";
 
         sortedInventory.forEach(cigar => {
             let daysAged = Math.floor((now - cigar.acquiredDate) / (1000 * 60 * 60 * 24));
             if (daysAged < 0) daysAged = 0;
             
-            let qty = cigar.quantity || 1;
-            
-            html += `
-            <div style="background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <div style="font-family: var(--font-serif); font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.2;">${cigar.brand}</div>
-                    <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${cigar.vitola} • Qty: ${qty}</div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="color: var(--leather); font-family: var(--font-mono); font-size: 16px; font-weight: 700;">${daysAged}</div>
-                    <div style="font-size: 9px; text-transform: uppercase; font-weight: 800; color: var(--text-dim); letter-spacing: 0.5px;">Days</div>
-                </div>
-            </div>`;
+            let include = false;
+            if (filterTier === 'all') { include = true; }
+            else if (filterTier === 'tier1' && daysAged <= 30) { include = true; titleText = "0-30 Days Aging"; }
+            else if (filterTier === 'tier2' && daysAged > 30 && daysAged <= 90) { include = true; titleText = "31-90 Days Aging"; }
+            else if (filterTier === 'tier3' && daysAged > 90 && daysAged <= 180) { include = true; titleText = "91-180 Days Aging"; }
+            else if (filterTier === 'tier4' && daysAged > 180) { include = true; titleText = "180+ Days Aging"; }
+
+            if (include) {
+                cigar.calculatedDaysAged = daysAged;
+                filteredInventory.push(cigar);
+            }
         });
+
+        if (modalTitle) modalTitle.innerText = titleText;
+
+        if (filteredInventory.length === 0) {
+            html = `<div class="empty-state" style="margin-top: 12px; padding: 20px;"><i class="fa-solid fa-leaf" style="opacity: 0.3;"></i><span>No cigars in this tier</span></div>`;
+        } else {
+            filteredInventory.forEach(cigar => {
+                let qty = cigar.quantity || 1;
+                html += `
+                <div style="background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-family: var(--font-serif); font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.2;">${cigar.brand}</div>
+                        <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${cigar.vitola} • Qty: ${qty}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: var(--leather); font-family: var(--font-mono); font-size: 16px; font-weight: 700;">${cigar.calculatedDaysAged}</div>
+                        <div style="font-size: 9px; text-transform: uppercase; font-weight: 800; color: var(--text-dim); letter-spacing: 0.5px;">Days</div>
+                    </div>
+                </div>`;
+            });
+        }
 
         listContainer.innerHTML = html;
         document.getElementById('timeline-modal').classList.add('active');
@@ -2050,7 +2067,7 @@
         }
     };
 
-    // --- AGING ENGINE LOGIC ---
+    // --- AGING ENGINE LOGIC (UPDATED WITH DYNAMIC PROGRESS & DIMMING) ---
     
     document.getElementById('vault-date').addEventListener('change', function(e) {
         if (!e.target.value) return;
@@ -2186,6 +2203,17 @@
             document.getElementById('stat-humidor-value').innerText = `$0.00`;
             document.getElementById('profile-wrapper-stat').innerText = "N/A";
             
+            // Handle empty dashboard graphics
+            document.getElementById('label-tier-1').style.opacity = '0.3';
+            document.getElementById('label-tier-2').style.opacity = '0.3';
+            document.getElementById('label-tier-3').style.opacity = '0.3';
+            document.getElementById('label-tier-4').style.opacity = '0.3';
+            
+            document.getElementById('bar-tier-1').style.width = '25%';
+            document.getElementById('bar-tier-2').style.width = '25%';
+            document.getElementById('bar-tier-3').style.width = '25%';
+            document.getElementById('bar-tier-4').style.width = '25%';
+            
             renderFavorites(); 
             return;
         }
@@ -2197,17 +2225,19 @@
         let readyAlertsCount = 0;
         let totalQuantity = 0;
 
-        // --- NEW AGING CALCULATOR ---
+        // --- DYNAMIC AGING CALCULATOR ---
         let tier1 = 0; // 0-30
         let tier2 = 0; // 31-90
         let tier3 = 0; // 91-180
         let tier4 = 0; // 180+
+        let totalAgingQuantity = 0;
 
         humidorInventory.forEach(c => {
             let days = Math.floor((now - c.acquiredDate) / (1000 * 60 * 60 * 24));
             if (days < 0) days = 0;
             
             let qty = c.quantity || 1;
+            totalAgingQuantity += qty;
             
             if (days <= 30) tier1 += qty;
             else if (days <= 90) tier2 += qty;
@@ -2219,7 +2249,20 @@
         document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
         document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
         document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
-        // ----------------------------
+        
+        // Dynamic Opacity Dimming
+        document.getElementById('label-tier-1').style.opacity = tier1 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-2').style.opacity = tier2 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-3').style.opacity = tier3 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-4').style.opacity = tier4 === 0 ? '0.3' : '1';
+        
+        // Dynamic Proportional Widths
+        if (totalAgingQuantity > 0) {
+            document.getElementById('bar-tier-1').style.width = `${(tier1 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-2').style.width = `${(tier2 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-3').style.width = `${(tier3 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-4').style.width = `${(tier4 / totalAgingQuantity) * 100}%`;
+        }
 
         humidorInventory.forEach(cigar => {
             const msPerDay = 1000 * 60 * 60 * 24;
