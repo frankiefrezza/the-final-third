@@ -1115,7 +1115,7 @@
         <p class="modal-text">To view detailed tasting notes and scores from industry experts, check the external review archives.</p>
         
         <a id="modal-review-btn" href="#" target="_blank" class="modal-btn">
-            Google Search Results
+            See Search Results <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left: 4px;"></i>
         </a>
     </div>
 </div>
@@ -1453,7 +1453,7 @@ setInterval(loadDailyCigar, 1000 * 60 * 60);
         let titleText = "Full Aging Timeline";
 
         sortedInventory.forEach(cigar => {
-            let daysAged = Math.floor((now - c.acquiredDate) / (1000 * 60 * 60 * 24));
+            let daysAged = Math.floor((now - cigar.acquiredDate) / (1000 * 60 * 60 * 24));
             if (daysAged < 0) daysAged = 0;
             
             let include = false;
