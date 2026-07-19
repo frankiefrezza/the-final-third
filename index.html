@@ -1323,20 +1323,29 @@
     }
 
     async function loadDailyCigar() {
-        const day = getDayOfYear();
-        const displayEl = document.getElementById('daily-cigar-display');
-        try {
-            const docRef = doc(db, "daily_roster", day.toString());
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                displayEl.innerText = docSnap.data().name;
-            } else {
-                displayEl.innerText = "Padrón 60th Anniversary Perfecto"; 
-            }
-        } catch(e) {
-            displayEl.innerText = "Padrón 1964 Anniversary"; 
+    const day = getDayOfYear();
+    const displayEl = document.getElementById('daily-cigar-display');
+    
+    console.log(`[Daily Cigar] Current Day of Year calculated: ${day}`);
+    
+    try {
+        const docRef = doc(db, "daily_roster", day.toString());
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            console.log("[Daily Cigar] Document found successfully:", docSnap.data());
+            displayEl.innerText = docSnap.data().name;
+        } else {
+            console.warn(`[Daily Cigar] Document ID "${day}" does NOT exist in your "daily_roster" collection. Falling back.`);
+            displayEl.innerText = "Padrón 60th Anniversary Perfecto"; 
         }
+    } catch(e) {
+        console.error("[Daily Cigar] Firestore fetch failed entirely. Check your Security Rules.", e);
+        displayEl.innerText = "Padrón 1964 Anniversary"; 
     }
+}
+// Check for a new cigar every hour in case the app stays open in the background
+setInterval(loadDailyCigar, 1000 * 60 * 60);
 
     // --- CUSTOM AUTOCOMPLETE LOGIC ---
     window.brandLibrary = [];
