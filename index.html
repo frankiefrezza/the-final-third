@@ -420,47 +420,54 @@
 <div id="app-container">
 
     <div id="login-environment" class="app-environment active">
-        <div style="width: 100%; max-width: 400px; margin-top: 20px;">
+        <div style="width: 100%; max-width: 400px; display: flex; flex-direction: column; min-height: 85vh; justify-content: center; padding-top: 40px;">
             
-            <!-- BETA WARNING BANNER -->
-            <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 14px; padding: 14px 16px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <i class="fa-solid fa-code-pull-request" style="color: var(--gold); margin-top: 2px; font-size: 14px;"></i>
-                <div>
-                    <div style="color: var(--gold); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Beta Release</div>
-                    <div style="color: var(--text-dim); font-size: 12px; line-height: 1.4; font-weight: 600;">The app is in active development. Certain features may not function as intended while we build.</div>
-                </div>
-            </div>
-
-            <img src="final-third-logo.png" class="app-logo" alt="Final Third Logo">
-            <p class="login-subtitle">FROM THE FIRST LIGHT TO THE FINAL THIRD</p>
+            <!-- LOGO (Moved up, Tagline Removed) -->
+            <img src="final-third-logo.png" class="app-logo" alt="Final Third Logo" style="margin-bottom: 32px;">
             
-            <!-- View 1: Sign In -->
-            <div id="auth-signin" class="auth-view active">
-                <input type="email" id="signin-email" class="editorial-input" placeholder="Email address" autocomplete="off">
-                <input type="password" id="signin-password" class="editorial-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
-                <button id="signin-btn" class="btn-primary" onclick="handleLogin()">Log In <i class="fa-solid fa-arrow-right"></i></button>
-                <div class="auth-flex-links">
-                    <span class="auth-link" onclick="showAuthView('reset')">Forgot Password?</span>
-                    <span class="auth-link" onclick="showAuthView('signup')">Create Account</span>
+            <!-- BENTO BOX CONTAINER FOR AUTHENTICATION -->
+            <div class="log-card" style="padding: 28px 24px; box-shadow: 0 12px 32px var(--shadow-strong); border-radius: 24px; width: 100%;">
+                
+                <!-- View 1: Sign In -->
+                <div id="auth-signin" class="auth-view active" style="max-width: 100%;">
+                    <input type="email" id="signin-email" class="editorial-input" placeholder="Email address" autocomplete="off">
+                    <input type="password" id="signin-password" class="editorial-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
+                    <button id="signin-btn" class="btn-primary" onclick="handleLogin()">Log In <i class="fa-solid fa-arrow-right"></i></button>
+                    <div class="auth-flex-links" style="margin-top: 20px; padding: 0 4px;">
+                        <span class="auth-link" onclick="showAuthView('reset')">Forgot Password?</span>
+                        <span class="auth-link" onclick="showAuthView('signup')">Create Account</span>
+                    </div>
                 </div>
+
+                <!-- View 2: Sign Up -->
+                <div id="auth-signup" class="auth-view" style="max-width: 100%;">
+                    <input type="text" id="signup-username" class="editorial-input" placeholder="Choose a Username" autocomplete="off">
+                    <input type="email" id="signup-email" class="editorial-input" placeholder="Email address" autocomplete="off">
+                    <input type="password" id="signup-password" class="editorial-input" placeholder="Password" autocomplete="off">
+                    <input type="password" id="signup-confirm" class="editorial-input" placeholder="Confirm Password" autocomplete="off" style="margin-bottom: 24px;">
+                    <button id="signup-btn" class="btn-primary" onclick="handleSignUp()">Register <i class="fa-solid fa-user-plus"></i></button>
+                    <span class="auth-link" style="display: block; margin-top: 24px; text-align: center;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
+                </div>
+
+                <!-- View 3: Password Reset -->
+                <div id="auth-reset" class="auth-view" style="max-width: 100%;">
+                    <p style="color: var(--text-main); font-size: 14px; margin-bottom: 20px; font-weight: 600; text-align: center;">Enter your email to receive a reset link.</p>
+                    <input type="email" id="reset-email" class="editorial-input" placeholder="Email address" autocomplete="off" style="margin-bottom: 24px;">
+                    <button id="reset-btn" class="btn-primary" onclick="handleResetPassword()">Send Link <i class="fa-solid fa-envelope"></i></button>
+                    <span class="auth-link" style="display: block; margin-top: 24px; text-align: center;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
+                </div>
+
             </div>
 
-            <!-- View 2: Sign Up -->
-            <div id="auth-signup" class="auth-view">
-                <input type="text" id="signup-username" class="editorial-input" placeholder="Choose a Username" autocomplete="off">
-                <input type="email" id="signup-email" class="editorial-input" placeholder="Email address" autocomplete="off">
-                <input type="password" id="signup-password" class="editorial-input" placeholder="Password" autocomplete="off">
-                <input type="password" id="signup-confirm" class="editorial-input" placeholder="Confirm Password" autocomplete="off" style="margin-bottom: 24px;">
-                <button id="signup-btn" class="btn-primary" onclick="handleSignUp()">Register <i class="fa-solid fa-user-plus"></i></button>
-                <span class="auth-link" style="display: block; margin-top: 24px;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
-            </div>
-
-            <!-- View 3: Password Reset -->
-            <div id="auth-reset" class="auth-view">
-                <p style="color: var(--text-main); font-size: 14px; margin-bottom: 20px; font-weight: 600;">Enter your email to receive a reset link.</p>
-                <input type="email" id="reset-email" class="editorial-input" placeholder="Email address" autocomplete="off" style="margin-bottom: 24px;">
-                <button id="reset-btn" class="btn-primary" onclick="handleResetPassword()">Send Link <i class="fa-solid fa-envelope"></i></button>
-                <span class="auth-link" style="display: block; margin-top: 24px;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
+            <!-- BETA WARNING BANNER (Moved to the bottom) -->
+            <div style="margin-top: auto; padding-top: 48px; padding-bottom: 24px;">
+                <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 14px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <i class="fa-solid fa-code-pull-request" style="color: var(--gold); margin-top: 2px; font-size: 14px;"></i>
+                    <div>
+                        <div style="color: var(--gold); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Beta Release</div>
+                        <div style="color: var(--text-dim); font-size: 12px; line-height: 1.4; font-weight: 600;">The app is in active development. Certain features may not function as intended while we build.</div>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -1430,7 +1437,7 @@
         let titleText = "Full Aging Timeline";
 
         sortedInventory.forEach(cigar => {
-            let daysAged = Math.floor((now - cigar.acquiredDate) / (1000 * 60 * 60 * 24));
+            let daysAged = Math.floor((now - c.acquiredDate) / (1000 * 60 * 60 * 24));
             if (daysAged < 0) daysAged = 0;
             
             let include = false;
