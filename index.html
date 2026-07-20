@@ -100,8 +100,9 @@
         .login-subtitle { color: var(--text-dim); font-size: 11px; margin-bottom: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
         .editorial-input { width: 100%; background: var(--surface-1); border: 2px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); padding: 18px 20px; font-size: 16px; font-weight: 600; text-align: center; outline: none; margin-bottom: 16px; transition: border 0.3s; font-family: var(--font-sans); }
         .editorial-input:focus { border-color: var(--leather); }
-        .btn-primary { width: 100%; background: var(--btn-leather); color: #0B0F19; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); letter-spacing: 0.5px; }
+        .btn-primary { width: 100%; background: var(--btn-leather); color: #0B0F19; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); letter-spacing: 0.5px; }
         .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
         .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 16px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
         .btn-secondary.attached { background: rgba(176, 125, 70, 0.1); color: var(--leather); border-color: var(--leather); border-style: solid; }
@@ -1298,6 +1299,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
     // FIREBASE CONFIGURATION 
     const firebaseConfig = {
@@ -1313,6 +1315,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
+    const storage = getStorage(app);
 
     window.currentUserName = "User";
 
@@ -1325,6 +1328,8 @@
     }
 
     async function loadDailyCigar() {
+        if (!auth.currentUser) return; // FIX: Prevents unauthenticated fetch errors
+
         const day = getDayOfYear();
         const displayEl = document.getElementById('daily-cigar-display');
         
@@ -1348,6 +1353,15 @@
     }
     // Check for a new cigar every hour in case the app stays open in the background
     setInterval(loadDailyCigar, 1000 * 60 * 60);
+
+    // --- CLOUD STORAGE HELPER ---
+    async function uploadImageToStorage(base64Data, folder) {
+        if (!base64Data || !base64Data.startsWith('data:image')) return base64Data; // Skips if already a URL or null
+        const fileName = `${folder}_${Date.now()}.jpg`;
+        const storageRef = ref(storage, `users/${auth.currentUser.uid}/${folder}/${fileName}`);
+        await uploadString(storageRef, base64Data, 'data_url');
+        return await getDownloadURL(storageRef);
+    }
 
     // --- CUSTOM AUTOCOMPLETE LOGIC ---
     window.brandLibrary = [];
@@ -1514,37 +1528,38 @@
         document.getElementById('log-date').value = todayStr;
     }
 
-    window.compressImage = function(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = event => {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 1000;
-                    const MAX_HEIGHT = 1000;
-                    let width = img.width;
-                    let height = img.height;
+window.compressImage = function(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                // Aggressively scale down to fit directly in the database
+                const MAX_WIDTH = 400;
+                const MAX_HEIGHT = 400;
+                let width = img.width;
+                let height = img.height;
 
-                    if (width > height) {
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                    } else {
-                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                    }
+                if (width > height) {
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                } else {
+                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                }
 
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7)); 
-                };
-                img.onerror = error => reject(error);
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.6)); 
             };
-            reader.onerror = error => reject(error);
-        });
-    };
+            img.onerror = error => reject(error);
+        };
+        reader.onerror = error => reject(error);
+    });
+};
 
     window.compressAvatar = function(file) {
         return new Promise((resolve, reject) => {
@@ -1601,9 +1616,9 @@
     };
 
     window.openLightbox = function(docId) {
-        const base64Str = window.imageRegistry[docId];
-        if(base64Str) {
-            document.getElementById('lightbox-img').src = base64Str;
+        const urlStr = window.imageRegistry[docId];
+        if(urlStr) {
+            document.getElementById('lightbox-img').src = urlStr;
             document.getElementById('lightbox-overlay').classList.add('active');
         }
     };
@@ -1620,16 +1635,20 @@
         const file = event.target.files[0];
         if(!file) return;
         try {
+            document.getElementById('profile-avatar-img').style.opacity = '0.5'; // Processing state
             const compressedBase64 = await window.compressAvatar(file);
+            const imageUrl = await uploadImageToStorage(compressedBase64, 'avatar');
             
-            document.getElementById('profile-avatar-img').src = compressedBase64;
-            localStorage.setItem('finalThirdAvatar', compressedBase64); 
+            document.getElementById('profile-avatar-img').src = imageUrl;
+            document.getElementById('profile-avatar-img').style.opacity = '1';
+            localStorage.setItem('finalThirdAvatar', imageUrl); 
             
             if (auth.currentUser) {
-                await setDoc(doc(db, "users", auth.currentUser.uid), { avatar: compressedBase64 }, { merge: true });
+                await setDoc(doc(db, "users", auth.currentUser.uid), { avatar: imageUrl }, { merge: true });
             }
         } catch (error) {
             console.error("Avatar upload failed:", error);
+            document.getElementById('profile-avatar-img').style.opacity = '1';
         }
     };
 
@@ -1949,19 +1968,24 @@
         document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.logSmoke = async function() {
-        const date = document.getElementById('log-date').value;
-        const brand = document.getElementById('log-brand').value;
-        const vitola = document.getElementById('log-vitola').value;
-        const ring = document.getElementById('log-ring-gauge').value;
-        const wrapper = document.getElementById('log-wrapper').value;
-        const cut = document.getElementById('log-cut').value;
-        const light = document.getElementById('log-light').value;
-        const pairing = document.getElementById('log-pairing').value;
-        const notes = document.getElementById('log-notes').value;
+window.logSmoke = async function() {
+    const date = document.getElementById('log-date').value;
+    const brand = document.getElementById('log-brand').value;
+    const vitola = document.getElementById('log-vitola').value;
+    const ring = document.getElementById('log-ring-gauge').value;
+    const wrapper = document.getElementById('log-wrapper').value;
+    const cut = document.getElementById('log-cut').value;
+    const light = document.getElementById('log-light').value;
+    const pairing = document.getElementById('log-pairing').value;
+    const notes = document.getElementById('log-notes').value;
+    const submitBtn = document.getElementById('journal-submit-btn');
 
-        if(!brand) { alert("Please enter the brand to log."); return; }
+    if(!brand) { alert("Please enter the brand to log."); return; }
 
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+    submitBtn.disabled = true;
+
+    try {
         const newLog = {
             uid: auth.currentUser.uid,
             date: date || new Date().toISOString().split('T')[0],
@@ -1973,42 +1997,44 @@
             light: light || "N/A",
             pairing: pairing || "None",
             notes: notes || "No notes.",
-            image: currentLogImage 
+            image: currentLogImage // Saving the scaled Base64 string directly
         };
 
-        try {
-            if (editingJournalId) {
-                await updateDoc(doc(db, "journal", editingJournalId), newLog);
-                editingJournalId = null;
-                const submitBtn = document.getElementById('journal-submit-btn');
-                submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
-                submitBtn.style.background = 'var(--btn-leather)';
-            } else {
-                await addDoc(collection(db, "journal"), newLog);
-            }
-            
-            document.getElementById('log-brand').value = '';
-            document.getElementById('log-vitola').selectedIndex = 0;
-            document.getElementById('log-ring-gauge').value = '';
-            document.getElementById('log-wrapper').selectedIndex = 0;
-            document.getElementById('log-cut').selectedIndex = 0;
-            document.getElementById('log-light').selectedIndex = 0;
-            document.getElementById('log-pairing').value = '';
-            document.getElementById('log-notes').value = '';
-            
-            currentLogImage = null;
-            document.getElementById('log-image-upload').value = "";
-            const photoBtn = document.getElementById('log-photo-btn');
-            photoBtn.classList.remove('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-            
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('log-date').value = today;
-            
-        } catch (e) {
-            console.error("Error adding document: ", e);
+        if (editingJournalId) {
+            await updateDoc(doc(db, "journal", editingJournalId), newLog);
+            editingJournalId = null;
+            submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+            submitBtn.style.background = 'var(--btn-leather)';
+        } else {
+            await addDoc(collection(db, "journal"), newLog);
+            submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
         }
-    };
+        
+        document.getElementById('log-brand').value = '';
+        document.getElementById('log-vitola').selectedIndex = 0;
+        document.getElementById('log-ring-gauge').value = '';
+        document.getElementById('log-wrapper').selectedIndex = 0;
+        document.getElementById('log-cut').selectedIndex = 0;
+        document.getElementById('log-light').selectedIndex = 0;
+        document.getElementById('log-pairing').value = '';
+        document.getElementById('log-notes').value = '';
+        
+        currentLogImage = null;
+        document.getElementById('log-image-upload').value = "";
+        const photoBtn = document.getElementById('log-photo-btn');
+        photoBtn.classList.remove('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('log-date').value = today;
+        
+    } catch (e) {
+        console.error("Error adding document: ", e);
+        submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+    } finally {
+        submitBtn.disabled = false;
+    }
+};
 
     // --- SORT ENGINE & EXPAND ENGINE ---
     window.toggleHumidorSort = function() {
@@ -2258,22 +2284,27 @@
         document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.storeCigar = async function() {
-        const brand = document.getElementById('vault-brand').value;
-        const qtyVal = document.getElementById('vault-quantity').value;
-        const vitola = document.getElementById('vault-vitola').value;
-        const ring = document.getElementById('vault-ring-gauge').value;
-        const wrapper = document.getElementById('vault-wrapper').value;
-        const priceVal = document.getElementById('vault-price').value;
-        const acquiredDate = document.getElementById('vault-date').value;
-        const targetDate = document.getElementById('vault-target-date').value;
-        const ratingVal = document.getElementById('vault-rating').value;
+window.storeCigar = async function() {
+    const brand = document.getElementById('vault-brand').value;
+    const qtyVal = document.getElementById('vault-quantity').value;
+    const vitola = document.getElementById('vault-vitola').value;
+    const ring = document.getElementById('vault-ring-gauge').value;
+    const wrapper = document.getElementById('vault-wrapper').value;
+    const priceVal = document.getElementById('vault-price').value;
+    const acquiredDate = document.getElementById('vault-date').value;
+    const targetDate = document.getElementById('vault-target-date').value;
+    const ratingVal = document.getElementById('vault-rating').value;
+    const submitBtn = document.getElementById('vault-submit-btn');
 
-        if(!brand || !acquiredDate || !targetDate) { alert("Please enter the brand, date acquired, and target peak date."); return; }
+    if(!brand || !acquiredDate || !targetDate) { alert("Please enter the brand, date acquired, and target peak date."); return; }
 
-        const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
-        const targetTime = new Date(targetDate + 'T00:00:00').getTime();
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+    submitBtn.disabled = true;
 
+    const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
+    const targetTime = new Date(targetDate + 'T00:00:00').getTime();
+
+    try {
         const newCigar = {
             uid: auth.currentUser.uid,
             brand,
@@ -2285,40 +2316,42 @@
             targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
             rating: ratingVal ? parseFloat(ratingVal) : null,
             acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
-            image: currentVaultImage 
+            image: currentVaultImage // Saving the scaled Base64 string directly
         };
 
-        try {
-            if (editingVaultId) {
-                await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
-                editingVaultId = null;
-                const submitBtn = document.getElementById('vault-submit-btn');
-                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-                submitBtn.style.background = 'var(--btn-leather)';
-            } else {
-                await addDoc(collection(db, "humidor"), newCigar);
-            }
-            
-            document.getElementById('vault-brand').value = '';
-            document.getElementById('vault-quantity').value = '1';
-            document.getElementById('vault-ring-gauge').value = '';
-            document.getElementById('vault-price').value = '';
-            document.getElementById('vault-rating').selectedIndex = 0;
-            document.getElementById('vault-vitola').selectedIndex = 0;
-            document.getElementById('vault-wrapper').selectedIndex = 0;
-            
-            currentVaultImage = null;
-            document.getElementById('vault-image-upload').value = "";
-            const photoBtn = document.getElementById('vault-photo-btn');
-            photoBtn.classList.remove('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-            
-            initializeDates();
-
-        } catch (e) {
-            console.error("Error adding document: ", e);
+        if (editingVaultId) {
+            await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
+            editingVaultId = null;
+            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+            submitBtn.style.background = 'var(--btn-leather)';
+        } else {
+            await addDoc(collection(db, "humidor"), newCigar);
+            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
         }
-    };
+        
+        document.getElementById('vault-brand').value = '';
+        document.getElementById('vault-quantity').value = '1';
+        document.getElementById('vault-ring-gauge').value = '';
+        document.getElementById('vault-price').value = '';
+        document.getElementById('vault-rating').selectedIndex = 0;
+        document.getElementById('vault-vitola').selectedIndex = 0;
+        document.getElementById('vault-wrapper').selectedIndex = 0;
+        
+        currentVaultImage = null;
+        document.getElementById('vault-image-upload').value = "";
+        const photoBtn = document.getElementById('vault-photo-btn');
+        photoBtn.classList.remove('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        
+        initializeDates();
+
+    } catch (e) {
+        console.error("Error adding document: ", e);
+        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+    } finally {
+        submitBtn.disabled = false;
+    }
+};
 
     window.renderHumidor = function() {
         const list = document.getElementById('humidor-inventory-list');
