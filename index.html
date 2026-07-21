@@ -1415,9 +1415,17 @@
                 return;
             }
 
+            // Filter and sort: exact starting matches go to the top
             const matches = window.brandLibrary.filter(brand => 
                 brand.toLowerCase().includes(val)
-            );
+            ).sort((a, b) => {
+                const aStarts = a.toLowerCase().startsWith(val);
+                const bStarts = b.toLowerCase().startsWith(val);
+                
+                if (aStarts && !bStarts) return -1;
+                if (!aStarts && bStarts) return 1;
+                return a.localeCompare(b); // Alphabetical sort for the rest
+            }).slice(0, 10); // Limit to 10 results for a clean UI
 
             if (matches.length > 0) {
                 matches.forEach(match => {
@@ -1443,7 +1451,7 @@
             }
         });
     }
-
+    
     // Initialize custom autocomplete listeners
     setupAutocomplete('vault-brand', 'vault-autocomplete');
     setupAutocomplete('log-brand', 'log-autocomplete');
