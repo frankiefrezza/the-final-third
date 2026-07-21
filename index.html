@@ -739,7 +739,7 @@
                 <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
                     <div style="position: relative; flex: 1;">
                         <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
-                        <input type="text" id="humidor-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="renderHumidor()">
+                        <input type="text" id="humidor-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderHumidor()">
                     </div>
                     <button id="humidor-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleHumidorSort()">
                         <i class="fa-solid fa-calendar-days"></i>
@@ -853,7 +853,7 @@
                 <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
                     <div style="position: relative; flex: 1;">
                         <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
-                        <input type="text" id="journal-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="renderJournal()">
+                        <input type="text" id="journal-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderJournal()">
                     </div>
                     <button id="journal-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleJournalSort()">
                         <i class="fa-solid fa-calendar-days"></i>
@@ -1154,6 +1154,28 @@
     let currentLogImage = null;
     window.imageRegistry = {}; 
 
+    // --- HELPERS: XSS SANITIZATION & DEBOUNCING ---
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag])
+        );
+    }
+
+    function debounce(func, timeout = 250) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    }
+
     // --- THEME ENGINE ---
     window.toggleTheme = function() {
         const html = document.documentElement;
@@ -1426,6 +1448,39 @@
     setupAutocomplete('vault-brand', 'vault-autocomplete');
     setupAutocomplete('log-brand', 'log-autocomplete');
 
+    // --- AGING NOTIFICATION ALERT ENGINE ---
+    window.checkAgingAlerts = function(inventory) {
+        const now = new Date().getTime();
+        let alertedCigars = JSON.parse(localStorage.getItem('alertedCigars') || '[]');
+        let newlyReady = [];
+        
+        inventory.forEach(cigar => {
+            if (cigar.targetDate && now >= cigar.targetDate && !alertedCigars.includes(cigar.id)) {
+                newlyReady.push(cigar);
+                alertedCigars.push(cigar.id);
+            }
+        });
+
+        if (newlyReady.length > 0) {
+            localStorage.setItem('alertedCigars', JSON.stringify(alertedCigars));
+            
+            if ("Notification" in window && Notification.permission === "granted") {
+                newlyReady.forEach(cigar => {
+                    new Notification("Peak Aging Reached", {
+                        body: `Your ${escapeHTML(cigar.brand)} ${escapeHTML(cigar.vitola)} has reached its target peak date.`,
+                        icon: "app-icon.png"
+                    });
+                });
+            } else {
+                const brands = newlyReady.map(c => escapeHTML(c.brand)).join(", ");
+                // Give the UI a second to render before triggering a blocking alert
+                setTimeout(() => {
+                    alert(`Peak Aging Reached! The following cigars are ready: ${brands}`);
+                }, 500);
+            }
+        }
+    };
+
 
     window.openCigarModal = function() {
         const displayEl = document.getElementById('daily-cigar-display');
@@ -1495,8 +1550,8 @@
                 html += `
                 <div style="background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="font-family: var(--font-serif); font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.2;">${cigar.brand}</div>
-                        <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${cigar.vitola} • Qty: ${qty}</div>
+                        <div style="font-family: var(--font-serif); font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.2;">${escapeHTML(cigar.brand)}</div>
+                        <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${escapeHTML(cigar.vitola)} • Qty: ${qty}</div>
                     </div>
                     <div style="text-align: right;">
                         <div style="color: var(--leather); font-family: var(--font-mono); font-size: 16px; font-weight: 700;">${cigar.calculatedDaysAged}</div>
@@ -1827,6 +1882,11 @@ window.compressImage = function(file) {
             document.getElementById('main-environment').style.display = 'flex';
             document.getElementById('main-environment').classList.add('active');
             
+            // Request Notification Permissions if needed
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+            
             window.updateThemeUI(document.documentElement.getAttribute('data-theme'));
             
             window.currentUserName = user.displayName || user.email.split('@')[0]; 
@@ -1865,6 +1925,7 @@ window.compressImage = function(file) {
                 humidorInventory = [];
                 snapshot.forEach((doc) => { humidorInventory.push({ id: doc.id, ...doc.data() }); });
                 renderHumidor();
+                checkAgingAlerts(humidorInventory);
             });
 
             unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid)), (snapshot) => {
@@ -1921,8 +1982,8 @@ window.compressImage = function(file) {
             html += `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; ${borderStr}">
                 <div>
-                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${cigar.brand}</div>
-                    <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${cigar.vitola} • ${cigar.wrapper}</div>
+                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
+                    <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 6px; background: rgba(176, 125, 70, 0.1); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(176, 125, 70, 0.2);">
                     <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
@@ -2040,13 +2101,13 @@ window.logSmoke = async function() {
     window.toggleHumidorSort = function() {
         humidorSortOrder = humidorSortOrder === 'date' ? 'alpha' : 'date';
         document.getElementById('humidor-sort-btn').innerHTML = humidorSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
-        renderHumidor();
+        debouncedRenderHumidor();
     };
 
     window.toggleJournalSort = function() {
         journalSortOrder = journalSortOrder === 'date' ? 'alpha' : 'date';
         document.getElementById('journal-sort-btn').innerHTML = journalSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
-        renderJournal();
+        debouncedRenderJournal();
     };
     
     window.toggleJournalExpand = function(id, event) {
@@ -2061,6 +2122,8 @@ window.logSmoke = async function() {
             icon.style.transform = 'rotate(0deg)';
         }
     };
+
+    window.debouncedRenderJournal = debounce(() => renderJournal(), 250);
 
     window.renderJournal = function() {
         const journalList = document.getElementById('journal-history-list');
@@ -2143,11 +2206,11 @@ window.logSmoke = async function() {
                         <!-- Visible Summary Block -->
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
                             <div style="flex: 1; padding-right: 12px;">
-                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${log.brand}</div>
-                                <div class="log-meta">${log.vitola} • <span style="font-family: var(--font-mono);">${log.ring}</span> • ${log.wrapper}</div>
+                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(log.brand)}</div>
+                                <div class="log-meta">${escapeHTML(log.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(log.ring)}</span> • ${escapeHTML(log.wrapper)}</div>
                             </div>
                             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                                <div class="badge badge-amber">${log.date}</div>
+                                <div class="badge badge-amber">${escapeHTML(log.date)}</div>
                                 <button onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="toggleJournalExpand('${log.id}', event)" id="journal-chevron-${log.id}" style="background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; transition: transform 0.3s; margin-top: 4px; font-size: 14px;">
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </button>
@@ -2157,13 +2220,13 @@ window.logSmoke = async function() {
                         <!-- Hidden Collapsible Details Block -->
                         <div id="journal-details-${log.id}" style="display: none;">
                             <div style="display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; flex-wrap: wrap;">
-                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-scissors" style="margin-right: 4px; color: var(--leather);"></i> ${log.cut}</span>
-                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-fire" style="margin-right: 4px; color: var(--gold);"></i> ${log.light}</span>
-                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-martini-glass" style="margin-right: 4px; color: var(--walnut);"></i> ${log.pairing}</span>
+                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-scissors" style="margin-right: 4px; color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
+                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-fire" style="margin-right: 4px; color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
+                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-martini-glass" style="margin-right: 4px; color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
                                 ${imageBadge}
                             </div>
                             
-                            <div style="font-size: 13px; color: var(--text-dim); margin-top: 12px; font-style: italic; line-height: 1.4;">"${log.notes}"</div>
+                            <div style="font-size: 13px; color: var(--text-dim); margin-top: 12px; font-style: italic; line-height: 1.4;">"${escapeHTML(log.notes)}"</div>
                         </div>
 
                     </div>
@@ -2179,8 +2242,8 @@ window.logSmoke = async function() {
             <div class="log-card" style="margin-bottom: 12px;">
                 <div class="log-header" style="margin-bottom: 0;">
                     <div>
-                        <div class="log-title">${log.brand}</div>
-                        <div class="log-meta">${log.date}</div>
+                        <div class="log-title">${escapeHTML(log.brand)}</div>
+                        <div class="log-meta">${escapeHTML(log.date)}</div>
                     </div>
                     <div class="badge badge-indigo">Smoked</div>
                 </div>
@@ -2352,6 +2415,8 @@ window.storeCigar = async function() {
         submitBtn.disabled = false;
     }
 };
+
+    window.debouncedRenderHumidor = debounce(() => renderHumidor(), 250);
 
     window.renderHumidor = function() {
         const list = document.getElementById('humidor-inventory-list');
@@ -2526,8 +2591,8 @@ window.storeCigar = async function() {
                     <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
                         <div class="log-header">
                             <div style="flex: 1; padding-right: 12px;">
-                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${cigar.brand}</div>
-                                <div class="log-meta">${cigar.vitola} • <span style="font-family: var(--font-mono);">${cigar.ring}</span> • ${cigar.wrapper}</div>
+                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
+                                <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
                             </div>
                             <div class="badge ${badgeClass}">${statusText}</div>
                         </div>
@@ -2572,7 +2637,7 @@ window.storeCigar = async function() {
 
         if(totalValid > 0) {
             const pct = Math.round((maxCount / totalValid) * 100);
-            wrapperBadge.innerText = `${pct}% ${topWrapper}`;
+            wrapperBadge.innerText = `${pct}% ${escapeHTML(topWrapper)}`;
         } else {
             wrapperBadge.innerText = "N/A";
         }
