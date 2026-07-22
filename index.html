@@ -92,9 +92,8 @@
 
         /* App Logo dynamically inverts for light mode to stay visible */
         .app-logo { width: 120%; max-width: 120%; height: auto; margin: 0 0 4px -10%; display: block; filter: drop-shadow(0 0 35px var(--shadow-strong)); transition: filter 0.3s; }
-[data-theme="light"] .app-logo { 
-    filter: none; 
-}
+        [data-theme="light"] .app-logo { filter: none; }
+        
         /* --- LOGIN SCREEN --- */
         #login-environment { justify-content: center; align-items: center; padding: 40px 24px; text-align: center; background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%); }
         .login-subtitle { color: var(--text-dim); font-size: 11px; margin-bottom: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
@@ -329,22 +328,6 @@
         }
         .swipe-front:active { cursor: grabbing; }
 
-        /* --- ACTIVE LOGGING MODE UI OVERRIDES --- */
-        #humidor-inventory-list .swipe-front {
-            cursor: default; /* Remove pointer by default to prevent confusion */
-        }
-        #humidor-inventory-list.logging-mode-active .swipe-front {
-    cursor: pointer;
-    border: 2px solid var(--leather);
-    /* Use solid background with an inset shadow tint to prevent transparency bleed */
-    background: var(--surface-2);
-    box-shadow: inset 0 0 0 200px rgba(212, 175, 55, 0.05), 0 4px 16px rgba(212, 175, 55, 0.15);
-    transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
-}
-        #humidor-inventory-list.logging-mode-active .swipe-front:active {
-            transform: scale(0.98);
-        }
-
         /* --- FORMS & INPUTS --- */
         .form-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s, background-color 0.3s; box-sizing: border-box; }
         .form-input:focus { border-color: var(--leather); }
@@ -556,10 +539,17 @@
                 </div>
 
                 <!-- LOG A SMOKE BENTO BOX -->
-                <div class="log-card" style="margin-bottom: 24px; padding: 20px; text-align: center; border: 1px solid var(--leather); background: linear-gradient(145deg, rgba(212, 175, 55, 0.05) 0%, var(--surface-1) 100%);">
-                    <h3 style="font-family: var(--font-serif); font-size: 20px; font-weight: 400; color: var(--text-main); margin-bottom: 6px;">Have you smoked today?</h3>
-                    <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.5;">Select a cigar from your humidor to update your inventory and start a new journal entry.</p>
-                    <button class="btn-primary" onclick="startSmokeWorkflow()" style="padding: 14px; font-size: 14px;">Log a Smoke <i class="fa-solid fa-fire" style="margin-left: 6px;"></i></button>
+                <div style="background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface-1) 100%); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 16px; box-shadow: 0 8px 24px var(--shadow-subtle);">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: rgba(212, 175, 55, 0.15); width: 40px; height: 40px; border-radius: 12px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                            <i class="fa-solid fa-fire" style="font-size: 18px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-family: var(--font-serif); font-size: 18px; font-weight: 800; color: var(--text-main);">Have you smoked today?</div>
+                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Update inventory & start a journal entry</div>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="openLogSmokeModal()" style="padding: 14px; font-size: 14px; border-radius: 12px;">Select Cigar <i class="fa-solid fa-arrow-right" style="margin-left: 4px;"></i></button>
                 </div>
 
                  <!-- AGING OVERVIEW -->
@@ -629,15 +619,8 @@
 
             <!-- HUMIDOR / SUPPLY CHAIN SCREEN -->
             <section id="view-humidor" class="view-section">
-                
-                <!-- NEW WORKFLOW BANNER (Displays during selection mode) -->
-                <div id="smoke-workflow-banner" style="display: none; background: rgba(212, 175, 55, 0.15); border: 2px dashed var(--leather); border-radius: 16px; padding: 20px 16px; margin-bottom: 24px; flex-direction: column; align-items: center; text-align: center; gap: 12px;">
-                    <div style="font-size: 16px; color: var(--text-main); font-weight: 800;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather); margin-right: 8px;"></i> Select a cigar to log</div>
-                    <div style="font-size: 12px; color: var(--text-dim); line-height: 1.4;">Tap the cigar you just smoked to remove it from your inventory and start your journal entry.</div>
-                    <button class="btn-secondary" onclick="cancelSmokeWorkflow()" style="width: auto; padding: 10px 28px; margin-top: 8px; margin-bottom: 0; border-color: var(--danger); color: var(--danger);"><i class="fa-solid fa-xmark"></i> Cancel Logging</button>
-                </div>
 
-                <!-- ADD TO HUMIDOR FORM (Hidden during selection mode) -->
+                <!-- ADD TO HUMIDOR FORM -->
                 <div id="humidor-add-section">
                     <div class="section-header" style="margin-top: 0;">
                         <div class="section-title">Store New Acquisition</div>
@@ -911,6 +894,21 @@
                     <div class="section-title">Release Notes</div>
                 </div>
 
+                <!-- Version 1.1.1 -->
+                <div class="log-card" style="margin-bottom: 24px;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Version Update 1.1.1</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Log a Smoke UI Revamp</div>
+                        </div>
+                        <div class="badge badge-mint">Latest</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Searchable Modal</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The "Log a Smoke" action now opens a clean pop-up modal overlay instead of navigating you to the humidor. You can search directly within the modal to easily find and deplete your inventory before writing your journal entry.</div>
+                    </div>
+                </div>
+
                 <!-- Version 1.1.0 -->
                 <div class="log-card" style="margin-bottom: 24px;">
                     <div class="log-header" style="margin-bottom: 16px;">
@@ -918,7 +916,6 @@
                             <div class="log-meta">Version Update 1.1.0</div>
                             <div class="log-title" style="font-size: 14px; margin-top: 4px;">Streamlined Logging Workflow</div>
                         </div>
-                        <div class="badge badge-mint">Latest</div>
                     </div>
                     <div style="margin-bottom: 16px;">
                         <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-code-branch" style="color: var(--leather);"></i> Separated Actions</div>
@@ -945,24 +942,6 @@
                     <div>
                         <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-compress" style="color: var(--leather);"></i> Collapsible Journal Cards</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Journal history entries are now collapsed by default to save vertical screen space. Tap the chevron icon on any card to reveal your detailed tasting notes and smoking mechanics.</div>
-                    </div>
-                </div>
-
-                <!-- Version 1.0.8 -->
-                <div class="log-card" style="margin-bottom: 24px;">
-                    <div class="log-header" style="margin-bottom: 16px;">
-                        <div>
-                            <div class="log-meta">Version Update 1.0.8</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Typography & UI Enhancements</div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-gantt" style="color: var(--leather);"></i> Interactive Aging Timeline</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Integrated a new visual aging timeline overview on the home dashboard, allowing you to instantly track the maturation stages of your collection across 30, 90, and 180+ day tiers.</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-font" style="color: var(--leather);"></i> DM Serif Display</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Updated the main typography to DM Serif Display, providing a cleaner, more premium editorial interface across the entire application.</div>
                     </div>
                 </div>
 
@@ -1065,6 +1044,25 @@
         </div>
 
     </div> 
+</div>
+
+<!-- LOG A SMOKE MODAL -->
+<div id="log-smoke-modal" class="action-sheet-overlay" onclick="closeLogSmokeModal(event)">
+    <div class="action-sheet" onclick="event.stopPropagation()" style="height: 85vh; display: flex; flex-direction: column; padding-bottom: max(24px, env(safe-area-inset-bottom));">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main);">Select Cigar</div>
+            <div onclick="closeLogSmokeModal()" style="color: var(--text-dim); font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 16px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 14px;"></i>
+            <input type="text" id="log-smoke-search" class="form-input" placeholder="Search humidor..." style="margin-bottom: 0; padding-left: 42px; border-radius: 14px;" oninput="renderLogSmokeList()">
+        </div>
+        
+        <div id="log-smoke-list" style="overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; padding-right: 4px;">
+            <!-- JS injects list here -->
+        </div>
+    </div>
 </div>
 
 <!-- AVATAR MODAL -->
@@ -1271,7 +1269,6 @@
         if (!isDragging) return;
         isDragging = false;
         
-        // FIX: Only delay clearing the flag if an actual swipe occurred
         if (isSwiping) {
             setTimeout(() => { window.isDraggingCard = false; }, 50);
         } else {
@@ -1282,8 +1279,6 @@
 
         const swipeFront = e.target ? e.target.closest('.swipe-front') : null;
         if (!swipeFront || swipeStartX === null) return;
-        
-        // ... leave the rest of the function exactly as it is ...
 
         swipeFront.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05)';
         swipeFront.parentElement.classList.remove('is-swiping');
@@ -1339,44 +1334,54 @@
     const storage = getStorage(app);
 
     window.currentUserName = "User";
-    window.isLoggingSmokeWorkflow = false;
 
-    // --- QUICK LOG WORKFLOW ---
-    window.startSmokeWorkflow = function() {
-        window.isLoggingSmokeWorkflow = true;
-        document.getElementById('smoke-workflow-banner').style.display = 'flex';
-        document.getElementById('humidor-add-section').style.display = 'none'; // Hide add form
-        document.getElementById('humidor-inventory-list').classList.add('logging-mode-active'); // Add visual cue
-        
-        switchTab('view-humidor', 1);
-        
-        setTimeout(() => {
-            document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
-        }, 100);
+    // --- QUICK LOG WORKFLOW (MODAL) ---
+    window.openLogSmokeModal = function() {
+        document.getElementById('log-smoke-search').value = '';
+        window.renderLogSmokeList();
+        document.getElementById('log-smoke-modal').classList.add('active');
     };
 
-    window.cancelSmokeWorkflow = function() {
-        window.isLoggingSmokeWorkflow = false;
-        document.getElementById('smoke-workflow-banner').style.display = 'none';
-        document.getElementById('humidor-add-section').style.display = 'block'; // Show add form again
-        document.getElementById('humidor-inventory-list').classList.remove('logging-mode-active'); // Remove visual cue
+    window.closeLogSmokeModal = function(event) {
+        document.getElementById('log-smoke-modal').classList.remove('active');
     };
-    
-    // Decoupled click handler ensures clicks are only registered during the active workflow
-    window.handleHumidorCardClick = function(id, event) {
-        if (window.isDraggingCard) return; 
+
+    window.renderLogSmokeList = function() {
+        const searchVal = document.getElementById('log-smoke-search').value.toLowerCase().replace(/[^\w\s]/g, '');
+        const listEl = document.getElementById('log-smoke-list');
         
-        if (window.isLoggingSmokeWorkflow) {
-            handleCigarSelection(id);
-        } else {
-            // Future feature: Open generic cigar detail view here. 
-            // Currently does nothing outside of log mode to prevent errors.
+        let filtered = humidorInventory;
+        if(searchVal) {
+            filtered = filtered.filter(c => 
+                (c.brand && c.brand.toLowerCase().replace(/[^\w\s]/g, '').includes(searchVal)) || 
+                (c.vitola && c.vitola.toLowerCase().replace(/[^\w\s]/g, '').includes(searchVal))
+            );
         }
+        
+        if(filtered.length === 0) {
+            listEl.innerHTML = `<div class="empty-state"><i class="fa-solid fa-box" style="opacity: 0.3;"></i><span>No matching cigars</span></div>`;
+            return;
+        }
+        
+        let html = '';
+        filtered.forEach(c => {
+            let qty = c.quantity || 1;
+            html += `
+            <div style="background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: transform 0.2s, background-color 0.2s;" onclick="processSmokeSelection('${c.id}')" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                <div>
+                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(c.brand)}</div>
+                    <div style="font-size: 12px; color: var(--text-dim); font-weight: 600;">${escapeHTML(c.vitola)} • Qty: ${qty}</div>
+                </div>
+                <div style="background: rgba(212, 175, 55, 0.15); width: 32px; height: 32px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                    <i class="fa-solid fa-arrow-right" style="font-size: 14px;"></i>
+                </div>
+            </div>`;
+        });
+        listEl.innerHTML = html;
     };
 
-    window.handleCigarSelection = async function(id) {
+    window.processSmokeSelection = async function(id) {
         if (window.isDraggingCard) return; 
-        if (!window.isLoggingSmokeWorkflow) return; 
 
         const cigar = humidorInventory.find(c => c.id === id);
         if (!cigar) return;
@@ -1410,9 +1415,7 @@
             return;
         }
 
-        // Action succeeded, reset the UI state
-        window.cancelSmokeWorkflow();
-
+        closeLogSmokeModal();
         switchTab('view-journal', 2);
         
         document.getElementById('log-brand').value = cigar.brand || '';
@@ -1429,6 +1432,11 @@
         document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    window.handleHumidorCardClick = function(id, event) {
+        if (window.isDraggingCard) return; 
+        // Card click currently disabled to prevent accidental actions. Detail view can go here in future.
+    };
+
     function getDayOfYear() {
         const now = new Date();
         const start = new Date(now.getFullYear(), 0, 0);
@@ -1438,7 +1446,7 @@
     }
 
     async function loadDailyCigar() {
-        if (!auth.currentUser) return; // FIX: Prevents unauthenticated fetch errors
+        if (!auth.currentUser) return;
 
         const day = getDayOfYear();
         const displayEl = document.getElementById('daily-cigar-display');
