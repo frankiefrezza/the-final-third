@@ -414,6 +414,33 @@
         .modal-btn { display: block; background-color: var(--btn-leather); color: #1A1A1A; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); transition: transform 0.2s, background-color 0.3s; border: none; cursor: pointer; }
         .modal-btn:active { transform: scale(0.98); }
 
+        /* --- CUSTOM DIALOG UI --- */
+        .custom-dialog-overlay {
+            position: fixed; z-index: 9999; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--overlay-bg); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s;
+        }
+        .custom-dialog-overlay.active { display: flex; opacity: 1; }
+        .custom-dialog-box {
+            background: var(--surface-1); border-radius: 24px; padding: 24px;
+            width: 85%; max-width: 350px; border: 1px solid var(--border-subtle);
+            box-shadow: 0 10px 40px var(--shadow-strong); text-align: center; font-family: var(--font-sans);
+        }
+        .custom-dialog-title { font-family: var(--font-serif); font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
+        .custom-dialog-msg { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; font-weight: 500; }
+        .custom-dialog-input { 
+            width: 100%; display: none; background: var(--surface-2); border: 1px solid var(--border-subtle); 
+            color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-size: 16px; font-weight: 600; 
+            margin-bottom: 24px; outline: none; text-align: center;
+        }
+        .custom-dialog-input:focus { border-color: var(--leather); }
+        .custom-dialog-actions { display: flex; gap: 12px; justify-content: center; }
+        .custom-dialog-btn { flex: 1; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; transition: transform 0.2s; }
+        .custom-dialog-btn:active { transform: scale(0.98); }
+        .custom-dialog-cancel { background: var(--surface-2); color: var(--text-main); border: 1px solid var(--border-subtle); }
+        .custom-dialog-confirm { background: var(--leather); color: #1A1A1A; }
+        .custom-dialog-danger { background: var(--danger); color: white; }
+
     </style>
 </head>
 <body>
@@ -1124,7 +1151,74 @@
     </div>
 </div>
 
+<!-- CUSTOM BENTO DIALOG ENGINE -->
+<div id="custom-dialog-overlay" class="custom-dialog-overlay">
+    <div class="custom-dialog-box">
+        <div id="custom-dialog-title" class="custom-dialog-title">Notice</div>
+        <div id="custom-dialog-msg" class="custom-dialog-msg"></div>
+        <input type="text" id="custom-dialog-input" class="custom-dialog-input" autocomplete="off">
+        <div class="custom-dialog-actions">
+            <button id="custom-dialog-cancel" class="custom-dialog-btn custom-dialog-cancel">Cancel</button>
+            <button id="custom-dialog-confirm" class="custom-dialog-btn custom-dialog-confirm">OK</button>
+        </div>
+    </div>
+</div>
+
 <script type="module">
+
+    // --- CUSTOM DIALOG ENGINE GLOBALS ---
+    window.showCustomDialog = function({ title, message, type = 'alert', defaultVal = '', isDanger = false }) {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById('custom-dialog-overlay');
+            const titleEl = document.getElementById('custom-dialog-title');
+            const msgEl = document.getElementById('custom-dialog-msg');
+            const inputEl = document.getElementById('custom-dialog-input');
+            const cancelBtn = document.getElementById('custom-dialog-cancel');
+            const confirmBtn = document.getElementById('custom-dialog-confirm');
+
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+            
+            inputEl.style.display = type === 'prompt' ? 'block' : 'none';
+            cancelBtn.style.display = type === 'alert' ? 'none' : 'block';
+            
+            if (type === 'prompt') {
+                inputEl.value = defaultVal;
+                // Wait for display change to apply focus
+                setTimeout(() => { inputEl.focus(); inputEl.select(); }, 50);
+            }
+
+            if (isDanger) {
+                confirmBtn.className = 'custom-dialog-btn custom-dialog-danger';
+            } else {
+                confirmBtn.className = 'custom-dialog-btn custom-dialog-confirm';
+            }
+
+            overlay.classList.add('active');
+
+            const cleanup = () => {
+                overlay.classList.remove('active');
+                confirmBtn.onclick = null;
+                cancelBtn.onclick = null;
+            };
+
+            confirmBtn.onclick = () => {
+                cleanup();
+                if (type === 'prompt') resolve(inputEl.value);
+                else resolve(true);
+            };
+
+            cancelBtn.onclick = () => {
+                cleanup();
+                resolve(type === 'prompt' ? null : false);
+            };
+        });
+    };
+
+    window.customAlert = (message, title = "Notice") => window.showCustomDialog({ title, message, type: 'alert' });
+    window.customConfirm = (message, title = "Confirm", isDanger = false) => window.showCustomDialog({ title, message, type: 'confirm', isDanger });
+    window.customPrompt = (message, defaultVal = "", title = "Input Required") => window.showCustomDialog({ title, message, type: 'prompt', defaultVal });
+
 
     let humidorInventory = [];
     let journalHistory = [];
@@ -1390,15 +1484,15 @@
         const currentQty = cigar.quantity || 1;
 
         if (currentQty > 1) {
-            const result = prompt(`You have ${currentQty} in your humidor. How many are you removing to log?`, "1");
+            const result = await window.customPrompt(`You have ${currentQty} in your humidor. How many are you removing to log?`, "1", "Select Quantity");
             if (result === null) return; 
             qtyToRemove = parseInt(result);
             if (isNaN(qtyToRemove) || qtyToRemove <= 0 || qtyToRemove > currentQty) {
-                alert("Invalid quantity. Action cancelled.");
+                await window.customAlert("Invalid quantity. Action cancelled.", "Error");
                 return;
             }
         } else {
-            const confirmLog = confirm(`Remove ${escapeHTML(cigar.brand)} from your humidor and log it to your journal?`);
+            const confirmLog = await window.customConfirm(`Remove ${escapeHTML(cigar.brand)} from your humidor and log it to your journal?`, "Log Smoke");
             if (!confirmLog) return;
         }
 
@@ -1411,7 +1505,7 @@
                 await updateDoc(doc(db, "humidor", id), { quantity: newQty });
             }
         } catch (e) {
-            alert("Error updating humidor: " + e.message);
+            await window.customAlert("Error updating humidor: " + e.message, "Error");
             return;
         }
 
@@ -1578,8 +1672,8 @@
             } else {
                 const brands = newlyReady.map(c => escapeHTML(c.brand)).join(", ");
                 // Give the UI a second to render before triggering a blocking alert
-                setTimeout(() => {
-                    alert(`Peak Aging Reached! The following cigars are ready: ${brands}`);
+                setTimeout(async () => {
+                    await window.customAlert(`Peak Aging Reached! The following cigars are ready: ${brands}`, "Aging Alert");
                 }, 500);
             }
         }
@@ -1770,7 +1864,7 @@ window.compressImage = function(file) {
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
             }
         } catch (error) {
-            alert("Error processing image.");
+            await window.customAlert("Error processing image.", "Upload Failed");
         }
     };
 
@@ -1812,7 +1906,7 @@ window.compressImage = function(file) {
     };
 
     window.editUsername = async function() {
-        const newName = prompt("Enter your new username:", window.currentUserName);
+        const newName = await window.customPrompt("Enter your new username:", window.currentUserName, "Edit Username");
         if (newName && newName.trim() !== "" && newName.trim() !== window.currentUserName) {
             try {
                 await updateProfile(auth.currentUser, { displayName: newName.trim() });
@@ -1820,7 +1914,7 @@ window.compressImage = function(file) {
                 document.getElementById('display-name').innerText = window.currentUserName;
                 document.getElementById('profile-display-name').innerText = window.currentUserName;
             } catch (error) {
-                alert("Failed to update username: " + error.message);
+                await window.customAlert("Failed to update username: " + error.message, "Error");
             }
         }
     };
@@ -1832,8 +1926,11 @@ window.compressImage = function(file) {
         const email = document.getElementById('delete-email').value;
         const password = document.getElementById('delete-password').value;
         
-        if (!email || !password) return alert("Please enter email and password to confirm deletion.");
-        if (!confirm("Are you absolutely sure? All of your logs and humidor data will be permanently wiped.")) return;
+        if (!email || !password) {
+            await window.customAlert("Please enter email and password to confirm deletion.", "Required Fields");
+            return;
+        }
+        if (!(await window.customConfirm("Are you absolutely sure? All of your logs and humidor data will be permanently wiped.", "Confirm Deletion", true))) return;
 
         const user = auth.currentUser;
         const credential = EmailAuthProvider.credential(email, password);
@@ -1857,10 +1954,10 @@ window.compressImage = function(file) {
 
             await deleteUser(user);
             
-            alert("Account and all associated data have been permanently erased.");
+            await window.customAlert("Account and all associated data have been permanently erased.", "Account Deleted");
             closeDeleteActionSheet();
         } catch (error) {
-            alert("Deletion failed: " + error.message);
+            await window.customAlert("Deletion failed: " + error.message, "Error");
         }
     };
 
@@ -1925,13 +2022,16 @@ window.compressImage = function(file) {
     window.handleLogin = async function() {
         const email = document.getElementById('signin-email').value;
         const password = document.getElementById('signin-password').value;
-        if(!email || !password) return alert("Please enter email and password.");
+        if(!email || !password) {
+            await window.customAlert("Please enter email and password.", "Required Fields");
+            return;
+        }
         
         document.getElementById('signin-btn').innerHTML = 'Logging In...';
         try {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
-            alert("Login failed: " + error.message);
+            await window.customAlert("Login failed: " + error.message, "Error");
             document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
         }
     };
@@ -1942,8 +2042,14 @@ window.compressImage = function(file) {
         const password = document.getElementById('signup-password').value;
         const confirm = document.getElementById('signup-confirm').value;
         
-        if(!username || !email || !password) return alert("Please fill in all fields.");
-        if(password !== confirm) return alert("Passwords do not match.");
+        if(!username || !email || !password) {
+            await window.customAlert("Please fill in all fields.", "Required Fields");
+            return;
+        }
+        if(password !== confirm) {
+            await window.customAlert("Passwords do not match.", "Error");
+            return;
+        }
         
         document.getElementById('signup-btn').innerHTML = 'Registering...';
         try {
@@ -1951,24 +2057,27 @@ window.compressImage = function(file) {
             await updateProfile(userCredential.user, { displayName: username });
             window.currentUserName = username;
         } catch (error) {
-            alert("Sign up failed: " + error.message);
+            await window.customAlert("Sign up failed: " + error.message, "Error");
             document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
         }
     };
 
     window.handleResetPassword = async function() {
         const email = document.getElementById('reset-email').value;
-        if(!email) return alert("Please enter your email address.");
+        if(!email) {
+            await window.customAlert("Please enter your email address.", "Required Field");
+            return;
+        }
         
         document.getElementById('reset-btn').innerHTML = 'Sending...';
         try {
             await sendPasswordResetEmail(auth, email);
-            alert("Password reset email sent! Check your inbox.");
+            await window.customAlert("Password reset email sent! Check your inbox.", "Success");
             showAuthView('signin');
             document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
             document.getElementById('reset-email').value = '';
         } catch (error) {
-            alert("Reset failed: " + error.message);
+            await window.customAlert("Reset failed: " + error.message, "Error");
             document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
         }
     };
@@ -2145,7 +2254,10 @@ window.logSmoke = async function() {
     const notes = document.getElementById('log-notes').value;
     const submitBtn = document.getElementById('journal-submit-btn');
 
-    if(!brand) { alert("Please enter the brand to log."); return; }
+    if(!brand) { 
+        await window.customAlert("Please enter the brand to log.", "Missing Data");
+        return; 
+    }
 
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
     submitBtn.disabled = true;
@@ -2391,7 +2503,7 @@ window.logSmoke = async function() {
 
     window.removeJournalLog = async function(id) {
         window.closeAllSwipes();
-        if(confirm("Remove this log from your journal?")) {
+        if(await window.customConfirm("Remove this log from your journal?", "Remove Log", true)) {
             await deleteDoc(doc(db, "journal", id));
         }
     };
@@ -2463,7 +2575,10 @@ window.storeCigar = async function() {
     const ratingVal = document.getElementById('vault-rating').value;
     const submitBtn = document.getElementById('vault-submit-btn');
 
-    if(!brand || !acquiredDate || !targetDate) { alert("Please enter the brand, date acquired, and target peak date."); return; }
+    if(!brand || !acquiredDate || !targetDate) { 
+        await window.customAlert("Please enter the brand, date acquired, and target peak date.", "Missing Data");
+        return; 
+    }
 
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
     submitBtn.disabled = true;
@@ -2751,7 +2866,7 @@ window.storeCigar = async function() {
 
     window.removeCigar = async function(id) {
         window.closeAllSwipes();
-        if(confirm("Remove this cigar from your humidor?")) {
+        if(await window.customConfirm("Remove this cigar from your humidor?", "Remove Cigar", true)) {
             await deleteDoc(doc(db, "humidor", id));
         }
     };
