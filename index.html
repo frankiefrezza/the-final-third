@@ -21,35 +21,35 @@
     </script>
 
     <style>
-        /* --- DEFAULT DARK THEME (NAVY SLATE) --- */
+        /* --- DEFAULT DARK THEME (CHARCOAL & GOLD) --- */
         :root {
-            --bg-base: #0B0F19;
-            --bg-gradient-start: #1E293B;
-            --bg-gradient-end: #0B0F19;
-            --layer2-grad-start: #27374D;
-            --layer2-grad-end: #131A2A;
-            --surface-1: #131A2A;
-            --surface-2: #1E293B;
-            --surface-glass: rgba(19, 26, 42, 0.85);
+            --bg-base: #1A1A1A;
+            --bg-gradient-start: #2C2C2C;
+            --bg-gradient-end: #1A1A1A;
+            --layer2-grad-start: #333333;
+            --layer2-grad-end: #242424;
+            --surface-1: #242424;
+            --surface-2: #2E2E2E;
+            --surface-glass: rgba(36, 36, 36, 0.85);
             
-            --text-main: #F8FAFC;
-            --text-dim: #94A3B8;
-            --border-subtle: #2A3441;
+            --text-main: #F5F5F5;
+            --text-dim: #A3A3A3;
+            --border-subtle: #3D3D3D;
             
             --walnut: #5C4033;
-            --leather: #B07D46;
-            --gold: #D4AF37;
+            --leather: #D4AF37; /* Replacing leather tan with classic gold */
+            --gold: #F1C40F; /* Brighter accent gold */
             --danger: #E15A5A;
 
-            --btn-leather: #B07D46; /* Base for main buttons */
-            --btn-gold: #D4AF37;    /* Base for edit swipe button */
+            --btn-leather: #D4AF37; /* Base for main buttons */
+            --btn-gold: #F1C40F;    /* Base for edit swipe button */
             
-            --shadow-subtle: rgba(0,0,0,0.2);
-            --shadow-strong: rgba(0,0,0,0.5);
-            --shadow-layer3: rgba(0,0,0,0.6);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --overlay-bg: rgba(11, 15, 25, 0.8);
-            --stat-bg-end: #0F141E;
+            --shadow-subtle: rgba(0,0,0,0.3);
+            --shadow-strong: rgba(0,0,0,0.6);
+            --shadow-layer3: rgba(0,0,0,0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --overlay-bg: rgba(26, 26, 26, 0.85);
+            --stat-bg-end: #141414;
             
             --font-sans: 'Inter', -apple-system, sans-serif;
             --font-serif: 'DM Serif Display', Georgia, serif;
@@ -100,12 +100,12 @@
         .login-subtitle { color: var(--text-dim); font-size: 11px; margin-bottom: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
         .editorial-input { width: 100%; background: var(--surface-1); border: 2px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); padding: 18px 20px; font-size: 16px; font-weight: 600; text-align: center; outline: none; margin-bottom: 16px; transition: border 0.3s; font-family: var(--font-sans); }
         .editorial-input:focus { border-color: var(--leather); }
-        .btn-primary { width: 100%; background: var(--btn-leather); color: #0B0F19; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); letter-spacing: 0.5px; }
+        .btn-primary { width: 100%; background: var(--btn-leather); color: #1A1A1A; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); letter-spacing: 0.5px; }
         .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
         .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 16px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
-        .btn-secondary.attached { background: rgba(176, 125, 70, 0.1); color: var(--leather); border-color: var(--leather); border-style: solid; }
+        .btn-secondary.attached { background: rgba(212, 175, 55, 0.1); color: var(--leather); border-color: var(--leather); border-style: solid; }
 
         .auth-view { display: none; width: 100%; max-width: 400px; }
         .auth-view.active { display: block; }
@@ -247,7 +247,7 @@
         .log-meta { font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
         .badge { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; white-space: nowrap; }
         
-        .badge-indigo { background: rgba(176, 125, 70, 0.15); color: var(--leather); }
+        .badge-indigo { background: rgba(212, 175, 55, 0.15); color: var(--leather); }
         .badge-mint { background: rgba(212, 175, 55, 0.15); color: var(--gold); }
         .badge-rose { background: rgba(225, 90, 90, 0.15); color: var(--danger); }
         .badge-amber { background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); }
@@ -304,7 +304,7 @@
         
         .swipe-action-edit { 
             background: var(--btn-gold); 
-            color: #0B0F19; 
+            color: #1A1A1A; 
             position: relative; 
         }
         .swipe-action-edit::before {
@@ -384,12 +384,12 @@
         }
 
         /* --- FLOATING BOTTOM DOCK --- */
-        .bottom-dock-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; background: linear-gradient(to top, var(--bg-base) 40%, rgba(11, 15, 25, 0) 100%); padding-top: 40px; pointer-events: none; transition: background 0.3s; }
+        .bottom-dock-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; background: linear-gradient(to top, var(--bg-base) 40%, rgba(26, 26, 26, 0) 100%); padding-top: 40px; pointer-events: none; transition: background 0.3s; }
         [data-theme="light"] .bottom-dock-wrapper { background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); }
         .bottom-dock { width: calc(100% - 48px); max-width: 390px; background: var(--surface-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; margin-bottom: max(20px, env(safe-area-inset-bottom)); box-shadow: 0 10px 30px var(--shadow-strong); pointer-events: auto; }
         .nav-item { color: var(--text-dim); font-size: 20px; cursor: pointer; position: relative; width: 54px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.2s; border-radius: 16px; }
         .nav-item span { font-size: 10px; font-weight: 700; margin-top: 4px; }
-        .nav-item.active { color: var(--leather); background: rgba(176, 125, 70, 0.15); }
+        .nav-item.active { color: var(--leather); background: rgba(212, 175, 55, 0.15); }
 
         /* Action Sheet & Modals */
         .action-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--overlay-bg); backdrop-filter: blur(5px); z-index: 2000; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
@@ -412,7 +412,7 @@
         .close-modal:hover { color: var(--text-main); }
         .modal-subtitle { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
         .modal-text { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
-        .modal-btn { display: block; background-color: var(--btn-leather); color: #0B0F19; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); transition: transform 0.2s, background-color 0.3s; border: none; cursor: pointer; }
+        .modal-btn { display: block; background-color: var(--btn-leather); color: #1A1A1A; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); transition: transform 0.2s, background-color 0.3s; border: none; cursor: pointer; }
         .modal-btn:active { transform: scale(0.98); }
 
     </style>
@@ -922,7 +922,7 @@
                     </div>
                     <div style="margin-bottom: 8px;">
                         <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-sun" style="color: var(--leather);"></i> The "Parchment & Espresso" Theme</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now toggle between our classic "Navy Slate & Walnut" dark mode and our new "Parchment & Espresso" light mode. Perfect for reading tasting notes in bright sunlight. Access the toggle in your Profile settings.</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now toggle between our classic "Charcoal & Gold" dark mode and our new "Parchment & Espresso" light mode. Perfect for reading tasting notes in bright sunlight. Access the toggle in your Profile settings.</div>
                     </div>
                 </div>
 
@@ -986,7 +986,7 @@
                 <div style="text-align: center; margin-bottom: 32px;">
                     <div style="position: relative; display: inline-block; cursor: pointer;" onclick="openAvatarActionSheet()">
                         <img id="profile-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
-                        <div style="position: absolute; bottom: 5px; right: 5px; background: var(--leather); color: #0B0F19; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--surface-1);">
+                        <div style="position: absolute; bottom: 5px; right: 5px; background: var(--leather); color: #1A1A1A; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--surface-1);">
                             <i class="fa-solid fa-camera" style="font-size: 14px;"></i>
                         </div>
                     </div>
@@ -1040,7 +1040,7 @@
                 <!-- Theme Toggle Button -->
                 <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 32px; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleTheme()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="background: rgba(176, 125, 70, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                        <div style="background: rgba(212, 175, 55, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
                             <i id="theme-icon" class="fa-solid fa-moon"></i>
                         </div>
                         <div>
@@ -1993,7 +1993,7 @@ window.compressImage = function(file) {
                     <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
                     <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px; background: rgba(176, 125, 70, 0.1); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(176, 125, 70, 0.2);">
+                <div style="display: flex; align-items: center; gap: 6px; background: rgba(212, 175, 55, 0.1); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.2);">
                     <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
                     <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--leather); line-height: 1;">${cigar.rating.toFixed(2)}</span>
                 </div>
@@ -2576,9 +2576,9 @@ window.storeCigar = async function() {
                     imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
                 }
 
-                let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
+                let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
                 
-                let qtyBadge = `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-cubes" style="margin-right: 4px;"></i> QTY: ${cigarQty}</span>`;
+                let qtyBadge = `<span style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-cubes" style="margin-right: 4px;"></i> QTY: ${cigarQty}</span>`;
                 
                 let attributesRow = '';
                 if (qtyBadge || ratingBadge || imageBadge) {
