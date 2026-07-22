@@ -329,6 +329,22 @@
         }
         .swipe-front:active { cursor: grabbing; }
 
+        /* --- ACTIVE LOGGING MODE UI OVERRIDES --- */
+        #humidor-inventory-list .swipe-front {
+            cursor: default; /* Remove pointer by default to prevent confusion */
+        }
+        #humidor-inventory-list.logging-mode-active .swipe-front {
+    cursor: pointer;
+    border: 2px solid var(--leather);
+    /* Use solid background with an inset shadow tint to prevent transparency bleed */
+    background: var(--surface-2);
+    box-shadow: inset 0 0 0 200px rgba(212, 175, 55, 0.05), 0 4px 16px rgba(212, 175, 55, 0.15);
+    transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+}
+        #humidor-inventory-list.logging-mode-active .swipe-front:active {
+            transform: scale(0.98);
+        }
+
         /* --- FORMS & INPUTS --- */
         .form-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s, background-color 0.3s; box-sizing: border-box; }
         .form-input:focus { border-color: var(--leather); }
@@ -539,6 +555,13 @@
                     </div>
                 </div>
 
+                <!-- LOG A SMOKE BENTO BOX -->
+                <div class="log-card" style="margin-bottom: 24px; padding: 20px; text-align: center; border: 1px solid var(--leather); background: linear-gradient(145deg, rgba(212, 175, 55, 0.05) 0%, var(--surface-1) 100%);">
+                    <h3 style="font-family: var(--font-serif); font-size: 20px; font-weight: 400; color: var(--text-main); margin-bottom: 6px;">Have you smoked today?</h3>
+                    <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.5;">Select a cigar from your humidor to update your inventory and start a new journal entry.</p>
+                    <button class="btn-primary" onclick="startSmokeWorkflow()" style="padding: 14px; font-size: 14px;">Log a Smoke <i class="fa-solid fa-fire" style="margin-left: 6px;"></i></button>
+                </div>
+
                  <!-- AGING OVERVIEW -->
                 <div class="log-card" style="margin-bottom: 24px; padding: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
@@ -607,143 +630,156 @@
             <!-- HUMIDOR / SUPPLY CHAIN SCREEN -->
             <section id="view-humidor" class="view-section">
                 
-                <div class="section-header" style="margin-top: 0;">
-                    <div class="section-title">Store New Acquisition</div>
+                <!-- NEW WORKFLOW BANNER (Displays during selection mode) -->
+                <div id="smoke-workflow-banner" style="display: none; background: rgba(212, 175, 55, 0.15); border: 2px dashed var(--leather); border-radius: 16px; padding: 20px 16px; margin-bottom: 24px; flex-direction: column; align-items: center; text-align: center; gap: 12px;">
+                    <div style="font-size: 16px; color: var(--text-main); font-weight: 800;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather); margin-right: 8px;"></i> Select a cigar to log</div>
+                    <div style="font-size: 12px; color: var(--text-dim); line-height: 1.4;">Tap the cigar you just smoked to remove it from your inventory and start your journal entry.</div>
+                    <button class="btn-secondary" onclick="cancelSmokeWorkflow()" style="width: auto; padding: 10px 28px; margin-top: 8px; margin-bottom: 0; border-color: var(--danger); color: var(--danger);"><i class="fa-solid fa-xmark"></i> Cancel Logging</button>
                 </div>
 
-                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-                    <div class="autocomplete-wrapper" style="flex: 1;">
-                        <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; width: 100%;" autocomplete="off">
-                        <div id="vault-autocomplete" class="autocomplete-dropdown"></div>
+                <!-- ADD TO HUMIDOR FORM (Hidden during selection mode) -->
+                <div id="humidor-add-section">
+                    <div class="section-header" style="margin-top: 0;">
+                        <div class="section-title">Store New Acquisition</div>
                     </div>
-                    <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Vitola</option>
-                        <optgroup label="Parejo (Straight)">
-                            <option value="Petit Corona">Petit Corona</option>
-                            <option value="Corona">Corona</option>
-                            <option value="Corona Gorda">Corona Gorda</option>
-                            <option value="Lonsdale">Lonsdale</option>
-                            <option value="Panatela">Panatela</option>
-                            <option value="Lancero">Lancero</option>
-                            <option value="Rothschild">Rothschild</option>
-                            <option value="Robusto">Robusto</option>
-                            <option value="Petit Robusto">Petit Robusto</option>
-                            <option value="Toro">Toro</option>
-                            <option value="Gordo">Gordo</option>
-                            <option value="Churchill">Churchill</option>
-                            <option value="Double Corona">Double Corona</option>
-                            <option value="Presidente">Presidente</option>
-                            <option value="Gigante">Gigante</option>
-                        </optgroup>
-                        <optgroup label="Figurado (Shaped)">
-                            <option value="Belicoso">Belicoso</option>
-                            <option value="Torpedo">Torpedo</option>
-                            <option value="Pyramid">Pyramid</option>
-                            <option value="Perfecto">Perfecto</option>
-                            <option value="Salomon">Salomon</option>
-                            <option value="Diadema">Diadema</option>
-                            <option value="Culebra">Culebra</option>
-                            <option value="Chisel">Chisel</option>
-                        </optgroup>
-                    </select>
-                    <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                    <select id="vault-wrapper" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Wrapper</option>
-                        <option value="Connecticut">Connecticut</option>
-                        <option value="Corojo">Corojo</option>
-                        <option value="Habano">Habano</option>
-                        <option value="Maduro">Maduro</option>
-                        <option value="Oscuro">Oscuro</option>
-                        <option value="Cameroon">Cameroon</option>
-                        <option value="Candela">Candela</option>
-                        <option value="Sumatra">Sumatra</option>
-                        <option value="Broadleaf">Broadleaf</option>
-                        <option value="Rosado">Rosado</option>
-                    </select>
-                    <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
-                </div>
-                
-                <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
-                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
-                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
-                    </div>
-                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
-                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
-                    </div>
-                </div>
-                
-                <div style="margin-top: 16px; margin-bottom: 16px;">
-                    <select id="vault-rating" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Rating (1-10)</option>
-                        <option value="10">10.00</option>
-                        <option value="9.75">9.75</option>
-                        <option value="9.5">9.50</option>
-                        <option value="9.25">9.25</option>
-                        <option value="9">9.00</option>
-                        <option value="8.75">8.75</option>
-                        <option value="8.5">8.50</option>
-                        <option value="8.25">8.25</option>
-                        <option value="8">8.00</option>
-                        <option value="7.75">7.75</option>
-                        <option value="7.5">7.50</option>
-                        <option value="7.25">7.25</option>
-                        <option value="7">7.00</option>
-                        <option value="6.75">6.75</option>
-                        <option value="6.5">6.50</option>
-                        <option value="6.25">6.25</option>
-                        <option value="6">6.00</option>
-                        <option value="5.75">5.75</option>
-                        <option value="5.5">5.50</option>
-                        <option value="5.25">5.25</option>
-                        <option value="5">5.00</option>
-                        <option value="4.75">4.75</option>
-                        <option value="4.5">4.50</option>
-                        <option value="4.25">4.25</option>
-                        <option value="4">4.00</option>
-                        <option value="3.75">3.75</option>
-                        <option value="3.5">3.50</option>
-                        <option value="3.25">3.25</option>
-                        <option value="3">3.00</option>
-                        <option value="2.75">2.75</option>
-                        <option value="2.5">2.50</option>
-                        <option value="2.25">2.25</option>
-                        <option value="2">2.00</option>
-                        <option value="1.75">1.75</option>
-                        <option value="1.5">1.50</option>
-                        <option value="1.25">1.25</option>
-                        <option value="1">1.00</option>
-                    </select>
-                </div>
 
-                <!-- Hidden Input and Visual Upload Button -->
-                <input type="file" id="vault-image-upload" accept="image/*" style="display: none;" onchange="handleCigarImageUpload(event, 'vault')">
-                <button id="vault-photo-btn" class="btn-secondary" onclick="document.getElementById('vault-image-upload').click()">
-                    <i class="fa-solid fa-camera"></i> Add Picture
-                </button>
-                
-                <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                        <div class="autocomplete-wrapper" style="flex: 1;">
+                            <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; width: 100%;" autocomplete="off">
+                            <div id="vault-autocomplete" class="autocomplete-dropdown"></div>
+                        </div>
+                        <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Vitola</option>
+                            <optgroup label="Parejo (Straight)">
+                                <option value="Petit Corona">Petit Corona</option>
+                                <option value="Corona">Corona</option>
+                                <option value="Corona Gorda">Corona Gorda</option>
+                                <option value="Lonsdale">Lonsdale</option>
+                                <option value="Panatela">Panatela</option>
+                                <option value="Lancero">Lancero</option>
+                                <option value="Rothschild">Rothschild</option>
+                                <option value="Robusto">Robusto</option>
+                                <option value="Petit Robusto">Petit Robusto</option>
+                                <option value="Toro">Toro</option>
+                                <option value="Gordo">Gordo</option>
+                                <option value="Churchill">Churchill</option>
+                                <option value="Double Corona">Double Corona</option>
+                                <option value="Presidente">Presidente</option>
+                                <option value="Gigante">Gigante</option>
+                            </optgroup>
+                            <optgroup label="Figurado (Shaped)">
+                                <option value="Belicoso">Belicoso</option>
+                                <option value="Torpedo">Torpedo</option>
+                                <option value="Pyramid">Pyramid</option>
+                                <option value="Perfecto">Perfecto</option>
+                                <option value="Salomon">Salomon</option>
+                                <option value="Diadema">Diadema</option>
+                                <option value="Culebra">Culebra</option>
+                                <option value="Chisel">Chisel</option>
+                            </optgroup>
+                        </select>
+                        <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                        <select id="vault-wrapper" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Wrapper</option>
+                            <option value="Connecticut">Connecticut</option>
+                            <option value="Corojo">Corojo</option>
+                            <option value="Habano">Habano</option>
+                            <option value="Maduro">Maduro</option>
+                            <option value="Oscuro">Oscuro</option>
+                            <option value="Cameroon">Cameroon</option>
+                            <option value="Candela">Candela</option>
+                            <option value="Sumatra">Sumatra</option>
+                            <option value="Broadleaf">Broadleaf</option>
+                            <option value="Rosado">Rosado</option>
+                        </select>
+                        <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
+                        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                            <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
+                            <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                        </div>
+                        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                            <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
+                            <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 16px; margin-bottom: 16px;">
+                        <select id="vault-rating" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Rating (1-10)</option>
+                            <option value="10">10.00</option>
+                            <option value="9.75">9.75</option>
+                            <option value="9.5">9.50</option>
+                            <option value="9.25">9.25</option>
+                            <option value="9">9.00</option>
+                            <option value="8.75">8.75</option>
+                            <option value="8.5">8.50</option>
+                            <option value="8.25">8.25</option>
+                            <option value="8">8.00</option>
+                            <option value="7.75">7.75</option>
+                            <option value="7.5">7.50</option>
+                            <option value="7.25">7.25</option>
+                            <option value="7">7.00</option>
+                            <option value="6.75">6.75</option>
+                            <option value="6.5">6.50</option>
+                            <option value="6.25">6.25</option>
+                            <option value="6">6.00</option>
+                            <option value="5.75">5.75</option>
+                            <option value="5.5">5.50</option>
+                            <option value="5.25">5.25</option>
+                            <option value="5">5.00</option>
+                            <option value="4.75">4.75</option>
+                            <option value="4.5">4.50</option>
+                            <option value="4.25">4.25</option>
+                            <option value="4">4.00</option>
+                            <option value="3.75">3.75</option>
+                            <option value="3.5">3.50</option>
+                            <option value="3.25">3.25</option>
+                            <option value="3">3.00</option>
+                            <option value="2.75">2.75</option>
+                            <option value="2.5">2.50</option>
+                            <option value="2.25">2.25</option>
+                            <option value="2">2.00</option>
+                            <option value="1.75">1.75</option>
+                            <option value="1.5">1.50</option>
+                            <option value="1.25">1.25</option>
+                            <option value="1">1.00</option>
+                        </select>
+                    </div>
+
+                    <!-- Hidden Input and Visual Upload Button -->
+                    <input type="file" id="vault-image-upload" accept="image/*" style="display: none;" onchange="handleCigarImageUpload(event, 'vault')">
+                    <button id="vault-photo-btn" class="btn-secondary" onclick="document.getElementById('vault-image-upload').click()">
+                        <i class="fa-solid fa-camera"></i> Add Picture
+                    </button>
+                    
+                    <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
+
+                </div>
 
                 <!-- HUMIDOR HEADER WITH SEARCH & SORT -->
-                <div class="section-header" style="margin-top: 32px; border-bottom: none; padding-bottom: 0;">
-                    <div class="section-title">Aging Timeline</div>
-                </div>
-                
-                <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
-                    <div style="position: relative; flex: 1;">
-                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
-                        <input type="text" id="humidor-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderHumidor()">
+                <div id="humidor-list-header">
+                    <div class="section-header" style="margin-top: 32px; border-bottom: none; padding-bottom: 0;">
+                        <div class="section-title">Aging Timeline</div>
                     </div>
-                    <button id="humidor-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleHumidorSort()">
-                        <i class="fa-solid fa-calendar-days"></i>
-                    </button>
+                    
+                    <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
+                        <div style="position: relative; flex: 1;">
+                            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
+                            <input type="text" id="humidor-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderHumidor()">
+                        </div>
+                        <button id="humidor-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleHumidorSort()">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="humidor-inventory-list" style="margin-bottom: 40px;">
@@ -875,6 +911,25 @@
                     <div class="section-title">Release Notes</div>
                 </div>
 
+                <!-- Version 1.1.0 -->
+                <div class="log-card" style="margin-bottom: 24px;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Version Update 1.1.0</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Streamlined Logging Workflow</div>
+                        </div>
+                        <div class="badge badge-mint">Latest</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-code-branch" style="color: var(--leather);"></i> Separated Actions</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Humidor cards no longer act as click targets until you explicitly activate the "Log a Smoke" feature. This completely prevents accidental removal prompts while browsing your inventory.</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Photo Badge Isolation</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Fixed an event bubbling bug where tapping "View Photo" on a card would incorrectly trigger humidor actions instead of just opening the image.</div>
+                    </div>
+                </div>
+
                 <!-- Version 1.0.9 -->
                 <div class="log-card" style="margin-bottom: 24px;">
                     <div class="log-header" style="margin-bottom: 16px;">
@@ -882,7 +937,6 @@
                             <div class="log-meta">Version Update 1.0.9</div>
                             <div class="log-title" style="font-size: 14px; margin-top: 4px;">Search, Sort & Collapsible Entries</div>
                         </div>
-                        <div class="badge badge-mint">Latest</div>
                     </div>
                     <div style="margin-bottom: 16px;">
                         <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Search & Filter</div>
@@ -909,72 +963,6 @@
                     <div>
                         <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-font" style="color: var(--leather);"></i> DM Serif Display</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Updated the main typography to DM Serif Display, providing a cleaner, more premium editorial interface across the entire application.</div>
-                    </div>
-                </div>
-
-                <!-- Version 1.0.7 -->
-                <div class="log-card" style="margin-bottom: 24px;">
-                    <div class="log-header" style="margin-bottom: 16px;">
-                        <div>
-                            <div class="log-meta">Version Update 1.0.7</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Premium Light Mode</div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-sun" style="color: var(--leather);"></i> The "Parchment & Espresso" Theme</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now toggle between our classic "Charcoal & Gold" dark mode and our new "Parchment & Espresso" light mode. Perfect for reading tasting notes in bright sunlight. Access the toggle in your Profile settings.</div>
-                    </div>
-                </div>
-
-                <!-- Version 1.0.6 -->
-                <div class="log-card" style="margin-bottom: 24px;">
-                    <div class="log-header" style="margin-bottom: 16px;">
-                        <div>
-                            <div class="log-meta">Version Update 1.0.6</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Native Gestures & Reviews</div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Swipe to Action Engine</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">We have completely removed the clunky edit buttons. You can now intuitively swipe left or drag any entry in your Humidor or Journal to seamlessly reveal the Edit and Remove tools across both touchscreens and computer mice.</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Dynamic External Reviews</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Tapping the Daily Selection at the top of your screen will now bring up a custom prompt, routing you directly to industry reviews and ratings.</div>
-                    </div>
-                </div>
-
-                <!-- Version 1.0.5 -->
-                <div class="log-card" style="margin-bottom: 24px;">
-                    <div class="log-header" style="margin-bottom: 16px;">
-                        <div>
-                            <div class="log-meta">Version Update 1.0.5</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Cloud Sync & Advanced Tracking</div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cloud" style="color: var(--leather);"></i> Cloud Sync</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Your profile and journal are now securely stored in the cloud. Simply log in from any device to access your data wherever you are.</div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-calendar-day" style="color: var(--leather);"></i> Daily Cigar Suggestion</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new featured cigar is displayed at the top of the home screen each day. With a library of 365 cigars, you'll receive a different recommendation every day throughout the year.</div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cubes" style="color: var(--leather);"></i> Quantity Tracking</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new Quantity field has been added, allowing you to keep track of how many cigars you have for each entry in your humidor.</div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hourglass-half" style="color: var(--leather);"></i> Improved Aging Tracking</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Added Date Acquired and Peak Aging Date fields when adding a cigar. The Peak Aging Date requires a minimum of seven days after the acquisition date to promote realistic aging timelines.</div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-camera" style="color: var(--leather);"></i> Photo Attachments</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now attach photos to Humidor and Journal entries. Entries containing photos will display an image indicator, making them easy to identify while browsing your collection.</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-simple" style="color: var(--leather);"></i> Enhanced Profile Statistics</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The Profile page now automatically generates statistics based on your Humidor and Journal entries, including Average Humidor Cost, Average Aging Time, Favorite Cut, and Favorite Light.</div>
                     </div>
                 </div>
 
@@ -1208,6 +1196,7 @@
     let swipeStartY = null;
     let isSwiping = false;
     let isDragging = false; 
+    window.isDraggingCard = false; // Prevents tap events from firing after a swipe
     const maxSwipe = -140; 
 
     window.closeAllSwipes = function() {
@@ -1232,6 +1221,7 @@
         if (!swipeFront) return;
 
         isDragging = true;
+        window.isDraggingCard = true;
         swipeStartX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         swipeStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         isSwiping = false;
@@ -1277,14 +1267,23 @@
         }
     }
 
-    function handleDragEnd(e) {
+        function handleDragEnd(e) {
         if (!isDragging) return;
         isDragging = false;
+        
+        // FIX: Only delay clearing the flag if an actual swipe occurred
+        if (isSwiping) {
+            setTimeout(() => { window.isDraggingCard = false; }, 50);
+        } else {
+            window.isDraggingCard = false; // Clear immediately for simple taps
+        }
         
         if (e.target && e.target.closest && e.target.closest('.swipe-actions')) return; 
 
         const swipeFront = e.target ? e.target.closest('.swipe-front') : null;
         if (!swipeFront || swipeStartX === null) return;
+        
+        // ... leave the rest of the function exactly as it is ...
 
         swipeFront.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05)';
         swipeFront.parentElement.classList.remove('is-swiping');
@@ -1340,6 +1339,95 @@
     const storage = getStorage(app);
 
     window.currentUserName = "User";
+    window.isLoggingSmokeWorkflow = false;
+
+    // --- QUICK LOG WORKFLOW ---
+    window.startSmokeWorkflow = function() {
+        window.isLoggingSmokeWorkflow = true;
+        document.getElementById('smoke-workflow-banner').style.display = 'flex';
+        document.getElementById('humidor-add-section').style.display = 'none'; // Hide add form
+        document.getElementById('humidor-inventory-list').classList.add('logging-mode-active'); // Add visual cue
+        
+        switchTab('view-humidor', 1);
+        
+        setTimeout(() => {
+            document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
+        }, 100);
+    };
+
+    window.cancelSmokeWorkflow = function() {
+        window.isLoggingSmokeWorkflow = false;
+        document.getElementById('smoke-workflow-banner').style.display = 'none';
+        document.getElementById('humidor-add-section').style.display = 'block'; // Show add form again
+        document.getElementById('humidor-inventory-list').classList.remove('logging-mode-active'); // Remove visual cue
+    };
+    
+    // Decoupled click handler ensures clicks are only registered during the active workflow
+    window.handleHumidorCardClick = function(id, event) {
+        if (window.isDraggingCard) return; 
+        
+        if (window.isLoggingSmokeWorkflow) {
+            handleCigarSelection(id);
+        } else {
+            // Future feature: Open generic cigar detail view here. 
+            // Currently does nothing outside of log mode to prevent errors.
+        }
+    };
+
+    window.handleCigarSelection = async function(id) {
+        if (window.isDraggingCard) return; 
+        if (!window.isLoggingSmokeWorkflow) return; 
+
+        const cigar = humidorInventory.find(c => c.id === id);
+        if (!cigar) return;
+
+        let qtyToRemove = 1;
+        const currentQty = cigar.quantity || 1;
+
+        if (currentQty > 1) {
+            const result = prompt(`You have ${currentQty} in your humidor. How many are you removing to log?`, "1");
+            if (result === null) return; 
+            qtyToRemove = parseInt(result);
+            if (isNaN(qtyToRemove) || qtyToRemove <= 0 || qtyToRemove > currentQty) {
+                alert("Invalid quantity. Action cancelled.");
+                return;
+            }
+        } else {
+            const confirmLog = confirm(`Remove ${escapeHTML(cigar.brand)} from your humidor and log it to your journal?`);
+            if (!confirmLog) return;
+        }
+
+        const newQty = currentQty - qtyToRemove;
+        
+        try {
+            if (newQty <= 0) {
+                await deleteDoc(doc(db, "humidor", id));
+            } else {
+                await updateDoc(doc(db, "humidor", id), { quantity: newQty });
+            }
+        } catch (e) {
+            alert("Error updating humidor: " + e.message);
+            return;
+        }
+
+        // Action succeeded, reset the UI state
+        window.cancelSmokeWorkflow();
+
+        switchTab('view-journal', 2);
+        
+        document.getElementById('log-brand').value = cigar.brand || '';
+        document.getElementById('log-vitola').value = cigar.vitola || '';
+        document.getElementById('log-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
+        document.getElementById('log-wrapper').value = cigar.wrapper || '';
+        
+        document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('log-cut').selectedIndex = 0;
+        document.getElementById('log-light').selectedIndex = 0;
+        document.getElementById('log-pairing').value = '';
+        document.getElementById('log-notes').value = '';
+        
+        document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     function getDayOfYear() {
         const now = new Date();
@@ -2195,7 +2283,7 @@ window.logSmoke = async function() {
                 let imageBadge = '';
                 if(log.image) {
                     window.imageRegistry[log.id] = log.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
                 }
 
                 html += `
@@ -2573,7 +2661,7 @@ window.storeCigar = async function() {
                 let imageBadge = '';
                 if(cigar.image) {
                     window.imageRegistry[cigar.id] = cigar.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
                 }
 
                 let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
@@ -2596,7 +2684,7 @@ window.storeCigar = async function() {
                         </button>
                     </div>
                     
-                    <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
+                    <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
                         <div class="log-header">
                             <div style="flex: 1; padding-right: 12px;">
                                 <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
