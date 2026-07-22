@@ -1267,45 +1267,28 @@
         }
     }
 
-        function handleDragEnd(e) {
-        if (!isDragging) return;
-        isDragging = false;
-        
-        // FIX: Only delay clearing the flag if an actual swipe occurred
-        if (isSwiping) {
-            setTimeout(() => { window.isDraggingCard = false; }, 50);
-        } else {
-            window.isDraggingCard = false; // Clear immediately for simple taps
-        }
-        
-        if (e.target && e.target.closest && e.target.closest('.swipe-actions')) return; 
+            function handleDragStart(e) {
+        // FIX: Disable swipe engine completely while in selection mode to prevent iOS click-swallowing
+        if (window.isLoggingSmokeWorkflow) return; 
 
-        const swipeFront = e.target ? e.target.closest('.swipe-front') : null;
-        if (!swipeFront || swipeStartX === null) return;
+        if (e.target.closest('.swipe-actions') || e.target.closest('.view-photo-badge')) return; 
         
-        // ... leave the rest of the function exactly as it is ...
-
-        swipeFront.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05)';
-        swipeFront.parentElement.classList.remove('is-swiping');
+        const swipeFront = e.target.closest('.swipe-front');
         
-        let currentX = 0;
-        const transformMatrix = window.getComputedStyle(swipeFront).getPropertyValue('transform');
-        if (transformMatrix !== 'none') {
-            currentX = parseInt(transformMatrix.split(',')[4].trim());
+        if (window.activeSwipeCard && window.activeSwipeCard !== swipeFront) {
+            window.closeAllSwipes();
         }
 
-        if (currentX < (maxSwipe / 2)) {
-            swipeFront.style.transform = `translateX(${maxSwipe}px)`;
-            window.activeSwipeCard = swipeFront;
-            swipeFront.parentElement.classList.add('is-open'); 
-        } else {
-            swipeFront.style.transform = `translateX(0px)`;
-            window.activeSwipeCard = null;
-            swipeFront.parentElement.classList.remove('is-open'); 
-        }
+        if (!swipeFront) return;
 
-        swipeStartX = null;
+        isDragging = true;
+        window.isDraggingCard = true;
+        swipeStartX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        swipeStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         isSwiping = false;
+        
+        swipeFront.style.transition = 'none';
+        swipeFront.parentElement.classList.add('is-swiping'); 
     }
 
     document.addEventListener('touchstart', handleDragStart, { passive: true });
