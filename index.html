@@ -512,11 +512,27 @@
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
         <!-- LAYER 1: PERSISTENT HEADER -->
-        <div class="dash-header">
-            <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
-                <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
-                <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
-                <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
+        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 20px;">
+            
+            <!-- COLLAPSED STATE -->
+            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 12px 16px; background: rgba(212, 175, 55, 0.05); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 14px; margin: 0 auto; max-width: 250px; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                <span style="font-size: 11px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    Today's Selection <i class="fa-solid fa-chevron-down"></i>
+                </span>
+            </div>
+
+            <!-- EXPANDED STATE -->
+            <div id="daily-cigar-expanded">
+                <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
+                    <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
+                    <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
+                    <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
+                </div>
+                
+                <!-- Expand/Collapse Chevron (Bottom Right) -->
+                <div style="position: absolute; bottom: 0px; right: 16px; cursor: pointer; color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.1); border-radius: 8px; width: 28px; height: 28px; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">
+                    <i class="fa-solid fa-chevron-up" style="font-size: 12px;"></i>
+                </div>
             </div>
         </div>
 
@@ -1062,6 +1078,22 @@
                     </div>
                 </div>
 
+                <!-- Daily Selection Default Preference -->
+                <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleDailyCigarPreference()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: rgba(212, 175, 55, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                            <i id="daily-pref-icon" class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Daily Selection</div>
+                            <div id="daily-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Default Expanded</div>
+                        </div>
+                    </div>
+                    <div style="background: var(--surface-2); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
+                        <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
+                    </div>
+                </div>
+
                 <button class="btn-primary" style="background: rgba(225, 90, 90, 0.1); color: var(--danger); box-shadow: none; width: 100%;" onclick="handleLogout()">
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
                 </button>
@@ -1191,6 +1223,62 @@
         } else {
             wrapper.style.display = 'none';
             chevron.style.transform = 'rotate(0deg)';
+        }
+    };
+
+    // --- DAILY SELECTION ENGINE ---
+    window.toggleDailyCigarLayer = function() {
+        const expanded = document.getElementById('daily-cigar-expanded');
+        const collapsed = document.getElementById('daily-cigar-collapsed');
+        
+        if (expanded.style.display === 'none') {
+            expanded.style.display = 'block';
+            collapsed.style.display = 'none';
+        } else {
+            expanded.style.display = 'none';
+            collapsed.style.display = 'block';
+        }
+    };
+
+    window.toggleDailyCigarPreference = function() {
+        const icon = document.getElementById('daily-pref-icon');
+        const text = document.getElementById('daily-pref-text');
+        const currentState = localStorage.getItem('finalThirdDailyPref') || 'expanded';
+        
+        if (currentState === 'expanded') {
+            localStorage.setItem('finalThirdDailyPref', 'collapsed');
+            if(icon) icon.className = 'fa-solid fa-down-left-and-up-right-to-center';
+            if(text) text.innerText = 'Default Collapsed';
+            
+            document.getElementById('daily-cigar-expanded').style.display = 'none';
+            document.getElementById('daily-cigar-collapsed').style.display = 'block';
+        } else {
+            localStorage.setItem('finalThirdDailyPref', 'expanded');
+            if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
+            if(text) text.innerText = 'Default Expanded';
+            
+            document.getElementById('daily-cigar-expanded').style.display = 'block';
+            document.getElementById('daily-cigar-collapsed').style.display = 'none';
+        }
+    };
+
+    window.applyDailyCigarPreference = function() {
+        const savedPref = localStorage.getItem('finalThirdDailyPref') || 'expanded';
+        const icon = document.getElementById('daily-pref-icon');
+        const text = document.getElementById('daily-pref-text');
+        const expanded = document.getElementById('daily-cigar-expanded');
+        const collapsed = document.getElementById('daily-cigar-collapsed');
+        
+        if (savedPref === 'collapsed') {
+            if(expanded) expanded.style.display = 'none';
+            if(collapsed) collapsed.style.display = 'block';
+            if(icon) icon.className = 'fa-solid fa-down-left-and-up-right-to-center';
+            if(text) text.innerText = 'Default Collapsed';
+        } else {
+            if(expanded) expanded.style.display = 'block';
+            if(collapsed) collapsed.style.display = 'none';
+            if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
+            if(text) text.innerText = 'Default Expanded';
         }
     };
 
@@ -2144,6 +2232,7 @@ window.compressImage = function(file) {
             
             window.currentUserName = user.displayName || user.email.split('@')[0]; 
             
+            window.applyDailyCigarPreference();
             initializeDates();
             loadDailyCigar();
             loadBrandLibrary(); 
