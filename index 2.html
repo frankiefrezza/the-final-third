@@ -21,40 +21,40 @@
     </script>
 
     <style>
-        /* --- DEFAULT DARK THEME (NAVY SLATE) --- */
+        /* --- DEFAULT DARK THEME (CHARCOAL & GOLD) --- */
         :root {
-            --bg-base: #0B0F19;
-            --bg-gradient-start: #1E293B;
-            --bg-gradient-end: #0B0F19;
-            --layer2-grad-start: #27374D;
-            --layer2-grad-end: #131A2A;
-            --surface-1: #131A2A;
-            --surface-2: #1E293B;
-            --surface-glass: rgba(19, 26, 42, 0.85);
+            --bg-base: #1A1A1A;
+            --bg-gradient-start: #2C2C2C;
+            --bg-gradient-end: #1A1A1A;
+            --layer2-grad-start: #333333;
+            --layer2-grad-end: #242424;
+            --surface-1: #242424;
+            --surface-2: #2E2E2E;
+            --surface-glass: rgba(36, 36, 36, 0.85);
             
-            --text-main: #F8FAFC;
-            --text-dim: #94A3B8;
-            --border-subtle: #2A3441;
+            --text-main: #F5F5F5;
+            --text-dim: #A3A3A3;
+            --border-subtle: #3D3D3D;
             
             --walnut: #5C4033;
-            --leather: #B07D46;
-            --gold: #D4AF37;
+            --leather: #D4AF37; /* Replacing leather tan with classic gold */
+            --gold: #F1C40F; /* Brighter accent gold */
             --danger: #E15A5A;
 
-            --btn-leather: #B07D46; /* Base for main buttons */
-            --btn-gold: #D4AF37;    /* Base for edit swipe button */
+            --btn-leather: #D4AF37; /* Base for main buttons */
+            --btn-gold: #F1C40F;    /* Base for edit swipe button */
             
-            --shadow-subtle: rgba(0,0,0,0.2);
-            --shadow-strong: rgba(0,0,0,0.5);
-            --shadow-layer3: rgba(0,0,0,0.6);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --overlay-bg: rgba(11, 15, 25, 0.8);
-            --stat-bg-end: #0F141E;
+            --shadow-subtle: rgba(0,0,0,0.3);
+            --shadow-strong: rgba(0,0,0,0.6);
+            --shadow-layer3: rgba(0,0,0,0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --overlay-bg: rgba(26, 26, 26, 0.85);
+            --stat-bg-end: #141414;
             
             --font-sans: 'Inter', -apple-system, sans-serif;
-    --font-serif: 'DM Serif Display', Georgia, serif;
-    --font-mono: 'JetBrains Mono', monospace;
-}
+            --font-serif: 'DM Serif Display', Georgia, serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
 
         /* --- LIGHT THEME (PREMIUM PARCHMENT & ESPRESSO) --- */
         [data-theme="light"] {
@@ -92,18 +92,19 @@
 
         /* App Logo dynamically inverts for light mode to stay visible */
         .app-logo { width: 120%; max-width: 120%; height: auto; margin: 0 0 4px -10%; display: block; filter: drop-shadow(0 0 35px var(--shadow-strong)); transition: filter 0.3s; }
-        [data-theme="light"] .app-logo { filter: invert(1) brightness(0.2) drop-shadow(0 0 20px rgba(0,0,0,0.05)); }
-
+        [data-theme="light"] .app-logo { filter: none; }
+        
         /* --- LOGIN SCREEN --- */
         #login-environment { justify-content: center; align-items: center; padding: 40px 24px; text-align: center; background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%); }
         .login-subtitle { color: var(--text-dim); font-size: 11px; margin-bottom: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
         .editorial-input { width: 100%; background: var(--surface-1); border: 2px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); padding: 18px 20px; font-size: 16px; font-weight: 600; text-align: center; outline: none; margin-bottom: 16px; transition: border 0.3s; font-family: var(--font-sans); }
         .editorial-input:focus { border-color: var(--leather); }
-        .btn-primary { width: 100%; background: var(--btn-leather); color: #0B0F19; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); letter-spacing: 0.5px; }
+        .btn-primary { width: 100%; background: var(--btn-leather); color: #1A1A1A; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); letter-spacing: 0.5px; }
         .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
         .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 16px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
-        .btn-secondary.attached { background: rgba(176, 125, 70, 0.1); color: var(--leather); border-color: var(--leather); border-style: solid; }
+        .btn-secondary.attached { background: rgba(212, 175, 55, 0.1); color: var(--leather); border-color: var(--leather); border-style: solid; }
 
         .auth-view { display: none; width: 100%; max-width: 400px; }
         .auth-view.active { display: block; }
@@ -113,11 +114,10 @@
 
         /* --- PERSISTENT HEADER (LAYER 1) --- */
         .dash-header {
-    text-align: center;
-    padding: 20px 16px;
-    /* This is the new spotlight line: */
-    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 65%);
-}
+            text-align: center;
+            padding: 20px 16px;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 65%);
+        }
 
         /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
@@ -126,7 +126,7 @@
         .layer-3-container { background: var(--surface-1); border-top-left-radius: 40px; margin-top: -40px; position: relative; flex-grow: 1; border-top: 1px solid var(--glass-border); box-shadow: 0 -8px 24px var(--shadow-layer3); overflow: hidden; z-index: 15; transition: background-color 0.3s; }
 
         /* --- VIEW SECTIONS (Static Content, Animated Container) --- */
-        .view-section { position: absolute; top: 0; bottom: 0; left: 0; right: 0; padding: 32px 24px calc(110px + env(safe-area-inset-bottom)) 24px; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .view-section { position: absolute; top: 0; bottom: 0; left: 0; right: 0; padding: 32px 16px calc(110px + env(safe-area-inset-bottom)) 16px; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .view-section.active { display: block; }
         
         /* --- VIEW SECTIONS & ANIMATIONS --- */
@@ -145,59 +145,108 @@
         }
 
         .section-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 20px; 
-    margin-top: 36px; 
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.15); /* Faint gold dividing line */
-}
-.section-title { 
-    font-family: var(--font-serif); 
-    font-size: 22px; 
-    font-weight: 400; /* DM Serif Display looks best un-bolded */
-    color: var(--text-main); 
-    position: relative;
-    padding-left: 14px;
-}
-/* Creates a stylish vertical "Cigar Band" accent next to the title */
-.section-title::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 10%;
-    height: 80%;
-    width: 4px;
-    background: var(--leather);
-    border-radius: 4px;
-}
-.section-link { 
-    font-size: 11px; 
-    font-weight: 800; 
-    color: var(--gold); 
-    cursor: pointer; 
-    text-transform: uppercase; 
-    letter-spacing: 1px; 
-}
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            margin-top: 36px; 
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .section-title { 
+            font-family: var(--font-serif); 
+            font-size: 22px; 
+            font-weight: 400;
+            color: var(--text-main); 
+            position: relative;
+            padding-left: 14px;
+        }
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10%;
+            height: 80%;
+            width: 4px;
+            background: var(--leather);
+            border-radius: 4px;
+        }
+        .section-link { 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--gold); 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
 
         /* --- HOME ELEMENTS --- */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-        .stat-box { background: linear-gradient(145deg, var(--surface-1) 0%, var(--stat-bg-end) 100%); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 1px solid var(--border-subtle); cursor: pointer; box-shadow: 0 4px 12px var(--shadow-subtle); transition: transform 0.2s, border-color 0.2s; min-height: 110px; }
+        .stats-grid { 
+            display: flex; 
+            gap: 8px; /* Kept the tight gap */
+            margin-bottom: 24px; 
+            overflow-x: auto; 
+            scroll-snap-type: x mandatory; 
+            -webkit-overflow-scrolling: touch; 
+            padding-bottom: 4px; 
+        }
+        /* Hide scrollbar for a cleaner look */
+        .stats-grid::-webkit-scrollbar { display: none; }
+
+        .stat-box { 
+            background: linear-gradient(145deg, var(--surface-1) 0%, var(--stat-bg-end) 100%); 
+            border-radius: 16px; 
+            padding: 16px 12px; /* Restored original padding */
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            border: 1px solid var(--border-subtle); 
+            cursor: pointer; 
+            box-shadow: 0 4px 12px var(--shadow-subtle); 
+            transition: transform 0.2s, border-color 0.2s; 
+            min-width: 95px; /* Restored original width */
+            flex: 0 0 auto; 
+            scroll-snap-align: start; 
+            position: relative; 
+            overflow: hidden; 
+        }
         .stat-box:active { transform: scale(0.98); border-color: var(--leather); }
-        .stat-header { display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 12px; }
-        .stat-box h2 { font-family: var(--font-mono); font-size: 36px; font-weight: 700; color: var(--text-main); line-height: 1; text-shadow: 0 2px 8px var(--shadow-subtle); margin: 0; }
-        .stat-box p { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin: 0; }
-        .stat-icon { font-size: 14px; color: var(--text-dim); opacity: 0.4; }
+
+        /* The top colored bar accent */
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 3px;
+            background: var(--border-subtle);
+            border-radius: 0 0 4px 4px;
+            transition: background 0.3s;
+        }
+        .stat-box:hover::before { background: var(--leather); }
+
+        /* Restored original text & icon sizes */
+        .stat-icon { font-size: 22px; color: var(--text-dim); margin-bottom: 10px; transition: color 0.3s; }
+        .stat-box p { font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin: 0; text-align: center; }
+        .stat-box h2 { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--text-main); line-height: 1; text-shadow: 0 2px 8px var(--shadow-subtle); margin: 8px 0 4px 0; }
+        .stat-sub { font-size: 11px; color: var(--text-dim); font-weight: 600; text-align: center; }
+
+        /* Icon specific colors */
+        .icon-humidor { color: var(--leather); }
+        .icon-smoked { color: var(--text-dim); opacity: 0.7; }
+        .icon-alerts { color: var(--gold); }
+        .icon-rating { color: var(--gold); }
 
         /* --- CARDS & LISTS --- */
-        .log-card { background: var(--surface-1); border-radius: 16px; padding: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; position: relative; transition: background-color 0.3s; }
+        .log-card { background: var(--surface-2); border-radius: 16px; padding: 16px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; position: relative; transition: background-color 0.3s; }
         .log-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 12px; }
         .log-title { font-family: var(--font-serif); font-size: 18px; font-weight: 800; color: var(--text-main); line-height: 1.3; margin-bottom: 4px; }
         .log-meta { font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
         .badge { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; white-space: nowrap; }
         
-        .badge-indigo { background: rgba(176, 125, 70, 0.15); color: var(--leather); }
+        .badge-indigo { background: rgba(212, 175, 55, 0.15); color: var(--leather); }
         .badge-mint { background: rgba(212, 175, 55, 0.15); color: var(--gold); }
         .badge-rose { background: rgba(225, 90, 90, 0.15); color: var(--danger); }
         .badge-amber { background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); }
@@ -254,10 +303,9 @@
         
         .swipe-action-edit { 
             background: var(--btn-gold); 
-            color: #0B0F19; 
+            color: #1A1A1A; 
             position: relative; 
         }
-        /* Fade gradient bridging the swipe button into the background */
         .swipe-action-edit::before {
             content: '';
             position: absolute;
@@ -290,19 +338,57 @@
         input[type="date"].form-input { min-height: 54px; -webkit-appearance: none; padding: 14px 16px; align-items: center; }
         input[type="date"]::-webkit-date-and-time-value { text-align: left; }
         
-        /* Invert the calendar icon dynamically based on theme */
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); opacity: 1; transition: filter 0.3s; }
         [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.3); }
 
         .empty-state { background: var(--surface-2); border: 1px solid var(--border-subtle); box-shadow: inset 0 2px 10px var(--shadow-subtle); text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; font-weight: 700; border-radius: 16px; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: background-color 0.3s; }
 
+        /* --- CUSTOM AUTOCOMPLETE DROPDOWN --- */
+        .autocomplete-wrapper {
+            position: relative;
+            flex: 1;
+            width: 100%;
+        }
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface-1);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            margin-top: 4px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 30px var(--shadow-strong);
+        }
+        .autocomplete-item {
+            padding: 14px 20px;
+            color: var(--text-main);
+            font-size: 14px;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background-color 0.2s;
+        }
+        .autocomplete-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 14px 14px;
+        }
+        .autocomplete-item:active {
+            background: var(--surface-2);
+        }
+
         /* --- FLOATING BOTTOM DOCK --- */
-        .bottom-dock-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; background: linear-gradient(to top, var(--bg-base) 40%, rgba(11, 15, 25, 0) 100%); padding-top: 40px; pointer-events: none; transition: background 0.3s; }
+        .bottom-dock-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; background: linear-gradient(to top, var(--bg-base) 40%, rgba(26, 26, 26, 0) 100%); padding-top: 40px; pointer-events: none; transition: background 0.3s; }
         [data-theme="light"] .bottom-dock-wrapper { background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); }
         .bottom-dock { width: calc(100% - 48px); max-width: 390px; background: var(--surface-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; margin-bottom: max(20px, env(safe-area-inset-bottom)); box-shadow: 0 10px 30px var(--shadow-strong); pointer-events: auto; }
         .nav-item { color: var(--text-dim); font-size: 20px; cursor: pointer; position: relative; width: 54px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.2s; border-radius: 16px; }
         .nav-item span { font-size: 10px; font-weight: 700; margin-top: 4px; }
-        .nav-item.active { color: var(--leather); background: rgba(176, 125, 70, 0.15); }
+        .nav-item.active { color: var(--leather); background: rgba(212, 175, 55, 0.15); }
 
         /* Action Sheet & Modals */
         .action-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--overlay-bg); backdrop-filter: blur(5px); z-index: 2000; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
@@ -325,8 +411,35 @@
         .close-modal:hover { color: var(--text-main); }
         .modal-subtitle { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
         .modal-text { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
-        .modal-btn { display: block; background-color: var(--btn-leather); color: #0B0F19; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(176, 125, 70, 0.2); transition: transform 0.2s, background-color 0.3s; border: none; cursor: pointer; }
+        .modal-btn { display: block; background-color: var(--btn-leather); color: #1A1A1A; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); transition: transform 0.2s, background-color 0.3s; border: none; cursor: pointer; }
         .modal-btn:active { transform: scale(0.98); }
+
+        /* --- CUSTOM DIALOG UI --- */
+        .custom-dialog-overlay {
+            position: fixed; z-index: 9999; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--overlay-bg); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s;
+        }
+        .custom-dialog-overlay.active { display: flex; opacity: 1; }
+        .custom-dialog-box {
+            background: var(--surface-1); border-radius: 24px; padding: 24px;
+            width: 85%; max-width: 350px; border: 1px solid var(--border-subtle);
+            box-shadow: 0 10px 40px var(--shadow-strong); text-align: center; font-family: var(--font-sans);
+        }
+        .custom-dialog-title { font-family: var(--font-serif); font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
+        .custom-dialog-msg { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; font-weight: 500; }
+        .custom-dialog-input { 
+            width: 100%; display: none; background: var(--surface-2); border: 1px solid var(--border-subtle); 
+            color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-size: 16px; font-weight: 600; 
+            margin-bottom: 24px; outline: none; text-align: center;
+        }
+        .custom-dialog-input:focus { border-color: var(--leather); }
+        .custom-dialog-actions { display: flex; gap: 12px; justify-content: center; }
+        .custom-dialog-btn { flex: 1; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; transition: transform 0.2s; }
+        .custom-dialog-btn:active { transform: scale(0.98); }
+        .custom-dialog-cancel { background: var(--surface-2); color: var(--text-main); border: 1px solid var(--border-subtle); }
+        .custom-dialog-confirm { background: var(--leather); color: #1A1A1A; }
+        .custom-dialog-danger { background: var(--danger); color: white; }
 
     </style>
 </head>
@@ -335,47 +448,61 @@
 <div id="app-container">
 
     <div id="login-environment" class="app-environment active">
-        <div style="width: 100%; max-width: 400px; margin-top: 20px;">
+        <div style="width: 100%; max-width: 400px; display: flex; flex-direction: column; min-height: 85vh; justify-content: center; padding-top: 40px;">
             
+            <!-- LOGO -->
+            <img src="final-third-logo.png" class="app-logo" alt="Final Third Logo" style="margin-bottom: 8px;">
+            
+            <!-- BENTO BOX CONTAINER FOR AUTHENTICATION -->
+            <div class="log-card" style="padding: 28px 24px; box-shadow: 0 12px 32px var(--shadow-strong); border-radius: 24px; width: 100%;">
+                
+                <!-- View 1: Sign In -->
+                <div id="auth-signin" class="auth-view active" style="max-width: 100%;">
+                    <input type="email" id="signin-email" class="editorial-input" placeholder="Email address" autocomplete="off">
+                    <input type="password" id="signin-password" class="editorial-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
+                    <button id="signin-btn" class="btn-primary" onclick="handleLogin()">Log In <i class="fa-solid fa-arrow-right"></i></button>
+                    <div class="auth-flex-links" style="margin-top: 20px; padding: 0 4px;">
+                        <span class="auth-link" onclick="showAuthView('reset')">Forgot Password?</span>
+                        <span class="auth-link" onclick="showAuthView('signup')">Create Account</span>
+                    </div>
+                </div>
+
+                <!-- View 2: Sign Up -->
+                <div id="auth-signup" class="auth-view" style="max-width: 100%;">
+                    <input type="text" id="signup-username" class="editorial-input" placeholder="Choose a Username" autocomplete="off">
+                    <input type="email" id="signup-email" class="editorial-input" placeholder="Email address" autocomplete="off">
+                    <input type="password" id="signup-password" class="editorial-input" placeholder="Password" autocomplete="off">
+                    <input type="password" id="signup-confirm" class="editorial-input" placeholder="Confirm Password" autocomplete="off" style="margin-bottom: 24px;">
+                    <button id="signup-btn" class="btn-primary" onclick="handleSignUp()">Register <i class="fa-solid fa-user-plus"></i></button>
+                    <span class="auth-link" style="display: block; margin-top: 24px; text-align: center;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
+                </div>
+
+                <!-- View 3: Password Reset -->
+                <div id="auth-reset" class="auth-view" style="max-width: 100%;">
+                    <p style="color: var(--text-main); font-size: 14px; margin-bottom: 20px; font-weight: 600; text-align: center;">Enter your email to receive a reset link.</p>
+                    <input type="email" id="reset-email" class="editorial-input" placeholder="Email address" autocomplete="off" style="margin-bottom: 24px;">
+                    <button id="reset-btn" class="btn-primary" onclick="handleResetPassword()">Send Link <i class="fa-solid fa-envelope"></i></button>
+                    <span class="auth-link" style="display: block; margin-top: 24px; text-align: center;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
+                </div>
+
+            </div>
+
             <!-- BETA WARNING BANNER -->
-            <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 14px; padding: 14px 16px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <i class="fa-solid fa-code-pull-request" style="color: var(--gold); margin-top: 2px; font-size: 14px;"></i>
-                <div>
-                    <div style="color: var(--gold); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Beta Release</div>
-                    <div style="color: var(--text-dim); font-size: 12px; line-height: 1.4; font-weight: 600;">The app is in active development. Certain features may not function as intended while we build.</div>
+            <div style="margin-top: auto; padding-top: 32px; padding-bottom: 24px; width: 100%;">
+                <div style="background: linear-gradient(145deg, var(--surface-2) 0%, var(--surface-1) 100%); border: 1px solid var(--border-subtle); border-left: 4px solid var(--gold); border-radius: 16px; padding: 16px 20px; text-align: left; box-shadow: 0 8px 24px var(--shadow-subtle);">
+                    
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div style="background: rgba(212, 175, 55, 0.15); width: 28px; height: 28px; border-radius: 8px; display: flex; justify-content: center; align-items: center;">
+                            <i class="fa-solid fa-triangle-exclamation" style="color: var(--gold); font-size: 12px;"></i>
+                        </div>
+                        <div style="color: var(--text-main); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Developer Beta</div>
+                    </div>
+                    
+                    <div style="color: var(--text-dim); font-size: 12px; line-height: 1.6; font-weight: 600;">
+                        The app is in active development. Features may behave unexpectedly, and <span style="color: var(--danger); font-weight: 700;">some logged data may be deleted</span> as we stabilize the final database.
+                    </div>
+                    
                 </div>
-            </div>
-
-            <img src="final-third-logo.png" class="app-logo" alt="Final Third Logo">
-            <p class="login-subtitle">FROM THE FIRST LIGHT TO THE FINAL THIRD</p>
-            
-            <!-- View 1: Sign In -->
-            <div id="auth-signin" class="auth-view active">
-                <input type="email" id="signin-email" class="editorial-input" placeholder="Email address" autocomplete="off">
-                <input type="password" id="signin-password" class="editorial-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
-                <button id="signin-btn" class="btn-primary" onclick="handleLogin()">Log In <i class="fa-solid fa-arrow-right"></i></button>
-                <div class="auth-flex-links">
-                    <span class="auth-link" onclick="showAuthView('reset')">Forgot Password?</span>
-                    <span class="auth-link" onclick="showAuthView('signup')">Create Account</span>
-                </div>
-            </div>
-
-            <!-- View 2: Sign Up -->
-            <div id="auth-signup" class="auth-view">
-                <input type="text" id="signup-username" class="editorial-input" placeholder="Choose a Username" autocomplete="off">
-                <input type="email" id="signup-email" class="editorial-input" placeholder="Email address" autocomplete="off">
-                <input type="password" id="signup-password" class="editorial-input" placeholder="Password" autocomplete="off">
-                <input type="password" id="signup-confirm" class="editorial-input" placeholder="Confirm Password" autocomplete="off" style="margin-bottom: 24px;">
-                <button id="signup-btn" class="btn-primary" onclick="handleSignUp()">Register <i class="fa-solid fa-user-plus"></i></button>
-                <span class="auth-link" style="display: block; margin-top: 24px;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
-            </div>
-
-            <!-- View 3: Password Reset -->
-            <div id="auth-reset" class="auth-view">
-                <p style="color: var(--text-main); font-size: 14px; margin-bottom: 20px; font-weight: 600;">Enter your email to receive a reset link.</p>
-                <input type="email" id="reset-email" class="editorial-input" placeholder="Email address" autocomplete="off" style="margin-bottom: 24px;">
-                <button id="reset-btn" class="btn-primary" onclick="handleResetPassword()">Send Link <i class="fa-solid fa-envelope"></i></button>
-                <span class="auth-link" style="display: block; margin-top: 24px;" onclick="showAuthView('signin')"><i class="fa-solid fa-arrow-left"></i> Back to Log In</span>
             </div>
 
         </div>
@@ -410,36 +537,46 @@
             <section id="view-home" class="view-section active">
                 <div class="stats-grid">
                     <div class="stat-box" onclick="switchTab('view-humidor', 1)">
-                        <div class="stat-header">
-                            <p>In Humidor</p>
-                            <i class="fa-solid fa-box stat-icon"></i>
-                        </div>
-                        <h2 id="stat-collection" style="color: var(--leather); text-shadow: 0 2px 8px var(--shadow-subtle);">0</h2>
+                        <i class="fa-solid fa-box stat-icon icon-humidor"></i>
+                        <p>In Humidor</p>
+                        <h2 id="stat-collection" style="color: var(--text-main);">0</h2>
+                        <span class="stat-sub">Cigars</span>
                     </div>
                     
                     <div class="stat-box" onclick="switchTab('view-journal', 2)">
-                        <div class="stat-header">
-                            <p>Smoked</p>
-                            <i class="fa-solid fa-fire stat-icon"></i>
-                        </div>
+                        <i class="fa-solid fa-fire stat-icon icon-smoked"></i>
+                        <p>Smoked</p>
                         <h2 id="stat-smoked">0</h2>
+                        <span class="stat-sub">Cigars</span>
                     </div>
                     
                     <div class="stat-box" onclick="switchTab('view-radar', 3)">
-                        <div class="stat-header">
-                            <p>Alerts</p>
-                            <i class="fa-solid fa-bell stat-icon"></i>
-                        </div>
+                        <i class="fa-solid fa-bell stat-icon icon-alerts"></i>
+                        <p>Alerts</p>
                         <h2 id="stat-alerts">0</h2>
+                        <span class="stat-sub">Active</span>
                     </div>
                     
                     <div class="stat-box" onclick="switchTab('view-profile', 4)">
-                        <div class="stat-header">
-                            <p>Avg Rating</p>
-                            <i class="fa-solid fa-star stat-icon"></i>
-                        </div>
+                        <i class="fa-solid fa-star stat-icon icon-rating"></i>
+                        <p>Avg Rating</p>
                         <h2 id="stat-avg">0.0</h2>
+                        <span class="stat-sub">Score</span>
                     </div>
+                </div>
+
+                <!-- LOG A SMOKE BENTO BOX -->
+                <div style="background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface-1) 100%); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 16px; box-shadow: 0 8px 24px var(--shadow-subtle);">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: rgba(212, 175, 55, 0.15); width: 40px; height: 40px; border-radius: 12px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                            <i class="fa-solid fa-fire" style="font-size: 18px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-family: var(--font-serif); font-size: 18px; font-weight: 800; color: var(--text-main);">Have you smoked today?</div>
+                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Update inventory & start a journal entry</div>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="openLogSmokeModal()" style="padding: 14px; font-size: 14px; border-radius: 12px;">Select Cigar <i class="fa-solid fa-arrow-right" style="margin-left: 4px;"></i></button>
                 </div>
 
                  <!-- AGING OVERVIEW -->
@@ -449,44 +586,37 @@
                             <i class="fa-solid fa-leaf" style="color: var(--leather);"></i>
                             <div style="font-size: 12px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 1px;">Aging Overview</div>
                         </div>
-                        <div class="section-link" style="font-size: 10px;" onclick="openTimelineModal()">See Full Timeline <i class="fa-solid fa-chevron-right" style="margin-left: 4px;"></i></div>
+                        <div class="section-link" style="font-size: 10px;" onclick="openTimelineModal('all')">See Full Timeline <i class="fa-solid fa-chevron-right" style="margin-left: 4px;"></i></div>
                     </div>
 
-                    <!-- Segmented Timeline Bar -->
-                    <div style="display: flex; align-items: center; width: 100%; height: 4px; border-radius: 2px; margin-bottom: 16px; position: relative;">
-                        <!-- Track Segments -->
-                        <div style="flex: 1; background: #4ADE80; height: 100%;"></div>
-                        <div style="width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-1);"></div>
-                        <div style="flex: 1.5; background: #FACC15; height: 100%;"></div>
-                        <div style="width: 8px; height: 8px; background: #FACC15; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-1);"></div>
-                        <div style="flex: 1; background: #F97316; height: 100%;"></div>
-                        <div style="width: 8px; height: 8px; background: #F97316; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-1);"></div>
-                        <div style="flex: 1; background: #EF4444; height: 100%; position: relative;">
-                            <div style="position: absolute; right: 20px; top: -2px; width: 4px; height: 8px; background: #EF4444; border-radius: 2px;"></div>
-                        </div>
+                    <!-- Dynamic Proportional Timeline Bar -->
+                    <div id="aging-progress-bar" style="display: flex; width: 100%; height: 8px; border-radius: 4px; margin-bottom: 16px; overflow: hidden; background: var(--surface-2); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);">
+                        <div id="bar-tier-1" style="width: 25%; background: #4ADE80; transition: width 0.5s ease;"></div>
+                        <div id="bar-tier-2" style="width: 25%; background: #FACC15; transition: width 0.5s ease;"></div>
+                        <div id="bar-tier-3" style="width: 25%; background: #F97316; transition: width 0.5s ease;"></div>
+                        <div id="bar-tier-4" style="width: 25%; background: #EF4444; transition: width 0.5s ease;"></div>
                     </div>
 
-                    <!-- Timeline Labels -->
-                    <div style="display: flex; justify-content: space-between; text-align: left;">
-                        <div style="flex: 1;">
+                    <!-- Timeline Labels (Grid Method & Interactive) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1.1fr 1fr 0.9fr; text-align: left; gap: 8px;">
+                        <div id="label-tier-1" onclick="openTimelineModal('tier1')" style="cursor: pointer; transition: opacity 0.3s;">
                             <div style="color: #4ADE80; font-size: 11px; font-weight: 700; text-transform: uppercase;">0-30 Days</div>
                             <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-1">0 cigars</div>
                         </div>
-                        <div style="flex: 1.5; padding-left: 10px;">
+                        <div id="label-tier-2" onclick="openTimelineModal('tier2')" style="cursor: pointer; transition: opacity 0.3s;">
                             <div style="color: #FACC15; font-size: 11px; font-weight: 700; text-transform: uppercase;">31-90 Days</div>
                             <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-2">0 cigars</div>
                         </div>
-                        <div style="flex: 1; padding-left: 10px;">
+                        <div id="label-tier-3" onclick="openTimelineModal('tier3')" style="cursor: pointer; transition: opacity 0.3s;">
                             <div style="color: #F97316; font-size: 11px; font-weight: 700; text-transform: uppercase;">91-180 Days</div>
                             <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-3">0 cigars</div>
                         </div>
-                        <div style="flex: 0.8; padding-left: 10px;">
+                        <div id="label-tier-4" onclick="openTimelineModal('tier4')" style="cursor: pointer; transition: opacity 0.3s;">
                             <div style="color: #EF4444; font-size: 11px; font-weight: 700; text-transform: uppercase;">180+ Days</div>
                             <div style="color: var(--text-dim); font-size: 12px; margin-top: 4px;" id="aging-tier-4">0 cigars</div>
                         </div>
                     </div>
                 </div>
-
 
                 <!-- FAVORITES BENTO BOX -->
                 <div class="section-header" style="margin-top: 24px;">
@@ -516,130 +646,156 @@
 
             <!-- HUMIDOR / SUPPLY CHAIN SCREEN -->
             <section id="view-humidor" class="view-section">
-                
-                <div class="section-header" style="margin-top: 0;">
-                    <div class="section-title">Store New Acquisition</div>
-                </div>
 
-                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-                    <input type="text" id="vault-brand" class="form-input" list="brand-list" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; flex: 1;">
-                    <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Vitola</option>
-                        <optgroup label="Parejo (Straight)">
-                            <option value="Petit Corona">Petit Corona</option>
-                            <option value="Corona">Corona</option>
-                            <option value="Corona Gorda">Corona Gorda</option>
-                            <option value="Lonsdale">Lonsdale</option>
-                            <option value="Panatela">Panatela</option>
-                            <option value="Lancero">Lancero</option>
-                            <option value="Rothschild">Rothschild</option>
-                            <option value="Robusto">Robusto</option>
-                            <option value="Petit Robusto">Petit Robusto</option>
-                            <option value="Toro">Toro</option>
-                            <option value="Gordo">Gordo</option>
-                            <option value="Churchill">Churchill</option>
-                            <option value="Double Corona">Double Corona</option>
-                            <option value="Presidente">Presidente</option>
-                            <option value="Gigante">Gigante</option>
-                        </optgroup>
-                        <optgroup label="Figurado (Shaped)">
-                            <option value="Belicoso">Belicoso</option>
-                            <option value="Torpedo">Torpedo</option>
-                            <option value="Pyramid">Pyramid</option>
-                            <option value="Perfecto">Perfecto</option>
-                            <option value="Salomon">Salomon</option>
-                            <option value="Diadema">Diadema</option>
-                            <option value="Culebra">Culebra</option>
-                            <option value="Chisel">Chisel</option>
-                        </optgroup>
-                    </select>
-                    <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                    <select id="vault-wrapper" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Wrapper</option>
-                        <option value="Connecticut">Connecticut</option>
-                        <option value="Corojo">Corojo</option>
-                        <option value="Habano">Habano</option>
-                        <option value="Maduro">Maduro</option>
-                        <option value="Oscuro">Oscuro</option>
-                        <option value="Cameroon">Cameroon</option>
-                        <option value="Candela">Candela</option>
-                        <option value="Sumatra">Sumatra</option>
-                        <option value="Broadleaf">Broadleaf</option>
-                        <option value="Rosado">Rosado</option>
-                    </select>
-                    <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
-                </div>
-                
-                <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
-                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
-                        <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                <!-- ADD TO HUMIDOR FORM -->
+                <div id="humidor-add-section">
+                    
+                    <div class="section-header" style="margin-top: 0; cursor: pointer; padding-right: 8px;" onclick="toggleEntryForm('humidor-form-wrapper', 'humidor-form-chevron')">
+                        <div class="section-title">Store New Acquisition</div>
+                        <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.1); border-radius: 8px; width: 28px; height: 28px;">
+                            <i id="humidor-form-chevron" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 12px;"></i>
+                        </div>
                     </div>
-                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                        <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
-                        <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+
+                    <div id="humidor-form-wrapper" style="display: none; padding-top: 8px;">
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <div class="autocomplete-wrapper" style="flex: 1;">
+                                <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; width: 100%;" autocomplete="off">
+                                <div id="vault-autocomplete" class="autocomplete-dropdown"></div>
+                            </div>
+                            <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
+                                <option value="" disabled selected>Vitola</option>
+                                <optgroup label="Parejo (Straight)">
+                                    <option value="Petit Corona">Petit Corona</option>
+                                    <option value="Corona">Corona</option>
+                                    <option value="Corona Gorda">Corona Gorda</option>
+                                    <option value="Lonsdale">Lonsdale</option>
+                                    <option value="Panatela">Panatela</option>
+                                    <option value="Lancero">Lancero</option>
+                                    <option value="Rothschild">Rothschild</option>
+                                    <option value="Robusto">Robusto</option>
+                                    <option value="Petit Robusto">Petit Robusto</option>
+                                    <option value="Toro">Toro</option>
+                                    <option value="Gordo">Gordo</option>
+                                    <option value="Churchill">Churchill</option>
+                                    <option value="Double Corona">Double Corona</option>
+                                    <option value="Presidente">Presidente</option>
+                                    <option value="Gigante">Gigante</option>
+                                </optgroup>
+                                <optgroup label="Figurado (Shaped)">
+                                    <option value="Belicoso">Belicoso</option>
+                                    <option value="Torpedo">Torpedo</option>
+                                    <option value="Pyramid">Pyramid</option>
+                                    <option value="Perfecto">Perfecto</option>
+                                    <option value="Salomon">Salomon</option>
+                                    <option value="Diadema">Diadema</option>
+                                    <option value="Culebra">Culebra</option>
+                                    <option value="Chisel">Chisel</option>
+                                </optgroup>
+                            </select>
+                            <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                            <select id="vault-wrapper" class="form-input form-select" style="margin-bottom: 0;">
+                                <option value="" disabled selected>Wrapper</option>
+                                <option value="Connecticut">Connecticut</option>
+                                <option value="Corojo">Corojo</option>
+                                <option value="Habano">Habano</option>
+                                <option value="Maduro">Maduro</option>
+                                <option value="Oscuro">Oscuro</option>
+                                <option value="Cameroon">Cameroon</option>
+                                <option value="Candela">Candela</option>
+                                <option value="Sumatra">Sumatra</option>
+                                <option value="Broadleaf">Broadleaf</option>
+                                <option value="Rosado">Rosado</option>
+                            </select>
+                            <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
+                            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                                <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
+                                <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                            </div>
+                            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                                <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
+                                <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 16px; margin-bottom: 16px;">
+                            <select id="vault-rating" class="form-input form-select" style="margin-bottom: 0;">
+                                <option value="" disabled selected>Rating (1-10)</option>
+                                <option value="10">10.00</option>
+                                <option value="9.75">9.75</option>
+                                <option value="9.5">9.50</option>
+                                <option value="9.25">9.25</option>
+                                <option value="9">9.00</option>
+                                <option value="8.75">8.75</option>
+                                <option value="8.5">8.50</option>
+                                <option value="8.25">8.25</option>
+                                <option value="8">8.00</option>
+                                <option value="7.75">7.75</option>
+                                <option value="7.5">7.50</option>
+                                <option value="7.25">7.25</option>
+                                <option value="7">7.00</option>
+                                <option value="6.75">6.75</option>
+                                <option value="6.5">6.50</option>
+                                <option value="6.25">6.25</option>
+                                <option value="6">6.00</option>
+                                <option value="5.75">5.75</option>
+                                <option value="5.5">5.50</option>
+                                <option value="5.25">5.25</option>
+                                <option value="5">5.00</option>
+                                <option value="4.75">4.75</option>
+                                <option value="4.5">4.50</option>
+                                <option value="4.25">4.25</option>
+                                <option value="4">4.00</option>
+                                <option value="3.75">3.75</option>
+                                <option value="3.5">3.50</option>
+                                <option value="3.25">3.25</option>
+                                <option value="3">3.00</option>
+                                <option value="2.75">2.75</option>
+                                <option value="2.5">2.50</option>
+                                <option value="2.25">2.25</option>
+                                <option value="2">2.00</option>
+                                <option value="1.75">1.75</option>
+                                <option value="1.5">1.50</option>
+                                <option value="1.25">1.25</option>
+                                <option value="1">1.00</option>
+                            </select>
+                        </div>
+
+                        <!-- Hidden Input and Visual Upload Button -->
+                        <input type="file" id="vault-image-upload" accept="image/*" style="display: none;" onchange="handleCigarImageUpload(event, 'vault')">
+                        <button id="vault-photo-btn" class="btn-secondary" onclick="document.getElementById('vault-image-upload').click()">
+                            <i class="fa-solid fa-camera"></i> Add Picture
+                        </button>
+                        
+                        <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
                     </div>
-                </div>
-                
-                <div style="margin-top: 16px; margin-bottom: 16px;">
-                    <select id="vault-rating" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Rating (1-10)</option>
-                        <option value="10">10.00</option>
-                        <option value="9.75">9.75</option>
-                        <option value="9.5">9.50</option>
-                        <option value="9.25">9.25</option>
-                        <option value="9">9.00</option>
-                        <option value="8.75">8.75</option>
-                        <option value="8.5">8.50</option>
-                        <option value="8.25">8.25</option>
-                        <option value="8">8.00</option>
-                        <option value="7.75">7.75</option>
-                        <option value="7.5">7.50</option>
-                        <option value="7.25">7.25</option>
-                        <option value="7">7.00</option>
-                        <option value="6.75">6.75</option>
-                        <option value="6.5">6.50</option>
-                        <option value="6.25">6.25</option>
-                        <option value="6">6.00</option>
-                        <option value="5.75">5.75</option>
-                        <option value="5.5">5.50</option>
-                        <option value="5.25">5.25</option>
-                        <option value="5">5.00</option>
-                        <option value="4.75">4.75</option>
-                        <option value="4.5">4.50</option>
-                        <option value="4.25">4.25</option>
-                        <option value="4">4.00</option>
-                        <option value="3.75">3.75</option>
-                        <option value="3.5">3.50</option>
-                        <option value="3.25">3.25</option>
-                        <option value="3">3.00</option>
-                        <option value="2.75">2.75</option>
-                        <option value="2.5">2.50</option>
-                        <option value="2.25">2.25</option>
-                        <option value="2">2.00</option>
-                        <option value="1.75">1.75</option>
-                        <option value="1.5">1.50</option>
-                        <option value="1.25">1.25</option>
-                        <option value="1">1.00</option>
-                    </select>
+
                 </div>
 
-                <!-- Hidden Input and Visual Upload Button -->
-                <input type="file" id="vault-image-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleCigarImageUpload(event, 'vault')">
-                <button id="vault-photo-btn" class="btn-secondary" onclick="document.getElementById('vault-image-upload').click()">
-                    <i class="fa-solid fa-camera"></i> Add Picture
-                </button>
-                
-                <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i></button>
-
-                <div class="section-header" style="margin-top: 32px;">
-                    <div class="section-title">Aging Timeline</div>
+                <!-- HUMIDOR HEADER WITH SEARCH & SORT -->
+                <div id="humidor-list-header">
+                    <div class="section-header" style="margin-top: 32px; border-bottom: none; padding-bottom: 0;">
+                        <div class="section-title">Aging Timeline</div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
+                        <div style="position: relative; flex: 1;">
+                            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
+                            <input type="text" id="humidor-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderHumidor()">
+                        </div>
+                        <button id="humidor-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleHumidorSort()">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="humidor-inventory-list" style="margin-bottom: 40px;">
@@ -653,93 +809,118 @@
             <!-- JOURNAL SCREEN -->
             <section id="view-journal" class="view-section">
                 
-                <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
-                    <input type="date" id="log-date" class="form-input" style="margin-bottom: 0;">
-                    <input type="text" id="log-brand" class="form-input" list="brand-list" placeholder="Brand & Line (e.g., Perdomo 10th Anniv)" style="margin-bottom: 0;">
+                <div class="section-header" style="margin-top: 0; cursor: pointer; padding-right: 8px;" onclick="toggleEntryForm('journal-form-wrapper', 'journal-form-chevron')">
+                    <div class="section-title">Log a Smoke</div>
+                    <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.1); border-radius: 8px; width: 28px; height: 28px;">
+                        <i id="journal-form-chevron" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 12px;"></i>
+                    </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                    <select id="log-vitola" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Vitola</option>
-                        <optgroup label="Parejo (Straight)">
-                            <option value="Petit Corona">Petit Corona</option>
-                            <option value="Corona">Corona</option>
-                            <option value="Corona Gorda">Corona Gorda</option>
-                            <option value="Lonsdale">Lonsdale</option>
-                            <option value="Panatela">Panatela</option>
-                            <option value="Lancero">Lancero</option>
-                            <option value="Rothschild">Rothschild</option>
-                            <option value="Robusto">Robusto</option>
-                            <option value="Petit Robusto">Petit Robusto</option>
-                            <option value="Toro">Toro</option>
-                            <option value="Gordo">Gordo</option>
-                            <option value="Churchill">Churchill</option>
-                            <option value="Double Corona">Double Corona</option>
-                            <option value="Presidente">Presidente</option>
-                            <option value="Gigante">Gigante</option>
-                        </optgroup>
-                        <optgroup label="Figurado (Shaped)">
-                            <option value="Belicoso">Belicoso</option>
-                            <option value="Torpedo">Torpedo</option>
-                            <option value="Pyramid">Pyramid</option>
-                            <option value="Perfecto">Perfecto</option>
-                            <option value="Salomon">Salomon</option>
-                            <option value="Diadema">Diadema</option>
-                            <option value="Culebra">Culebra</option>
-                            <option value="Chisel">Chisel</option>
-                        </optgroup>
-                    </select>
-                    <input type="number" id="log-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
+                <div id="journal-form-wrapper" style="display: none; padding-top: 8px;">
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                        <input type="date" id="log-date" class="form-input" style="margin-bottom: 0;">
+                        
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="log-brand" class="form-input" placeholder="Brand & Line (e.g., Perdomo 10th Anniv)" style="margin-bottom: 0; width: 100%;" autocomplete="off">
+                            <div id="log-autocomplete" class="autocomplete-dropdown"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                        <select id="log-vitola" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Vitola</option>
+                            <optgroup label="Parejo (Straight)">
+                                <option value="Petit Corona">Petit Corona</option>
+                                <option value="Corona">Corona</option>
+                                <option value="Corona Gorda">Corona Gorda</option>
+                                <option value="Lonsdale">Lonsdale</option>
+                                <option value="Panatela">Panatela</option>
+                                <option value="Lancero">Lancero</option>
+                                <option value="Rothschild">Rothschild</option>
+                                <option value="Robusto">Robusto</option>
+                                <option value="Petit Robusto">Petit Robusto</option>
+                                <option value="Toro">Toro</option>
+                                <option value="Gordo">Gordo</option>
+                                <option value="Churchill">Churchill</option>
+                                <option value="Double Corona">Double Corona</option>
+                                <option value="Presidente">Presidente</option>
+                                <option value="Gigante">Gigante</option>
+                            </optgroup>
+                            <optgroup label="Figurado (Shaped)">
+                                <option value="Belicoso">Belicoso</option>
+                                <option value="Torpedo">Torpedo</option>
+                                <option value="Pyramid">Pyramid</option>
+                                <option value="Perfecto">Perfecto</option>
+                                <option value="Salomon">Salomon</option>
+                                <option value="Diadema">Diadema</option>
+                                <option value="Culebra">Culebra</option>
+                                <option value="Chisel">Chisel</option>
+                            </optgroup>
+                        </select>
+                        <input type="number" id="log-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                        <select id="log-wrapper" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Wrapper</option>
+                            <option value="Connecticut">Connecticut</option>
+                            <option value="Corojo">Corojo</option>
+                            <option value="Habano">Habano</option>
+                            <option value="Maduro">Maduro</option>
+                            <option value="Oscuro">Oscuro</option>
+                            <option value="Cameroon">Cameroon</option>
+                            <option value="Candela">Candela</option>
+                            <option value="Sumatra">Sumatra</option>
+                            <option value="Broadleaf">Broadleaf</option>
+                            <option value="Rosado">Rosado</option>
+                        </select>
+                        <select id="log-cut" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Cut Style</option>
+                            <option value="Straight Cut">Straight Cut</option>
+                            <option value="V-Cut">V-Cut</option>
+                            <option value="Crown Cut">Crown Cut</option>
+                            <option value="Punch">Punch</option>
+                        </select>
+                    </div>
+
+                    <!-- Mechanics Tracking & Pairings -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                        <select id="log-light" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Light Method</option>
+                            <option value="Torch Lighter">Torch Lighter</option>
+                            <option value="Soft Flame">Soft Flame</option>
+                            <option value="Cedar Spill">Cedar Spill</option>
+                            <option value="Matches">Matches</option>
+                        </select>
+                        <input type="text" id="log-pairing" class="form-input" placeholder="Pairing (e.g., Bourbon)" style="margin-bottom: 0;">
+                    </div>
+
+                    <textarea id="log-notes" class="form-input" placeholder="Tasting notes for the final third..." rows="3" style="resize: none; margin-top: 16px; margin-bottom: 16px;"></textarea>
+                    
+                    <!-- Hidden Input and Visual Upload Button -->
+                    <input type="file" id="log-image-upload" accept="image/*" style="display: none;" onchange="handleCigarImageUpload(event, 'journal')">
+                    <button id="log-photo-btn" class="btn-secondary" onclick="document.getElementById('log-image-upload').click()">
+                        <i class="fa-solid fa-camera"></i> Add Picture
+                    </button>
+
+                    <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button> 
                 </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                    <select id="log-wrapper" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Wrapper</option>
-                        <option value="Connecticut">Connecticut</option>
-                        <option value="Corojo">Corojo</option>
-                        <option value="Habano">Habano</option>
-                        <option value="Maduro">Maduro</option>
-                        <option value="Oscuro">Oscuro</option>
-                        <option value="Cameroon">Cameroon</option>
-                        <option value="Candela">Candela</option>
-                        <option value="Sumatra">Sumatra</option>
-                        <option value="Broadleaf">Broadleaf</option>
-                        <option value="Rosado">Rosado</option>
-                    </select>
-                    <select id="log-cut" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Cut Style</option>
-                        <option value="Straight Cut">Straight Cut</option>
-                        <option value="V-Cut">V-Cut</option>
-                        <option value="Crown Cut">Crown Cut</option>
-                        <option value="Punch">Punch</option>
-                    </select>
-                </div>
 
-                <!-- Mechanics Tracking & Pairings -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                    <select id="log-light" class="form-input form-select" style="margin-bottom: 0;">
-                        <option value="" disabled selected>Light Method</option>
-                        <option value="Torch Lighter">Torch Lighter</option>
-                        <option value="Soft Flame">Soft Flame</option>
-                        <option value="Cedar Spill">Cedar Spill</option>
-                        <option value="Matches">Matches</option>
-                    </select>
-                    <input type="text" id="log-pairing" class="form-input" placeholder="Pairing (e.g., Keto Bourbon)" style="margin-bottom: 0;">
-                </div>
-
-                <textarea id="log-notes" class="form-input" placeholder="Tasting notes for the final third..." rows="3" style="resize: none; margin-top: 16px; margin-bottom: 16px;"></textarea>
-                
-                <!-- Hidden Input and Visual Upload Button -->
-                <input type="file" id="log-image-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleCigarImageUpload(event, 'journal')">
-                <button id="log-photo-btn" class="btn-secondary" onclick="document.getElementById('log-image-upload').click()">
-                    <i class="fa-solid fa-camera"></i> Add Picture
-                </button>
-
-                <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i></button> 
-
-                <div class="section-header" style="margin-top: 32px;">
+                <!-- JOURNAL HEADER WITH SEARCH & SORT -->
+                <div class="section-header" style="margin-top: 32px; border-bottom: none; padding-bottom: 0;">
                     <div class="section-title">Journal History</div>
                 </div>
+                
+                <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
+                    <div style="position: relative; flex: 1;">
+                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
+                        <input type="text" id="journal-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderJournal()">
+                    </div>
+                    <button id="journal-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleJournalSort()">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </button>
+                </div>
+                
                 <div id="journal-history-list" style="margin-bottom: 40px;">
                     <div class="empty-state">
                         <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
@@ -755,88 +936,54 @@
                     <div class="section-title">Release Notes</div>
                 </div>
 
-                <!-- Version 1.0.8 -->
+                <!-- Version 1.1.1 -->
                 <div class="log-card" style="margin-bottom: 24px;">
                     <div class="log-header" style="margin-bottom: 16px;">
                         <div>
-                            <div class="log-meta">Version Update 1.0.8</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Typography & UI Enhancements</div>
+                            <div class="log-meta">Version Update 1.1.1</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Log a Smoke UI Revamp</div>
                         </div>
                         <div class="badge badge-mint">Latest</div>
                     </div>
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-gantt" style="color: var(--leather);"></i> Interactive Aging Timeline</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Integrated a new visual aging timeline overview on the home dashboard, allowing you to instantly track the maturation stages of your collection across 30, 90, and 180+ day tiers.</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-font" style="color: var(--leather);"></i> DM Serif Display</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Updated the main typography to DM Serif Display, providing a cleaner, more premium editorial interface across the entire application.</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Searchable Modal</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The "Log a Smoke" action now opens a clean pop-up modal overlay instead of navigating you to the humidor. You can search directly within the modal to easily find and deplete your inventory before writing your journal entry.</div>
                     </div>
                 </div>
 
-                <!-- Version 1.0.7 -->
+                <!-- Version 1.1.0 -->
                 <div class="log-card" style="margin-bottom: 24px;">
                     <div class="log-header" style="margin-bottom: 16px;">
                         <div>
-                            <div class="log-meta">Version Update 1.0.7</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Premium Light Mode</div>
+                            <div class="log-meta">Version Update 1.1.0</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Streamlined Logging Workflow</div>
                         </div>
                     </div>
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-sun" style="color: var(--leather);"></i> The "Parchment & Espresso" Theme</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now toggle between our classic "Navy Slate & Walnut" dark mode and our new "Parchment & Espresso" light mode. Perfect for reading tasting notes in bright sunlight. Access the toggle in your Profile settings.</div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-code-branch" style="color: var(--leather);"></i> Separated Actions</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Humidor cards no longer act as click targets until you explicitly activate the "Log a Smoke" feature. This completely prevents accidental removal prompts while browsing your inventory.</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Photo Badge Isolation</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Fixed an event bubbling bug where tapping "View Photo" on a card would incorrectly trigger humidor actions instead of just opening the image.</div>
                     </div>
                 </div>
 
-                <!-- Version 1.0.6 -->
+                <!-- Version 1.0.9 -->
                 <div class="log-card" style="margin-bottom: 24px;">
                     <div class="log-header" style="margin-bottom: 16px;">
                         <div>
-                            <div class="log-meta">Version Update 1.0.6</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Native Gestures & Reviews</div>
+                            <div class="log-meta">Version Update 1.0.9</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Search, Sort & Collapsible Entries</div>
                         </div>
                     </div>
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Swipe to Action Engine</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">We have completely removed the clunky edit buttons. You can now intuitively swipe left or drag any entry in your Humidor or Journal to seamlessly reveal the Edit and Remove tools across both touchscreens and computer mice.</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Search & Filter</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Added a dedicated search bar and sorting toggle (A-Z vs Date) just beneath the Journal and Aging Timeline headers to easily parse your collection.</div>
                     </div>
                     <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Dynamic External Reviews</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Tapping the Daily Selection at the top of your screen will now bring up a custom prompt, routing you directly to industry reviews and ratings.</div>
-                    </div>
-                </div>
-
-                <!-- Version 1.0.5 -->
-                <div class="log-card" style="margin-bottom: 24px;">
-                    <div class="log-header" style="margin-bottom: 16px;">
-                        <div>
-                            <div class="log-meta">Version Update 1.0.5</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Cloud Sync & Advanced Tracking</div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cloud" style="color: var(--leather);"></i> Cloud Sync</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Your profile and journal are now securely stored in the cloud. Simply log in from any device to access your data wherever you are.</div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-calendar-day" style="color: var(--leather);"></i> Daily Cigar Suggestion</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new featured cigar is displayed at the top of the home screen each day. With a library of 365 cigars, you'll receive a different recommendation every day throughout the year.</div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cubes" style="color: var(--leather);"></i> Quantity Tracking</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">A new Quantity field has been added, allowing you to keep track of how many cigars you have for each entry in your humidor.</div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-hourglass-half" style="color: var(--leather);"></i> Improved Aging Tracking</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Added Date Acquired and Peak Aging Date fields when adding a cigar. The Peak Aging Date requires a minimum of seven days after the acquisition date to promote realistic aging timelines.</div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-camera" style="color: var(--leather);"></i> Photo Attachments</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">You can now attach photos to Humidor and Journal entries. Entries containing photos will display an image indicator, making them easy to identify while browsing your collection.</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-simple" style="color: var(--leather);"></i> Enhanced Profile Statistics</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The Profile page now automatically generates statistics based on your Humidor and Journal entries, including Average Humidor Cost, Average Aging Time, Favorite Cut, and Favorite Light.</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-compress" style="color: var(--leather);"></i> Collapsible Journal Cards</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Journal history entries are now collapsed by default to save vertical screen space. Tap the chevron icon on any card to reveal your detailed tasting notes and smoking mechanics.</div>
                     </div>
                 </div>
 
@@ -848,7 +995,7 @@
                 <div style="text-align: center; margin-bottom: 32px;">
                     <div style="position: relative; display: inline-block; cursor: pointer;" onclick="openAvatarActionSheet()">
                         <img id="profile-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
-                        <div style="position: absolute; bottom: 5px; right: 5px; background: var(--leather); color: #0B0F19; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--surface-1);">
+                        <div style="position: absolute; bottom: 5px; right: 5px; background: var(--leather); color: #1A1A1A; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--surface-1);">
                             <i class="fa-solid fa-camera" style="font-size: 14px;"></i>
                         </div>
                     </div>
@@ -902,7 +1049,7 @@
                 <!-- Theme Toggle Button -->
                 <div style="background: var(--surface-1); border-radius: 16px; padding: 16px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 32px; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleTheme()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="background: rgba(176, 125, 70, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                        <div style="background: rgba(212, 175, 55, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
                             <i id="theme-icon" class="fa-solid fa-moon"></i>
                         </div>
                         <div>
@@ -939,6 +1086,25 @@
         </div>
 
     </div> 
+</div>
+
+<!-- LOG A SMOKE MODAL -->
+<div id="log-smoke-modal" class="action-sheet-overlay" onclick="closeLogSmokeModal(event)">
+    <div class="action-sheet" onclick="event.stopPropagation()" style="height: 85vh; display: flex; flex-direction: column; padding-bottom: max(24px, env(safe-area-inset-bottom));">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main);">Select Cigar</div>
+            <div onclick="closeLogSmokeModal()" style="color: var(--text-dim); font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 16px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 14px;"></i>
+            <input type="text" id="log-smoke-search" class="form-input" placeholder="Search humidor..." style="margin-bottom: 0; padding-left: 42px; border-radius: 14px;" oninput="renderLogSmokeList()">
+        </div>
+        
+        <div id="log-smoke-list" style="overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; padding-right: 4px;">
+            <!-- JS injects list here -->
+        </div>
+    </div>
 </div>
 
 <!-- AVATAR MODAL -->
@@ -980,7 +1146,7 @@
         <p class="modal-text">To view detailed tasting notes and scores from industry experts, check the external review archives.</p>
         
         <a id="modal-review-btn" href="#" target="_blank" class="modal-btn">
-            Google Search Results
+            See Search Results <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left: 4px;"></i>
         </a>
     </div>
 </div>
@@ -990,7 +1156,7 @@
     <div class="modal-content" onclick="event.stopPropagation()" style="max-height: 80vh; display: flex; flex-direction: column; padding: 24px 16px;">
         <span class="close-modal" onclick="closeTimelineModal(event)">&times;</span>
         <p class="modal-subtitle">HUMIDOR INVENTORY</p>
-        <h2 style="margin-bottom: 20px; font-family: var(--font-serif); font-size: 22px;">Full Aging Timeline</h2>
+        <h2 id="timeline-modal-title" style="margin-bottom: 20px; font-family: var(--font-serif); font-size: 22px;">Full Aging Timeline</h2>
         
         <div id="timeline-modal-list" style="overflow-y: auto; text-align: left; padding-right: 4px; flex: 1;">
             <!-- Javascript will inject the list of cigars here -->
@@ -1000,19 +1166,123 @@
     </div>
 </div>
 
-<datalist id="brand-list"></datalist>
+<!-- CUSTOM BENTO DIALOG ENGINE -->
+<div id="custom-dialog-overlay" class="custom-dialog-overlay">
+    <div class="custom-dialog-box">
+        <div id="custom-dialog-title" class="custom-dialog-title">Notice</div>
+        <div id="custom-dialog-msg" class="custom-dialog-msg"></div>
+        <input type="text" id="custom-dialog-input" class="custom-dialog-input" autocomplete="off">
+        <div class="custom-dialog-actions">
+            <button id="custom-dialog-cancel" class="custom-dialog-btn custom-dialog-cancel">Cancel</button>
+            <button id="custom-dialog-confirm" class="custom-dialog-btn custom-dialog-confirm">OK</button>
+        </div>
+    </div>
+</div>
 
 <script type="module">
+
+    window.toggleEntryForm = function(wrapperId, chevronId) {
+        const wrapper = document.getElementById(wrapperId);
+        const chevron = document.getElementById(chevronId);
+        
+        if (wrapper.style.display === 'none') {
+            wrapper.style.display = 'block';
+            chevron.style.transform = 'rotate(180deg)';
+        } else {
+            wrapper.style.display = 'none';
+            chevron.style.transform = 'rotate(0deg)';
+        }
+    };
+
+    // --- CUSTOM DIALOG ENGINE GLOBALS ---
+    window.showCustomDialog = function({ title, message, type = 'alert', defaultVal = '', isDanger = false }) {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById('custom-dialog-overlay');
+            const titleEl = document.getElementById('custom-dialog-title');
+            const msgEl = document.getElementById('custom-dialog-msg');
+            const inputEl = document.getElementById('custom-dialog-input');
+            const cancelBtn = document.getElementById('custom-dialog-cancel');
+            const confirmBtn = document.getElementById('custom-dialog-confirm');
+
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+            
+            inputEl.style.display = type === 'prompt' ? 'block' : 'none';
+            cancelBtn.style.display = type === 'alert' ? 'none' : 'block';
+            
+            if (type === 'prompt') {
+                inputEl.value = defaultVal;
+                // Wait for display change to apply focus
+                setTimeout(() => { inputEl.focus(); inputEl.select(); }, 50);
+            }
+
+            if (isDanger) {
+                confirmBtn.className = 'custom-dialog-btn custom-dialog-danger';
+            } else {
+                confirmBtn.className = 'custom-dialog-btn custom-dialog-confirm';
+            }
+
+            overlay.classList.add('active');
+
+            const cleanup = () => {
+                overlay.classList.remove('active');
+                confirmBtn.onclick = null;
+                cancelBtn.onclick = null;
+            };
+
+            confirmBtn.onclick = () => {
+                cleanup();
+                if (type === 'prompt') resolve(inputEl.value);
+                else resolve(true);
+            };
+
+            cancelBtn.onclick = () => {
+                cleanup();
+                resolve(type === 'prompt' ? null : false);
+            };
+        });
+    };
+
+    window.customAlert = (message, title = "Notice") => window.showCustomDialog({ title, message, type: 'alert' });
+    window.customConfirm = (message, title = "Confirm", isDanger = false) => window.showCustomDialog({ title, message, type: 'confirm', isDanger });
+    window.customPrompt = (message, defaultVal = "", title = "Input Required") => window.showCustomDialog({ title, message, type: 'prompt', defaultVal });
+
 
     let humidorInventory = [];
     let journalHistory = [];
     let editingVaultId = null;
     let editingJournalId = null;
     
+    // Sort Engine States
+    let humidorSortOrder = 'date'; // 'date' | 'alpha'
+    let journalSortOrder = 'date'; // 'date' | 'alpha'
+    
     // Globals for image uploads and registry
     let currentVaultImage = null;
     let currentLogImage = null;
     window.imageRegistry = {}; 
+
+    // --- HELPERS: XSS SANITIZATION & DEBOUNCING ---
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag])
+        );
+    }
+
+    function debounce(func, timeout = 250) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    }
 
     // --- THEME ENGINE ---
     window.toggleTheme = function() {
@@ -1046,6 +1316,7 @@
     let swipeStartY = null;
     let isSwiping = false;
     let isDragging = false; 
+    window.isDraggingCard = false; // Prevents tap events from firing after a swipe
     const maxSwipe = -140; 
 
     window.closeAllSwipes = function() {
@@ -1059,7 +1330,6 @@
     };
 
     function handleDragStart(e) {
-        // Updated to ignore the new view-photo-badge class for the lightbox fix
         if (e.target.closest('.swipe-actions') || e.target.closest('.view-photo-badge')) return; 
         
         const swipeFront = e.target.closest('.swipe-front');
@@ -1071,6 +1341,7 @@
         if (!swipeFront) return;
 
         isDragging = true;
+        window.isDraggingCard = true;
         swipeStartX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         swipeStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         isSwiping = false;
@@ -1116,9 +1387,15 @@
         }
     }
 
-    function handleDragEnd(e) {
+        function handleDragEnd(e) {
         if (!isDragging) return;
         isDragging = false;
+        
+        if (isSwiping) {
+            setTimeout(() => { window.isDraggingCard = false; }, 50);
+        } else {
+            window.isDraggingCard = false; // Clear immediately for simple taps
+        }
         
         if (e.target && e.target.closest && e.target.closest('.swipe-actions')) return; 
 
@@ -1160,8 +1437,9 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-    // FIREBASE CONFIGURATION (Using the newer 'the-final-third' project credentials)
+    // FIREBASE CONFIGURATION 
     const firebaseConfig = {
         apiKey: "AIzaSyBdJ-ctGph_yGm4rdyAmPYYZR2QqWNBLxc",
         authDomain: "the-final-third.firebaseapp.com",
@@ -1175,8 +1453,118 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
+    const storage = getStorage(app);
 
     window.currentUserName = "User";
+
+    // --- QUICK LOG WORKFLOW (MODAL) ---
+    window.openLogSmokeModal = function() {
+        document.getElementById('log-smoke-search').value = '';
+        window.renderLogSmokeList();
+        document.getElementById('log-smoke-modal').classList.add('active');
+    };
+
+    window.closeLogSmokeModal = function(event) {
+        document.getElementById('log-smoke-modal').classList.remove('active');
+    };
+
+    window.renderLogSmokeList = function() {
+        const searchVal = document.getElementById('log-smoke-search').value.toLowerCase().replace(/[^\w\s]/g, '');
+        const listEl = document.getElementById('log-smoke-list');
+        
+        let filtered = humidorInventory;
+        if(searchVal) {
+            filtered = filtered.filter(c => 
+                (c.brand && c.brand.toLowerCase().replace(/[^\w\s]/g, '').includes(searchVal)) || 
+                (c.vitola && c.vitola.toLowerCase().replace(/[^\w\s]/g, '').includes(searchVal))
+            );
+        }
+        
+        if(filtered.length === 0) {
+            listEl.innerHTML = `<div class="empty-state"><i class="fa-solid fa-box" style="opacity: 0.3;"></i><span>No matching cigars</span></div>`;
+            return;
+        }
+        
+        let html = '';
+        filtered.forEach(c => {
+            let qty = c.quantity || 1;
+            html += `
+            <div style="background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: transform 0.2s, background-color 0.2s;" onclick="processSmokeSelection('${c.id}')" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                <div>
+                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(c.brand)}</div>
+                    <div style="font-size: 12px; color: var(--text-dim); font-weight: 600;">${escapeHTML(c.vitola)} • Qty: ${qty}</div>
+                </div>
+                <div style="background: rgba(212, 175, 55, 0.15); width: 32px; height: 32px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                    <i class="fa-solid fa-arrow-right" style="font-size: 14px;"></i>
+                </div>
+            </div>`;
+        });
+        listEl.innerHTML = html;
+    };
+
+    window.processSmokeSelection = async function(id) {
+        if (window.isDraggingCard) return; 
+
+        const cigar = humidorInventory.find(c => c.id === id);
+        if (!cigar) return;
+
+        let qtyToRemove = 1;
+        const currentQty = cigar.quantity || 1;
+
+        if (currentQty > 1) {
+            const result = await window.customPrompt(`You have ${currentQty} in your humidor. How many are you removing to log?`, "1", "Select Quantity");
+            if (result === null) return; 
+            qtyToRemove = parseInt(result);
+            if (isNaN(qtyToRemove) || qtyToRemove <= 0 || qtyToRemove > currentQty) {
+                await window.customAlert("Invalid quantity. Action cancelled.", "Error");
+                return;
+            }
+        } else {
+            const confirmLog = await window.customConfirm(`Remove ${escapeHTML(cigar.brand)} from your humidor and log it to your journal?`, "Log Smoke");
+            if (!confirmLog) return;
+        }
+
+        const newQty = currentQty - qtyToRemove;
+        
+        try {
+            if (newQty <= 0) {
+                await deleteDoc(doc(db, "humidor", id));
+            } else {
+                await updateDoc(doc(db, "humidor", id), { quantity: newQty });
+            }
+        } catch (e) {
+            await window.customAlert("Error updating humidor: " + e.message, "Error");
+            return;
+        }
+
+        closeLogSmokeModal();
+        switchTab('view-journal', 2);
+        
+        document.getElementById('log-brand').value = cigar.brand || '';
+        document.getElementById('log-vitola').value = cigar.vitola || '';
+        document.getElementById('log-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
+        document.getElementById('log-wrapper').value = cigar.wrapper || '';
+        
+        document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('log-cut').selectedIndex = 0;
+        document.getElementById('log-light').selectedIndex = 0;
+        document.getElementById('log-pairing').value = '';
+        document.getElementById('log-notes').value = '';
+        
+        const logWrapper = document.getElementById('journal-form-wrapper');
+        const logChevron = document.getElementById('journal-form-chevron');
+        if (logWrapper && logWrapper.style.display === 'none') {
+            logWrapper.style.display = 'block';
+            logChevron.style.transform = 'rotate(180deg)';
+        }
+        
+        document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.handleHumidorCardClick = function(id, event) {
+        if (window.isDraggingCard) return; 
+        // Card click currently disabled to prevent accidental actions. Detail view can go here in future.
+    };
 
     function getDayOfYear() {
         const now = new Date();
@@ -1187,40 +1575,50 @@
     }
 
     async function loadDailyCigar() {
+        if (!auth.currentUser) return;
+
         const day = getDayOfYear();
         const displayEl = document.getElementById('daily-cigar-display');
+        
+        console.log(`[Daily Cigar] Current Day of Year calculated: ${day}`);
+        
         try {
             const docRef = doc(db, "daily_roster", day.toString());
             const docSnap = await getDoc(docRef);
+            
             if (docSnap.exists()) {
+                console.log("[Daily Cigar] Document found successfully:", docSnap.data());
                 displayEl.innerText = docSnap.data().name;
             } else {
+                console.warn(`[Daily Cigar] Document ID "${day}" does NOT exist in your "daily_roster" collection. Falling back.`);
                 displayEl.innerText = "Padrón 60th Anniversary Perfecto"; 
             }
         } catch(e) {
+            console.error("[Daily Cigar] Firestore fetch failed entirely. Check your Security Rules.", e);
             displayEl.innerText = "Padrón 1964 Anniversary"; 
         }
     }
+    // Check for a new cigar every hour in case the app stays open in the background
+    setInterval(loadDailyCigar, 1000 * 60 * 60);
 
-    // UPDATED FUNCTION: Attach directly to the existing datalist
-        async function loadBrandLibrary() {
+    // --- CLOUD STORAGE HELPER ---
+    async function uploadImageToStorage(base64Data, folder) {
+        if (!base64Data || !base64Data.startsWith('data:image')) return base64Data; // Skips if already a URL or null
+        const fileName = `${folder}_${Date.now()}.jpg`;
+        const storageRef = ref(storage, `users/${auth.currentUser.uid}/${folder}/${fileName}`);
+        await uploadString(storageRef, base64Data, 'data_url');
+        return await getDownloadURL(storageRef);
+    }
+
+    // --- CUSTOM AUTOCOMPLETE LOGIC ---
+    window.brandLibrary = [];
+
+    async function loadBrandLibrary() {
         try {
-            // Pointing specifically to the app_data collection and cigar_library document
             const libraryDoc = await getDoc(doc(db, "app_data", "cigar_library"));
             
             if (libraryDoc.exists()) {
-                // IMPORTANT: Changed from .brands to .list to match your database
-                const brands = libraryDoc.data().list || [];
-                const dataList = document.getElementById('brand-list');
-                
-                // Clear it out just in case it runs twice
-                dataList.innerHTML = ''; 
-                
-                brands.forEach(brand => {
-                    const option = document.createElement('option');
-                    option.value = brand;
-                    dataList.appendChild(option);
-                });
+                window.brandLibrary = libraryDoc.data().list || [];
             } else {
                 console.warn("Brand library not found in this database!");
             }
@@ -1228,6 +1626,94 @@
             console.error("Failed to load brand library:", error);
         }
     }
+
+    function setupAutocomplete(inputId, dropdownId) {
+        const input = document.getElementById(inputId);
+        const dropdown = document.getElementById(dropdownId);
+
+        input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            dropdown.innerHTML = '';
+            
+            if (!val) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            // Filter and sort: exact starting matches go to the top
+            const matches = window.brandLibrary.filter(brand => 
+                brand.toLowerCase().includes(val)
+            ).sort((a, b) => {
+                const aStarts = a.toLowerCase().startsWith(val);
+                const bStarts = b.toLowerCase().startsWith(val);
+                
+                if (aStarts && !bStarts) return -1;
+                if (!aStarts && bStarts) return 1;
+                return a.localeCompare(b); // Alphabetical sort for the rest
+            }).slice(0, 10); // Limit to 10 results for a clean UI
+
+            if (matches.length > 0) {
+                matches.forEach(match => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    div.innerText = match;
+                    
+                    div.onclick = function() {
+                        input.value = match;
+                        dropdown.style.display = 'none';
+                    };
+                    dropdown.appendChild(div);
+                });
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target !== input && e.target !== dropdown) {
+                dropdown.style.display = 'none';
+            }
+        });
+    }
+    
+    // Initialize custom autocomplete listeners
+    setupAutocomplete('vault-brand', 'vault-autocomplete');
+    setupAutocomplete('log-brand', 'log-autocomplete');
+
+    // --- AGING NOTIFICATION ALERT ENGINE ---
+    window.checkAgingAlerts = function(inventory) {
+        const now = new Date().getTime();
+        let alertedCigars = JSON.parse(localStorage.getItem('alertedCigars') || '[]');
+        let newlyReady = [];
+        
+        inventory.forEach(cigar => {
+            if (cigar.targetDate && now >= cigar.targetDate && !alertedCigars.includes(cigar.id)) {
+                newlyReady.push(cigar);
+                alertedCigars.push(cigar.id);
+            }
+        });
+
+        if (newlyReady.length > 0) {
+            localStorage.setItem('alertedCigars', JSON.stringify(alertedCigars));
+            
+            if ("Notification" in window && Notification.permission === "granted") {
+                newlyReady.forEach(cigar => {
+                    new Notification("Peak Aging Reached", {
+                        body: `Your ${escapeHTML(cigar.brand)} ${escapeHTML(cigar.vitola)} has reached its target peak date.`,
+                        icon: "app-icon.png"
+                    });
+                });
+            } else {
+                const brands = newlyReady.map(c => escapeHTML(c.brand)).join(", ");
+                // Give the UI a second to render before triggering a blocking alert
+                setTimeout(async () => {
+                    await window.customAlert(`Peak Aging Reached! The following cigars are ready: ${brands}`, "Aging Alert");
+                }, 500);
+            }
+        }
+    };
+
 
     window.openCigarModal = function() {
         const displayEl = document.getElementById('daily-cigar-display');
@@ -1251,9 +1737,10 @@
         document.getElementById('cigar-modal').classList.remove('active');
     };
 
-        // --- TIMELINE MODAL LOGIC ---
-    window.openTimelineModal = function() {
+    // --- TIMELINE MODAL LOGIC (UPDATED WITH TIER FILTERING) ---
+    window.openTimelineModal = function(filterTier = 'all') {
         const listContainer = document.getElementById('timeline-modal-list');
+        const modalTitle = document.getElementById('timeline-modal-title');
         
         if (!humidorInventory || humidorInventory.length === 0) {
             listContainer.innerHTML = `<div class="empty-state" style="margin-top: 12px; padding: 20px;"><i class="fa-solid fa-leaf" style="opacity: 0.3;"></i><span>No cigars currently aging</span></div>`;
@@ -1264,27 +1751,48 @@
         const now = new Date().getTime();
         let html = '';
 
-        // Sort cigars by oldest (longest aged) first
         const sortedInventory = [...humidorInventory].sort((a, b) => a.acquiredDate - b.acquiredDate);
+        let filteredInventory = [];
+        
+        let titleText = "Full Aging Timeline";
 
         sortedInventory.forEach(cigar => {
             let daysAged = Math.floor((now - cigar.acquiredDate) / (1000 * 60 * 60 * 24));
             if (daysAged < 0) daysAged = 0;
             
-            let qty = cigar.quantity || 1;
-            
-            html += `
-            <div style="background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <div style="font-family: var(--font-serif); font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.2;">${cigar.brand}</div>
-                    <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${cigar.vitola} • Qty: ${qty}</div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="color: var(--leather); font-family: var(--font-mono); font-size: 16px; font-weight: 700;">${daysAged}</div>
-                    <div style="font-size: 9px; text-transform: uppercase; font-weight: 800; color: var(--text-dim); letter-spacing: 0.5px;">Days</div>
-                </div>
-            </div>`;
+            let include = false;
+            if (filterTier === 'all') { include = true; }
+            else if (filterTier === 'tier1' && daysAged <= 30) { include = true; titleText = "0-30 Days Aging"; }
+            else if (filterTier === 'tier2' && daysAged > 30 && daysAged <= 90) { include = true; titleText = "31-90 Days Aging"; }
+            else if (filterTier === 'tier3' && daysAged > 90 && daysAged <= 180) { include = true; titleText = "91-180 Days Aging"; }
+            else if (filterTier === 'tier4' && daysAged > 180) { include = true; titleText = "180+ Days Aging"; }
+
+            if (include) {
+                cigar.calculatedDaysAged = daysAged;
+                filteredInventory.push(cigar);
+            }
         });
+
+        if (modalTitle) modalTitle.innerText = titleText;
+
+        if (filteredInventory.length === 0) {
+            html = `<div class="empty-state" style="margin-top: 12px; padding: 20px;"><i class="fa-solid fa-leaf" style="opacity: 0.3;"></i><span>No cigars in this tier</span></div>`;
+        } else {
+            filteredInventory.forEach(cigar => {
+                let qty = cigar.quantity || 1;
+                html += `
+                <div style="background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-family: var(--font-serif); font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.2;">${escapeHTML(cigar.brand)}</div>
+                        <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; font-weight: 600;">${escapeHTML(cigar.vitola)} • Qty: ${qty}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: var(--leather); font-family: var(--font-mono); font-size: 16px; font-weight: 700;">${cigar.calculatedDaysAged}</div>
+                        <div style="font-size: 9px; text-transform: uppercase; font-weight: 800; color: var(--text-dim); letter-spacing: 0.5px;">Days</div>
+                    </div>
+                </div>`;
+            });
+        }
 
         listContainer.innerHTML = html;
         document.getElementById('timeline-modal').classList.add('active');
@@ -1304,41 +1812,42 @@
 
         document.getElementById('vault-date').value = todayStr;
         document.getElementById('vault-target-date').value = targetStr;
-        document.getElementById('vault-target-date').min = todayStr;
+        document.getElementById('vault-target-date').min = targetStr; 
         document.getElementById('log-date').value = todayStr;
     }
 
-    window.compressImage = function(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = event => {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 1000;
-                    const MAX_HEIGHT = 1000;
-                    let width = img.width;
-                    let height = img.height;
+window.compressImage = function(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                // Aggressively scale down to fit directly in the database
+                const MAX_WIDTH = 400;
+                const MAX_HEIGHT = 400;
+                let width = img.width;
+                let height = img.height;
 
-                    if (width > height) {
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                    } else {
-                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                    }
+                if (width > height) {
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                } else {
+                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                }
 
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7)); 
-                };
-                img.onerror = error => reject(error);
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.6)); 
             };
-            reader.onerror = error => reject(error);
-        });
-    };
+            img.onerror = error => reject(error);
+        };
+        reader.onerror = error => reject(error);
+    });
+};
 
     window.compressAvatar = function(file) {
         return new Promise((resolve, reject) => {
@@ -1390,14 +1899,14 @@
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
             }
         } catch (error) {
-            alert("Error processing image.");
+            await window.customAlert("Error processing image.", "Upload Failed");
         }
     };
 
     window.openLightbox = function(docId) {
-        const base64Str = window.imageRegistry[docId];
-        if(base64Str) {
-            document.getElementById('lightbox-img').src = base64Str;
+        const urlStr = window.imageRegistry[docId];
+        if(urlStr) {
+            document.getElementById('lightbox-img').src = urlStr;
             document.getElementById('lightbox-overlay').classList.add('active');
         }
     };
@@ -1414,21 +1923,25 @@
         const file = event.target.files[0];
         if(!file) return;
         try {
+            document.getElementById('profile-avatar-img').style.opacity = '0.5'; // Processing state
             const compressedBase64 = await window.compressAvatar(file);
+            const imageUrl = await uploadImageToStorage(compressedBase64, 'avatar');
             
-            document.getElementById('profile-avatar-img').src = compressedBase64;
-            localStorage.setItem('finalThirdAvatar', compressedBase64); 
+            document.getElementById('profile-avatar-img').src = imageUrl;
+            document.getElementById('profile-avatar-img').style.opacity = '1';
+            localStorage.setItem('finalThirdAvatar', imageUrl); 
             
             if (auth.currentUser) {
-                await setDoc(doc(db, "users", auth.currentUser.uid), { avatar: compressedBase64 }, { merge: true });
+                await setDoc(doc(db, "users", auth.currentUser.uid), { avatar: imageUrl }, { merge: true });
             }
         } catch (error) {
             console.error("Avatar upload failed:", error);
+            document.getElementById('profile-avatar-img').style.opacity = '1';
         }
     };
 
     window.editUsername = async function() {
-        const newName = prompt("Enter your new username:", window.currentUserName);
+        const newName = await window.customPrompt("Enter your new username:", window.currentUserName, "Edit Username");
         if (newName && newName.trim() !== "" && newName.trim() !== window.currentUserName) {
             try {
                 await updateProfile(auth.currentUser, { displayName: newName.trim() });
@@ -1436,7 +1949,7 @@
                 document.getElementById('display-name').innerText = window.currentUserName;
                 document.getElementById('profile-display-name').innerText = window.currentUserName;
             } catch (error) {
-                alert("Failed to update username: " + error.message);
+                await window.customAlert("Failed to update username: " + error.message, "Error");
             }
         }
     };
@@ -1448,8 +1961,11 @@
         const email = document.getElementById('delete-email').value;
         const password = document.getElementById('delete-password').value;
         
-        if (!email || !password) return alert("Please enter email and password to confirm deletion.");
-        if (!confirm("Are you absolutely sure? All of your logs and humidor data will be permanently wiped.")) return;
+        if (!email || !password) {
+            await window.customAlert("Please enter email and password to confirm deletion.", "Required Fields");
+            return;
+        }
+        if (!(await window.customConfirm("Are you absolutely sure? All of your logs and humidor data will be permanently wiped.", "Confirm Deletion", true))) return;
 
         const user = auth.currentUser;
         const credential = EmailAuthProvider.credential(email, password);
@@ -1473,10 +1989,10 @@
 
             await deleteUser(user);
             
-            alert("Account and all associated data have been permanently erased.");
+            await window.customAlert("Account and all associated data have been permanently erased.", "Account Deleted");
             closeDeleteActionSheet();
         } catch (error) {
-            alert("Deletion failed: " + error.message);
+            await window.customAlert("Deletion failed: " + error.message, "Error");
         }
     };
 
@@ -1541,13 +2057,16 @@
     window.handleLogin = async function() {
         const email = document.getElementById('signin-email').value;
         const password = document.getElementById('signin-password').value;
-        if(!email || !password) return alert("Please enter email and password.");
+        if(!email || !password) {
+            await window.customAlert("Please enter email and password.", "Required Fields");
+            return;
+        }
         
         document.getElementById('signin-btn').innerHTML = 'Logging In...';
         try {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
-            alert("Login failed: " + error.message);
+            await window.customAlert("Login failed: " + error.message, "Error");
             document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
         }
     };
@@ -1558,8 +2077,14 @@
         const password = document.getElementById('signup-password').value;
         const confirm = document.getElementById('signup-confirm').value;
         
-        if(!username || !email || !password) return alert("Please fill in all fields.");
-        if(password !== confirm) return alert("Passwords do not match.");
+        if(!username || !email || !password) {
+            await window.customAlert("Please fill in all fields.", "Required Fields");
+            return;
+        }
+        if(password !== confirm) {
+            await window.customAlert("Passwords do not match.", "Error");
+            return;
+        }
         
         document.getElementById('signup-btn').innerHTML = 'Registering...';
         try {
@@ -1567,24 +2092,27 @@
             await updateProfile(userCredential.user, { displayName: username });
             window.currentUserName = username;
         } catch (error) {
-            alert("Sign up failed: " + error.message);
+            await window.customAlert("Sign up failed: " + error.message, "Error");
             document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
         }
     };
 
     window.handleResetPassword = async function() {
         const email = document.getElementById('reset-email').value;
-        if(!email) return alert("Please enter your email address.");
+        if(!email) {
+            await window.customAlert("Please enter your email address.", "Required Field");
+            return;
+        }
         
         document.getElementById('reset-btn').innerHTML = 'Sending...';
         try {
             await sendPasswordResetEmail(auth, email);
-            alert("Password reset email sent! Check your inbox.");
+            await window.customAlert("Password reset email sent! Check your inbox.", "Success");
             showAuthView('signin');
             document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
             document.getElementById('reset-email').value = '';
         } catch (error) {
-            alert("Reset failed: " + error.message);
+            await window.customAlert("Reset failed: " + error.message, "Error");
             document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
         }
     };
@@ -1602,14 +2130,18 @@
             document.getElementById('main-environment').style.display = 'flex';
             document.getElementById('main-environment').classList.add('active');
             
-            // Set correct theme UI right away
+            // Request Notification Permissions if needed
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+            
             window.updateThemeUI(document.documentElement.getAttribute('data-theme'));
             
             window.currentUserName = user.displayName || user.email.split('@')[0]; 
             
             initializeDates();
             loadDailyCigar();
-            loadBrandLibrary(); // Brand library is now fetched upon successful login
+            loadBrandLibrary(); 
             
             document.getElementById('profile-display-name').innerText = window.currentUserName;
             document.getElementById('profile-display-email').innerText = user.email;
@@ -1640,14 +2172,13 @@
             unsubscribeHumidor = onSnapshot(query(collection(db, "humidor"), where("uid", "==", user.uid)), (snapshot) => {
                 humidorInventory = [];
                 snapshot.forEach((doc) => { humidorInventory.push({ id: doc.id, ...doc.data() }); });
-                humidorInventory.sort((a, b) => b.acquiredDate - a.acquiredDate); 
                 renderHumidor();
+                checkAgingAlerts(humidorInventory);
             });
 
             unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid)), (snapshot) => {
                 journalHistory = [];
                 snapshot.forEach((doc) => { journalHistory.push({ id: doc.id, ...doc.data() }); });
-                journalHistory.sort((a, b) => new Date(b.date) - new Date(a.date)); 
                 renderJournal();
             });
 
@@ -1693,16 +2224,16 @@
             return;
         }
 
-        let html = '<div style="background: var(--surface-1); border-radius: 20px; padding: 8px 20px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px var(--shadow-subtle);">';
+        let html = '<div style="background: var(--surface-2); border-radius: 20px; padding: 8px 20px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px var(--shadow-subtle);">';
         sorted.forEach((cigar, index) => {
             const borderStr = index < sorted.length - 1 ? 'border-bottom: 1px solid var(--glass-border);' : '';
             html += `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; ${borderStr}">
                 <div>
-                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${cigar.brand}</div>
-                    <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${cigar.vitola} • ${cigar.wrapper}</div>
+                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
+                    <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px; background: rgba(176, 125, 70, 0.1); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(176, 125, 70, 0.2);">
+                <div style="display: flex; align-items: center; gap: 6px; background: rgba(212, 175, 55, 0.1); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.2);">
                     <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
                     <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--leather); line-height: 1;">${cigar.rating.toFixed(2)}</span>
                 </div>
@@ -1743,22 +2274,37 @@
         submitBtn.innerHTML = 'Update Ledger <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
         submitBtn.style.background = 'var(--gold)';
         
+        const logWrapper = document.getElementById('journal-form-wrapper');
+        const logChevron = document.getElementById('journal-form-chevron');
+        if (logWrapper && logWrapper.style.display === 'none') {
+            logWrapper.style.display = 'block';
+            logChevron.style.transform = 'rotate(180deg)';
+        }
+        
         document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.logSmoke = async function() {
-        const date = document.getElementById('log-date').value;
-        const brand = document.getElementById('log-brand').value;
-        const vitola = document.getElementById('log-vitola').value;
-        const ring = document.getElementById('log-ring-gauge').value;
-        const wrapper = document.getElementById('log-wrapper').value;
-        const cut = document.getElementById('log-cut').value;
-        const light = document.getElementById('log-light').value;
-        const pairing = document.getElementById('log-pairing').value;
-        const notes = document.getElementById('log-notes').value;
+window.logSmoke = async function() {
+    const date = document.getElementById('log-date').value;
+    const brand = document.getElementById('log-brand').value;
+    const vitola = document.getElementById('log-vitola').value;
+    const ring = document.getElementById('log-ring-gauge').value;
+    const wrapper = document.getElementById('log-wrapper').value;
+    const cut = document.getElementById('log-cut').value;
+    const light = document.getElementById('log-light').value;
+    const pairing = document.getElementById('log-pairing').value;
+    const notes = document.getElementById('log-notes').value;
+    const submitBtn = document.getElementById('journal-submit-btn');
 
-        if(!brand) { alert("Please enter the brand to log."); return; }
+    if(!brand) { 
+        await window.customAlert("Please enter the brand to log.", "Missing Data");
+        return; 
+    }
 
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+    submitBtn.disabled = true;
+
+    try {
         const newLog = {
             uid: auth.currentUser.uid,
             date: date || new Date().toISOString().split('T')[0],
@@ -1770,42 +2316,72 @@
             light: light || "N/A",
             pairing: pairing || "None",
             notes: notes || "No notes.",
-            image: currentLogImage 
+            image: currentLogImage // Saving the scaled Base64 string directly
         };
 
-        try {
-            if (editingJournalId) {
-                await updateDoc(doc(db, "journal", editingJournalId), newLog);
-                editingJournalId = null;
-                const submitBtn = document.getElementById('journal-submit-btn');
-                submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
-                submitBtn.style.background = 'var(--btn-leather)';
-            } else {
-                await addDoc(collection(db, "journal"), newLog);
-            }
-            
-            document.getElementById('log-brand').value = '';
-            document.getElementById('log-vitola').selectedIndex = 0;
-            document.getElementById('log-ring-gauge').value = '';
-            document.getElementById('log-wrapper').selectedIndex = 0;
-            document.getElementById('log-cut').selectedIndex = 0;
-            document.getElementById('log-light').selectedIndex = 0;
-            document.getElementById('log-pairing').value = '';
-            document.getElementById('log-notes').value = '';
-            
-            currentLogImage = null;
-            document.getElementById('log-image-upload').value = "";
-            const photoBtn = document.getElementById('log-photo-btn');
-            photoBtn.classList.remove('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-            
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('log-date').value = today;
-            
-        } catch (e) {
-            console.error("Error adding document: ", e);
+        if (editingJournalId) {
+            await updateDoc(doc(db, "journal", editingJournalId), newLog);
+            editingJournalId = null;
+            submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+            submitBtn.style.background = 'var(--btn-leather)';
+        } else {
+            await addDoc(collection(db, "journal"), newLog);
+            submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+        }
+        
+        document.getElementById('log-brand').value = '';
+        document.getElementById('log-vitola').selectedIndex = 0;
+        document.getElementById('log-ring-gauge').value = '';
+        document.getElementById('log-wrapper').selectedIndex = 0;
+        document.getElementById('log-cut').selectedIndex = 0;
+        document.getElementById('log-light').selectedIndex = 0;
+        document.getElementById('log-pairing').value = '';
+        document.getElementById('log-notes').value = '';
+        
+        currentLogImage = null;
+        document.getElementById('log-image-upload').value = "";
+        const photoBtn = document.getElementById('log-photo-btn');
+        photoBtn.classList.remove('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('log-date').value = today;
+        
+    } catch (e) {
+        console.error("Error adding document: ", e);
+        submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+    } finally {
+        submitBtn.disabled = false;
+    }
+};
+
+    // --- SORT ENGINE & EXPAND ENGINE ---
+    window.toggleHumidorSort = function() {
+        humidorSortOrder = humidorSortOrder === 'date' ? 'alpha' : 'date';
+        document.getElementById('humidor-sort-btn').innerHTML = humidorSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
+        debouncedRenderHumidor();
+    };
+
+    window.toggleJournalSort = function() {
+        journalSortOrder = journalSortOrder === 'date' ? 'alpha' : 'date';
+        document.getElementById('journal-sort-btn').innerHTML = journalSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
+        debouncedRenderJournal();
+    };
+    
+    window.toggleJournalExpand = function(id, event) {
+        event.stopPropagation(); // Shield the swipe engine from tap interactions
+        const details = document.getElementById('journal-details-' + id);
+        const icon = document.getElementById('journal-chevron-' + id);
+        if(details.style.display === 'none') {
+            details.style.display = 'block';
+            icon.style.transform = 'rotate(180deg)';
+        } else {
+            details.style.display = 'none';
+            icon.style.transform = 'rotate(0deg)';
         }
     };
+
+    window.debouncedRenderJournal = debounce(() => renderJournal(), 250);
 
     window.renderJournal = function() {
         const journalList = document.getElementById('journal-history-list');
@@ -1834,57 +2410,98 @@
             return;
         }
 
-        let html = '';
-        journalHistory.forEach(log => {
-            let imageBadge = '';
-            if(log.image) {
-                window.imageRegistry[log.id] = log.image;
-                // Changed from <span> to <button> and injected touch/mouse isolation events to fix the double tap bug
-                imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
-            }
-
-            html += `
-            <div class="swipe-container">
-                <div class="swipe-actions">
-                    <button class="swipe-action-btn swipe-action-edit" onclick="editJournalLog('${log.id}')">
-                        <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
-                    </button>
-                    <button class="swipe-action-btn swipe-action-delete" onclick="removeJournalLog('${log.id}')">
-                        <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
-                    </button>
-                </div>
+        // --- FILTER & SORT LOGIC ---
+        const searchInput = document.getElementById('journal-search');
+        // Grab the input, make it lowercase, and strip out punctuation using Regex
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
+        
+        let displayList = [...journalHistory];
+        
+        if (searchTerm) {
+            displayList = displayList.filter(log => {
+                // Strip punctuation from the stored brand and vitola before comparing
+                const normalizedBrand = log.brand.toLowerCase().replace(/[^\w\s]/g, '');
+                const normalizedVitola = log.vitola.toLowerCase().replace(/[^\w\s]/g, '');
                 
-                <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
-                    <div class="log-header">
-                        <div style="flex: 1; padding-right: 12px;">
-                            <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${log.brand}</div>
-                            <div class="log-meta">${log.vitola} • <span style="font-family: var(--font-mono);">${log.ring}</span> • ${log.wrapper}</div>
-                        </div>
-                        <div class="badge badge-amber">${log.date}</div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 4px; flex-wrap: wrap;">
-                        <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-scissors" style="margin-right: 4px; color: var(--leather);"></i> ${log.cut}</span>
-                        <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-fire" style="margin-right: 4px; color: var(--gold);"></i> ${log.light}</span>
-                        <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-martini-glass" style="margin-right: 4px; color: var(--walnut);"></i> ${log.pairing}</span>
-                        ${imageBadge}
-                    </div>
-                    
-                    <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; font-style: italic;">"${log.notes}"</div>
-                </div>
-            </div>`;
-        });
+                return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
+            });
+        }
 
+        if (journalSortOrder === 'alpha') {
+            displayList.sort((a, b) => a.brand.localeCompare(b.brand));
+        } else {
+            displayList.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        let html = '';
+        if (displayList.length === 0) {
+            html = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>No results found</span>
+                </div>`;
+        } else {
+            displayList.forEach(log => {
+                let imageBadge = '';
+                if(log.image) {
+                    window.imageRegistry[log.id] = log.image;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
+                }
+
+                html += `
+                <div class="swipe-container">
+                    <div class="swipe-actions">
+                        <button class="swipe-action-btn swipe-action-edit" onclick="editJournalLog('${log.id}')">
+                            <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                        </button>
+                        <button class="swipe-action-btn swipe-action-delete" onclick="removeJournalLog('${log.id}')">
+                            <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                        </button>
+                    </div>
+                    
+                    <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
+                        
+                        <!-- Visible Summary Block -->
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+                            <div style="flex: 1; padding-right: 12px;">
+                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(log.brand)}</div>
+                                <div class="log-meta">${escapeHTML(log.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(log.ring)}</span> • ${escapeHTML(log.wrapper)}</div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                                <div class="badge badge-amber">${escapeHTML(log.date)}</div>
+                                <button onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="toggleJournalExpand('${log.id}', event)" id="journal-chevron-${log.id}" style="background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; transition: transform 0.3s; margin-top: 4px; font-size: 14px;">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden Collapsible Details Block -->
+                        <div id="journal-details-${log.id}" style="display: none;">
+                            <div style="display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; flex-wrap: wrap;">
+                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-scissors" style="margin-right: 4px; color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
+                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-fire" style="margin-right: 4px; color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
+                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-martini-glass" style="margin-right: 4px; color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
+                                ${imageBadge}
+                            </div>
+                            
+                            <div style="font-size: 13px; color: var(--text-dim); margin-top: 12px; font-style: italic; line-height: 1.4;">"${escapeHTML(log.notes)}"</div>
+                        </div>
+
+                    </div>
+                </div>`;
+            });
+        }
         journalList.innerHTML = html;
         
         let homeHtml = '';
-        journalHistory.slice(0, 2).forEach(log => {
+        // Sort home recent list cleanly by date regardless of filter
+        [...journalHistory].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 2).forEach(log => {
             homeHtml += `
             <div class="log-card" style="margin-bottom: 12px;">
                 <div class="log-header" style="margin-bottom: 0;">
                     <div>
-                        <div class="log-title">${log.brand}</div>
-                        <div class="log-meta">${log.date}</div>
+                        <div class="log-title">${escapeHTML(log.brand)}</div>
+                        <div class="log-meta">${escapeHTML(log.date)}</div>
                     </div>
                     <div class="badge badge-indigo">Smoked</div>
                 </div>
@@ -1928,12 +2545,12 @@
 
     window.removeJournalLog = async function(id) {
         window.closeAllSwipes();
-        if(confirm("Remove this log from your journal?")) {
+        if(await window.customConfirm("Remove this log from your journal?", "Remove Log", true)) {
             await deleteDoc(doc(db, "journal", id));
         }
     };
 
-    // --- AGING ENGINE LOGIC ---
+    // --- AGING ENGINE LOGIC (UPDATED WITH DYNAMIC PROGRESS & DIMMING) ---
     
     document.getElementById('vault-date').addEventListener('change', function(e) {
         if (!e.target.value) return;
@@ -1985,25 +2602,40 @@
         submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
         submitBtn.style.background = 'var(--gold)';
 
+        const vaultWrapper = document.getElementById('humidor-form-wrapper');
+        const vaultChevron = document.getElementById('humidor-form-chevron');
+        if (vaultWrapper && vaultWrapper.style.display === 'none') {
+            vaultWrapper.style.display = 'block';
+            vaultChevron.style.transform = 'rotate(180deg)';
+        }
+
         document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.storeCigar = async function() {
-        const brand = document.getElementById('vault-brand').value;
-        const qtyVal = document.getElementById('vault-quantity').value;
-        const vitola = document.getElementById('vault-vitola').value;
-        const ring = document.getElementById('vault-ring-gauge').value;
-        const wrapper = document.getElementById('vault-wrapper').value;
-        const priceVal = document.getElementById('vault-price').value;
-        const acquiredDate = document.getElementById('vault-date').value;
-        const targetDate = document.getElementById('vault-target-date').value;
-        const ratingVal = document.getElementById('vault-rating').value;
+window.storeCigar = async function() {
+    const brand = document.getElementById('vault-brand').value;
+    const qtyVal = document.getElementById('vault-quantity').value;
+    const vitola = document.getElementById('vault-vitola').value;
+    const ring = document.getElementById('vault-ring-gauge').value;
+    const wrapper = document.getElementById('vault-wrapper').value;
+    const priceVal = document.getElementById('vault-price').value;
+    const acquiredDate = document.getElementById('vault-date').value;
+    const targetDate = document.getElementById('vault-target-date').value;
+    const ratingVal = document.getElementById('vault-rating').value;
+    const submitBtn = document.getElementById('vault-submit-btn');
 
-        if(!brand || !acquiredDate || !targetDate) { alert("Please enter the brand, date acquired, and target peak date."); return; }
+    if(!brand || !acquiredDate || !targetDate) { 
+        await window.customAlert("Please enter the brand, date acquired, and target peak date.", "Missing Data");
+        return; 
+    }
 
-        const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
-        const targetTime = new Date(targetDate + 'T00:00:00').getTime();
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+    submitBtn.disabled = true;
 
+    const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
+    const targetTime = new Date(targetDate + 'T00:00:00').getTime();
+
+    try {
         const newCigar = {
             uid: auth.currentUser.uid,
             brand,
@@ -2015,40 +2647,44 @@
             targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
             rating: ratingVal ? parseFloat(ratingVal) : null,
             acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
-            image: currentVaultImage 
+            image: currentVaultImage // Saving the scaled Base64 string directly
         };
 
-        try {
-            if (editingVaultId) {
-                await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
-                editingVaultId = null;
-                const submitBtn = document.getElementById('vault-submit-btn');
-                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-                submitBtn.style.background = 'var(--btn-leather)';
-            } else {
-                await addDoc(collection(db, "humidor"), newCigar);
-            }
-            
-            document.getElementById('vault-brand').value = '';
-            document.getElementById('vault-quantity').value = '1';
-            document.getElementById('vault-ring-gauge').value = '';
-            document.getElementById('vault-price').value = '';
-            document.getElementById('vault-rating').selectedIndex = 0;
-            document.getElementById('vault-vitola').selectedIndex = 0;
-            document.getElementById('vault-wrapper').selectedIndex = 0;
-            
-            currentVaultImage = null;
-            document.getElementById('vault-image-upload').value = "";
-            const photoBtn = document.getElementById('vault-photo-btn');
-            photoBtn.classList.remove('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-            
-            initializeDates();
-
-        } catch (e) {
-            console.error("Error adding document: ", e);
+        if (editingVaultId) {
+            await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
+            editingVaultId = null;
+            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+            submitBtn.style.background = 'var(--btn-leather)';
+        } else {
+            await addDoc(collection(db, "humidor"), newCigar);
+            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
         }
-    };
+        
+        document.getElementById('vault-brand').value = '';
+        document.getElementById('vault-quantity').value = '1';
+        document.getElementById('vault-ring-gauge').value = '';
+        document.getElementById('vault-price').value = '';
+        document.getElementById('vault-rating').selectedIndex = 0;
+        document.getElementById('vault-vitola').selectedIndex = 0;
+        document.getElementById('vault-wrapper').selectedIndex = 0;
+        
+        currentVaultImage = null;
+        document.getElementById('vault-image-upload').value = "";
+        const photoBtn = document.getElementById('vault-photo-btn');
+        photoBtn.classList.remove('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        
+        initializeDates();
+
+    } catch (e) {
+        console.error("Error adding document: ", e);
+        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+    } finally {
+        submitBtn.disabled = false;
+    }
+};
+
+    window.debouncedRenderHumidor = debounce(() => renderHumidor(), 250);
 
     window.renderHumidor = function() {
         const list = document.getElementById('humidor-inventory-list');
@@ -2069,114 +2705,178 @@
             document.getElementById('stat-humidor-value').innerText = `$0.00`;
             document.getElementById('profile-wrapper-stat').innerText = "N/A";
             
+            // Handle empty dashboard graphics
+            document.getElementById('label-tier-1').style.opacity = '0.3';
+            document.getElementById('label-tier-2').style.opacity = '0.3';
+            document.getElementById('label-tier-3').style.opacity = '0.3';
+            document.getElementById('label-tier-4').style.opacity = '0.3';
+            
+            document.getElementById('bar-tier-1').style.width = '25%';
+            document.getElementById('bar-tier-2').style.width = '25%';
+            document.getElementById('bar-tier-3').style.width = '25%';
+            document.getElementById('bar-tier-4').style.width = '25%';
+            
             renderFavorites(); 
             return;
         }
 
-        let html = '';
         const now = new Date().getTime();
         let totalValue = 0;
         let totalAgedDays = 0;
         let readyAlertsCount = 0;
         let totalQuantity = 0;
 
-        // --- NEW AGING CALCULATOR ---
-let tier1 = 0; // 0-30
-let tier2 = 0; // 31-90
-let tier3 = 0; // 91-180
-let tier4 = 0; // 180+
+        // --- DYNAMIC AGING CALCULATOR ---
+        let tier1 = 0; // 0-30
+        let tier2 = 0; // 31-90
+        let tier3 = 0; // 91-180
+        let tier4 = 0; // 180+
+        let totalAgingQuantity = 0;
 
-humidorInventory.forEach(c => {
-    let days = Math.floor((now - c.acquiredDate) / (1000 * 60 * 60 * 24));
-    if (days < 0) days = 0;
-    
-    let qty = c.quantity || 1;
-    
-    if (days <= 30) tier1 += qty;
-    else if (days <= 90) tier2 += qty;
-    else if (days <= 180) tier3 += qty;
-    else tier4 += qty;
-});
-
-document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
-document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
-document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
-document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
-// ----------------------------
-
-        humidorInventory.forEach(cigar => {
-            const msPerDay = 1000 * 60 * 60 * 24;
-            const cigarQty = cigar.quantity || 1;
-            totalQuantity += cigarQty;
+        humidorInventory.forEach(c => {
+            let days = Math.floor((now - c.acquiredDate) / (1000 * 60 * 60 * 24));
+            if (days < 0) days = 0;
             
-            let daysAged = Math.floor((now - cigar.acquiredDate) / msPerDay);
+            let qty = c.quantity || 1;
+            totalAgingQuantity += qty;
+            
+            if (days <= 30) tier1 += qty;
+            else if (days <= 90) tier2 += qty;
+            else if (days <= 180) tier3 += qty;
+            else tier4 += qty;
+            
+            const msPerDay = 1000 * 60 * 60 * 24;
+            let daysAged = Math.floor((now - c.acquiredDate) / msPerDay);
             if (daysAged < 0) daysAged = 0; 
             
             totalAgedDays += daysAged;
-            totalValue += ((cigar.price || 0) * cigarQty);
+            totalValue += ((c.price || 0) * qty);
 
-            let totalTargetDays = Math.floor((cigar.targetDate - cigar.acquiredDate) / msPerDay);
+            let totalTargetDays = Math.floor((c.targetDate - c.acquiredDate) / msPerDay);
             if (totalTargetDays <= 0) totalTargetDays = 1; 
             
             let progress = (daysAged / totalTargetDays) * 100;
-            if (progress > 100) progress = 100;
-            if (progress < 0) progress = 0; 
-
-            let isReady = progress >= 100;
-            if (isReady) readyAlertsCount += cigarQty;
-            
-            let badgeClass = isReady ? 'badge-mint' : 'badge-amber';
-            let statusText = isReady ? 'Ready' : 'Aging';
-
-            let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
-            
-            let imageBadge = '';
-            if(cigar.image) {
-                window.imageRegistry[cigar.id] = cigar.image;
-                // Changed from <span> to <button> and injected touch/mouse isolation events to fix the double tap bug
-                imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
-            }
-
-            let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
-            
-            let qtyBadge = `<span style="font-size: 11px; background: rgba(176, 125, 70, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(176, 125, 70, 0.3);"><i class="fa-solid fa-cubes" style="margin-right: 4px;"></i> QTY: ${cigarQty}</span>`;
-            
-            let attributesRow = '';
-            if (qtyBadge || ratingBadge || imageBadge) {
-                attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${ratingBadge}${imageBadge}</div>`;
-            }
-
-            html += `
-            <div class="swipe-container">
-                <div class="swipe-actions">
-                    <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
-                        <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
-                    </button>
-                    <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
-                        <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
-                    </button>
-                </div>
-                
-                <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
-                    <div class="log-header">
-                        <div style="flex: 1; padding-right: 12px;">
-                            <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${cigar.brand}</div>
-                            <div class="log-meta">${cigar.vitola} • <span style="font-family: var(--font-mono);">${cigar.ring}</span> • ${cigar.wrapper}</div>
-                        </div>
-                        <div class="badge ${badgeClass}">${statusText}</div>
-                    </div>
-                    ${attributesRow}
-                    <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
-                    <div class="timeline-footer">
-                        <span>Aged: ${daysAged} Days</span>
-                        <span>Target: ${totalTargetDays} Days</span>
-                    </div>
-                </div>
-            </div>`;
+            if (progress >= 100) readyAlertsCount += qty;
         });
 
+        document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
+        
+        // Dynamic Opacity Dimming
+        document.getElementById('label-tier-1').style.opacity = tier1 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-2').style.opacity = tier2 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-3').style.opacity = tier3 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-4').style.opacity = tier4 === 0 ? '0.3' : '1';
+        
+        // Dynamic Proportional Widths
+        if (totalAgingQuantity > 0) {
+            document.getElementById('bar-tier-1').style.width = `${(tier1 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-2').style.width = `${(tier2 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-3').style.width = `${(tier3 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-4').style.width = `${(tier4 / totalAgingQuantity) * 100}%`;
+        }
+
+        // --- FILTER & SORT LOGIC ---
+        const searchInput = document.getElementById('humidor-search');
+        // Grab the input, make it lowercase, and strip out punctuation using Regex
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
+        
+        let displayList = [...humidorInventory];
+        
+        if (searchTerm) {
+            displayList = displayList.filter(cigar => {
+                // Strip punctuation from the stored brand and vitola before comparing
+                const normalizedBrand = cigar.brand.toLowerCase().replace(/[^\w\s]/g, '');
+                const normalizedVitola = cigar.vitola.toLowerCase().replace(/[^\w\s]/g, '');
+                
+                return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
+            });
+        }
+
+        if (humidorSortOrder === 'alpha') {
+            displayList.sort((a, b) => a.brand.localeCompare(b.brand));
+        } else {
+            displayList.sort((a, b) => b.acquiredDate - a.acquiredDate);
+        }
+
+        let html = '';
+        if (displayList.length === 0) {
+            html = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>No results found</span>
+                </div>`;
+        } else {
+            displayList.forEach(cigar => {
+                const msPerDay = 1000 * 60 * 60 * 24;
+                const cigarQty = cigar.quantity || 1;
+                totalQuantity += cigarQty;
+                
+                let daysAged = Math.floor((now - cigar.acquiredDate) / msPerDay);
+                if (daysAged < 0) daysAged = 0; 
+
+                let totalTargetDays = Math.floor((cigar.targetDate - cigar.acquiredDate) / msPerDay);
+                if (totalTargetDays <= 0) totalTargetDays = 1; 
+                
+                let progress = (daysAged / totalTargetDays) * 100;
+                if (progress > 100) progress = 100;
+                if (progress < 0) progress = 0; 
+
+                let isReady = progress >= 100;
+                let badgeClass = isReady ? 'badge-mint' : 'badge-amber';
+                let statusText = isReady ? 'Ready' : 'Aging';
+
+                let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
+                
+                let imageBadge = '';
+                if(cigar.image) {
+                    window.imageRegistry[cigar.id] = cigar.image;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
+                }
+
+                let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
+                
+                let qtyBadge = `<span style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-cubes" style="margin-right: 4px;"></i> QTY: ${cigarQty}</span>`;
+                
+                let attributesRow = '';
+                if (qtyBadge || ratingBadge || imageBadge) {
+                    attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${ratingBadge}${imageBadge}</div>`;
+                }
+
+                html += `
+                <div class="swipe-container">
+                    <div class="swipe-actions">
+                        <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
+                            <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                        </button>
+                        <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
+                            <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                        </button>
+                    </div>
+                    
+                    <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
+                        <div class="log-header">
+                            <div style="flex: 1; padding-right: 12px;">
+                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
+                                <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
+                            </div>
+                            <div class="badge ${badgeClass}">${statusText}</div>
+                        </div>
+                        ${attributesRow}
+                        <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
+                        <div class="timeline-footer">
+                            <span>Aged: ${daysAged} Days</span>
+                            <span>Target: ${totalTargetDays} Days</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+        
         list.innerHTML = html;
-        countStat.innerText = totalQuantity; 
+        countStat.innerText = totalAgingQuantity; 
         document.getElementById('stat-alerts').innerText = readyAlertsCount;
         
         let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
@@ -2205,7 +2905,7 @@ document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1
 
         if(totalValid > 0) {
             const pct = Math.round((maxCount / totalValid) * 100);
-            wrapperBadge.innerText = `${pct}% ${topWrapper}`;
+            wrapperBadge.innerText = `${pct}% ${escapeHTML(topWrapper)}`;
         } else {
             wrapperBadge.innerText = "N/A";
         }
@@ -2215,7 +2915,7 @@ document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1
 
     window.removeCigar = async function(id) {
         window.closeAllSwipes();
-        if(confirm("Remove this cigar from your humidor?")) {
+        if(await window.customConfirm("Remove this cigar from your humidor?", "Remove Cigar", true)) {
             await deleteDoc(doc(db, "humidor", id));
         }
     };
