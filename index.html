@@ -183,7 +183,7 @@
         /* --- HOME ELEMENTS --- */
         .stats-grid { 
             display: flex; 
-            gap: 8px; /* Kept the tight gap */
+            gap: 8px;
             margin-bottom: 24px; 
             overflow-x: auto; 
             scroll-snap-type: x mandatory; 
@@ -196,7 +196,7 @@
         .stat-box { 
             background: linear-gradient(145deg, var(--surface-1) 0%, var(--stat-bg-end) 100%); 
             border-radius: 16px; 
-            padding: 16px 12px; /* Restored original padding */
+            padding: 16px 12px;
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
@@ -205,7 +205,7 @@
             cursor: pointer; 
             box-shadow: 0 4px 12px var(--shadow-subtle); 
             transition: transform 0.2s, border-color 0.2s; 
-            min-width: 95px; /* Restored original width */
+            min-width: 95px;
             flex: 0 0 auto; 
             scroll-snap-align: start; 
             position: relative; 
@@ -227,7 +227,6 @@
         }
         .stat-box:hover::before { background: var(--leather); }
 
-        /* Restored original text & icon sizes */
         .stat-icon { font-size: 22px; color: var(--text-dim); margin-bottom: 10px; transition: color 0.3s; }
         .stat-box p { font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin: 0; text-align: center; }
         .stat-box h2 { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--text-main); line-height: 1; text-shadow: 0 2px 8px var(--shadow-subtle); margin: 8px 0 4px 0; }
@@ -528,16 +527,17 @@
                     <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
                     <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
                 </div>
-                
-                <!-- Expand/Collapse Chevron (Bottom Right) -->
-                <div style="position: absolute; bottom: 0px; right: 16px; cursor: pointer; color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.1); border-radius: 8px; width: 28px; height: 28px; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">
-                    <i class="fa-solid fa-chevron-up" style="font-size: 12px;"></i>
-                </div>
             </div>
         </div>
 
         <!-- LAYER 2: DYNAMIC TITLE LAYER -->
         <div style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-top-left-radius: 40px; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--glass-border); box-shadow: 0 -4px 20px var(--shadow-strong); z-index: 5;">
+            
+            <!-- LAYER 2 ATTACHED CHEVRON (Hides when Layer 1 Collapses) -->
+            <div id="layer-2-chevron" style="position: absolute; top: -16px; right: 24px; cursor: pointer; color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-1); border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px var(--shadow-strong); border-radius: 8px; width: 32px; height: 32px; transition: transform 0.2s; z-index: 10;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">
+                <i class="fa-solid fa-chevron-up" style="font-size: 12px;"></i>
+            </div>
+
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800; color: var(--text-main);">
                     Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">User</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
@@ -683,52 +683,17 @@
                         </div>
                         
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                            <select id="vault-vitola" class="form-input form-select" style="margin-bottom: 0;">
-                                <option value="" disabled selected>Vitola</option>
-                                <optgroup label="Parejo (Straight)">
-                                    <option value="Petit Corona">Petit Corona</option>
-                                    <option value="Corona">Corona</option>
-                                    <option value="Corona Gorda">Corona Gorda</option>
-                                    <option value="Lonsdale">Lonsdale</option>
-                                    <option value="Panatela">Panatela</option>
-                                    <option value="Lancero">Lancero</option>
-                                    <option value="Rothschild">Rothschild</option>
-                                    <option value="Robusto">Robusto</option>
-                                    <option value="Petit Robusto">Petit Robusto</option>
-                                    <option value="Toro">Toro</option>
-                                    <option value="Gordo">Gordo</option>
-                                    <option value="Churchill">Churchill</option>
-                                    <option value="Double Corona">Double Corona</option>
-                                    <option value="Presidente">Presidente</option>
-                                    <option value="Gigante">Gigante</option>
-                                </optgroup>
-                                <optgroup label="Figurado (Shaped)">
-                                    <option value="Belicoso">Belicoso</option>
-                                    <option value="Torpedo">Torpedo</option>
-                                    <option value="Pyramid">Pyramid</option>
-                                    <option value="Perfecto">Perfecto</option>
-                                    <option value="Salomon">Salomon</option>
-                                    <option value="Diadema">Diadema</option>
-                                    <option value="Culebra">Culebra</option>
-                                    <option value="Chisel">Chisel</option>
-                                </optgroup>
-                            </select>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" id="vault-vitola" class="form-input" placeholder="Vitola" autocomplete="off" style="margin-bottom: 0; width: 100%;">
+                                <div id="vault-vitola-autocomplete" class="autocomplete-dropdown"></div>
+                            </div>
                             <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                            <select id="vault-wrapper" class="form-input form-select" style="margin-bottom: 0;">
-                                <option value="" disabled selected>Wrapper</option>
-                                <option value="Connecticut">Connecticut</option>
-                                <option value="Corojo">Corojo</option>
-                                <option value="Habano">Habano</option>
-                                <option value="Maduro">Maduro</option>
-                                <option value="Oscuro">Oscuro</option>
-                                <option value="Cameroon">Cameroon</option>
-                                <option value="Candela">Candela</option>
-                                <option value="Sumatra">Sumatra</option>
-                                <option value="Broadleaf">Broadleaf</option>
-                                <option value="Rosado">Rosado</option>
-                            </select>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" id="vault-wrapper" class="form-input" placeholder="Wrapper" autocomplete="off" style="margin-bottom: 0; width: 100%;">
+                                <div id="vault-wrapper-autocomplete" class="autocomplete-dropdown"></div>
+                            </div>
                             <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
                         </div>
                         
@@ -843,53 +808,18 @@
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                        <select id="log-vitola" class="form-input form-select" style="margin-bottom: 0;">
-                            <option value="" disabled selected>Vitola</option>
-                            <optgroup label="Parejo (Straight)">
-                                <option value="Petit Corona">Petit Corona</option>
-                                <option value="Corona">Corona</option>
-                                <option value="Corona Gorda">Corona Gorda</option>
-                                <option value="Lonsdale">Lonsdale</option>
-                                <option value="Panatela">Panatela</option>
-                                <option value="Lancero">Lancero</option>
-                                <option value="Rothschild">Rothschild</option>
-                                <option value="Robusto">Robusto</option>
-                                <option value="Petit Robusto">Petit Robusto</option>
-                                <option value="Toro">Toro</option>
-                                <option value="Gordo">Gordo</option>
-                                <option value="Churchill">Churchill</option>
-                                <option value="Double Corona">Double Corona</option>
-                                <option value="Presidente">Presidente</option>
-                                <option value="Gigante">Gigante</option>
-                            </optgroup>
-                            <optgroup label="Figurado (Shaped)">
-                                <option value="Belicoso">Belicoso</option>
-                                <option value="Torpedo">Torpedo</option>
-                                <option value="Pyramid">Pyramid</option>
-                                <option value="Perfecto">Perfecto</option>
-                                <option value="Salomon">Salomon</option>
-                                <option value="Diadema">Diadema</option>
-                                <option value="Culebra">Culebra</option>
-                                <option value="Chisel">Chisel</option>
-                            </optgroup>
-                        </select>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="log-vitola" class="form-input" placeholder="Vitola" autocomplete="off" style="margin-bottom: 0; width: 100%;">
+                            <div id="log-vitola-autocomplete" class="autocomplete-dropdown"></div>
+                        </div>
                         <input type="number" id="log-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
                     </div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                        <select id="log-wrapper" class="form-input form-select" style="margin-bottom: 0;">
-                            <option value="" disabled selected>Wrapper</option>
-                            <option value="Connecticut">Connecticut</option>
-                            <option value="Corojo">Corojo</option>
-                            <option value="Habano">Habano</option>
-                            <option value="Maduro">Maduro</option>
-                            <option value="Oscuro">Oscuro</option>
-                            <option value="Cameroon">Cameroon</option>
-                            <option value="Candela">Candela</option>
-                            <option value="Sumatra">Sumatra</option>
-                            <option value="Broadleaf">Broadleaf</option>
-                            <option value="Rosado">Rosado</option>
-                        </select>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="log-wrapper" class="form-input" placeholder="Wrapper" autocomplete="off" style="margin-bottom: 0; width: 100%;">
+                            <div id="log-wrapper-autocomplete" class="autocomplete-dropdown"></div>
+                        </div>
                         <select id="log-cut" class="form-input form-select" style="margin-bottom: 0;">
                             <option value="" disabled selected>Cut Style</option>
                             <option value="Straight Cut">Straight Cut</option>
@@ -952,6 +882,29 @@
                     <div class="section-title">Release Notes</div>
                 </div>
 
+                <!-- Version 1.1.2 -->
+                <div class="log-card" style="margin-bottom: 24px;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Version Update 1.1.2</div>
+                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Crowdsourced Library & Hybrid Inputs</div>
+                        </div>
+                        <div class="badge badge-mint">Latest</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--leather);"></i> Community Library</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The app now seamlessly learns from you. Any new cigar brands you log manually are automatically added to the global database, improving autocomplete for the entire community.</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-keyboard" style="color: var(--leather);"></i> Seamless Autocomplete</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Vitola and Wrapper fields have been updated to utilize the same dynamic autocomplete engine as the Brand field, ditching clunky native browser dropdowns.</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-layer-group" style="color: var(--leather);"></i> UI Refinements</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The Daily Selection chevron now sits natively on the Vault layer and elegantly hides itself when collapsed.</div>
+                    </div>
+                </div>
+
                 <!-- Version 1.1.1 -->
                 <div class="log-card" style="margin-bottom: 24px;">
                     <div class="log-header" style="margin-bottom: 16px;">
@@ -959,7 +912,7 @@
                             <div class="log-meta">Version Update 1.1.1</div>
                             <div class="log-title" style="font-size: 14px; margin-top: 4px;">Log a Smoke UI Revamp</div>
                         </div>
-                        <div class="badge badge-mint">Latest</div>
+                        <div class="badge badge-amber">Past</div>
                     </div>
                     <div style="margin-bottom: 16px;">
                         <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Searchable Modal</div>
@@ -1230,13 +1183,16 @@
     window.toggleDailyCigarLayer = function() {
         const expanded = document.getElementById('daily-cigar-expanded');
         const collapsed = document.getElementById('daily-cigar-collapsed');
+        const chevron = document.getElementById('layer-2-chevron'); 
         
         if (expanded.style.display === 'none') {
             expanded.style.display = 'block';
             collapsed.style.display = 'none';
+            if(chevron) chevron.style.display = 'flex'; 
         } else {
             expanded.style.display = 'none';
             collapsed.style.display = 'block';
+            if(chevron) chevron.style.display = 'none'; 
         }
     };
 
@@ -1252,6 +1208,7 @@
             
             document.getElementById('daily-cigar-expanded').style.display = 'none';
             document.getElementById('daily-cigar-collapsed').style.display = 'block';
+            if(document.getElementById('layer-2-chevron')) document.getElementById('layer-2-chevron').style.display = 'none'; 
         } else {
             localStorage.setItem('finalThirdDailyPref', 'expanded');
             if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
@@ -1259,6 +1216,7 @@
             
             document.getElementById('daily-cigar-expanded').style.display = 'block';
             document.getElementById('daily-cigar-collapsed').style.display = 'none';
+            if(document.getElementById('layer-2-chevron')) document.getElementById('layer-2-chevron').style.display = 'flex'; 
         }
     };
 
@@ -1268,15 +1226,18 @@
         const text = document.getElementById('daily-pref-text');
         const expanded = document.getElementById('daily-cigar-expanded');
         const collapsed = document.getElementById('daily-cigar-collapsed');
+        const chevron = document.getElementById('layer-2-chevron'); 
         
         if (savedPref === 'collapsed') {
             if(expanded) expanded.style.display = 'none';
             if(collapsed) collapsed.style.display = 'block';
+            if(chevron) chevron.style.display = 'none'; 
             if(icon) icon.className = 'fa-solid fa-down-left-and-up-right-to-center';
             if(text) text.innerText = 'Default Collapsed';
         } else {
             if(expanded) expanded.style.display = 'block';
             if(collapsed) collapsed.style.display = 'none';
+            if(chevron) chevron.style.display = 'flex'; 
             if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
             if(text) text.innerText = 'Default Expanded';
         }
@@ -1523,7 +1484,7 @@
     document.addEventListener('mouseleave', handleDragEnd); 
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc, setDoc, updateDoc, query, orderBy, where, getDocs, writeBatch, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, onAuthStateChanged, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
@@ -1544,6 +1505,44 @@
     const storage = getStorage(app);
 
     window.currentUserName = "User";
+
+    // --- CROWDSOURCING HELPER FUNCTION ---
+    window.brandLibrary = [];
+    
+    // Add Vitola and Wrapper Arrays
+    window.vitolaLibrary = [
+        "Petit Corona", "Corona", "Corona Gorda", "Lonsdale", "Panatela", "Lancero",
+        "Rothschild", "Robusto", "Petit Robusto", "Toro", "Gordo", "Churchill",
+        "Double Corona", "Presidente", "Gigante", "Belicoso", "Torpedo", "Pyramid",
+        "Perfecto", "Salomon", "Diadema", "Culebra", "Chisel"
+    ];
+    
+    window.wrapperLibrary = [
+        "Connecticut", "Corojo", "Habano", "Maduro", "Oscuro", "Cameroon",
+        "Candela", "Sumatra", "Broadleaf", "Rosado"
+    ];
+
+    window.checkAndAddNewBrand = async function(brandName) {
+        if (!brandName) return;
+        
+        // Check if it already exists (case-insensitive)
+        const exists = window.brandLibrary.some(b => b.toLowerCase() === brandName.toLowerCase());
+        
+        if (!exists) {
+            try {
+                // 1. Add to the local array immediately so it works in the current session
+                window.brandLibrary.push(brandName);
+                
+                // 2. Append to the global Firestore document
+                await updateDoc(doc(db, "app_data", "cigar_library"), {
+                    list: arrayUnion(brandName)
+                });
+                console.log(`New brand added to global library: ${brandName}`);
+            } catch (error) {
+                console.error("Failed to update global brand library. Check Firestore rules.", error);
+            }
+        }
+    };
 
     // --- QUICK LOG WORKFLOW (MODAL) ---
     window.openLogSmokeModal = function() {
@@ -1704,7 +1703,6 @@
     }
 
     // --- CUSTOM AUTOCOMPLETE LOGIC ---
-    window.brandLibrary = [];
 
     async function loadBrandLibrary() {
         try {
@@ -1720,7 +1718,9 @@
         }
     }
 
-    function setupAutocomplete(inputId, dropdownId) {
+    // Updated Autocomplete function accepts a function that returns the library array
+    // This ensures it always grabs the latest data from Firebase, even after it loads
+    function setupAutocomplete(inputId, dropdownId, getLibraryFn) {
         const input = document.getElementById(inputId);
         const dropdown = document.getElementById(dropdownId);
 
@@ -1733,9 +1733,12 @@
                 return;
             }
 
+            // Grab the freshest state of the array right as you type
+            const dataLibrary = getLibraryFn();
+
             // Filter and sort: exact starting matches go to the top
-            const matches = window.brandLibrary.filter(brand => 
-                brand.toLowerCase().includes(val)
+            const matches = dataLibrary.filter(item => 
+                item.toLowerCase().includes(val)
             ).sort((a, b) => {
                 const aStarts = a.toLowerCase().startsWith(val);
                 const bStarts = b.toLowerCase().startsWith(val);
@@ -1770,9 +1773,16 @@
         });
     }
     
-    // Initialize custom autocomplete listeners
-    setupAutocomplete('vault-brand', 'vault-autocomplete');
-    setupAutocomplete('log-brand', 'log-autocomplete');
+    // Initialize custom autocomplete listeners using getter functions `() => ...`
+    setupAutocomplete('vault-brand', 'vault-autocomplete', () => window.brandLibrary);
+    setupAutocomplete('log-brand', 'log-autocomplete', () => window.brandLibrary);
+    
+    setupAutocomplete('vault-vitola', 'vault-vitola-autocomplete', () => window.vitolaLibrary);
+    setupAutocomplete('log-vitola', 'log-vitola-autocomplete', () => window.vitolaLibrary);
+    
+    setupAutocomplete('vault-wrapper', 'vault-wrapper-autocomplete', () => window.wrapperLibrary);
+    setupAutocomplete('log-wrapper', 'log-wrapper-autocomplete', () => window.wrapperLibrary);
+
 
     // --- AGING NOTIFICATION ALERT ENGINE ---
     window.checkAgingAlerts = function(inventory) {
@@ -2423,10 +2433,12 @@ window.logSmoke = async function() {
             submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
         }
         
+        await window.checkAndAddNewBrand(brand);
+        
         document.getElementById('log-brand').value = '';
-        document.getElementById('log-vitola').selectedIndex = 0;
+        document.getElementById('log-vitola').value = '';
         document.getElementById('log-ring-gauge').value = '';
-        document.getElementById('log-wrapper').selectedIndex = 0;
+        document.getElementById('log-wrapper').value = '';
         document.getElementById('log-cut').selectedIndex = 0;
         document.getElementById('log-light').selectedIndex = 0;
         document.getElementById('log-pairing').value = '';
@@ -2754,13 +2766,15 @@ window.storeCigar = async function() {
             submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
         }
         
+        await window.checkAndAddNewBrand(brand);
+        
         document.getElementById('vault-brand').value = '';
         document.getElementById('vault-quantity').value = '1';
         document.getElementById('vault-ring-gauge').value = '';
         document.getElementById('vault-price').value = '';
         document.getElementById('vault-rating').selectedIndex = 0;
-        document.getElementById('vault-vitola').selectedIndex = 0;
-        document.getElementById('vault-wrapper').selectedIndex = 0;
+        document.getElementById('vault-vitola').value = '';
+        document.getElementById('vault-wrapper').value = '';
         
         currentVaultImage = null;
         document.getElementById('vault-image-upload').value = "";
