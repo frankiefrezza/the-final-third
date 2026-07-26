@@ -1575,29 +1575,34 @@
     }
 
     async function loadDailyCigar() {
-        if (!auth.currentUser) return;
+    if (!auth.currentUser) return;
 
-        const day = getDayOfYear();
-        const displayEl = document.getElementById('daily-cigar-display');
+    const rawDay = getDayOfYear();
+    const displayEl = document.getElementById('daily-cigar-display');
+    
+    // Scramble the day using a prime multiplier to jump across the database
+    // Assuming your roster has 365 entries numbered 1 through 365
+    const totalRosterCount = 365;
+    const scrambledDay = ((rawDay * 157 + 31) % totalRosterCount) + 1;
+    
+    console.log(`[Daily Cigar] Raw Day: ${rawDay} -> Scrambled Doc ID: ${scrambledDay}`);
+    
+    try {
+        const docRef = doc(db, "daily_roster", scrambledDay.toString());
+        const docSnap = await getDoc(docRef);
         
-        console.log(`[Daily Cigar] Current Day of Year calculated: ${day}`);
-        
-        try {
-            const docRef = doc(db, "daily_roster", day.toString());
-            const docSnap = await getDoc(docRef);
-            
-            if (docSnap.exists()) {
-                console.log("[Daily Cigar] Document found successfully:", docSnap.data());
-                displayEl.innerText = docSnap.data().name;
-            } else {
-                console.warn(`[Daily Cigar] Document ID "${day}" does NOT exist in your "daily_roster" collection. Falling back.`);
-                displayEl.innerText = "Padrón 60th Anniversary Perfecto"; 
-            }
-        } catch(e) {
-            console.error("[Daily Cigar] Firestore fetch failed entirely. Check your Security Rules.", e);
-            displayEl.innerText = "Padrón 1964 Anniversary"; 
+        if (docSnap.exists()) {
+            displayEl.innerText = docSnap.data().name;
+        } else {
+            console.warn(`[Daily Cigar] Document ID "${scrambledDay}" does NOT exist in your "daily_roster" collection. Falling back.`);
+            displayEl.innerText = "Padrón 60th Anniversary Perfecto"; 
         }
+    } catch(e) {
+        console.error("[Daily Cigar] Firestore fetch failed.", e);
+        displayEl.innerText = "Padrón 1964 Anniversary"; 
     }
+}
+
     // Check for a new cigar every hour in case the app stays open in the background
     setInterval(loadDailyCigar, 1000 * 60 * 60);
 
