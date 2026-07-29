@@ -99,12 +99,13 @@
         .login-subtitle { color: var(--text-dim); font-size: 11px; margin-bottom: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
         .editorial-input { width: 100%; background: var(--surface-1); border: 2px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); padding: 18px 20px; font-size: 16px; font-weight: 600; text-align: center; outline: none; margin-bottom: 16px; transition: border 0.3s; font-family: var(--font-sans); }
         .editorial-input:focus { border-color: var(--leather); }
-        .btn-primary { width: 100%; background: var(--btn-leather); color: #1A1A1A; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); letter-spacing: 0.5px; }
+        
+        .btn-primary { width: 100%; background: var(--surface-1); color: var(--leather); padding: 18px; border-radius: 24px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(212, 175, 55, 0.3); cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
-        .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 16px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
-        .btn-secondary.attached { background: rgba(212, 175, 55, 0.1); color: var(--leather); border-color: var(--leather); border-style: solid; }
+        .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 24px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
+        .btn-secondary.attached { background: var(--surface-1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); }
 
         .auth-view { display: none; width: 100%; max-width: 400px; }
         .auth-view.active { display: block; }
@@ -237,12 +238,13 @@
         .log-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 12px; }
         .log-title { font-family: var(--font-serif); font-size: 18px; font-weight: 800; color: var(--text-main); line-height: 1.3; margin-bottom: 4px; }
         .log-meta { font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
-        .badge { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; white-space: nowrap; }
         
-        .badge-indigo { background: rgba(212, 175, 55, 0.15); color: var(--leather); }
-        .badge-mint { background: rgba(212, 175, 55, 0.15); color: var(--gold); }
-        .badge-rose { background: rgba(225, 90, 90, 0.15); color: var(--danger); }
-        .badge-amber { background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); }
+        .badge { font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 24px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; white-space: nowrap; }
+        
+        .badge-indigo { background: var(--surface-1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); }
+        .badge-mint { background: var(--surface-1); color: var(--gold); border: 1px solid rgba(241, 196, 15, 0.3); }
+        .badge-rose { background: var(--surface-1); color: var(--danger); border: 1px solid rgba(225, 90, 90, 0.3); }
+        .badge-amber { background: var(--surface-1); color: var(--text-main); border: 1px solid var(--border-subtle); }
         
         .progress-track { width: 100%; height: 6px; background: var(--surface-2); border-radius: 10px; overflow: hidden; margin-top: 14px; margin-bottom: 8px; }
         .progress-fill { height: 100%; background: var(--leather); border-radius: 10px; transition: width 0.5s ease; }
@@ -388,8 +390,8 @@
         .action-sheet-overlay.active { opacity: 1; pointer-events: auto; }
         .action-sheet { background: var(--surface-1); border-radius: 28px 28px 0 0; padding: 24px 24px max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s; border-top: 1px solid var(--border-subtle); }
         .action-sheet-overlay.active .action-sheet { transform: translateY(0); }
-        .action-btn { width: 100%; background: var(--surface-2); color: var(--text-main); padding: 18px; font-size: 15px; font-weight: 700; font-family: var(--font-sans); border-radius: 16px; margin-bottom: 12px; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
-        .action-btn.cancel { background: transparent; color: var(--danger); margin-bottom: 0; margin-top: 4px; }
+        .action-btn { width: 100%; background: var(--surface-2); color: var(--text-main); padding: 18px; font-size: 15px; font-weight: 700; font-family: var(--font-sans); border-radius: 24px; margin-bottom: 12px; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
+        .action-btn.cancel { background: transparent; color: var(--danger); margin-bottom: 0; margin-top: 4px; border: 1px solid var(--border-subtle); }
 
         /* Photo Lightbox specific styling */
         #lightbox-overlay { justify-content: center; align-items: center; padding: 24px; z-index: 3000; }
@@ -404,7 +406,8 @@
         .close-modal:hover { color: var(--text-main); }
         .modal-subtitle { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
         .modal-text { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
-        .modal-btn { display: block; background-color: var(--btn-leather); color: #1A1A1A; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); transition: transform 0.2s, background-color 0.3s; border: none; cursor: pointer; }
+        
+        .modal-btn { display: block; background-color: var(--surface-1); color: var(--leather); padding: 16px; border-radius: 24px; text-decoration: none; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s, background-color 0.3s; border: 1px solid rgba(212, 175, 55, 0.3); cursor: pointer; }
         .modal-btn:active { transform: scale(0.98); }
 
         /* --- CUSTOM DIALOG UI --- */
@@ -423,16 +426,17 @@
         .custom-dialog-msg { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; font-weight: 500; }
         .custom-dialog-input { 
             width: 100%; display: none; background: var(--surface-2); border: 1px solid var(--border-subtle); 
-            color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-size: 16px; font-weight: 600; 
+            color: var(--text-main); padding: 16px 20px; border-radius: 24px; font-size: 16px; font-weight: 600; 
             margin-bottom: 24px; outline: none; text-align: center;
         }
         .custom-dialog-input:focus { border-color: var(--leather); }
         .custom-dialog-actions { display: flex; gap: 12px; justify-content: center; }
-        .custom-dialog-btn { flex: 1; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; transition: transform 0.2s; }
+        .custom-dialog-btn { flex: 1; padding: 14px; border-radius: 24px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; transition: transform 0.2s; }
         .custom-dialog-btn:active { transform: scale(0.98); }
         .custom-dialog-cancel { background: var(--surface-2); color: var(--text-main); border: 1px solid var(--border-subtle); }
-        .custom-dialog-confirm { background: var(--leather); color: #1A1A1A; }
-        .custom-dialog-danger { background: var(--danger); color: white; }
+        
+        .custom-dialog-confirm { background: var(--surface-1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 24px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        .custom-dialog-danger { background: var(--danger); color: white; border-radius: 24px; }
 
     </style>
 </head>
@@ -505,11 +509,10 @@
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
         <!-- LAYER 1: PERSISTENT HEADER -->
-        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 30px;">
+        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 40px;">
             
             <!-- COLLAPSED STATE -->
-            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 6px 14px; background: var(--surface-1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 24px; margin: 0 auto -16px auto; max-width: fit-content; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
-
+            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 24px; margin: 0 auto -16px auto; max-width: fit-content; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                 <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     Today's Selection <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i>
                 </span>
@@ -587,7 +590,7 @@
                             <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Update inventory & log</div>
                         </div>
                     </div>
-                    <button class="btn-primary" onclick="openLogSmokeModal()" style="padding: 10px 16px; font-size: 13px; border-radius: 20px; width: auto; flex-shrink: 0; box-shadow: none;">Yes <i class="fa-solid fa-chevron-right" style="margin-left: 4px; font-size: 10px;"></i></button>
+                    <button class="btn-primary" onclick="openLogSmokeModal()" style="padding: 8px 16px; width: auto; flex-shrink: 0;">YES <i class="fa-solid fa-chevron-right" style="margin-left: 4px; font-size: 10px;"></i></button>
                 </div>
 
                  <!-- AGING OVERVIEW -->
@@ -663,7 +666,7 @@
                     
                     <div class="section-header" style="margin-top: 0; cursor: pointer; padding-right: 8px;" onclick="toggleEntryForm('humidor-form-wrapper', 'humidor-form-chevron')">
                         <div class="section-title">Store New Acquisition</div>
-                        <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.1); border-radius: 8px; width: 28px; height: 28px;">
+                        <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-1); border-radius: 50%; width: 28px; height: 28px; border: 1px solid rgba(212, 175, 55, 0.3);">
                             <i id="humidor-form-chevron" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 12px;"></i>
                         </div>
                     </div>
@@ -766,9 +769,9 @@
                     <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
                         <div style="position: relative; flex: 1;">
                             <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
-                            <input type="text" id="humidor-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderHumidor()">
+                            <input type="text" id="humidor-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 24px; font-size: 13px;" oninput="debouncedRenderHumidor()">
                         </div>
-                        <button id="humidor-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleHumidorSort()">
+                        <button id="humidor-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 24px; font-size: 14px;" onclick="toggleHumidorSort()">
                             <i class="fa-solid fa-calendar-days"></i>
                         </button>
                     </div>
@@ -787,7 +790,7 @@
                 
                 <div class="section-header" style="margin-top: 0; cursor: pointer; padding-right: 8px;" onclick="toggleEntryForm('journal-form-wrapper', 'journal-form-chevron')">
                     <div class="section-title">Log a Smoke</div>
-                    <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.1); border-radius: 8px; width: 28px; height: 28px;">
+                    <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-1); border-radius: 50%; width: 28px; height: 28px; border: 1px solid rgba(212, 175, 55, 0.3);">
                         <i id="journal-form-chevron" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 12px;"></i>
                     </div>
                 </div>
@@ -855,9 +858,9 @@
                 <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
                     <div style="position: relative; flex: 1;">
                         <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
-                        <input type="text" id="journal-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderJournal()">
+                        <input type="text" id="journal-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 24px; font-size: 13px;" oninput="debouncedRenderJournal()">
                     </div>
-                    <button id="journal-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleJournalSort()">
+                    <button id="journal-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 24px; font-size: 14px;" onclick="toggleJournalSort()">
                         <i class="fa-solid fa-calendar-days"></i>
                     </button>
                 </div>
@@ -1042,7 +1045,7 @@
                     </div>
                 </div>
 
-                <button class="btn-primary" style="background: rgba(225, 90, 90, 0.1); color: var(--danger); box-shadow: none; width: 100%;" onclick="handleLogout()">
+                <button class="btn-primary" style="background: rgba(225, 90, 90, 0.1); color: var(--danger); box-shadow: none; width: 100%; border: none; border-radius: 16px;" onclick="handleLogout()">
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
                 </button>
                 
@@ -1078,7 +1081,7 @@
         
         <div style="position: relative; margin-bottom: 16px;">
             <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 14px;"></i>
-            <input type="text" id="log-smoke-search" class="form-input" placeholder="Search humidor..." style="margin-bottom: 0; padding-left: 42px; border-radius: 14px;" oninput="renderLogSmokeList()">
+            <input type="text" id="log-smoke-search" class="form-input" placeholder="Search humidor..." style="margin-bottom: 0; padding-left: 42px; border-radius: 24px;" oninput="renderLogSmokeList()">
         </div>
         
         <div id="log-smoke-list" style="overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; padding-right: 4px;">
@@ -1106,7 +1109,7 @@
         <p style="text-align: center; font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.4;">Warning: This will permanently erase your entire Humidor and Journal history. This cannot be undone. Please confirm your credentials.</p>
         <input type="email" id="delete-email" class="form-input" placeholder="Email address" autocomplete="off">
         <input type="password" id="delete-password" class="form-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
-        <button class="action-btn" style="background: var(--danger); color: white; margin-bottom: 12px;" onclick="handleDeleteAccount()"><i class="fa-solid fa-trash"></i> Permanently Delete</button>
+        <button class="action-btn" style="background: var(--danger); color: white; margin-bottom: 12px; border-radius: 24px;" onclick="handleDeleteAccount()"><i class="fa-solid fa-trash"></i> Permanently Delete</button>
         <button class="action-btn cancel" onclick="closeDeleteActionSheet()">Cancel</button>
     </div>
 </div>
@@ -2332,7 +2335,7 @@ window.compressImage = function(file) {
                     <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
                     <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px; background: rgba(212, 175, 55, 0.1); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.2);">
+                <div style="display: flex; align-items: center; gap: 6px; background: var(--surface-1); padding: 4px 12px; border-radius: 24px; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
                     <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
                     <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--leather); line-height: 1;">${cigar.rating.toFixed(2)}</span>
                 </div>
@@ -2422,7 +2425,7 @@ window.logSmoke = async function() {
             await updateDoc(doc(db, "journal", editingJournalId), newLog);
             editingJournalId = null;
             submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
-            submitBtn.style.background = 'var(--btn-leather)';
+            submitBtn.style.background = 'var(--surface-1)';
         } else {
             await addDoc(collection(db, "journal"), newLog);
             submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
@@ -2546,7 +2549,7 @@ window.logSmoke = async function() {
                 let imageBadge = '';
                 if(log.image) {
                     window.imageRegistry[log.id] = log.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: var(--surface-1); padding: 4px 12px; border-radius: 24px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
                 }
 
                 html += `
@@ -2579,9 +2582,9 @@ window.logSmoke = async function() {
                         <!-- Hidden Collapsible Details Block -->
                         <div id="journal-details-${log.id}" style="display: none;">
                             <div style="display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; flex-wrap: wrap;">
-                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-scissors" style="margin-right: 4px; color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
-                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-fire" style="margin-right: 4px; color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
-                                <span style="font-size: 11px; background: var(--surface-2); padding: 4px 8px; border-radius: 6px; color: var(--text-main); font-weight: 600;"><i class="fa-solid fa-martini-glass" style="margin-right: 4px; color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
+                                <span style="font-size: 11px; background: var(--surface-1); padding: 4px 12px; border-radius: 24px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-scissors" style="margin-right: 4px; color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
+                                <span style="font-size: 11px; background: var(--surface-1); padding: 4px 12px; border-radius: 24px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-fire" style="margin-right: 4px; color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
+                                <span style="font-size: 11px; background: var(--surface-1); padding: 4px 12px; border-radius: 24px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-martini-glass" style="margin-right: 4px; color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
                                 ${imageBadge}
                             </div>
                             
@@ -2701,7 +2704,7 @@ window.logSmoke = async function() {
 
         const submitBtn = document.getElementById('vault-submit-btn');
         submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
-        submitBtn.style.background = 'var(--gold)';
+        submitBtn.style.background = 'var(--surface-1)';
 
         const vaultWrapper = document.getElementById('humidor-form-wrapper');
         const vaultChevron = document.getElementById('humidor-form-chevron');
@@ -2755,7 +2758,7 @@ window.storeCigar = async function() {
             await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
             editingVaultId = null;
             submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-            submitBtn.style.background = 'var(--btn-leather)';
+            submitBtn.style.background = 'var(--surface-1)';
         } else {
             await addDoc(collection(db, "humidor"), newCigar);
             submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
@@ -2936,12 +2939,12 @@ window.storeCigar = async function() {
                 let imageBadge = '';
                 if(cigar.image) {
                     window.imageRegistry[cigar.id] = cigar.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: var(--surface-1); padding: 4px 12px; border-radius: 24px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center;"><i class="fa-solid fa-camera" style="margin-right: 4px;"></i> View Photo</button>`;
                 }
 
-                let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
+                let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: var(--surface-1); padding: 4px 12px; border-radius: 24px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.2);"><i class="fa-solid fa-star" style="margin-right: 4px;"></i> ${cigar.rating}</span>` : '';
                 
-                let qtyBadge = `<span style="font-size: 11px; background: rgba(212, 175, 55, 0.15); padding: 4px 8px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-cubes" style="margin-right: 4px;"></i> QTY: ${cigarQty}</span>`;
+                let qtyBadge = `<span style="font-size: 11px; background: var(--surface-1); padding: 4px 12px; border-radius: 24px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fa-solid fa-cubes" style="margin-right: 4px;"></i> QTY: ${cigarQty}</span>`;
                 
                 let attributesRow = '';
                 if (qtyBadge || ratingBadge || imageBadge) {
