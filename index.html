@@ -986,9 +986,9 @@
                 
                 <div style="text-align: center; margin-bottom: 32px;">
                     <div style="position: relative; display: inline-block; cursor: pointer;" onclick="openAvatarActionSheet()">
-                        <img id="profile-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
-                        <div style="position: absolute; bottom: 5px; right: 5px; background: var(--leather); color: #1A1A1A; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; border: 3px solid var(--surface-1);">
-                            <i class="fa-solid fa-camera" style="font-size: 14px;"></i>
+                        <img id="profile-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 36px; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
+                        <div style="position: absolute; bottom: -4px; right: -4px; background: var(--leather); color: #1A1A1A; border-radius: 12px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border: 4px solid var(--surface-1); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                            <i class="fa-solid fa-camera" style="font-size: 16px;"></i>
                         </div>
                     </div>
                     <div id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 16px;">User</div>
@@ -1018,8 +1018,8 @@
                         </div>
                         <i class="fa-solid fa-chart-pie" style="color: var(--gold);"></i>
                     </div>
-                    <div style="display: flex; gap: 8px; margin-top: 10px;">
-                        <span class="badge badge-indigo" id="profile-wrapper-stat">N/A</span>
+                    <div id="profile-wrapper-stats-container" style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                        <span class="badge badge-indigo">N/A</span>
                     </div>
                 </div>
 
@@ -2840,6 +2840,8 @@ window.storeCigar = async function() {
         
         window.activeSwipeCard = null; 
 
+        const wrapperContainer = document.getElementById('profile-wrapper-stats-container');
+
         if(humidorInventory.length === 0) {
             list.innerHTML = `
                 <div class="empty-state">
@@ -2851,7 +2853,8 @@ window.storeCigar = async function() {
             
             document.getElementById('stat-avg-aging').innerHTML = `0 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
             document.getElementById('stat-humidor-value').innerText = `$0.00`;
-            document.getElementById('profile-wrapper-stat').innerText = "N/A";
+            
+            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
             
             // Handle empty dashboard graphics
             document.getElementById('label-tier-1').style.opacity = '0.3';
@@ -2880,6 +2883,9 @@ window.storeCigar = async function() {
         let tier4 = 0; // 180+
         let totalAgingQuantity = 0;
 
+        const wrapperCounts = {};
+        let totalValidWrappers = 0;
+
         humidorInventory.forEach(c => {
             const msPerDay = 1000 * 60 * 60 * 24;
             // Fallback for legacy items missing acquiredDate
@@ -2904,6 +2910,12 @@ window.storeCigar = async function() {
             
             let progress = (days / totalTargetDays) * 100;
             if (progress >= 100) readyAlertsCount += qty;
+
+            // Palate Mapping Logic
+            if(c.wrapper && c.wrapper !== "Unknown") {
+                wrapperCounts[c.wrapper] = (wrapperCounts[c.wrapper] || 0) + qty;
+                totalValidWrappers += qty;
+            }
         });
 
         document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
@@ -3032,31 +3044,22 @@ window.storeCigar = async function() {
         document.getElementById('stat-avg-aging').innerHTML = `${avgDays} <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
         document.getElementById('stat-humidor-value').innerText = `$${totalValue.toFixed(2)}`;
         
-        const wrapperBadge = document.getElementById('profile-wrapper-stat');
-        const wrapperCounts = {};
-        let maxCount = 0;
-        let topWrapper = 'Unknown';
-        let totalValid = 0;
-
-        humidorInventory.forEach(cigar => {
-            if(cigar.wrapper && cigar.wrapper !== "Unknown") {
-                wrapperCounts[cigar.wrapper] = (wrapperCounts[cigar.wrapper] || 0) + 1;
-                totalValid++;
-            }
-        });
-
-        for (const [wrapper, count] of Object.entries(wrapperCounts)) {
-            if (count > maxCount) {
-                maxCount = count;
-                topWrapper = wrapper;
-            }
-        }
-
-        if(totalValid > 0) {
-            const pct = Math.round((maxCount / totalValid) * 100);
-            wrapperBadge.innerText = `${pct}% ${escapeHTML(topWrapper)}`;
+        // Execute Updated Top 3 Palate Mapping Logic
+        const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
+        
+        if (totalValidWrappers > 0) {
+            let wrapperHtml = '';
+            const top3 = sortedWrappers.slice(0, 3);
+            const badgeClasses = ['badge-indigo', 'badge-mint', 'badge-amber'];
+            
+            top3.forEach((item, index) => {
+                const pct = Math.round((item[1] / totalValidWrappers) * 100);
+                const badgeClass = badgeClasses[index] || 'badge-indigo';
+                wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
+            });
+            wrapperContainer.innerHTML = wrapperHtml;
         } else {
-            wrapperBadge.innerText = "N/A";
+            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
         }
     };
 
