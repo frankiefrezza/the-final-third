@@ -889,7 +889,10 @@
             <section id="view-home" class="view-section active">
                 <div class="stats-grid">
                     <div class="stat-box" onclick="switchTab('view-humidor', 1)">
-                        <i class="fa-solid fa-box stat-icon icon-humidor"></i>
+                        <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="stat-icon icon-humidor">
+                            <path d="M5.5 3C4 3 3 4 2.5 5.5L1 12h9v1.5C10 14 10.5 14.5 11 14.5h2c.5 0 1-.5 1-1.5V12h9l-1.5-6.5C21 4 20 3 18.5 3H5.5z"/>
+                            <path d="M1 13.5v4.5C1 19.5 2.5 21 4 21h16c1.5 0 3-1.5 3-4.5v-4.5h-8v1c0 1-.5 1.5-1.5 1.5h-3C9.5 16 9 15.5 9 14.5v-1H1z"/>
+                        </svg>
                         <p>In Humidor</p>
                         <h2 id="stat-collection" style="color: var(--text-main);">0</h2>
                         <span class="stat-sub">Cigars</span>
@@ -1312,16 +1315,43 @@
                 <div class="section-header" style="margin-top: 0;">
                     <div class="section-title">Combustion & Burn Analytics</div>
                 </div>
-                <!-- Analytics Dashboard -->
-                <div class="glass-bento" style="border-radius: 16px; padding: 16px; margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div>
-                        <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Average Aging</div>
-                        <div id="stat-avg-aging" style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 4px;">0 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span></div>
+                
+                <!-- NEW PREMIUM ANALYTICS DASHBOARD -->
+                <div class="glass-bento" style="border-radius: 20px; padding: 24px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: stretch; gap: 8px;">
+                    
+                    <!-- LEFT COLUMN (AGING) -->
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <i class="fa-solid fa-hourglass-half" style="color: var(--leather); font-size: 16px; margin-bottom: 12px; opacity: 0.8;"></i>
+                        <div style="display: flex; align-items: center; width: 100%; gap: 6px; margin-bottom: 16px;">
+                            <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3));"></div>
+                            <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; white-space: nowrap;">Average Aging</div>
+                            <div style="flex: 1; height: 1px; background: linear-gradient(270deg, transparent, rgba(212, 175, 55, 0.3));"></div>
+                        </div>
+                        <div id="stat-avg-aging-val" style="font-family: var(--font-serif); font-size: 38px; color: var(--text-main); line-height: 1; font-weight: 400;">0</div>
+                        <div style="font-size: 10px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; margin-top: 8px; margin-bottom: 20px;">DAYS</div>
+                        <div id="stat-aging-pill" style="margin-top: auto; border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 4px 12px; font-size: 9px; color: var(--leather); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;">&bull; EMPTY &bull;</div>
                     </div>
-                    <div>
-                        <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Est. Humidor Value</div>
-                        <div id="stat-humidor-value" style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--leather); margin-top: 4px;">$0.00</div>
+
+                    <!-- CENTRAL DECORATIVE DIVIDER -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 24px; flex-shrink: 0;">
+                        <div style="width: 1px; flex: 1; background: linear-gradient(to bottom, transparent, rgba(212, 175, 55, 0.2) 20%);"></div>
+                        <i class="fa-solid fa-diamond" style="color: rgba(212, 175, 55, 0.4); font-size: 6px; margin: 12px 0;"></i>
+                        <div style="width: 1px; flex: 1; background: linear-gradient(to top, transparent, rgba(212, 175, 55, 0.2) 20%);"></div>
                     </div>
+
+                    <!-- RIGHT COLUMN (VALUE) -->
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <i class="fa-solid fa-box-archive" style="color: var(--leather); font-size: 16px; margin-bottom: 12px; opacity: 0.8;"></i>
+                        <div style="display: flex; align-items: center; width: 100%; gap: 6px; margin-bottom: 16px;">
+                            <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3));"></div>
+                            <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; white-space: nowrap;">Humidor Value</div>
+                            <div style="flex: 1; height: 1px; background: linear-gradient(270deg, transparent, rgba(212, 175, 55, 0.3));"></div>
+                        </div>
+                        <div id="stat-humidor-value-val" style="font-family: var(--font-serif); font-size: 38px; color: var(--leather); line-height: 1; font-weight: 400;">$0</div>
+                        <div style="font-size: 10px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; margin-top: 8px; margin-bottom: 20px;">EST. TOTAL</div>
+                        <div id="stat-value-pill" style="margin-top: auto; border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 12px; padding: 4px 12px; font-size: 9px; color: #4ADE80; background: rgba(74, 222, 128, 0.05); font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;"><i class="fa-solid fa-arrow-trend-up"></i> +$0 this month</div>
+                    </div>
+
                 </div>
 
                 <div class="log-card" style="margin-bottom: 16px;">
@@ -1396,7 +1426,7 @@
 
         </div> <!-- END LAYER 3 CONTAINER -->
 
-        <!-- FLOATING BOTTOM DOCK -->
+         <!-- FLOATING BOTTOM DOCK -->
         <div class="bottom-dock-wrapper">
             <nav class="bottom-dock">
                 <div class="nav-item active" onclick="switchTab('view-home', 0)"><i class="fa-solid fa-house"></i><span>Home</span></div>
@@ -1406,6 +1436,7 @@
                 <div class="nav-item" onclick="switchTab('view-profile', 4)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
             </nav>
         </div>
+
 
     </div> 
 </div>
@@ -2982,8 +3013,8 @@ window.logSmoke = async function() {
         
         journalHistory.forEach(log => {
             if(log.ring && log.ring !== "-") ringCounts[log.ring] = (ringCounts[log.ring] || 0) + 1;
-            if(log.cut && log.cut !== "N/A") cutCounts[log.cut] = (cutCounts[log.cut] || 0) + 1;
-            if(log.light && log.light !== "N/A") lightCounts[log.light] = (lightCounts[log.light] || 0) + 1;
+            if(log.cut && log.cut !== "N/A") cutCounts[log.cut] = (log.cut || 0) + 1;
+            if(log.light && log.light !== "N/A") lightCounts[log.light] = (log.light || 0) + 1;
         });
 
         const getTop = (counts, defaultStr) => {
@@ -3165,8 +3196,10 @@ window.storeCigar = async function() {
             countStat.innerText = '0';
             document.getElementById('stat-alerts').innerText = '0';
             
-            document.getElementById('stat-avg-aging').innerHTML = `0 <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
-            document.getElementById('stat-humidor-value').innerText = `$0.00`;
+            document.getElementById('stat-avg-aging-val').innerText = '0';
+            document.getElementById('stat-humidor-value-val').innerText = '$0';
+            document.getElementById('stat-aging-pill').innerHTML = '&bull; EMPTY &bull;';
+            document.getElementById('stat-value-pill').innerHTML = '<i class="fa-solid fa-arrow-trend-up"></i> +$0 this month';
             
             wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
             
@@ -3185,10 +3218,15 @@ window.storeCigar = async function() {
         }
 
         const now = Date.now();
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+
         let totalValue = 0;
         let totalAgedDays = 0;
         let readyAlertsCount = 0;
         let totalQuantity = 0;
+        let monthlyAddedValue = 0;
 
         // --- DYNAMIC AGING CALCULATOR ---
         let tier1 = 0; // 0-30
@@ -3216,7 +3254,15 @@ window.storeCigar = async function() {
             else tier4 += qty;
             
             totalAgedDays += days;
-            totalValue += ((c.price || 0) * qty);
+            
+            const cigarTotalVal = (c.price || 0) * qty;
+            totalValue += cigarTotalVal;
+
+            // Check if acquired this current calendar month/year
+            const acqObj = new Date(acqDate);
+            if (acqObj.getFullYear() === currentYear && acqObj.getMonth() === currentMonth) {
+                monthlyAddedValue += cigarTotalVal;
+            }
 
             const targetDate = c.targetDate || (acqDate + 7 * msPerDay);
             let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
@@ -3355,8 +3401,19 @@ window.storeCigar = async function() {
         document.getElementById('stat-alerts').innerText = readyAlertsCount;
         
         let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
-        document.getElementById('stat-avg-aging').innerHTML = `${avgDays} <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--text-dim);">Days</span>`;
-        document.getElementById('stat-humidor-value').innerText = `$${totalValue.toFixed(2)}`;
+        document.getElementById('stat-avg-aging-val').innerText = avgDays;
+        
+        let formattedValue = totalValue % 1 === 0 ? `$${totalValue.toLocaleString('en-US')}` : `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('stat-humidor-value-val').innerText = formattedValue;
+        
+        let formattedMonthly = monthlyAddedValue % 1 === 0 ? `+$${monthlyAddedValue.toLocaleString('en-US')}` : `+$${monthlyAddedValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('stat-value-pill').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${formattedMonthly} this month`;
+
+        let agingStatus = "&bull; JUST RESTING &bull;";
+        if (avgDays >= 180) agingStatus = "&bull; VINTAGE &bull;";
+        else if (avgDays >= 90) agingStatus = "&bull; WELL AGED &bull;";
+        else if (avgDays >= 30) agingStatus = "&bull; DEVELOPING &bull;";
+        document.getElementById('stat-aging-pill').innerHTML = agingStatus;
         
         // Execute Updated Top 3 Palate Mapping Logic
         const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
