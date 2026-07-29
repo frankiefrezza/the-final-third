@@ -100,7 +100,7 @@
         .editorial-input { width: 100%; background: var(--surface-1); border: 2px solid var(--border-subtle); border-radius: 16px; color: var(--text-main); padding: 18px 20px; font-size: 16px; font-weight: 600; text-align: center; outline: none; margin-bottom: 16px; transition: border 0.3s; font-family: var(--font-sans); }
         .editorial-input:focus { border-color: var(--leather); }
         
-        .btn-primary { width: 100%; background: var(--surface-1); color: var(--leather); padding: 18px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(212, 175, 55, 0.3); cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .btn-primary { width: 100%; background: var(--surface-1); color: var(--leather); padding: 18px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(212, 175, 55, 0.3); cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s, color 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
@@ -407,7 +407,7 @@
         .modal-subtitle { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
         .modal-text { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
         
-        .modal-btn { display: flex; align-items: center; justify-content: center; gap: 6px; background-color: var(--surface-1); color: var(--leather); padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s, background-color 0.3s; border: 1px solid rgba(212, 175, 55, 0.3); cursor: pointer; }
+        .modal-btn { display: flex; align-items: center; justify-content: center; gap: 6px; background-color: var(--surface-1); color: var(--leather); padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.2s, background-color 0.3s; border: 1px solid rgba(212, 175, 55, 0.3); cursor: pointer; }
         .modal-btn:active { transform: scale(0.98); }
 
         /* --- CUSTOM DIALOG UI --- */
@@ -512,7 +512,7 @@
         <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 40px;">
             
             <!-- COLLAPSED STATE -->
-            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                 <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     Today's Selection <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i>
                 </span>
@@ -532,7 +532,7 @@
         <div style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-radius: 40px 40px 0 0; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--glass-border); box-shadow: 0 -4px 20px var(--shadow-strong); z-index: 5;">
             
             <!-- LAYER 2 ATTACHED CHEVRON (Hides when Layer 1 Collapses) -->
-            <div id="layer-2-chevron" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); cursor: pointer; color: var(--leather); padding: 2px 16px; display: flex; align-items: center; justify-content: center; background: var(--surface-1); border: 1px solid var(--glass-border); border-bottom: none; box-shadow: 0 -4px 12px rgba(0,0,0,0.2); border-radius: 12px 12px 0 0; width: 60px; height: 20px; transition: transform 0.2s, background 0.3s; z-index: 10;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='translateX(-50%) scale(0.95)'" onmouseup="this.style.transform='translateX(-50%) scale(1)'" onmouseleave="this.style.transform='translateX(-50%) scale(1)'" ontouchstart="this.style.transform='translateX(-50%) scale(0.95)'" ontouchend="this.style.transform='translateX(-50%) scale(1)'">
+            <div id="layer-2-chevron" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); cursor: pointer; color: var(--leather); padding: 2px 16px; display: flex; align-items: center; justify-content: center; background: var(--surface-1); border: 1px solid var(--glass-border); border-bottom: none; border-radius: 12px 12px 0 0; width: 60px; height: 20px; transition: transform 0.2s, background 0.3s; z-index: 10;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='translateX(-50%) scale(0.95)'" onmouseup="this.style.transform='translateX(-50%) scale(1)'" onmouseleave="this.style.transform='translateX(-50%) scale(1)'" ontouchstart="this.style.transform='translateX(-50%) scale(0.95)'" ontouchend="this.style.transform='translateX(-50%) scale(1)'">
                 <i class="fa-solid fa-chevron-up" style="font-size: 10px;"></i>
             </div>
 
@@ -635,7 +635,7 @@
                 <!-- FAVORITES BENTO BOX -->
                 <div class="section-header" style="margin-top: 24px;">
                     <div class="section-title">Favorites</div>
-                    <div class="section-link" onclick="switchTab('view-humidor', 1)">Humidor</div>
+                    <div class="section-link" onclick="switchTab('view-journal', 2)">Journal</div>
                 </div>
                 
                 <div id="home-favorites-list">
@@ -695,7 +695,7 @@
                             <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
                         </div>
                         
-                        <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
+                        <div style="display: flex; gap: 12px; margin-top: 16px; margin-bottom: 16px; width: 100%;">
                             <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
                                 <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
                                 <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
@@ -704,49 +704,6 @@
                                 <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
                                 <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
                             </div>
-                        </div>
-                        
-                        <div style="margin-top: 16px; margin-bottom: 16px;">
-                            <select id="vault-rating" class="form-input form-select" style="margin-bottom: 0;">
-                                <option value="" disabled selected>Rating (1-10)</option>
-                                <option value="10">10.00</option>
-                                <option value="9.75">9.75</option>
-                                <option value="9.5">9.50</option>
-                                <option value="9.25">9.25</option>
-                                <option value="9">9.00</option>
-                                <option value="8.75">8.75</option>
-                                <option value="8.5">8.50</option>
-                                <option value="8.25">8.25</option>
-                                <option value="8">8.00</option>
-                                <option value="7.75">7.75</option>
-                                <option value="7.5">7.50</option>
-                                <option value="7.25">7.25</option>
-                                <option value="7">7.00</option>
-                                <option value="6.75">6.75</option>
-                                <option value="6.5">6.50</option>
-                                <option value="6.25">6.25</option>
-                                <option value="6">6.00</option>
-                                <option value="5.75">5.75</option>
-                                <option value="5.5">5.50</option>
-                                <option value="5.25">5.25</option>
-                                <option value="5">5.00</option>
-                                <option value="4.75">4.75</option>
-                                <option value="4.5">4.50</option>
-                                <option value="4.25">4.25</option>
-                                <option value="4">4.00</option>
-                                <option value="3.75">3.75</option>
-                                <option value="3.5">3.50</option>
-                                <option value="3.25">3.25</option>
-                                <option value="3">3.00</option>
-                                <option value="2.75">2.75</option>
-                                <option value="2.5">2.50</option>
-                                <option value="2.25">2.25</option>
-                                <option value="2">2.00</option>
-                                <option value="1.75">1.75</option>
-                                <option value="1.5">1.50</option>
-                                <option value="1.25">1.25</option>
-                                <option value="1">1.00</option>
-                            </select>
                         </div>
 
                         <!-- Hidden Input and Visual Upload Button -->
@@ -839,6 +796,50 @@
                         <input type="text" id="log-pairing" class="form-input" placeholder="Pairing (e.g., Bourbon)" style="margin-bottom: 0;">
                     </div>
 
+                    <!-- Rating Block -->
+                    <div style="margin-top: 16px; margin-bottom: 16px;">
+                        <select id="log-rating" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Rating (1-10)</option>
+                            <option value="10">10.00</option>
+                            <option value="9.75">9.75</option>
+                            <option value="9.5">9.50</option>
+                            <option value="9.25">9.25</option>
+                            <option value="9">9.00</option>
+                            <option value="8.75">8.75</option>
+                            <option value="8.5">8.50</option>
+                            <option value="8.25">8.25</option>
+                            <option value="8">8.00</option>
+                            <option value="7.75">7.75</option>
+                            <option value="7.5">7.50</option>
+                            <option value="7.25">7.25</option>
+                            <option value="7">7.00</option>
+                            <option value="6.75">6.75</option>
+                            <option value="6.5">6.50</option>
+                            <option value="6.25">6.25</option>
+                            <option value="6">6.00</option>
+                            <option value="5.75">5.75</option>
+                            <option value="5.5">5.50</option>
+                            <option value="5.25">5.25</option>
+                            <option value="5">5.00</option>
+                            <option value="4.75">4.75</option>
+                            <option value="4.5">4.50</option>
+                            <option value="4.25">4.25</option>
+                            <option value="4">4.00</option>
+                            <option value="3.75">3.75</option>
+                            <option value="3.5">3.50</option>
+                            <option value="3.25">3.25</option>
+                            <option value="3">3.00</option>
+                            <option value="2.75">2.75</option>
+                            <option value="2.5">2.50</option>
+                            <option value="2.25">2.25</option>
+                            <option value="2">2.00</option>
+                            <option value="1.75">1.75</option>
+                            <option value="1.5">1.50</option>
+                            <option value="1.25">1.25</option>
+                            <option value="1">1.00</option>
+                        </select>
+                    </div>
+
                     <textarea id="log-notes" class="form-input" placeholder="Tasting notes for the final third..." rows="3" style="resize: none; margin-top: 16px; margin-bottom: 16px;"></textarea>
                     
                     <!-- Hidden Input and Visual Upload Button -->
@@ -890,15 +891,15 @@
                         <div class="badge badge-mint">Latest</div>
                     </div>
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--leather);"></i> Community Library</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--leather);"></i> Community Library</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The app now seamlessly learns from you. Any new cigar brands you log manually are automatically added to the global database, improving autocomplete for the entire community.</div>
                     </div>
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-keyboard" style="color: var(--leather);"></i> Seamless Autocomplete</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-keyboard" style="color: var(--leather);"></i> Seamless Autocomplete</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Vitola and Wrapper fields have been updated to utilize the same dynamic autocomplete engine as the Brand field, ditching clunky native browser dropdowns.</div>
                     </div>
                     <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-layer-group" style="color: var(--leather);"></i> UI Refinements</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-layer-group" style="color: var(--leather);"></i> UI Refinements</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The Daily Selection chevron now sits natively on the Vault layer and elegantly hides itself when collapsed.</div>
                     </div>
                 </div>
@@ -913,7 +914,7 @@
                         <div class="badge badge-amber">Past</div>
                     </div>
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Searchable Modal</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Searchable Modal</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">The "Log a Smoke" action now opens a clean pop-up modal overlay instead of navigating you to the humidor. You can search directly within the modal to easily find and deplete your inventory before writing your journal entry.</div>
                     </div>
                 </div>
@@ -927,11 +928,11 @@
                         </div>
                     </div>
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-code-branch" style="color: var(--leather);"></i> Separated Actions</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-code-branch" style="color: var(--leather);"></i> Separated Actions</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Humidor cards no longer act as click targets until you explicitly activate the "Log a Smoke" feature. This completely prevents accidental removal prompts while browsing your inventory.</div>
                     </div>
                     <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Photo Badge Isolation</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Photo Badge Isolation</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Fixed an event bubbling bug where tapping "View Photo" on a card would incorrectly trigger humidor actions instead of just opening the image.</div>
                     </div>
                 </div>
@@ -945,11 +946,11 @@
                         </div>
                     </div>
                     <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Search & Filter</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Search & Filter</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Added a dedicated search bar and sorting toggle (A-Z vs Date) just beneath the Journal and Aging Timeline headers to easily parse your collection.</div>
                     </div>
                     <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-compress" style="color: var(--leather);"></i> Collapsible Journal Cards</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-compress" style="color: var(--leather);"></i> Collapsible Journal Cards</div>
                         <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">Journal history entries are now collapsed by default to save vertical screen space. Tap the chevron icon on any card to reveal your detailed tasting notes and smoking mechanics.</div>
                     </div>
                 </div>
@@ -1045,7 +1046,7 @@
                     </div>
                 </div>
 
-                <button class="btn-primary" style="background: rgba(225, 90, 90, 0.1); color: var(--danger); box-shadow: none; width: 100%; border: none; border-radius: 12px;" onclick="handleLogout()">
+                <button class="btn-primary" style="background: rgba(225, 90, 90, 0.1); color: var(--danger); width: 100%; border: none; border-radius: 12px;" onclick="handleLogout()">
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
                 </button>
                 
@@ -1634,6 +1635,7 @@
         document.getElementById('log-cut').selectedIndex = 0;
         document.getElementById('log-light').selectedIndex = 0;
         document.getElementById('log-pairing').value = '';
+        document.getElementById('log-rating').selectedIndex = 0;
         document.getElementById('log-notes').value = '';
         
         const logWrapper = document.getElementById('journal-form-wrapper');
@@ -1858,7 +1860,7 @@
         let titleText = "Full Aging Timeline";
 
         sortedInventory.forEach(cigar => {
-            let daysAged = Math.floor((now - cigar.acquiredDate) / (1000 * 60 * 60 * 24));
+            let daysAged = Math.floor((now - c.acquiredDate) / (1000 * 60 * 60 * 24));
             if (daysAged < 0) daysAged = 0;
             
             let include = false;
@@ -2306,7 +2308,7 @@ window.compressImage = function(file) {
 
     window.renderFavorites = function() {
         const favContainer = document.getElementById('home-favorites-list');
-        const ratedCigars = humidorInventory.filter(c => c.rating);
+        const ratedCigars = journalHistory.filter(c => c.rating);
         
         if (ratedCigars.length > 0) {
             const sum = ratedCigars.reduce((acc, curr) => acc + curr.rating, 0);
@@ -2326,7 +2328,7 @@ window.compressImage = function(file) {
             return;
         }
 
-        let html = '<div style="background: var(--surface-2); border-radius: 20px; padding: 8px 20px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px var(--shadow-subtle);">';
+        let html = '<div style="background: var(--surface-2); border-radius: 20px; padding: 8px 20px; border: 1px solid var(--border-subtle);">';
         sorted.forEach((cigar, index) => {
             const borderStr = index < sorted.length - 1 ? 'border-bottom: 1px solid var(--glass-border);' : '';
             html += `
@@ -2335,7 +2337,7 @@ window.compressImage = function(file) {
                     <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
                     <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
                 </div>
-                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3);">
                     <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
                     <span style="font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--leather);">${cigar.rating.toFixed(2)}</span>
                 </div>
@@ -2360,6 +2362,7 @@ window.compressImage = function(file) {
         document.getElementById('log-cut').value = log.cut !== 'N/A' ? log.cut : '';
         document.getElementById('log-light').value = log.light !== 'N/A' ? log.light : '';
         document.getElementById('log-pairing').value = log.pairing !== 'None' ? log.pairing : '';
+        document.getElementById('log-rating').value = log.rating || '';
         document.getElementById('log-notes').value = log.notes !== 'No notes.' ? log.notes : '';
 
         currentLogImage = log.image || null;
@@ -2375,6 +2378,7 @@ window.compressImage = function(file) {
         const submitBtn = document.getElementById('journal-submit-btn');
         submitBtn.innerHTML = 'Update Ledger <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
         submitBtn.style.background = 'var(--gold)';
+        submitBtn.style.color = '#1A1A1A';
         
         const logWrapper = document.getElementById('journal-form-wrapper');
         const logChevron = document.getElementById('journal-form-chevron');
@@ -2395,6 +2399,7 @@ window.logSmoke = async function() {
     const cut = document.getElementById('log-cut').value;
     const light = document.getElementById('log-light').value;
     const pairing = document.getElementById('log-pairing').value;
+    const rating = document.getElementById('log-rating').value;
     const notes = document.getElementById('log-notes').value;
     const submitBtn = document.getElementById('journal-submit-btn');
 
@@ -2417,6 +2422,7 @@ window.logSmoke = async function() {
             cut: cut || "N/A",
             light: light || "N/A",
             pairing: pairing || "None",
+            rating: rating ? parseFloat(rating) : null,
             notes: notes || "No notes.",
             image: currentLogImage // Saving the scaled Base64 string directly
         };
@@ -2425,7 +2431,8 @@ window.logSmoke = async function() {
             await updateDoc(doc(db, "journal", editingJournalId), newLog);
             editingJournalId = null;
             submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
-            submitBtn.style.background = 'var(--surface-1)';
+            submitBtn.style.background = '';
+            submitBtn.style.color = '';
         } else {
             await addDoc(collection(db, "journal"), newLog);
             submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
@@ -2440,6 +2447,7 @@ window.logSmoke = async function() {
         document.getElementById('log-cut').selectedIndex = 0;
         document.getElementById('log-light').selectedIndex = 0;
         document.getElementById('log-pairing').value = '';
+        document.getElementById('log-rating').selectedIndex = 0;
         document.getElementById('log-notes').value = '';
         
         currentLogImage = null;
@@ -2511,6 +2519,7 @@ window.logSmoke = async function() {
             document.getElementById('profile-mechanics-cut').innerText = "N/A Cut";
             document.getElementById('profile-mechanics-light').innerText = "N/A Light";
             
+            renderFavorites();
             return;
         }
 
@@ -2551,6 +2560,8 @@ window.logSmoke = async function() {
                     window.imageRegistry[log.id] = log.image;
                     imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
                 }
+                
+                let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
 
                 html += `
                 <div class="swipe-container">
@@ -2582,6 +2593,7 @@ window.logSmoke = async function() {
                         <!-- Hidden Collapsible Details Block -->
                         <div id="journal-details-${log.id}" style="display: none;">
                             <div style="display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; flex-wrap: wrap;">
+                                ${ratingBadge}
                                 <span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
                                 <span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-fire" style="color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
                                 <span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
@@ -2645,6 +2657,8 @@ window.logSmoke = async function() {
         ringBadge.innerText = topRing === 'N/A' ? 'N/A Gauge' : `${topRing} Ring`;
         cutBadge.innerText = topCut;
         lightBadge.innerText = topLight;
+        
+        renderFavorites();
     };
 
     window.removeJournalLog = async function(id) {
@@ -2690,8 +2704,6 @@ window.logSmoke = async function() {
             document.getElementById('vault-target-date').value = new Date(cigar.targetDate).toISOString().split('T')[0];
         }
         
-        document.getElementById('vault-rating').value = cigar.rating || '';
-        
         currentVaultImage = cigar.image || null;
         const photoBtn = document.getElementById('vault-photo-btn');
         if(currentVaultImage) {
@@ -2704,7 +2716,8 @@ window.logSmoke = async function() {
 
         const submitBtn = document.getElementById('vault-submit-btn');
         submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
-        submitBtn.style.background = 'var(--surface-1)';
+        submitBtn.style.background = 'var(--gold)';
+        submitBtn.style.color = '#1A1A1A';
 
         const vaultWrapper = document.getElementById('humidor-form-wrapper');
         const vaultChevron = document.getElementById('humidor-form-chevron');
@@ -2725,7 +2738,6 @@ window.storeCigar = async function() {
     const priceVal = document.getElementById('vault-price').value;
     const acquiredDate = document.getElementById('vault-date').value;
     const targetDate = document.getElementById('vault-target-date').value;
-    const ratingVal = document.getElementById('vault-rating').value;
     const submitBtn = document.getElementById('vault-submit-btn');
 
     if(!brand || !acquiredDate || !targetDate) { 
@@ -2749,7 +2761,6 @@ window.storeCigar = async function() {
             wrapper: wrapper || "Unknown",
             price: priceVal ? parseFloat(priceVal) : null,
             targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
-            rating: ratingVal ? parseFloat(ratingVal) : null,
             acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
             image: currentVaultImage // Saving the scaled Base64 string directly
         };
@@ -2758,7 +2769,8 @@ window.storeCigar = async function() {
             await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
             editingVaultId = null;
             submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-            submitBtn.style.background = 'var(--surface-1)';
+            submitBtn.style.background = '';
+            submitBtn.style.color = '';
         } else {
             await addDoc(collection(db, "humidor"), newCigar);
             submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
@@ -2770,7 +2782,6 @@ window.storeCigar = async function() {
         document.getElementById('vault-quantity').value = '1';
         document.getElementById('vault-ring-gauge').value = '';
         document.getElementById('vault-price').value = '';
-        document.getElementById('vault-rating').selectedIndex = 0;
         document.getElementById('vault-vitola').value = '';
         document.getElementById('vault-wrapper').value = '';
         
@@ -2822,7 +2833,6 @@ window.storeCigar = async function() {
             document.getElementById('bar-tier-3').style.width = '25%';
             document.getElementById('bar-tier-4').style.width = '25%';
             
-            renderFavorites(); 
             return;
         }
 
@@ -2941,14 +2951,12 @@ window.storeCigar = async function() {
                     window.imageRegistry[cigar.id] = cigar.image;
                     imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
                 }
-
-                let ratingBadge = cigar.rating ? `<span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${cigar.rating}</span>` : '';
                 
                 let qtyBadge = `<span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
                 
                 let attributesRow = '';
-                if (qtyBadge || ratingBadge || imageBadge) {
-                    attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${ratingBadge}${imageBadge}</div>`;
+                if (qtyBadge || imageBadge) {
+                    attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${imageBadge}</div>`;
                 }
 
                 html += `
@@ -3015,8 +3023,6 @@ window.storeCigar = async function() {
         } else {
             wrapperBadge.innerText = "N/A";
         }
-        
-        renderFavorites(); 
     };
 
     window.removeCigar = async function(id) {
