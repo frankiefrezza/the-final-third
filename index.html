@@ -239,7 +239,7 @@
         .log-title { font-family: var(--font-serif); font-size: 18px; font-weight: 800; color: var(--text-main); line-height: 1.3; margin-bottom: 4px; }
         .log-meta { font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
         
-        .badge { font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+        .badge { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; }
         
         .badge-indigo { background: var(--surface-1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); }
         .badge-mint { background: var(--surface-1); color: var(--gold); border: 1px solid rgba(241, 196, 15, 0.3); }
@@ -512,7 +512,7 @@
         <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 40px;">
             
             <!-- COLLAPSED STATE -->
-            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 6px 16px; background: var(--surface-1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                 <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     Today's Selection <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i>
                 </span>
@@ -590,7 +590,7 @@
                             <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Update inventory & log</div>
                         </div>
                     </div>
-                    <button class="btn-primary" onclick="openLogSmokeModal()" style="padding: 10px 20px; width: auto; flex-shrink: 0;">YES <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i></button>
+                    <button class="btn-primary" onclick="openLogSmokeModal()" style="padding: 8px 16px; border-radius: 8px; font-size: 11px; width: auto; flex-shrink: 0; gap: 6px;">YES <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i></button>
                 </div>
 
                  <!-- AGING OVERVIEW -->
@@ -2335,9 +2335,9 @@ window.compressImage = function(file) {
                     <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
                     <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
                 </div>
-                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--surface-1); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-                    <i class="fa-solid fa-star" style="color: var(--leather); font-size: 12px;"></i>
-                    <span style="font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--leather);">${cigar.rating.toFixed(2)}</span>
+                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                    <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
+                    <span style="font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--leather);">${cigar.rating.toFixed(2)}</span>
                 </div>
             </div>`;
         });
@@ -2549,7 +2549,7 @@ window.logSmoke = async function() {
                 let imageBadge = '';
                 if(log.image) {
                     window.imageRegistry[log.id] = log.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
                 }
 
                 html += `
@@ -2582,9 +2582,9 @@ window.logSmoke = async function() {
                         <!-- Hidden Collapsible Details Block -->
                         <div id="journal-details-${log.id}" style="display: none;">
                             <div style="display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; flex-wrap: wrap;">
-                                <span style="font-size: 11px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
-                                <span style="font-size: 11px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><i class="fa-solid fa-fire" style="color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
-                                <span style="font-size: 11px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
+                                <span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
+                                <span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-fire" style="color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
+                                <span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
                                 ${imageBadge}
                             </div>
                             
@@ -2939,12 +2939,12 @@ window.storeCigar = async function() {
                 let imageBadge = '';
                 if(cigar.image) {
                     window.imageRegistry[cigar.id] = cigar.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 11px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
                 }
 
-                let ratingBadge = cigar.rating ? `<span style="font-size: 11px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><i class="fa-solid fa-star"></i> ${cigar.rating}</span>` : '';
+                let ratingBadge = cigar.rating ? `<span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${cigar.rating}</span>` : '';
                 
-                let qtyBadge = `<span style="font-size: 11px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
+                let qtyBadge = `<span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
                 
                 let attributesRow = '';
                 if (qtyBadge || ratingBadge || imageBadge) {
