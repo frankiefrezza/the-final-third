@@ -610,12 +610,79 @@
         }
 
         /* --- FLOATING BOTTOM DOCK --- */
-        .bottom-dock-wrapper { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 1000; background: linear-gradient(to top, var(--bg-base) 40%, rgba(26, 26, 26, 0) 100%); padding-top: 40px; pointer-events: none; transition: background 0.3s; }
-        [data-theme="light"] .bottom-dock-wrapper { background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); }
-        .bottom-dock { width: calc(100% - 32px); max-width: 390px; background: var(--surface-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 32px; display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: max(20px, env(safe-area-inset-bottom)); box-shadow: 0 10px 30px var(--shadow-strong); pointer-events: auto; }
-        .nav-item { color: var(--text-dim); font-size: 20px; cursor: pointer; position: relative; width: 64px; height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.2s; border-radius: 16px; }
-        .nav-item span { font-size: 10px; font-weight: 700; margin-top: 6px; }
-        .nav-item.active { color: #1A1A1A; background: var(--leather); }
+        .bottom-dock-wrapper { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            display: flex; 
+            justify-content: center; 
+            z-index: 1000; 
+            background: linear-gradient(to top, var(--bg-base) 40%, rgba(26, 26, 26, 0) 100%); 
+            padding-top: 40px; 
+            pointer-events: none; 
+            transition: background 0.3s; 
+        }
+        [data-theme="light"] .bottom-dock-wrapper { 
+            background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); 
+        }
+        .bottom-dock { 
+            width: calc(100% - 32px); 
+            max-width: 390px; 
+            background: rgba(30, 30, 30, 0.65); 
+            backdrop-filter: blur(24px); 
+            -webkit-backdrop-filter: blur(24px); 
+            border: 1px solid rgba(212, 175, 55, 0.15); 
+            border-radius: 32px; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            padding: 8px 12px; 
+            margin-bottom: max(20px, env(safe-area-inset-bottom)); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255, 255, 255, 0.05); 
+            pointer-events: auto; 
+        }
+        .nav-item { 
+            color: var(--text-dim); 
+            font-size: 20px; 
+            cursor: pointer; 
+            position: relative; 
+            width: 68px; 
+            height: 60px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 5px; 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            border-radius: 18px; 
+            opacity: 0.6; 
+        }
+        .nav-item span { 
+            font-size: 10px; 
+            font-weight: 700; 
+            margin-top: 0; 
+            transition: color 0.3s; 
+        }
+        .nav-item:active { 
+            transform: scale(0.92); 
+            opacity: 1; 
+        }
+        .nav-item.active { 
+            color: var(--leather); 
+            background: rgba(212, 175, 55, 0.12); 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            opacity: 1; 
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1); 
+        }
+        .nav-item.active span { 
+            color: var(--leather); 
+        }
+        [data-theme="light"] .bottom-dock { 
+            background: rgba(255, 255, 255, 0.7); 
+            border: 1px solid rgba(194, 150, 98, 0.3); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255, 255, 255, 0.5); 
+        }
 
         /* Action Sheet & Modals */
         .action-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--overlay-bg); backdrop-filter: blur(5px); z-index: 2000; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
