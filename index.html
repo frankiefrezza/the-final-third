@@ -44,6 +44,7 @@
             --leather: #D4AF37; 
             --gold: #F1C40F; 
             --danger: #E15A5A;
+            --mint: #4ADE80;
 
             --btn-leather: #D4AF37; 
             --btn-gold: #F1C40F;    
@@ -449,7 +450,7 @@
         .badge { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; }
         
         .badge-indigo { background: var(--surface-1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); }
-        .badge-mint { background: var(--surface-1); color: var(--gold); border: 1px solid rgba(241, 196, 15, 0.3); }
+        .badge-mint { background: var(--surface-1); color: var(--mint); border: 1px solid rgba(74, 222, 128, 0.3); }
         .badge-rose { background: var(--surface-1); color: var(--danger); border: 1px solid rgba(225, 90, 90, 0.3); }
         .badge-amber { background: var(--surface-1); color: var(--text-main); border: 1px solid var(--border-subtle); }
 
@@ -737,6 +738,12 @@
         .custom-dialog-confirm { background: var(--surface-1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
         .custom-dialog-danger { background: var(--danger); color: white; border-radius: 12px; }
 
+        /* Custom Information List Styles */
+        .info-list { list-style: none; padding: 0; margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
+        .info-list li { display: flex; gap: 10px; align-items: flex-start; }
+        .info-list-icon { color: var(--leather); margin-top: 2px; font-size: 12px; width: 14px; text-align: center; flex-shrink: 0; }
+        .info-list-content { flex: 1; }
+
     </style>
 </head>
 <body>
@@ -906,10 +913,12 @@
                     </div>
                     
                     <div class="stat-box" onclick="switchTab('view-radar', 3)">
-                        <i class="fa-solid fa-bell stat-icon icon-alerts"></i>
-                        <p>Alerts</p>
-                        <h2 id="stat-alerts">0</h2>
-                        <span class="stat-sub">Active</span>
+                        <i class="fa-solid fa-book-bookmark stat-icon icon-alerts"></i>
+                        <p>Info</p>
+                        <!-- Added hidden element to maintain JS hook for readyAlertsCount if still active -->
+                        <div id="stat-alerts" style="display:none;"></div>
+                        <h2 id="stat-info-count">6</h2>
+                        <span class="stat-sub">Articles</span>
                     </div>
                     
                     <div class="stat-box" onclick="switchTab('view-profile', 4)">
@@ -1216,83 +1225,139 @@
 
             </section>
 
-            <!-- UPDATES / VERSION HISTORY SCREEN -->
+            <!-- ACADEMY / INFO SCREEN -->
             <section id="view-radar" class="view-section">
                 <div class="section-header" style="margin-top: 0;">
-                    <div class="section-title">Release Notes</div>
+                    <div class="section-title">Information & Guides</div>
                 </div>
 
-                <!-- Version 1.1.2 -->
+                <!-- Anatomy -->
                 <div class="log-card" style="margin-bottom: 24px; text-align: left;">
                     <div class="log-header" style="margin-bottom: 16px;">
                         <div>
-                            <div class="log-meta">Version Update 1.1.2</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Crowdsourced Library & Hybrid Inputs</div>
+                            <div class="log-meta">The Basics</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Anatomy of a Cigar</div>
                         </div>
-                        <div class="badge badge-mint">Latest</div>
+                        <i class="fa-solid fa-layer-group" style="color: var(--leather); font-size: 18px;"></i>
                     </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--leather);"></i> Community Library</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;">The app now seamlessly learns from you. Any new cigar brands you log manually are automatically added to the global database, improving autocomplete for the entire community.</div>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-keyboard" style="color: var(--leather);"></i> Seamless Autocomplete</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;">Vitola and Wrapper fields have been updated to utilize the same dynamic autocomplete engine as the Brand field, ditching clunky native browser dropdowns.</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-layer-group" style="color: var(--leather);"></i> UI Refinements</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;">The Daily Selection chevron now sits natively on the Vault layer and elegantly hides itself when collapsed.</div>
+                    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
+                        <p style="margin-bottom: 8px;">A premium handmade cigar is entirely crafted from whole tobacco leaves, meticulously assembled in three distinct layers:</p>
+                        <ul class="info-list">
+                            <li><i class="fa-solid fa-leaf info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Wrapper (Capa):</strong> The outermost leaf. Flawless, oily, and highly flavorful. It accounts for up to 60% of the cigar's total flavor profile.</div></li>
+                            <li><i class="fa-solid fa-compress info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Binder (Capote):</strong> The structural leaf that holds the filler tobacco tightly together and ensures a consistent, even burn.</div></li>
+                            <li><i class="fa-solid fa-align-center info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Filler (Tripa):</strong> The core blend of leaves (usually 3 to 5 different types) that dictate the strength and complexity of the cigar.</div></li>
+                            <li><i class="fa-solid fa-circle-dot info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Cap & Foot:</strong> The <em>cap</em> is the enclosed head you cut before smoking. The <em>foot</em> is the open end you light.</div></li>
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Version 1.1.1 -->
+                <!-- The Cut -->
                 <div class="log-card" style="margin-bottom: 24px; text-align: left;">
                     <div class="log-header" style="margin-bottom: 16px;">
                         <div>
-                            <div class="log-meta">Version Update 1.1.1</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Log a Smoke UI Revamp</div>
+                            <div class="log-meta">Preparation</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Mastering the Cut</div>
                         </div>
-                        <div class="badge badge-amber">Past</div>
+                        <i class="fa-solid fa-scissors" style="color: var(--leather); font-size: 18px;"></i>
                     </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Searchable Modal</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;">The "Log a Smoke" action now opens a clean pop-up modal overlay instead of navigating you to the humidor. You can search directly within the modal to easily find and deplete your inventory before writing your journal entry.</div>
+                    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
+                        <p style="margin-bottom: 12px;">The goal is to open the cap without unravelling the wrapper. Always cut above the "shoulder" (the curved line where the cap ends).</p>
+                        <div class="glass-bento" style="padding: 12px; border-radius: 12px; margin-bottom: 8px;">
+                            <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">Straight Cut</strong>
+                            The standard guillotine cut. Removes the cap entirely for a wide, open draw. <span style="color: var(--mint);"><i class="fa-solid fa-check"></i> Best for Torpedos.</span>
+                        </div>
+                        <div class="glass-bento" style="padding: 12px; border-radius: 12px; margin-bottom: 8px;">
+                            <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">V-Cut</strong>
+                            Creates a deep wedge. Concentrates the smoke on the palate while maintaining the structural integrity of the cap.
+                        </div>
+                        <div class="glass-bento" style="padding: 12px; border-radius: 12px; margin-bottom: 8px;">
+                            <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">Cross-Axis Crown Cut</strong>
+                            Executed by making two perpendicular V-cuts to form a star shape. Offers an incredibly open draw with focused flavor delivery.
+                        </div>
+                        <div class="glass-bento" style="padding: 12px; border-radius: 12px;">
+                            <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">Punch Cut</strong>
+                            Bores a small circular hole. <span style="color: var(--mint);"><i class="fa-solid fa-check"></i> Best for larger ring gauges to tighten the draw.</span> Avoid on torpedo/pointed shapes.
+                        </div>
                     </div>
                 </div>
 
-                <!-- Version 1.1.0 -->
+                <!-- Lighting -->
                 <div class="log-card" style="margin-bottom: 24px; text-align: left;">
                     <div class="log-header" style="margin-bottom: 16px;">
                         <div>
-                            <div class="log-meta">Version Update 1.1.0</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Streamlined Logging Workflow</div>
+                            <div class="log-meta">Ignition</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">The Art of Lighting</div>
                         </div>
+                        <i class="fa-solid fa-fire" style="color: var(--leather); font-size: 18px;"></i>
                     </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-code-branch" style="color: var(--leather);"></i> Separated Actions</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;">Humidor cards no longer act as click targets until you explicitly activate the "Log a Smoke" feature. This completely prevents accidental removal prompts while browsing your inventory.</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-hand-pointer" style="color: var(--leather);"></i> Photo Badge Isolation</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;">Fixed an event bubbling bug where tapping "View Photo" on a card would incorrectly trigger humidor actions instead of just opening the image.</div>
+                    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
+                        <div class="badge badge-amber" style="margin-bottom: 12px;"><i class="fa-solid fa-triangle-exclamation"></i> Never touch the flame to the tobacco</div>
+                        <p style="margin-bottom: 12px;">Hold the cigar at a 45-degree angle above the flame. Rotate it slowly to <strong>toast the foot</strong> until the entire surface is evenly charred. Only then, place it in your mouth and take gentle puffs while holding the flame near (but not touching) the foot to draw the heat in.</p>
+                        <ul class="info-list">
+                            <li><i class="fa-solid fa-fire-flame-curved info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Soft Flame (Matches/Bic):</strong> Cooler burn, preserving delicate wrapper flavors. Must be used indoors away from wind. Let sulfur matches burn off entirely before toasting.</div></li>
+                            <li><i class="fa-solid fa-jet-fighter-up info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Torch Lighter:</strong> Wind-resistant and highly precise. Can scorch the tobacco if held too close. Keep the visible tip of the flame at least an inch away.</div></li>
+                            <li><i class="fa-solid fa-tree info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Cedar Spill:</strong> The traditional method. Igniting a strip of Spanish cedar provides a low-temperature flame that imparts a subtle, sweet aroma during the light.</div></li>
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Version 1.0.9 -->
+                <!-- Tasting & Retrohaling -->
                 <div class="log-card" style="margin-bottom: 24px; text-align: left;">
                     <div class="log-header" style="margin-bottom: 16px;">
                         <div>
-                            <div class="log-meta">Version Update 1.0.9</div>
-                            <div class="log-title" style="font-size: 14px; margin-top: 4px;">Search, Sort & Collapsible Entries</div>
+                            <div class="log-meta">Tasting Technique</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Palate & Retrohaling</div>
                         </div>
+                        <i class="fa-solid fa-wind" style="color: var(--leather); font-size: 18px;"></i>
                     </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--leather);"></i> Search & Filter</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;">Added a dedicated search bar and sorting toggle (A-Z vs Date) just beneath the Journal and Aging Timeline headers to easily parse your collection.</div>
+                    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
+                        <p style="margin-bottom: 12px;">A cigar is traditionally divided into three sections, each providing a different experience as moisture and heat build up: the <strong>First Third</strong> (brightest flavors), <strong>Second Third</strong> (the balanced "sweet spot"), and <strong>The Final Third</strong> (deep, intense, and robust).</p>
+                        <div style="width: 100%; height: 1px; background: var(--border-subtle); margin: 16px 0;"></div>
+                        <strong style="color: var(--text-main); font-size: 14px;">How to Retrohale</strong>
+                        <p style="margin-top: 8px;">Much of a cigar's flavor profile is actually perceived through olfactory sensors (smell). Retrohaling is the act of expelling a small amount of smoke through your nasal cavity, rather than just exhaling through the mouth.</p>
+                        <ul class="info-list" style="margin-top: 8px;">
+                            <li><i class="fa-solid fa-1 info-list-icon"></i><div class="info-list-content">Draw the smoke into your mouth (do not inhale into your lungs).</div></li>
+                            <li><i class="fa-solid fa-2 info-list-icon"></i><div class="info-list-content">Release about 70-80% of the smoke through your mouth normally.</div></li>
+                            <li><i class="fa-solid fa-3 info-list-icon"></i><div class="info-list-content">With your mouth closed, push the remaining 20-30% of the smoke up and out through your nose using your throat and tongue.</div></li>
+                        </ul>
                     </div>
-                    <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;"><i class="fa-solid fa-compress" style="color: var(--leather);"></i> Collapsible Journal Cards</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;">Journal history entries are now collapsed by default to save vertical screen space. Tap the chevron icon on any card to reveal your detailed tasting notes and smoking mechanics.</div>
+                </div>
+
+                <!-- Resting -->
+                <div class="log-card" style="margin-bottom: 24px; text-align: left;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Storage</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Acclimation & Resting</div>
+                        </div>
+                        <i class="fa-solid fa-box-archive" style="color: var(--leather); font-size: 18px;"></i>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
+                        <p style="margin-bottom: 12px;">When you purchase cigars—especially online where they endure temperature fluctuations during shipping—they experience "transit shock." Letting them rest allows humidity to stabilize evenly, ensuring a straight burn.</p>
+                        <div class="glass-bento" style="padding: 12px; border-radius: 12px; margin-bottom: 12px;">
+                            <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">The 70/70 Rule vs. 65/65</strong>
+                            Historically, 70°F and 70% Relative Humidity (RH) was the standard. However, modern enthusiasts generally prefer a slightly lower environment around <strong>65°F and 65% RH</strong>, which prevents mold and provides a sharper, more reliable burn.
+                        </div>
+                        <strong style="color: var(--text-main); font-size: 13px;">Cellophane: On or Off?</strong>
+                        <p style="margin-top: 4px;">Cellophane is porous. Leaving it on protects the wrapper from physical damage while rummaging through your humidor and slows down aging slightly. Taking it off accelerates the aging process and allows aromas to marry with other cigars. Either choice is entirely acceptable.</p>
+                    </div>
+                </div>
+
+                <!-- Sickness -->
+                <div class="log-card" style="margin-bottom: 24px; text-align: left;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Wellbeing</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Preventing Cigar Sickness</div>
+                        </div>
+                        <i class="fa-solid fa-heart-pulse" style="color: var(--leather); font-size: 18px;"></i>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
+                        <p style="margin-bottom: 12px;">Cigar sickness (nausea, cold sweats, or dizziness) is caused by a sudden influx of nicotine, which acts as an alkaline and triggers a rapid drop in blood sugar levels.</p>
+                        <ul class="info-list">
+                            <li><i class="fa-solid fa-shield info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Prevention:</strong> Never smoke a full-bodied cigar on an empty stomach. A hearty meal beforehand is your best defense. Keep your pacing to about one puff per minute so the cigar doesn't overheat and release excess nicotine.</div></li>
+                            <li><i class="fa-solid fa-kit-medical info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">The Cure:</strong> If you feel green, you need to raise your blood sugar quickly. A packet of pure sugar, a sugary soda, or a piece of chocolate will neutralize the alkaline effects and relieve the nausea within minutes.</div></li>
+                        </ul>
                     </div>
                 </div>
 
@@ -1432,7 +1497,7 @@
                 <div class="nav-item active" onclick="switchTab('view-home', 0)"><i class="fa-solid fa-house"></i><span>Home</span></div>
                 <div class="nav-item" onclick="switchTab('view-humidor', 1)"><i class="fa-solid fa-box-archive"></i><span>Humidor</span></div>
                 <div class="nav-item" onclick="switchTab('view-journal', 2)"><i class="fa-solid fa-book-open"></i><span>Journal</span></div>
-               <div class="nav-item" onclick="switchTab('view-radar', 3)"><i class="fa-solid fa-bell"></i><span>Updates</span></div>
+               <div class="nav-item" onclick="switchTab('view-radar', 3)"><i class="fa-solid fa-book-bookmark"></i><span>Info</span></div>
                 <div class="nav-item" onclick="switchTab('view-profile', 4)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
             </nav>
         </div>
@@ -2515,8 +2580,8 @@ window.compressImage = function(file) {
                 titleEl.innerText = "Journal.";
                 subtitleEl.innerText = "Tasting Ledger";
             } else if(dockIndex === 3) {
-                titleEl.innerText = "Updates.";
-                subtitleEl.innerText = "Release Notes & News";
+                titleEl.innerText = "Info.";
+                subtitleEl.innerText = "Guides & Education";
             } else if(dockIndex === 4) {
                 titleEl.innerText = "Profile.";
                 subtitleEl.innerText = "Data & Analytics";
@@ -3398,7 +3463,10 @@ window.storeCigar = async function() {
         
         list.innerHTML = html;
         countStat.innerText = totalAgingQuantity; 
-        document.getElementById('stat-alerts').innerText = readyAlertsCount;
+        
+        // Hidden element helps satisfy JS updating logic for peak cigars
+        const alertsEl = document.getElementById('stat-alerts');
+        if (alertsEl) alertsEl.innerText = readyAlertsCount;
         
         let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
         document.getElementById('stat-avg-aging-val').innerText = avgDays;
