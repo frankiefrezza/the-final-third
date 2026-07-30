@@ -913,12 +913,11 @@
                     </div>
                     
                     <div class="stat-box" onclick="switchTab('view-humidor', 1)">
-    <i class="fa-solid fa-fire-flame-curved stat-icon icon-alerts"></i>
-    <p>Peak Aging</p>
-    <h2 id="stat-alerts">0</h2>
-    <span class="stat-sub">Ready</span>
-</div>
-
+                        <i class="fa-solid fa-fire-flame-curved stat-icon icon-alerts"></i>
+                        <p>Peak Aging</p>
+                        <h2 id="stat-alerts">0</h2>
+                        <span class="stat-sub">Ready</span>
+                    </div>
                     
                     <div class="stat-box" onclick="switchTab('view-profile', 4)">
                         <i class="fa-solid fa-star stat-icon icon-rating"></i>
@@ -1242,9 +1241,9 @@
                     <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
                         <p style="margin-bottom: 8px;">A premium handmade cigar is entirely crafted from whole tobacco leaves, meticulously assembled in three distinct layers:</p>
                         <ul class="info-list">
-                            <li><i class="fa-solid fa-leaf info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Wrapper (Capa):</strong> The outermost leaf. Flawless, oily, and highly flavorful. It accounts for up to 60% of the cigar's total flavor profile.</div></li>
-                            <li><i class="fa-solid fa-compress info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Binder (Capote):</strong> The structural leaf that holds the filler tobacco tightly together and ensures a consistent, even burn.</div></li>
-                            <li><i class="fa-solid fa-align-center info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Filler (Tripa):</strong> The core blend of leaves (usually 3 to 5 different types) that dictate the strength and complexity of the cigar.</div></li>
+                            <li><i class="fa-solid fa-leaf info-list-icon"></i><div class="info-list-content"><strong style="color: var(--leather); cursor: pointer;" onclick="openInfoDetail('wrapper')">Wrapper (Capa) <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i>:</strong> The outermost leaf. Flawless, oily, and highly flavorful. It accounts for up to 60% of the cigar's total flavor profile.</div></li>
+                            <li><i class="fa-solid fa-compress info-list-icon"></i><div class="info-list-content"><strong style="color: var(--leather); cursor: pointer;" onclick="openInfoDetail('binder')">Binder (Capote) <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i>:</strong> The structural leaf that holds the filler tobacco tightly together and ensures a consistent, even burn.</div></li>
+                            <li><i class="fa-solid fa-align-center info-list-icon"></i><div class="info-list-content"><strong style="color: var(--leather); cursor: pointer;" onclick="openInfoDetail('filler')">Filler (Tripa) <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i>:</strong> The core blend of leaves (usually 3 to 5 different types) that dictate the strength and complexity of the cigar.</div></li>
                             <li><i class="fa-solid fa-circle-dot info-list-icon"></i><div class="info-list-content"><strong style="color: var(--text-main);">Cap & Foot:</strong> The <em>cap</em> is the enclosed head you cut before smoking. The <em>foot</em> is the open end you light.</div></li>
                         </ul>
                     </div>
@@ -1262,7 +1261,7 @@
                     <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
                         <p style="margin-bottom: 12px;">The goal is to open the cap without unravelling the wrapper. Always cut above the "shoulder" (the curved line where the cap ends).</p>
                         <div class="glass-bento" style="padding: 12px; border-radius: 12px; margin-bottom: 8px;">
-                            <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">Straight Cut</strong>
+                            <strong style="color: var(--leather); display: block; margin-bottom: 4px; cursor: pointer;" onclick="openInfoDetail('straight_cut')">Straight Cut <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></strong>
                             The standard guillotine cut. Removes the cap entirely for a wide, open draw. <span style="color: var(--mint);"><i class="fa-solid fa-check"></i> Best for Torpedos.</span>
                         </div>
                         <div class="glass-bento" style="padding: 12px; border-radius: 12px; margin-bottom: 8px;">
@@ -1312,7 +1311,7 @@
                     <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
                         <p style="margin-bottom: 12px;">A cigar is traditionally divided into three sections, each providing a different experience as moisture and heat build up: the <strong>First Third</strong> (brightest flavors), <strong>Second Third</strong> (the balanced "sweet spot"), and <strong>The Final Third</strong> (deep, intense, and robust).</p>
                         <div style="width: 100%; height: 1px; background: var(--border-subtle); margin: 16px 0;"></div>
-                        <strong style="color: var(--text-main); font-size: 14px;">How to Retrohale</strong>
+                        <strong style="color: var(--leather); font-size: 14px; cursor: pointer;" onclick="openInfoDetail('retrohale')">How to Retrohale <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></strong>
                         <p style="margin-top: 8px;">Much of a cigar's flavor profile is actually perceived through olfactory sensors (smell). Retrohaling is the act of expelling a small amount of smoke through your nasal cavity, rather than just exhaling through the mouth.</p>
                         <ul class="info-list" style="margin-top: 8px;">
                             <li><i class="fa-solid fa-1 info-list-icon"></i><div class="info-list-content">Draw the smoke into your mouth (do not inhale into your lungs).</div></li>
@@ -1334,7 +1333,7 @@
                     <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
                         <p style="margin-bottom: 12px;">When you purchase cigars—especially online where they endure temperature fluctuations during shipping—they experience "transit shock." Letting them rest allows humidity to stabilize evenly, ensuring a straight burn.</p>
                         <div class="glass-bento" style="padding: 12px; border-radius: 12px; margin-bottom: 12px;">
-                            <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">The 70/70 Rule vs. 65/65</strong>
+                            <strong style="color: var(--leather); display: block; margin-bottom: 4px; cursor: pointer;" onclick="openInfoDetail('70_70_rule')">The 70/70 Rule vs. 65/65 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></strong>
                             Historically, 70°F and 70% Relative Humidity (RH) was the standard. However, modern enthusiasts generally prefer a slightly lower environment around <strong>65°F and 65% RH</strong>, which prevents mold and provides a sharper, more reliable burn.
                         </div>
                         <strong style="color: var(--text-main); font-size: 13px;">Cellophane: On or Off?</strong>
@@ -1495,7 +1494,15 @@
             <nav class="bottom-dock">
                 <div class="nav-item active" onclick="switchTab('view-home', 0)"><i class="fa-solid fa-house"></i><span>Home</span></div>
                 <div class="nav-item" onclick="switchTab('view-humidor', 1)"><i class="fa-solid fa-box-archive"></i><span>Humidor</span></div>
-                <div class="nav-item" onclick="switchTab('view-journal', 2)"><i class="fa-solid fa-book"></i><span>Journal</span></div>
+                <div class="nav-item" onclick="switchTab('view-journal', 2)">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 4px;">
+                        <rect x="7" y="2" width="12" height="20" rx="2" />
+                        <rect x="4" y="6" width="5" height="2" rx="1" />
+                        <rect x="4" y="11" width="5" height="2" rx="1" />
+                        <rect x="4" y="16" width="5" height="2" rx="1" />
+                    </svg>
+                    <span>Journal</span>
+                </div>
                <div class="nav-item" onclick="switchTab('view-radar', 3)"><i class="fa-solid fa-book-bookmark"></i><span>Info</span></div>
                 <div class="nav-item" onclick="switchTab('view-profile', 4)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
             </nav>
@@ -1583,6 +1590,23 @@
     </div>
 </div>
 
+<!-- INFO DETAIL MODAL -->
+<div id="info-detail-modal" class="modal-overlay" onclick="closeInfoModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="width: 85%; max-width: 380px; text-align: left; padding: 28px 24px;">
+        <span class="close-modal" onclick="closeInfoModal(event)">&times;</span>
+        <p id="info-modal-badge" class="modal-subtitle" style="color: var(--leather);">TOPIC GUIDE</p>
+        <h2 id="info-modal-title" style="margin-bottom: 16px; font-family: var(--font-serif); font-size: 22px;">Title</h2>
+        
+        <div id="info-modal-media" style="display: none; margin-bottom: 16px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-subtle);">
+            <img id="info-modal-img" src="" style="width: 100%; height: auto; display: block;">
+        </div>
+
+        <div id="info-modal-body" style="font-size: 14px; color: var(--text-dim); line-height: 1.6; max-height: 55vh; overflow-y: auto; padding-right: 4px;">
+            <!-- Dynamic content injects here -->
+        </div>
+    </div>
+</div>
+
 <!-- CUSTOM BENTO DIALOG ENGINE -->
 <div id="custom-dialog-overlay" class="custom-dialog-overlay">
     <div class="custom-dialog-box">
@@ -1597,6 +1621,76 @@
 </div>
 
 <script type="module">
+
+    // --- INFO MODAL DICTIONARY & LOGIC ---
+    window.infoLibrary = {
+        'wrapper': {
+            title: 'Wrapper Anatomy',
+            category: 'Leaf Primings',
+            content: `<strong>Wrapper leaves (Capa)</strong> are the most expensive and flawless leaves on a cigar. They come from specific primings (levels) of the tobacco plant.<br><br>
+            <strong style="color: var(--text-main);">Tobacco Plant Primings:</strong><br><br>
+            • <strong style="color: var(--text-main);">Ligero (Top):</strong> Gets the most sun. Strongest flavor, thickest leaf, highest nicotine.<br>
+            • <strong style="color: var(--text-main);">Viso (Upper Middle):</strong> Rich aroma, supple texture, excellent wrapper quality.<br>
+            • <strong style="color: var(--text-main);">Seco (Lower Middle):</strong> Mild flavor, thinner leaf, excellent burn rate.<br>
+            • <strong style="color: var(--text-main);">Volado (Bottom):</strong> Gets the least sun. Minimal flavor, but highly combustible to keep the cigar lit.`
+        },
+        'binder': {
+            title: 'The Binder (Capote)',
+            category: 'Structure',
+            content: `The binder holds the filler bunch together. It is usually a wrapper leaf that was rejected due to aesthetic blemishes (like prominent veins or sun spots). <br><br>Because it doesn’t need to look pretty, it is selected strictly for its combustibility and structural integrity to ensure the cigar burns evenly.`
+        },
+        'filler': {
+            title: 'The Filler (Tripa)',
+            category: 'Blending',
+            content: `The filler is a carefully proportioned recipe of leaves that gives the cigar its specific tasting notes. <br><br>A master blender will fold 3 to 5 different types of leaves together (accordion style) to create a tunnel for air to flow through.<br><br>
+            • <strong style="color: var(--text-main);">Long-filler:</strong> Consists of whole, intact leaves running the entire length of the cigar (standard for premium cigars).<br>
+            • <strong style="color: var(--text-main);">Short-filler:</strong> Chopped scraps and offcuts (found in cheaper or machine-made cigars).`
+        },
+        'straight_cut': {
+            title: 'Straight Cut Mechanics',
+            category: 'Preparation',
+            content: `The straight cut is the classic standard for parejos (straight-sided cigars). <br><br>
+            <strong style="color: var(--text-main);">The Trick:</strong> Look for the 'shoulder' of the cigar—the point where the rounded cap starts to straighten out into the main body. You only want to cut 2-3 millimeters off the very top. <br><br>If you cut past the shoulder, the structural integrity of the cap is compromised and the wrapper will begin to unravel in your mouth.`
+        },
+        'retrohale': {
+            title: 'The Science of Retrohaling',
+            category: 'Tasting',
+            content: `Your tongue can only taste five basic sensations: sweet, sour, salty, bitter, and umami. Every other complex flavor (cedar, leather, dark chocolate, black pepper) is perceived by the olfactory receptors in your nasal cavity. <br><br>
+            Without retrohaling, you are essentially ignoring the aromatic compounds of the smoke, experiencing only about 30% of what the master blender intended.`
+        },
+        '70_70_rule': {
+            title: 'The 70/70 Myth',
+            category: 'Storage',
+            content: `For decades, 70 degrees Fahrenheit and 70% Relative Humidity was preached as gospel. However, modern enthusiasts realize that 70% RH borders on the threshold for mold growth and can make the filler tobacco swell, causing a dangerously tight draw.<br><br>
+            <strong style="color: var(--text-main);">The Modern Standard:</strong> 65% RH at 65-68°F. This lower moisture level ensures a sharper, crisper burn, prevents wrapper splitting, and practically eliminates the risk of mold.`
+        }
+    };
+
+    window.openInfoDetail = function(topicKey) {
+        const data = window.infoLibrary[topicKey];
+        if(!data) return;
+
+        document.getElementById('info-modal-title').innerText = data.title;
+        document.getElementById('info-modal-badge').innerText = data.category.toUpperCase();
+        document.getElementById('info-modal-body').innerHTML = data.content;
+        
+        const mediaDiv = document.getElementById('info-modal-media');
+        const imgEl = document.getElementById('info-modal-img');
+        
+        if (data.imageSrc) {
+            imgEl.src = data.imageSrc;
+            mediaDiv.style.display = 'block';
+        } else {
+            mediaDiv.style.display = 'none';
+            imgEl.src = '';
+        }
+        
+        document.getElementById('info-detail-modal').classList.add('active');
+    };
+
+    window.closeInfoModal = function(event) {
+        document.getElementById('info-detail-modal').classList.remove('active');
+    };
 
     window.toggleEntryForm = function(wrapperId, chevronId) {
         const wrapper = document.getElementById(wrapperId);
