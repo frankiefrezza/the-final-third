@@ -912,14 +912,13 @@
                         <span class="stat-sub">Cigars</span>
                     </div>
                     
-                    <div class="stat-box" onclick="switchTab('view-radar', 3)">
-                        <i class="fa-solid fa-book-bookmark stat-icon icon-alerts"></i>
-                        <p>Info</p>
-                        <!-- Added hidden element to maintain JS hook for readyAlertsCount if still active -->
-                        <div id="stat-alerts" style="display:none;"></div>
-                        <h2 id="stat-info-count">6</h2>
-                        <span class="stat-sub">Articles</span>
-                    </div>
+                    <div class="stat-box" onclick="switchTab('view-humidor', 1)">
+    <i class="fa-solid fa-fire-flame-curved stat-icon icon-alerts"></i>
+    <p>Peak Aging</p>
+    <h2 id="stat-alerts">0</h2>
+    <span class="stat-sub">Ready</span>
+</div>
+
                     
                     <div class="stat-box" onclick="switchTab('view-profile', 4)">
                         <i class="fa-solid fa-star stat-icon icon-rating"></i>
@@ -1496,7 +1495,7 @@
             <nav class="bottom-dock">
                 <div class="nav-item active" onclick="switchTab('view-home', 0)"><i class="fa-solid fa-house"></i><span>Home</span></div>
                 <div class="nav-item" onclick="switchTab('view-humidor', 1)"><i class="fa-solid fa-box-archive"></i><span>Humidor</span></div>
-                <div class="nav-item" onclick="switchTab('view-journal', 2)"><i class="fa-solid fa-book-open"></i><span>Journal</span></div>
+                <div class="nav-item" onclick="switchTab('view-journal', 2)"><i class="fa-solid fa-book"></i><span>Journal</span></div>
                <div class="nav-item" onclick="switchTab('view-radar', 3)"><i class="fa-solid fa-book-bookmark"></i><span>Info</span></div>
                 <div class="nav-item" onclick="switchTab('view-profile', 4)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
             </nav>
