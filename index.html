@@ -1244,24 +1244,39 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
                         <select id="pairing-wrapper" class="form-input form-select" style="margin-bottom: 0;">
                             <option value="" disabled selected>Select Wrapper</option>
+                            <option value="candela">Candela</option>
                             <option value="connecticut">Connecticut</option>
+                            <option value="cameroon">Cameroon</option>
+                            <option value="sumatra">Sumatra</option>
                             <option value="habano">Habano</option>
+                            <option value="rosado">Rosado</option>
+                            <option value="corojo">Corojo</option>
+                            <option value="broadleaf">Broadleaf</option>
                             <option value="maduro">Maduro</option>
                             <option value="oscuro">Oscuro</option>
                         </select>
                         <select id="pairing-binder" class="form-input form-select" style="margin-bottom: 0;">
                             <option value="" disabled selected>Select Binder</option>
-                            <option value="corojo">Corojo</option>
-                            <option value="criollo">Criollo</option>
+                            <option value="connecticut">Connecticut</option>
+                            <option value="olor">Dominican Olor</option>
                             <option value="sumatra">Sumatra</option>
+                            <option value="criollo">Criollo</option>
+                            <option value="habano">Habano</option>
+                            <option value="san_andres">San Andrés</option>
+                            <option value="corojo">Corojo</option>
                             <option value="broadleaf">Broadleaf</option>
                         </select>
                     </div>
                     <button class="btn-primary" style="padding: 14px; font-size: 11px;" onclick="generatePairing()">Find Perfect Pairing <i class="fa-solid fa-wand-magic-sparkles"></i></button>
                     <div id="pairing-result-box" class="glass-bento" style="display: none; padding: 16px; border-radius: 12px; margin-top: 16px; text-align: center;">
                         <i id="pairing-icon" class="fa-solid fa-glass-water" style="color: var(--gold); font-size: 20px; margin-bottom: 8px;"></i>
-                        <div style="font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Suggested Drink</div>
-                        <div id="pairing-result-text" style="font-family: var(--font-serif); font-size: 16px; color: var(--text-main);"></div>
+                        <div id="pairing-title" style="font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Suggested Drink</div>
+                        <div id="pairing-result-text" style="font-family: var(--font-serif); font-size: 16px; color: var(--text-main); margin-bottom: 8px;"></div>
+                        <div id="pairing-reasoning" style="font-size: 12px; color: var(--text-dim); line-height: 1.4; border-top: 1px solid var(--border-subtle); padding-top: 8px; margin-bottom: 12px;"></div>
+                        
+                        <button class="btn-secondary" style="margin-bottom: 0; padding: 10px; font-size: 11px;" onclick="savePairingToLedger()">
+                            <i class="fa-solid fa-book-open"></i> Log this Pairing
+                        </button>
                     </div>
                 </div>
 
@@ -1667,48 +1682,69 @@
 <script type="module">
 
     // --- PAIRING GUIDE ENGINE ---
-    const pairingsDB = {
-      "connecticut": {
-        "corojo": { text: "Light Pilsner or a creamy Cappuccino.", icon: "fa-mug-hot" },
-        "criollo": { text: "White Rum or a crisp Sauvignon Blanc.", icon: "fa-wine-glass" },
-        "sumatra": { text: "Earl Grey tea or a mild Amber Ale.", icon: "fa-beer-mug-empty" },
-        "broadleaf": { text: "Mild Bourbon or a Latte.", icon: "fa-whiskey-glass" }
-      },
-      "habano": {
-        "corojo": { text: "Aged Rum or an oaky Bourbon.", icon: "fa-whiskey-glass" },
-        "criollo": { text: "Single Malt Scotch (Speyside) or a robust IPA.", icon: "fa-beer-mug-empty" },
-        "sumatra": { text: "Spiced Rum or a dry Cabernet Sauvignon.", icon: "fa-wine-glass" },
-        "broadleaf": { text: "Rye Whiskey or a Dark Stout.", icon: "fa-whiskey-glass" }
-      },
-      "maduro": {
-        "corojo": { text: "Dark Porter or a heavy Cognac.", icon: "fa-martini-glass" },
-        "criollo": { text: "High-rye Bourbon or a dark roast Espresso.", icon: "fa-mug-hot" },
-        "sumatra": { text: "Aged Scotch (Islay) or a rich Port wine.", icon: "fa-wine-glass" },
-        "broadleaf": { text: "Anejo Tequila or a strong Cold Brew.", icon: "fa-whiskey-glass" }
-      },
-      "oscuro": {
-        "corojo": { text: "Barrel-proof Bourbon or a Russian Imperial Stout.", icon: "fa-beer-mug-empty" },
-        "criollo": { text: "Peaty Scotch or a strong Cortado.", icon: "fa-mug-hot" },
-        "sumatra": { text: "Dark Rum or a vintage Tawny Port.", icon: "fa-wine-glass" },
-        "broadleaf": { text: "Mezcal or black Turkish coffee.", icon: "fa-whiskey-glass" }
-      }
+    const leafProfiles = {
+        wrappers: {
+            "candela": { strength: 1, name: "Candela", notes: "grassy and herbal", drinks: [{n: "Green Tea", i: "fa-mug-hot"}, {n: "Saison Ale", i: "fa-beer-mug-empty"}, {n: "Gin & Tonic", i: "fa-martini-glass"}] },
+            "connecticut": { strength: 1, name: "Connecticut", notes: "creamy and nutty", drinks: [{n: "Light Pilsner", i: "fa-beer-mug-empty"}, {n: "White Burgundy", i: "fa-wine-glass"}, {n: "Cappuccino", i: "fa-mug-hot"}] },
+            "cameroon": { strength: 2, name: "Cameroon", notes: "baking spice and cedar", drinks: [{n: "Amber Ale", i: "fa-beer-mug-empty"}, {n: "Speyside Scotch", i: "fa-whiskey-glass"}, {n: "Ginger Beer", i: "fa-glass-water"}] },
+            "sumatra": { strength: 2, name: "Sumatra", notes: "floral and cinnamon", drinks: [{n: "Earl Grey Tea", i: "fa-mug-hot"}, {n: "Aged White Rum", i: "fa-whiskey-glass"}, {n: "Pinot Noir", i: "fa-wine-glass"}] },
+            "habano": { strength: 3, name: "Habano", notes: "earthy and leathery", drinks: [{n: "Oaky Bourbon", i: "fa-whiskey-glass"}, {n: "Brown Ale", i: "fa-beer-mug-empty"}, {n: "Cabernet Sauvignon", i: "fa-wine-glass"}] },
+            "rosado": { strength: 3, name: "Rosado", notes: "spicy and sweet", drinks: [{n: "Rye Whiskey", i: "fa-whiskey-glass"}, {n: "Spiced Rum", i: "fa-whiskey-glass"}, {n: "Pale Ale", i: "fa-beer-mug-empty"}] },
+            "corojo": { strength: 4, name: "Corojo", notes: "heavy pepper and cedar", drinks: [{n: "High-Rye Bourbon", i: "fa-whiskey-glass"}, {n: "Islay Scotch", i: "fa-whiskey-glass"}, {n: "West Coast IPA", i: "fa-beer-mug-empty"}] },
+            "broadleaf": { strength: 4, name: "Broadleaf", notes: "dark chocolate and espresso", drinks: [{n: "Añejo Tequila", i: "fa-whiskey-glass"}, {n: "Dark Porter", i: "fa-beer-mug-empty"}, {n: "Cold Brew Coffee", i: "fa-mug-hot"}] },
+            "maduro": { strength: 5, name: "Maduro", notes: "sweet earth and cocoa", drinks: [{n: "Dark Rum", i: "fa-whiskey-glass"}, {n: "Tawny Port", i: "fa-wine-glass"}, {n: "Oatmeal Stout", i: "fa-beer-mug-empty"}] },
+            "oscuro": { strength: 5, name: "Oscuro", notes: "black pepper and molasses", drinks: [{n: "Barrel-proof Bourbon", i: "fa-whiskey-glass"}, {n: "Mezcal", i: "fa-whiskey-glass"}, {n: "Turkish Coffee", i: "fa-mug-hot"}] }
+        },
+        binders: {
+            "connecticut": { mod: 0, effect: "smooths out the blend" },
+            "olor": { mod: 0, effect: "adds a dry, woody finish" },
+            "sumatra": { mod: 1, effect: "adds a touch of floral sweetness" },
+            "criollo": { mod: 1, effect: "adds earthy richness" },
+            "habano": { mod: 2, effect: "adds deep leathery notes" },
+            "san_andres": { mod: 2, effect: "adds dense chocolate undertones" },
+            "corojo": { mod: 3, effect: "amplifies the spice kick" },
+            "broadleaf": { mod: 3, effect: "adds heavy, syrupy sweetness" }
+        }
     };
 
+    window.currentSuggestedDrink = "";
+    window.currentSuggestedWrapper = "";
+
     window.generatePairing = function() {
-        const wrapper = document.getElementById("pairing-wrapper").value;
-        const binder = document.getElementById("pairing-binder").value;
+        const wrapperKey = document.getElementById("pairing-wrapper").value;
+        const binderKey = document.getElementById("pairing-binder").value;
         
-        if (!wrapper || !binder) {
+        if (!wrapperKey || !binderKey) {
             window.customAlert("Please select both a wrapper and a binder to generate a pairing.", "Missing Selections");
             return;
         }
         
-        const match = pairingsDB[wrapper]?.[binder];
-        const suggestionText = match ? match.text : "A neat Bourbon or an aged Rum is a solid choice.";
-        const iconClass = match ? match.icon : "fa-whiskey-glass";
+        const wrapper = leafProfiles.wrappers[wrapperKey];
+        const binder = leafProfiles.binders[binderKey];
         
-        document.getElementById("pairing-result-text").innerText = suggestionText;
-        document.getElementById("pairing-icon").className = `fa-solid ${iconClass}`;
+        // Dynamic selection based on daily rotation (using date seed for consistency)
+        const daySeed = new Date().getDay();
+        const drinkTarget = wrapper.drinks[daySeed % wrapper.drinks.length];
+        
+        // Calculate intensity profile
+        const totalIntensity = wrapper.strength + (binder.mod * 0.5);
+        let bodyProfile = "Medium";
+        if (totalIntensity <= 1.5) bodyProfile = "Mild";
+        else if (totalIntensity > 1.5 && totalIntensity <= 2.5) bodyProfile = "Mild-Medium";
+        else if (totalIntensity > 3.5 && totalIntensity <= 4.5) bodyProfile = "Medium-Full";
+        else if (totalIntensity > 4.5) bodyProfile = "Full";
+
+        document.getElementById("pairing-title").innerText = `${bodyProfile} Body Profile`;
+        document.getElementById("pairing-result-text").innerText = drinkTarget.n;
+        document.getElementById("pairing-icon").className = `fa-solid ${drinkTarget.i}`;
+        
+        document.getElementById("pairing-reasoning").innerHTML = 
+            `The wrapper brings <strong>${wrapper.notes}</strong>, while the binder <strong>${binder.effect}</strong>. ` +
+            `This beverage cuts through the palate perfectly for this combination.`;
+        
+        // Save state for the ledger button
+        window.currentSuggestedDrink = drinkTarget.n;
+        window.currentSuggestedWrapper = wrapper.name;
         
         const resultBox = document.getElementById("pairing-result-box");
         resultBox.style.display = "block";
@@ -1717,6 +1753,26 @@
             resultBox.style.transition = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
             resultBox.style.transform = "scale(1)";
         }, 10);
+    };
+
+    window.savePairingToLedger = function() {
+        if(!window.currentSuggestedDrink) return;
+        
+        switchTab('view-journal', 2);
+        
+        // Open the log form if closed
+        const logWrapper = document.getElementById('journal-form-wrapper');
+        const logChevron = document.getElementById('journal-form-chevron');
+        if (logWrapper && logWrapper.style.display === 'none') {
+            logWrapper.style.display = 'block';
+            logChevron.style.transform = 'rotate(180deg)';
+        }
+        
+        // Pre-fill
+        document.getElementById('log-pairing').value = window.currentSuggestedDrink;
+        document.getElementById('log-wrapper').value = window.currentSuggestedWrapper;
+        
+        document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     // --- INFO MODAL DICTIONARY & LOGIC ---
