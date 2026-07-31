@@ -1229,6 +1229,42 @@
                     <div class="section-title">Information & Guides</div>
                 </div>
 
+                <!-- Pairing Guide Tool -->
+                <div class="log-card" style="margin-bottom: 24px; text-align: left;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Flavor Matching</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Pairing Guide</div>
+                        </div>
+                        <i class="fa-solid fa-martini-glass" style="color: var(--leather); font-size: 18px;"></i>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 16px;">
+                        Select your cigar's wrapper and binder to discover the perfect complementary beverage.
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <select id="pairing-wrapper" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Select Wrapper</option>
+                            <option value="connecticut">Connecticut</option>
+                            <option value="habano">Habano</option>
+                            <option value="maduro">Maduro</option>
+                            <option value="oscuro">Oscuro</option>
+                        </select>
+                        <select id="pairing-binder" class="form-input form-select" style="margin-bottom: 0;">
+                            <option value="" disabled selected>Select Binder</option>
+                            <option value="corojo">Corojo</option>
+                            <option value="criollo">Criollo</option>
+                            <option value="sumatra">Sumatra</option>
+                            <option value="broadleaf">Broadleaf</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" style="padding: 14px; font-size: 11px;" onclick="generatePairing()">Find Perfect Pairing <i class="fa-solid fa-wand-magic-sparkles"></i></button>
+                    <div id="pairing-result-box" class="glass-bento" style="display: none; padding: 16px; border-radius: 12px; margin-top: 16px; text-align: center;">
+                        <i id="pairing-icon" class="fa-solid fa-glass-water" style="color: var(--gold); font-size: 20px; margin-bottom: 8px;"></i>
+                        <div style="font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Suggested Drink</div>
+                        <div id="pairing-result-text" style="font-family: var(--font-serif); font-size: 16px; color: var(--text-main);"></div>
+                    </div>
+                </div>
+
                 <!-- Anatomy -->
                 <div class="log-card" style="margin-bottom: 24px; text-align: left;">
                     <div class="log-header" style="margin-bottom: 16px;">
@@ -1629,6 +1665,59 @@
 </div>
 
 <script type="module">
+
+    // --- PAIRING GUIDE ENGINE ---
+    const pairingsDB = {
+      "connecticut": {
+        "corojo": { text: "Light Pilsner or a creamy Cappuccino.", icon: "fa-mug-hot" },
+        "criollo": { text: "White Rum or a crisp Sauvignon Blanc.", icon: "fa-wine-glass" },
+        "sumatra": { text: "Earl Grey tea or a mild Amber Ale.", icon: "fa-beer-mug-empty" },
+        "broadleaf": { text: "Mild Bourbon or a Latte.", icon: "fa-whiskey-glass" }
+      },
+      "habano": {
+        "corojo": { text: "Aged Rum or an oaky Bourbon.", icon: "fa-whiskey-glass" },
+        "criollo": { text: "Single Malt Scotch (Speyside) or a robust IPA.", icon: "fa-beer-mug-empty" },
+        "sumatra": { text: "Spiced Rum or a dry Cabernet Sauvignon.", icon: "fa-wine-glass" },
+        "broadleaf": { text: "Rye Whiskey or a Dark Stout.", icon: "fa-whiskey-glass" }
+      },
+      "maduro": {
+        "corojo": { text: "Dark Porter or a heavy Cognac.", icon: "fa-martini-glass" },
+        "criollo": { text: "High-rye Bourbon or a dark roast Espresso.", icon: "fa-mug-hot" },
+        "sumatra": { text: "Aged Scotch (Islay) or a rich Port wine.", icon: "fa-wine-glass" },
+        "broadleaf": { text: "Anejo Tequila or a strong Cold Brew.", icon: "fa-whiskey-glass" }
+      },
+      "oscuro": {
+        "corojo": { text: "Barrel-proof Bourbon or a Russian Imperial Stout.", icon: "fa-beer-mug-empty" },
+        "criollo": { text: "Peaty Scotch or a strong Cortado.", icon: "fa-mug-hot" },
+        "sumatra": { text: "Dark Rum or a vintage Tawny Port.", icon: "fa-wine-glass" },
+        "broadleaf": { text: "Mezcal or black Turkish coffee.", icon: "fa-whiskey-glass" }
+      }
+    };
+
+    window.generatePairing = function() {
+        const wrapper = document.getElementById("pairing-wrapper").value;
+        const binder = document.getElementById("pairing-binder").value;
+        
+        if (!wrapper || !binder) {
+            window.customAlert("Please select both a wrapper and a binder to generate a pairing.", "Missing Selections");
+            return;
+        }
+        
+        const match = pairingsDB[wrapper]?.[binder];
+        const suggestionText = match ? match.text : "A neat Bourbon or an aged Rum is a solid choice.";
+        const iconClass = match ? match.icon : "fa-whiskey-glass";
+        
+        document.getElementById("pairing-result-text").innerText = suggestionText;
+        document.getElementById("pairing-icon").className = `fa-solid ${iconClass}`;
+        
+        const resultBox = document.getElementById("pairing-result-box");
+        resultBox.style.display = "block";
+        resultBox.style.transform = "scale(0.95)";
+        setTimeout(() => {
+            resultBox.style.transition = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+            resultBox.style.transform = "scale(1)";
+        }, 10);
+    };
 
     // --- INFO MODAL DICTIONARY & LOGIC ---
     window.infoLibrary = {
