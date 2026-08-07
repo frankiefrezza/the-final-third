@@ -379,7 +379,7 @@
             letter-spacing: 1px; 
         }
 
-                /* --- HOME ELEMENTS & GLASSMORPHISM SHARED CLASS --- */
+        /* --- HOME ELEMENTS & GLASSMORPHISM SHARED CLASS --- */
         .stats-grid { 
             display: flex; 
             gap: 8px;
@@ -388,28 +388,14 @@
         }
 
         .log-card, .stat-box, .glass-bento { 
-            /* 1. Subtle angled gradient for a 3D light-source effect */
-            background: linear-gradient(145deg, rgba(42, 42, 42, 0.9) 0%, rgba(28, 28, 28, 0.95) 100%) !important;
+            background: var(--surface-glass-bento) !important;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-radius: 16px; 
-            
-            /* 2. Beveled light-catching edges (gold top/left, dark bottom/right) */
-            border: 1px solid rgba(255, 255, 255, 0.03) !important;
-            border-top: 1px solid rgba(212, 175, 55, 0.18) !important;
-            border-left: 1px solid rgba(212, 175, 55, 0.08) !important;
-            
-            /* 3. Deeper drop shadow for elevation */
-            box-shadow: 0 12px 24px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass-bento) !important;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
             position: relative; 
-            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.3s; 
-        }
-
-        /* 4. Tactile "press" effect when tapping any of the boxes */
-        .log-card:active, .stat-box:active, .glass-bento:active {
-            transform: scale(0.98) translateY(2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.02);
-            border-color: var(--leather) !important; 
+            transition: transform 0.2s, background-color 0.3s, border-color 0.3s; 
         }
 
         .log-card {
@@ -429,6 +415,7 @@
             min-width: 0;
             overflow: hidden; 
         }
+        .stat-box:active { transform: scale(0.98); border-color: var(--leather) !important; }
 
         /* The top colored bar accent */
         .stat-box::before {
@@ -442,7 +429,6 @@
             border-radius: 0 0 4px 4px;
             transition: background 0.3s;
         }
-        
         .stat-box:hover::before { background: var(--leather); }
 
         .stat-icon { font-size: 18px; color: var(--text-dim); margin-bottom: 6px; transition: color 0.3s; }
