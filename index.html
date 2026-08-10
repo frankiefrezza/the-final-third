@@ -751,6 +751,13 @@
         .info-list-icon { color: var(--leather); margin-top: 2px; font-size: 12px; width: 14px; text-align: center; flex-shrink: 0; }
         .info-list-content { flex: 1; }
 
+        /* Visual Vitola Guide Styles */
+        .vitola-list-container { display: flex; flex-direction: column; gap: 8px; }
+        .vitola-card { background: var(--surface-glass-bento); border: 1px solid var(--border-glass-bento); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 16px; transition: transform 0.2s; }
+        .vitola-img { width: 60px; height: auto; border-radius: 4px; object-fit: contain; }
+        .vitola-name { color: var(--text-main); margin: 0 0 4px 0; font-size: 15px; font-weight: 800; font-family: var(--font-serif); }
+        .vitola-dimensions { color: var(--text-dim); margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+
     </style>
 </head>
 <body>
@@ -890,7 +897,7 @@
 
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800; color: var(--text-main);">
-                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">User</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
+                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">Smiljan</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
                 </span>
                 <span id="dynamic-layer-2-subtitle" style="color: var(--text-dim); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; display: block; font-family: var(--font-sans);">Vault Overview</span>
             </div>
@@ -1307,6 +1314,118 @@
                     </div>
                 </div>
 
+                <!-- Visual Vitola Guide -->
+                <div class="log-card" style="margin-bottom: 24px; text-align: left;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Shapes & Sizes</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Visual Vitola Guide</div>
+                        </div>
+                        <i class="fa-solid fa-ruler-combined" style="color: var(--leather); font-size: 18px;"></i>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 16px;">
+                        Reference standard cigar sizes and their traditional ring gauges. 
+                    </div>
+                    <div class="vitola-list-container">
+                        <!-- Robusto -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/robusto.png" alt="Robusto" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Robusto</h3>
+                                <p class="vitola-dimensions">5" x 50</p>
+                            </div>
+                        </div>
+                        <!-- Toro -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/toro.png" alt="Toro" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Toro</h3>
+                                <p class="vitola-dimensions">6" x 52</p>
+                            </div>
+                        </div>
+                        <!-- Churchill -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/churchill.png" alt="Churchill" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Churchill</h3>
+                                <p class="vitola-dimensions">7" x 47</p>
+                            </div>
+                        </div>
+                        <!-- Corona -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/corona.png" alt="Corona" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Corona</h3>
+                                <p class="vitola-dimensions">5.5" x 42</p>
+                            </div>
+                        </div>
+                        <!-- Gordo -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/gordo.png" alt="Gordo" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Gordo</h3>
+                                <p class="vitola-dimensions">6" x 60</p>
+                            </div>
+                        </div>
+                        <!-- Panatela -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/panatela.png" alt="Panatela" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Panatela</h3>
+                                <p class="vitola-dimensions">6" x 34</p>
+                            </div>
+                        </div>
+                        <!-- Lancero -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/lancero.png" alt="Lancero" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Lancero</h3>
+                                <p class="vitola-dimensions">7.5" x 38</p>
+                            </div>
+                        </div>
+                        <!-- Lonsdale -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/lonsdale.png" alt="Lonsdale" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Lonsdale</h3>
+                                <p class="vitola-dimensions">6.5" x 42</p>
+                            </div>
+                        </div>
+                        <!-- Belicoso -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/belicoso.png" alt="Belicoso" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Belicoso</h3>
+                                <p class="vitola-dimensions">5.5" x 52</p>
+                            </div>
+                        </div>
+                        <!-- Torpedo -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/torpedo.png" alt="Torpedo" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Torpedo</h3>
+                                <p class="vitola-dimensions">6.125" x 52</p>
+                            </div>
+                        </div>
+                        <!-- Petit Corona -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/petit_corona.png" alt="Petit Corona" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Petit Corona</h3>
+                                <p class="vitola-dimensions">4.5" x 42</p>
+                            </div>
+                        </div>
+                        <!-- Perfecto -->
+                        <div class="glass-bento vitola-card">
+                            <img src="/assets/vitolas/perfecto.png" alt="Perfecto" class="vitola-img" onerror="this.style.display='none'">
+                            <div class="vitola-details">
+                                <h3 class="vitola-name">Perfecto</h3>
+                                <p class="vitola-dimensions">Tapered at both ends</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- The Cut -->
                 <div class="log-card" style="margin-bottom: 24px; text-align: left;">
                     <div class="log-header" style="margin-bottom: 16px;">
@@ -1429,7 +1548,7 @@
                             <i class="fa-solid fa-camera" style="font-size: 16px;"></i>
                         </div>
                     </div>
-                    <div id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 16px;">User</div>
+                    <div id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 16px;">Smiljan</div>
                     <div id="profile-display-email" style="font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 4px;">user@email.com</div>
                 </div>
 
@@ -2195,7 +2314,7 @@
     const auth = getAuth(app);
     const storage = getStorage(app);
 
-    window.currentUserName = "User";
+    window.currentUserName = "Smiljan";
 
     // --- CROWDSOURCING HELPER FUNCTION ---
     window.brandLibrary = [];
