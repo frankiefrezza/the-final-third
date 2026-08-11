@@ -168,7 +168,7 @@
 
         /* Material Elevated Panel (24dp) */
         .glass-panel {
-            background: var(--surface-24dp);
+            background: var(--surface-80dp);
             border: 1px solid var(--border-subtle);
             border-radius: 32px;
             padding: 32px 24px;
@@ -233,14 +233,23 @@
         }
 
         .luxury-input:focus + .input-icon,
-        .input-group:focus-within .input-icon {
-            color: var(--leather);
-        }
+.input-group:focus-within .input-icon {
+    color: var(--leather);
+}
 
-        /* Primary Button */
-        .btn-cigar-band {
-            width: 100%;
-            background: var(--leather);
+.luxury-input:-webkit-autofill,
+.luxury-input:-webkit-autofill:hover, 
+.luxury-input:-webkit-autofill:focus, 
+.luxury-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--surface-01dp) inset !important;
+    -webkit-text-fill-color: var(--text-main) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Primary Button */
+.btn-cigar-band {
+    width: 100%;
+    background: var(--leather);
             color: #121212;
             padding: 20px;
             border-radius: 16px;
