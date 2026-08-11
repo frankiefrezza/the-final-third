@@ -28,40 +28,57 @@
     </script>
 
     <style>
-        /* --- DEFAULT DARK THEME (CHARCOAL & GOLD) --- */
+        /* --- DEFAULT DARK THEME (MATERIAL DESIGN STANDARD) --- */
         :root {
-            --bg-base: #1A1A1A;
-            --bg-gradient-start: #2C2C2C;
-            --bg-gradient-end: #1A1A1A;
-            --layer2-grad-start: #333333;
-            --layer2-grad-end: #242424;
-            --surface-1: #242424;
-            --surface-2: #2E2E2E;
-            --surface-glass: rgba(36, 36, 36, 0.85);
+            /* Base Surface #121212 for 15.8:1 contrast with 100% white */
+            --bg-base: #121212; 
             
-            /* Glass Bento Variables */
-            --surface-glass-bento: rgba(36, 36, 36, 0.45);
-            --border-glass-bento: rgba(212, 175, 55, 0.15);
+            /* Elevation levels based on Material Design white overlays */
+            --surface-00dp: #121212;
+            --surface-01dp: #1E1E1E; /* 5% */
+            --surface-02dp: #232323; /* 7% */
+            --surface-03dp: #252525; /* 8% */
+            --surface-04dp: #272727; /* 9% */
+            --surface-06dp: #2C2C2C; /* 11% */
+            --surface-08dp: #2E2E2E; /* 12% */
+            --surface-12dp: #333333; /* 14% */
+            --surface-16dp: #363636; /* 15% */
+            --surface-24dp: #383838; /* 16% */
+
+            --bg-gradient-start: var(--surface-01dp);
+            --bg-gradient-end: var(--bg-base);
+            --layer2-grad-start: var(--surface-02dp);
+            --layer2-grad-end: var(--surface-01dp);
             
-            --text-main: #F5F5F5;
-            --text-dim: #A3A3A3;
-            --border-subtle: #3D3D3D;
+            /* Replaced generic surfaces with specific elevation mappings */
+            --surface-1: var(--surface-02dp);
+            --surface-2: var(--surface-04dp);
             
-            --walnut: #5C4033;
+            /* Converted glass variables to opaque elevation surfaces for proper depth expression */
+            --surface-glass-bento: var(--surface-02dp);
+            --border-glass-bento: rgba(255, 255, 255, 0.05);
+            
+            /* Contrast & Accessibility */
+            --text-main: #FFFFFF; /* 100% White */
+            --text-dim: rgba(255, 255, 255, 0.70);
+            --border-subtle: rgba(255, 255, 255, 0.12);
+            
+            /* Vibrant Primary & Accent Colors */
+            --walnut: #8B4513;
             --leather: #D4AF37; 
             --gold: #F1C40F; 
-            --danger: #E15A5A;
+            --danger: #EF4444; 
             --mint: #4ADE80;
 
             --btn-leather: #D4AF37; 
             --btn-gold: #F1C40F;    
             
-            --shadow-subtle: rgba(0,0,0,0.3);
+            --shadow-subtle: rgba(0,0,0,0.4);
             --shadow-strong: rgba(0,0,0,0.6);
-            --shadow-layer3: rgba(0,0,0,0.7);
+            --shadow-layer3: rgba(0,0,0,0.8);
             --glass-border: rgba(255, 255, 255, 0.08);
-            --overlay-bg: rgba(26, 26, 26, 0.85);
-            --stat-bg-end: #141414;
+            --overlay-bg: rgba(0, 0, 0, 0.6);
+            --stat-bg-end: var(--bg-base);
             
             --font-sans: 'Inter', -apple-system, sans-serif;
             --font-serif: 'DM Serif Display', Georgia, serif;
@@ -77,9 +94,13 @@
             --layer2-grad-end: #F0EDE4;
             --surface-1: #FFFFFF;
             --surface-2: #F0EDE4;
-            --surface-glass: rgba(255, 255, 255, 0.85);
             
-            /* Glass Bento Variables */
+            --surface-02dp: #FFFFFF;
+            --surface-04dp: #FFFFFF;
+            --surface-08dp: #FFFFFF;
+            --surface-16dp: #FFFFFF;
+            --surface-24dp: #FFFFFF;
+            
             --surface-glass-bento: rgba(255, 255, 255, 0.6);
             --border-glass-bento: rgba(194, 150, 98, 0.25);
             
@@ -87,8 +108,13 @@
             --text-dim: #6B7280;
             --border-subtle: #E2DDD3;
 
-            --btn-leather: #C29662; 
-            --btn-gold: #E5C768;    
+            --leather: #D4AF37; 
+            --gold: #F1C40F; 
+            --danger: #EF4444;
+            --mint: #22C55E;
+
+            --btn-leather: #D4AF37; 
+            --btn-gold: #F1C40F;    
             
             --shadow-subtle: rgba(0,0,0,0.04);
             --shadow-strong: rgba(0,0,0,0.08);
@@ -116,7 +142,7 @@
             overflow: hidden;
             background-image: 
                 radial-gradient(circle at 50% -10%, rgba(212, 175, 55, 0.12) 0%, transparent 55%),
-                linear-gradient(180deg, var(--bg-gradient-start) 0%, #111111 100%);
+                linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-base) 100%);
         }
 
         /* Adjusted Logo */
@@ -133,25 +159,23 @@
             font-family: var(--font-serif);
             color: var(--leather);
             font-size: 14px;
-            opacity: 0.6;
+            opacity: 0.8;
             margin-bottom: 40px;
             position: relative;
             z-index: 2;
             letter-spacing: 0.5px;
         }
 
-        /* Premium Glassmorphic Panel */
+        /* Material Elevated Panel (24dp) */
         .glass-panel {
-            background: rgba(30, 30, 30, 0.4);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(212, 175, 55, 0.15);
+            background: var(--surface-24dp);
+            border: 1px solid var(--border-subtle);
             border-radius: 32px;
             padding: 32px 24px;
             width: 100%;
             position: relative;
             z-index: 2;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+            box-shadow: 0 16px 24px rgba(0,0,0,0.4), 0 6px 30px rgba(0,0,0,0.3);
         }
 
         .welcome-heading {
@@ -171,7 +195,7 @@
             padding: 0 10px;
         }
 
-        /* Luxury Input Fields */
+        /* Luxury Input Fields (01dp surface inside 24dp dialog) */
         .input-group {
             position: relative;
             margin-bottom: 20px;
@@ -190,7 +214,7 @@
 
         .luxury-input {
             width: 100%;
-            background: rgba(20, 20, 20, 0.6);
+            background: var(--surface-01dp);
             border: 1px solid var(--border-subtle);
             border-radius: 16px;
             color: var(--text-main);
@@ -204,8 +228,8 @@
 
         .luxury-input:focus {
             border-color: var(--leather);
-            background: rgba(30, 30, 30, 0.8);
-            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            background: var(--surface-04dp);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
         }
 
         .luxury-input:focus + .input-icon,
@@ -213,11 +237,11 @@
             color: var(--leather);
         }
 
-        /* Primary Button - Cigar Band Style */
+        /* Primary Button */
         .btn-cigar-band {
             width: 100%;
-            background: linear-gradient(135deg, #F9D423 0%, #D4AF37 100%);
-            color: #111;
+            background: var(--leather);
+            color: #121212;
             padding: 20px;
             border-radius: 16px;
             font-size: 13px;
@@ -231,38 +255,26 @@
             justify-content: center;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.25);
             margin-bottom: 24px;
             position: relative;
             overflow: hidden;
         }
 
-        .btn-cigar-band::after {
-            content: '';
-            position: absolute;
-            top: 4px; left: 4px; right: 4px; bottom: 4px;
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 12px;
-            pointer-events: none;
-        }
-
         .btn-cigar-band:active {
             transform: scale(0.97);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
         }
 
         /* Minimal Beta Card */
         .beta-card-minimal {
             margin-top: auto;
             padding: 16px;
-            background: rgba(20, 20, 20, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--surface-01dp);
+            border: 1px solid var(--border-subtle);
             border-radius: 16px;
             display: flex;
             align-items: flex-start;
             gap: 12px;
             text-align: left;
-            backdrop-filter: blur(10px);
             z-index: 2;
             position: relative;
             width: 100%;
@@ -298,39 +310,36 @@
         .auth-flex-links { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding: 0 8px; }
 
         /* Generic App Buttons */
-        .btn-primary { width: 100%; background: var(--surface-1); color: var(--leather); padding: 18px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(212, 175, 55, 0.3); cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s, color 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-primary { width: 100%; background: transparent; color: var(--leather); padding: 18px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid var(--leather); cursor: pointer; transition: transform 0.2s, background 0.3s, opacity 0.3s, color 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
         .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 12px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
-        .btn-secondary.attached { background: var(--surface-1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); }
+        .btn-secondary.attached { background: var(--surface-04dp); color: var(--leather); border: 1px solid var(--leather); border-style: solid; }
 
         /* --- PERSISTENT HEADER (LAYER 1) --- */
         .dash-header {
             text-align: center;
             padding: 20px 16px;
-            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 65%);
+            background: var(--bg-base);
         }
 
         /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
         
-                /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
+        /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
         .layer-3-container { 
             background-color: var(--bg-base);
-            background-image: 
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             border-radius: 40px 40px 0 0; 
             margin-top: -40px; 
             position: relative; 
             flex-grow: 1; 
-            border-top: 1px solid var(--glass-border); 
+            border-top: 1px solid var(--border-subtle); 
             box-shadow: 0 -8px 24px var(--shadow-layer3); 
             overflow: hidden; 
             z-index: 15; 
             transition: background-color 0.3s; 
         }
-
 
         /* --- VIEW SECTIONS & ANIMATIONS --- */
         .view-section { position: absolute; top: 0; bottom: 0; left: 0; right: 0; padding: 32px 16px calc(110px + env(safe-area-inset-bottom)) 16px; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
@@ -357,7 +366,7 @@
             margin-bottom: 20px; 
             margin-top: 36px; 
             padding-bottom: 8px;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            border-bottom: 1px solid var(--border-subtle);
         }
         .section-title { 
             font-family: var(--font-serif); 
@@ -386,7 +395,7 @@
             letter-spacing: 1px; 
         }
 
-        /* --- HOME ELEMENTS & GLASSMORPHISM SHARED CLASS --- */
+        /* --- HOME ELEMENTS & ELEVATION SURFACES SHARED CLASS --- */
         .stats-grid { 
             display: flex; 
             gap: 8px;
@@ -394,13 +403,12 @@
             width: 100%;
         }
 
+        /* Material Elevated Cards (02dp) */
         .log-card, .stat-box, .glass-bento { 
-            background: var(--surface-glass-bento) !important;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: var(--surface-02dp) !important;
             border-radius: 16px; 
             border: 1px solid var(--border-glass-bento) !important;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+            box-shadow: 0 4px 5px rgba(0,0,0,0.14), 0 1px 10px rgba(0,0,0,0.12);
             position: relative; 
             transition: transform 0.2s, background-color 0.3s, border-color 0.3s; 
         }
@@ -456,9 +464,9 @@
         
         .badge { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; }
         
-        .badge-indigo { background: var(--surface-1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); }
-        .badge-mint { background: var(--surface-1); color: var(--mint); border: 1px solid rgba(74, 222, 128, 0.3); }
-        .badge-rose { background: var(--surface-1); color: var(--danger); border: 1px solid rgba(225, 90, 90, 0.3); }
+        .badge-indigo { background: rgba(212, 175, 55, 0.1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); }
+        .badge-mint { background: rgba(74, 222, 128, 0.1); color: var(--mint); border: 1px solid rgba(74, 222, 128, 0.3); }
+        .badge-rose { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
         .badge-amber { background: var(--surface-1); color: var(--text-main); border: 1px solid var(--border-subtle); }
 
         /* Custom Humidor Status Badges with Animation */
@@ -472,7 +480,7 @@
             50% { opacity: 1; }
         }
         .humidor-badge-ready { 
-            background: var(--surface-1); 
+            background: transparent; 
             color: var(--gold); 
             border: 1px solid var(--leather); 
             animation: humidorPulse 2s infinite; 
@@ -486,7 +494,7 @@
             animation: humidorBreathe 3s infinite ease-in-out; 
         }
         
-        .progress-track { width: 100%; height: 6px; background: var(--surface-2); border-radius: 10px; overflow: hidden; margin-top: 14px; margin-bottom: 8px; }
+        .progress-track { width: 100%; height: 6px; background: var(--surface-04dp); border-radius: 10px; overflow: hidden; margin-top: 14px; margin-bottom: 8px; }
         .progress-fill { height: 100%; background: var(--leather); border-radius: 10px; transition: width 0.5s ease; }
         .timeline-footer { font-family: var(--font-mono); display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-dim); }
 
@@ -496,7 +504,7 @@
             width: 100%;
             margin-bottom: 12px;
             border-radius: 16px;
-            background: var(--surface-2); 
+            background: var(--surface-01dp); 
             overflow: hidden;
             transform: translateZ(0); 
             -webkit-transform: translateZ(0);
@@ -525,7 +533,7 @@
             justify-content: center;
             align-items: center;
             gap: 6px;
-            color: white;
+            color: #121212;
             font-weight: 800;
             font-size: 10px;
             text-transform: uppercase;
@@ -538,21 +546,10 @@
         
         .swipe-action-edit { 
             background: var(--btn-gold); 
-            color: #1A1A1A; 
             position: relative; 
         }
-        .swipe-action-edit::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            right: 100%;
-            width: 150px; 
-            background: linear-gradient(to right, transparent, var(--btn-gold));
-            pointer-events: none;
-        }
         
-        .swipe-action-delete { background: var(--danger); }
+        .swipe-action-delete { background: var(--danger); color: #FFFFFF; }
         
         .swipe-front {
             position: relative;
@@ -564,7 +561,7 @@
         .swipe-front:active { cursor: grabbing; }
 
         /* --- FORMS & INPUTS --- */
-        .form-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s, background-color 0.3s; box-sizing: border-box; }
+        .form-input { width: 100%; background: var(--surface-04dp); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s, background-color 0.3s; box-sizing: border-box; }
         .form-input:focus { border-color: var(--leather); }
         .form-input::placeholder { color: var(--text-dim); }
         .form-select { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%20fill%3D%22none%22%20stroke%3D%22%2394A3B8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 16px auto; }
@@ -576,7 +573,7 @@
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); opacity: 1; transition: filter 0.3s; }
         [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.3); }
 
-        .empty-state { background: var(--surface-2); border: 1px solid var(--border-subtle); text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; font-weight: 700; border-radius: 16px; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: background-color 0.3s; }
+        .empty-state { background: var(--surface-01dp); border: 1px solid var(--border-subtle); text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; font-weight: 700; border-radius: 16px; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: background-color 0.3s; }
 
         /* --- CUSTOM AUTOCOMPLETE DROPDOWN --- */
         .autocomplete-wrapper {
@@ -589,7 +586,7 @@
             top: 100%;
             left: 0;
             right: 0;
-            background: var(--surface-1);
+            background: var(--surface-08dp);
             border: 1px solid var(--border-subtle);
             border-radius: 14px;
             margin-top: 4px;
@@ -597,7 +594,7 @@
             overflow-y: auto;
             z-index: 1000;
             display: none;
-            box-shadow: 0 10px 30px var(--shadow-strong);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
         }
         .autocomplete-item {
             padding: 14px 20px;
@@ -614,10 +611,10 @@
             border-radius: 0 0 14px 14px;
         }
         .autocomplete-item:active {
-            background: var(--surface-2);
+            background: var(--surface-12dp);
         }
 
-        /* --- FLOATING BOTTOM DOCK --- */
+        /* --- FLOATING BOTTOM DOCK (08dp) --- */
         .bottom-dock-wrapper { 
             position: fixed; 
             bottom: 0; 
@@ -626,7 +623,7 @@
             display: flex; 
             justify-content: center; 
             z-index: 1000; 
-            background: linear-gradient(to top, var(--bg-base) 40%, rgba(26, 26, 26, 0) 100%); 
+            background: linear-gradient(to top, var(--bg-base) 40%, rgba(18, 18, 18, 0) 100%); 
             padding-top: 40px; 
             pointer-events: none; 
             transition: background 0.3s; 
@@ -637,17 +634,15 @@
         .bottom-dock { 
             width: calc(100% - 32px); 
             max-width: 390px; 
-            background: rgba(30, 30, 30, 0.65); 
-            backdrop-filter: blur(24px); 
-            -webkit-backdrop-filter: blur(24px); 
-            border: 1px solid rgba(212, 175, 55, 0.15); 
+            background: var(--surface-08dp); 
+            border: 1px solid var(--border-subtle); 
             border-radius: 32px; 
             display: flex; 
             justify-content: space-around; 
             align-items: center; 
             padding: 8px 12px; 
             margin-bottom: max(20px, env(safe-area-inset-bottom)); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255, 255, 255, 0.05); 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6); 
             pointer-events: auto; 
         }
         .nav-item { 
@@ -681,43 +676,42 @@
             background: rgba(212, 175, 55, 0.12); 
             border: 1px solid rgba(212, 175, 55, 0.3); 
             opacity: 1; 
-            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1); 
         }
         .nav-item.active span { 
             color: var(--leather); 
         }
         [data-theme="light"] .bottom-dock { 
-            background: rgba(255, 255, 255, 0.7); 
+            background: var(--surface-08dp); 
             border: 1px solid rgba(194, 150, 98, 0.3); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255, 255, 255, 0.5); 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1); 
         }
 
-        /* Action Sheet & Modals */
+        /* Action Sheet & Modals (16dp to 24dp) */
         .action-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--overlay-bg); backdrop-filter: blur(5px); z-index: 2000; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .action-sheet-overlay.active { opacity: 1; pointer-events: auto; }
-        .action-sheet { background: var(--surface-1); border-radius: 28px 28px 0 0; padding: 24px 24px max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s; border-top: 1px solid var(--border-subtle); }
+        .action-sheet { background: var(--surface-16dp); border-radius: 28px 28px 0 0; padding: 24px 24px max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s; border-top: 1px solid var(--border-subtle); box-shadow: 0 -8px 16px rgba(0,0,0,0.6); }
         .action-sheet-overlay.active .action-sheet { transform: translateY(0); }
-        .action-btn { width: 100%; background: var(--surface-2); color: var(--text-main); padding: 18px; font-size: 15px; font-weight: 700; font-family: var(--font-sans); border-radius: 12px; margin-bottom: 12px; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
+        .action-btn { width: 100%; background: var(--surface-02dp); color: var(--text-main); padding: 18px; font-size: 15px; font-weight: 700; font-family: var(--font-sans); border-radius: 12px; margin-bottom: 12px; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
         .action-btn.cancel { background: transparent; color: var(--danger); margin-bottom: 0; margin-top: 4px; border: 1px solid var(--border-subtle); }
 
         /* Photo Lightbox specific styling */
         #lightbox-overlay { justify-content: center; align-items: center; padding: 24px; z-index: 3000; }
-        #lightbox-img { max-width: 100%; max-height: 80vh; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); object-fit: contain; }
-        .lightbox-close { position: absolute; top: max(24px, env(safe-area-inset-top)); right: 24px; background: var(--surface-1); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px var(--shadow-strong); border: 1px solid var(--border-subtle); }
+        #lightbox-img { max-width: 100%; max-height: 80vh; border-radius: 16px; box-shadow: 0 16px 24px rgba(0,0,0,0.8); object-fit: contain; }
+        .lightbox-close { position: absolute; top: max(24px, env(safe-area-inset-top)); right: 24px; background: var(--surface-24dp); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px var(--shadow-strong); border: 1px solid var(--border-subtle); }
         
-        /* --- CIGAR REVIEW MODAL --- */
+        /* --- CIGAR REVIEW MODAL (24dp) --- */
         .modal-overlay { display: none; position: fixed; z-index: 2500; left: 0; top: 0; width: 100%; height: 100%; background-color: var(--overlay-bg); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background-color: var(--surface-1); padding: 24px; border-radius: 24px; width: 85%; max-width: 350px; color: var(--text-main); text-align: center; box-shadow: 0px 10px 40px var(--shadow-strong); font-family: var(--font-sans); border: 1px solid var(--border-subtle); position: relative; transition: background-color 0.3s; }
+        .modal-content { background-color: var(--surface-24dp); padding: 24px; border-radius: 24px; width: 85%; max-width: 350px; color: var(--text-main); text-align: center; box-shadow: 0 16px 24px rgba(0,0,0,0.6); font-family: var(--font-sans); border: 1px solid var(--border-subtle); position: relative; transition: background-color 0.3s; }
         .close-modal { position: absolute; top: 16px; right: 20px; color: var(--text-dim); font-size: 24px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
         .close-modal:hover { color: var(--text-main); }
         .modal-subtitle { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
         .modal-text { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
         
-        .modal-btn { display: flex; align-items: center; justify-content: center; gap: 6px; background-color: var(--surface-1); color: var(--leather); padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.2s, background-color 0.3s; border: 1px solid rgba(212, 175, 55, 0.3); cursor: pointer; }
+        .modal-btn { display: flex; align-items: center; justify-content: center; gap: 6px; background-color: transparent; color: var(--leather); padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.2s, background-color 0.3s; border: 1px solid var(--leather); cursor: pointer; }
         .modal-btn:active { transform: scale(0.98); }
 
-        /* --- CUSTOM DIALOG UI --- */
+        /* --- CUSTOM DIALOG UI (24dp) --- */
         .custom-dialog-overlay {
             position: fixed; z-index: 9999; top: 0; left: 0; right: 0; bottom: 0;
             background: var(--overlay-bg); backdrop-filter: blur(5px);
@@ -725,14 +719,14 @@
         }
         .custom-dialog-overlay.active { display: flex; opacity: 1; }
         .custom-dialog-box {
-            background: var(--surface-1); border-radius: 24px; padding: 24px;
+            background: var(--surface-24dp); border-radius: 24px; padding: 24px;
             width: 85%; max-width: 350px; border: 1px solid var(--border-subtle);
-            box-shadow: 0 10px 40px var(--shadow-strong); text-align: center; font-family: var(--font-sans);
+            box-shadow: 0 16px 24px rgba(0,0,0,0.6); text-align: center; font-family: var(--font-sans);
         }
         .custom-dialog-title { font-family: var(--font-serif); font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
         .custom-dialog-msg { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; font-weight: 500; }
         .custom-dialog-input { 
-            width: 100%; display: none; background: var(--surface-2); border: 1px solid var(--border-subtle); 
+            width: 100%; display: none; background: var(--surface-04dp); border: 1px solid var(--border-subtle); 
             color: var(--text-main); padding: 16px 20px; border-radius: 12px; font-size: 16px; font-weight: 600; 
             margin-bottom: 24px; outline: none; text-align: center;
         }
@@ -740,10 +734,10 @@
         .custom-dialog-actions { display: flex; gap: 12px; justify-content: center; }
         .custom-dialog-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; transition: transform 0.2s; }
         .custom-dialog-btn:active { transform: scale(0.98); }
-        .custom-dialog-cancel { background: var(--surface-2); color: var(--text-main); border: 1px solid var(--border-subtle); }
+        .custom-dialog-cancel { background: transparent; color: var(--text-main); border: 1px solid var(--border-subtle); }
         
-        .custom-dialog-confirm { background: var(--surface-1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
-        .custom-dialog-danger { background: var(--danger); color: white; border-radius: 12px; }
+        .custom-dialog-confirm { background: transparent; color: var(--leather); border: 1px solid var(--leather); border-radius: 12px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        .custom-dialog-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); border-radius: 12px; }
 
         /* Custom Information List Styles */
         .info-list { list-style: none; padding: 0; margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
@@ -753,11 +747,12 @@
 
         /* Visual Vitola Guide Styles */
         .vitola-list-container { display: flex; flex-direction: column; gap: 8px; }
-        .vitola-card { background: var(--surface-glass-bento); border: 1px solid var(--border-glass-bento); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 16px; transition: transform 0.2s; }
-        .vitola-img { width: 60px; height: auto; border-radius: 4px; object-fit: contain; }
         .vitola-name { color: var(--text-main); margin: 0 0 4px 0; font-size: 15px; font-weight: 800; font-family: var(--font-serif); }
         .vitola-dimensions { color: var(--text-dim); margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
 
+        /* Specifically adjust Desaturated Danger for Material Dark Accessibility */
+        .text-danger { color: var(--danger); }
+        
     </style>
 </head>
 <body>
@@ -772,7 +767,7 @@
             <img src="final-third-logo.png" class="app-logo-luxury" alt="Final Third Logo">
             <div class="login-tagline">From the First Light to the Final Third</div>
             
-            <!-- GLASSMORPHIC PANEL -->
+            <!-- MATERIAL ELEVATED PANEL (24dp) -->
             <div class="glass-panel">
                 
                 <!-- View 1: Sign In -->
@@ -852,7 +847,7 @@
 
             </div>
 
-            <!-- MINIMAL BETA WARNING -->
+            <!-- MINIMAL BETA WARNING (01dp) -->
             <div class="beta-card-minimal">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <div class="beta-card-text">
@@ -867,11 +862,11 @@
     <!-- MAIN APP SHELL -->
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
-        <!-- LAYER 1: PERSISTENT HEADER -->
+        <!-- LAYER 1: PERSISTENT HEADER (00dp) -->
         <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 40px;">
             
             <!-- COLLAPSED STATE -->
-            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                 <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     Today's Selection <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i>
                 </span>
@@ -887,11 +882,11 @@
             </div>
         </div>
 
-        <!-- LAYER 2: DYNAMIC TITLE LAYER -->
-        <div style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-radius: 40px 40px 0 0; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--glass-border); z-index: 5;">
+        <!-- LAYER 2: DYNAMIC TITLE LAYER (01dp) -->
+        <div style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-radius: 40px 40px 0 0; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--border-subtle); z-index: 5;">
             
             <!-- LAYER 2 ATTACHED CHEVRON (Hides when Layer 1 Collapses) -->
-            <div id="layer-2-chevron" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); cursor: pointer; color: var(--leather); padding: 2px 16px; display: flex; align-items: center; justify-content: center; background: var(--surface-1); border: 1px solid var(--glass-border); border-bottom: none; border-radius: 12px 12px 0 0; width: 60px; height: 20px; transition: transform 0.2s, background 0.3s; z-index: 10;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='translateX(-50%) scale(0.95)'" onmouseup="this.style.transform='translateX(-50%) scale(1)'" onmouseleave="this.style.transform='translateX(-50%) scale(1)'" ontouchstart="this.style.transform='translateX(-50%) scale(0.95)'" ontouchend="this.style.transform='translateX(-50%) scale(1)'">
+            <div id="layer-2-chevron" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); cursor: pointer; color: var(--leather); padding: 2px 16px; display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-bottom: none; border-radius: 12px 12px 0 0; width: 60px; height: 20px; transition: transform 0.2s, background 0.3s; z-index: 10;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='translateX(-50%) scale(0.95)'" onmouseup="this.style.transform='translateX(-50%) scale(1)'" onmouseleave="this.style.transform='translateX(-50%) scale(1)'" ontouchstart="this.style.transform='translateX(-50%) scale(0.95)'" ontouchend="this.style.transform='translateX(-50%) scale(1)'">
                 <i class="fa-solid fa-chevron-up" style="font-size: 10px;"></i>
             </div>
 
@@ -903,7 +898,7 @@
             </div>
         </div>
 
-        <!-- LAYER 3: PERSISTENT CONTENT CONTAINER -->
+        <!-- LAYER 3: PERSISTENT CONTENT CONTAINER (00dp Base) -->
         <div class="layer-3-container">
             
             <!-- HOME SCREEN -->
@@ -941,8 +936,8 @@
                     </div>
                 </div>
 
-                <!-- LOG A SMOKE BENTO BOX -->
-                <div style="background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface-1) 100%); border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                <!-- LOG A SMOKE BENTO BOX (02dp to 01dp gradient) -->
+                <div style="background: linear-gradient(135deg, var(--surface-02dp) 0%, var(--surface-01dp) 100%); border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 5px rgba(0,0,0,0.14);">
                     <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1;">
                         <div style="background: rgba(212, 175, 55, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather); flex-shrink: 0;">
                             <i class="fa-solid fa-fire" style="font-size: 16px;"></i>
@@ -966,7 +961,8 @@
                     </div>
 
                     <!-- Dynamic Proportional Timeline Bar -->
-                    <div id="aging-progress-bar" style="display: flex; width: 100%; height: 8px; border-radius: 4px; margin-bottom: 16px; overflow: hidden; background: var(--surface-2); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);">
+                    <div id="aging-progress-bar" style="display: flex; width: 100%; height: 8px; border-radius: 4px; margin-bottom: 16px; overflow: hidden; background: var(--surface-04dp); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);">
+                        <!-- Desaturated colors for WCAG AA Dark Theme compliance -->
                         <div id="bar-tier-1" style="width: 25%; background: #4ADE80; transition: width 0.5s ease;"></div>
                         <div id="bar-tier-2" style="width: 25%; background: #FACC15; transition: width 0.5s ease;"></div>
                         <div id="bar-tier-3" style="width: 25%; background: #F97316; transition: width 0.5s ease;"></div>
@@ -1028,7 +1024,7 @@
                     
                     <div class="section-header" style="margin-top: 0; cursor: pointer; padding-right: 8px;" onclick="toggleEntryForm('humidor-form-wrapper', 'humidor-form-chevron')">
                         <div class="section-title">Store New Acquisition</div>
-                        <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-1); border-radius: 8px; width: 28px; height: 28px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                        <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border-radius: 8px; width: 28px; height: 28px; border: 1px solid var(--border-subtle);">
                             <i id="humidor-form-chevron" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 12px;"></i>
                         </div>
                     </div>
@@ -1085,7 +1081,7 @@
                         <div class="section-title">Aging Timeline</div>
                     </div>
                     
-                    <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
+                    <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px;">
                         <div style="position: relative; flex: 1;">
                             <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
                             <input type="text" id="humidor-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderHumidor()">
@@ -1109,7 +1105,7 @@
                 
                 <div class="section-header" style="margin-top: 0; cursor: pointer; padding-right: 8px;" onclick="toggleEntryForm('journal-form-wrapper', 'journal-form-chevron')">
                     <div class="section-title">Log a Smoke</div>
-                    <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-1); border-radius: 8px; width: 28px; height: 28px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                    <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border-radius: 8px; width: 28px; height: 28px; border: 1px solid var(--border-subtle);">
                         <i id="journal-form-chevron" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 12px;"></i>
                     </div>
                 </div>
@@ -1218,7 +1214,7 @@
                     <div class="section-title">Journal History</div>
                 </div>
                 
-                <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding-bottom: 16px;">
+                <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px;">
                     <div style="position: relative; flex: 1;">
                         <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
                         <input type="text" id="journal-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderJournal()">
@@ -1314,114 +1310,172 @@
                     </div>
                 </div>
 
-                <!-- Visual Vitola Guide -->
+                <!-- Cigar Shapes & Sizes -->
                 <div class="log-card" style="margin-bottom: 24px; text-align: left;">
                     <div class="log-header" style="margin-bottom: 16px;">
                         <div>
                             <div class="log-meta">Shapes & Sizes</div>
-                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Visual Vitola Guide</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Vitola Guide</div>
                         </div>
                         <i class="fa-solid fa-ruler-combined" style="color: var(--leather); font-size: 18px;"></i>
                     </div>
                     <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 16px;">
                         Reference standard cigar sizes and their traditional ring gauges. 
                     </div>
+                    
+                    <div style="font-family: var(--font-serif); font-size: 15px; color: var(--gold); margin-bottom: 12px; margin-top: 8px;">Parejos (Straight-Sided)</div>
                     <div class="vitola-list-container">
-                        <!-- Robusto -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/robusto.png" alt="Robusto" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Robusto</h3>
-                                <p class="vitola-dimensions">5" x 50</p>
-                            </div>
-                        </div>
-                        <!-- Toro -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/toro.png" alt="Toro" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Toro</h3>
-                                <p class="vitola-dimensions">6" x 52</p>
-                            </div>
-                        </div>
-                        <!-- Churchill -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/churchill.png" alt="Churchill" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Churchill</h3>
-                                <p class="vitola-dimensions">7" x 47</p>
-                            </div>
-                        </div>
                         <!-- Corona -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/corona.png" alt="Corona" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Corona</h3>
-                                <p class="vitola-dimensions">5.5" x 42</p>
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Corona</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">5.5" - 6" x 42-44</span>
                             </div>
-                        </div>
-                        <!-- Gordo -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/gordo.png" alt="Gordo" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Gordo</h3>
-                                <p class="vitola-dimensions">6" x 60</p>
-                            </div>
-                        </div>
-                        <!-- Panatela -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/panatela.png" alt="Panatela" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Panatela</h3>
-                                <p class="vitola-dimensions">6" x 34</p>
-                            </div>
-                        </div>
-                        <!-- Lancero -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/lancero.png" alt="Lancero" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Lancero</h3>
-                                <p class="vitola-dimensions">7.5" x 38</p>
-                            </div>
-                        </div>
-                        <!-- Lonsdale -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/lonsdale.png" alt="Lonsdale" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Lonsdale</h3>
-                                <p class="vitola-dimensions">6.5" x 42</p>
-                            </div>
-                        </div>
-                        <!-- Belicoso -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/belicoso.png" alt="Belicoso" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Belicoso</h3>
-                                <p class="vitola-dimensions">5.5" x 52</p>
-                            </div>
-                        </div>
-                        <!-- Torpedo -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/torpedo.png" alt="Torpedo" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Torpedo</h3>
-                                <p class="vitola-dimensions">6.125" x 52</p>
-                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">The benchmark size against which all other sizes are measured.</p>
                         </div>
                         <!-- Petit Corona -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/petit_corona.png" alt="Petit Corona" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Petit Corona</h3>
-                                <p class="vitola-dimensions">4.5" x 42</p>
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Petit Corona</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">~4.5" x 40-42</span>
                             </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">A miniature corona.</p>
+                        </div>
+                        <!-- Churchill -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Churchill</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">7" x 47</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">A large corona format, famously favored by Winston Churchill.</p>
+                        </div>
+                        <!-- Robusto -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Robusto</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">4.75" - 5.5" x 48-52</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">A short, thick cigar.</p>
+                        </div>
+                        <!-- Corona Gorda / Toro -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Corona Gorda / Toro</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">5.625" - 6" x 46-50</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">A thicker corona that has grown immensely in popularity.</p>
+                        </div>
+                        <!-- Double Corona -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Double Corona</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">7.5" - 8.5" x 49-52</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">A very large, long-lasting format.</p>
+                        </div>
+                        <!-- Panetela -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Panetela / Lancero</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">5" - 7.5" x 34-38</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Long and thin elegance; maximizes wrapper flavor.</p>
+                        </div>
+                        <!-- Lonsdale -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Lonsdale</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">6.5" x 42</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Longer than a corona, thicker than a panetela.</p>
+                        </div>
+                        <!-- Grande -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Grande / Gordo</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">4.75"+ x 60+</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Modern extra-thick sizes.</p>
+                        </div>
+                    </div>
+
+                    <div style="font-family: var(--font-serif); font-size: 15px; color: var(--gold); margin-bottom: 12px; margin-top: 24px;">Figurados (Shaped)</div>
+                    <div class="vitola-list-container">
+                        <!-- Pyramid -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Pyramid</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">6" - 7" x 52-54</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Cut foot tapering to a pointed head (~40 ring gauge).</p>
+                        </div>
+                        <!-- Belicoso -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Belicoso</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">5" - 5.5" x ~50</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">A short pyramid with a slightly rounded head.</p>
+                        </div>
+                        <!-- Torpedo -->
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Torpedo</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">6.125" x 52</span>
+                            </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Closed foot and a pointed head with a bulge in the middle.</p>
                         </div>
                         <!-- Perfecto -->
-                        <div class="glass-bento vitola-card">
-                            <img src="/assets/vitolas/perfecto.png" alt="Perfecto" class="vitola-img" onerror="this.style.display='none'">
-                            <div class="vitola-details">
-                                <h3 class="vitola-name">Perfecto</h3>
-                                <p class="vitola-dimensions">Tapered at both ends</p>
+                        <div class="glass-bento" style="padding: 16px; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <h3 class="vitola-name" style="margin-bottom: 0;">Perfecto</h3>
+                                <span class="vitola-dimensions" style="color: var(--leather);">Varies</span>
                             </div>
+                            <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Tapered at both ends with a bulge in the middle.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wrapper Colors (Leaves) -->
+                <div class="log-card" style="margin-bottom: 24px; text-align: left;">
+                    <div class="log-header" style="margin-bottom: 16px;">
+                        <div>
+                            <div class="log-meta">Wrapper Leaves</div>
+                            <div class="log-title" style="font-size: 16px; margin-top: 4px;">Colors & Profiles</div>
+                        </div>
+                        <i class="fa-solid fa-palette" style="color: var(--leather); font-size: 18px;"></i>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 16px;">
+                        Wrappers vary widely in color due to the curing and fermentation processes. 
+                    </div>
+                    <div class="vitola-list-container">
+                        <div class="glass-bento" style="padding: 12px 16px; border-radius: 12px; border-left: 4px solid #4ADE80 !important;">
+                            <h3 class="vitola-name" style="margin-bottom: 2px;">Double Claro / Candela</h3>
+                            <p style="font-size: 11px; color: var(--text-dim); margin: 0;">Light green. Achieved by a quick drying process that locks in chlorophyll. Mild and grassy.</p>
+                        </div>
+                        <div class="glass-bento" style="padding: 12px 16px; border-radius: 12px; border-left: 4px solid #F5DEB3 !important;">
+                            <h3 class="vitola-name" style="margin-bottom: 2px;">Claro</h3>
+                            <p style="font-size: 11px; color: var(--text-dim); margin: 0;">Light tan. Typically shade-grown under cheesecloth. Mild, smooth, and neutral.</p>
+                        </div>
+                        <div class="glass-bento" style="padding: 12px 16px; border-radius: 12px; border-left: 4px solid #D2691E !important;">
+                            <h3 class="vitola-name" style="margin-bottom: 2px;">Colorado Claro</h3>
+                            <p style="font-size: 11px; color: var(--text-dim); margin: 0;">Medium brown. Often sun-grown. Slightly stronger profile than Claro.</p>
+                        </div>
+                        <div class="glass-bento" style="padding: 12px 16px; border-radius: 12px; border-left: 4px solid #B22222 !important;">
+                            <h3 class="vitola-name" style="margin-bottom: 2px;">Colorado</h3>
+                            <p style="font-size: 11px; color: var(--text-dim); margin: 0;">Reddish-brown. Robust and rich flavor, usually shade-grown.</p>
+                        </div>
+                        <div class="glass-bento" style="padding: 12px 16px; border-radius: 12px; border-left: 4px solid #800000 !important;">
+                            <h3 class="vitola-name" style="margin-bottom: 2px;">Colorado Maduro</h3>
+                            <p style="font-size: 11px; color: var(--text-dim); margin: 0;">Dark brown. A shade lighter than true Maduro, offering rich, aromatic spice.</p>
+                        </div>
+                        <div class="glass-bento" style="padding: 12px 16px; border-radius: 12px; border-left: 4px solid #4A0404 !important;">
+                            <h3 class="vitola-name" style="margin-bottom: 2px;">Maduro</h3>
+                            <p style="font-size: 11px; color: var(--text-dim); margin: 0;">Very dark brown to black. Leaves are heavily fermented, resulting in sweet, rich flavors.</p>
+                        </div>
+                        <div class="glass-bento" style="padding: 12px 16px; border-radius: 12px; border-left: 4px solid #1A1A1A !important;">
+                            <h3 class="vitola-name" style="margin-bottom: 2px;">Oscuro</h3>
+                            <p style="font-size: 11px; color: var(--text-dim); margin: 0;">Black. The darkest wrapper, achieved by leaving the leaves on the plant longest and fermenting them intensely.</p>
                         </div>
                     </div>
                 </div>
@@ -1543,8 +1597,8 @@
                 
                 <div style="text-align: center; margin-bottom: 32px;">
                     <div style="position: relative; display: inline-block; cursor: pointer;" onclick="openAvatarActionSheet()">
-                        <img id="profile-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 36px; object-fit: cover; background: var(--surface-2); display: block; border: 4px solid var(--surface-1);">
-                        <div style="position: absolute; bottom: -4px; right: -4px; background: var(--leather); color: #1A1A1A; border-radius: 12px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border: 4px solid var(--surface-1); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                        <img id="profile-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 36px; object-fit: cover; background: var(--surface-04dp); display: block; border: 4px solid var(--surface-01dp);">
+                        <div style="position: absolute; bottom: -4px; right: -4px; background: var(--leather); color: #121212; border-radius: 12px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border: 4px solid var(--surface-01dp); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
                             <i class="fa-solid fa-camera" style="font-size: 16px;"></i>
                         </div>
                     </div>
@@ -1589,7 +1643,7 @@
                         </div>
                         <div id="stat-humidor-value-val" style="font-family: var(--font-serif); font-size: 38px; color: var(--leather); line-height: 1; font-weight: 400;">$0</div>
                         <div style="font-size: 10px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; margin-top: 8px; margin-bottom: 20px;">EST. TOTAL</div>
-                        <div id="stat-value-pill" style="margin-top: auto; border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 12px; padding: 4px 12px; font-size: 9px; color: #4ADE80; background: rgba(74, 222, 128, 0.05); font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;"><i class="fa-solid fa-arrow-trend-up"></i> +$0 this month</div>
+                        <div id="stat-value-pill" style="margin-top: auto; border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 12px; padding: 4px 12px; font-size: 9px; color: var(--mint); background: rgba(74, 222, 128, 0.1); font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;"><i class="fa-solid fa-arrow-trend-up"></i> +$0 this month</div>
                     </div>
 
                 </div>
@@ -1633,7 +1687,7 @@
                             <div id="theme-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Dark Mode</div>
                         </div>
                     </div>
-                    <div style="background: var(--surface-2); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
+                    <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
                         <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
                     </div>
                 </div>
@@ -1649,12 +1703,12 @@
                             <div id="daily-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Default Expanded</div>
                         </div>
                     </div>
-                    <div style="background: var(--surface-2); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
+                    <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
                         <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
                     </div>
                 </div>
 
-                <button class="btn-primary" style="background: rgba(225, 90, 90, 0.1); color: var(--danger); width: 100%; border: none; border-radius: 12px;" onclick="handleLogout()">
+                <button class="btn-primary" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); width: 100%; border: none; border-radius: 12px;" onclick="handleLogout()">
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
                 </button>
                 
@@ -1735,7 +1789,7 @@
         <p style="text-align: center; font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.4;">Warning: This will permanently erase your entire Humidor and Journal history. This cannot be undone. Please confirm your credentials.</p>
         <input type="email" id="delete-email" class="form-input" placeholder="Email address" autocomplete="off">
         <input type="password" id="delete-password" class="form-input" placeholder="Password" autocomplete="off" style="margin-bottom: 24px;">
-        <button class="action-btn" style="background: var(--danger); color: white; margin-bottom: 12px; border-radius: 12px;" onclick="handleDeleteAccount()"><i class="fa-solid fa-trash"></i> Permanently Delete</button>
+        <button class="action-btn" style="background: transparent; color: var(--danger); border: 1px solid var(--danger); margin-bottom: 12px; border-radius: 12px;" onclick="handleDeleteAccount()"><i class="fa-solid fa-trash"></i> Permanently Delete</button>
         <button class="action-btn cancel" onclick="closeDeleteActionSheet()">Cancel</button>
     </div>
 </div>
@@ -3148,14 +3202,14 @@ window.compressImage = function(file) {
 
         let html = '<div class="glass-bento" style="border-radius: 20px; padding: 8px 20px;">';
         sorted.forEach((cigar, index) => {
-            const borderStr = index < sorted.length - 1 ? 'border-bottom: 1px solid var(--glass-border);' : '';
+            const borderStr = index < sorted.length - 1 ? 'border-bottom: 1px solid var(--border-subtle);' : '';
             html += `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; ${borderStr}">
                 <div>
                     <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
                     <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
                 </div>
-                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; background: var(--surface-1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; background: var(--surface-01dp); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-subtle);">
                     <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
                     <span style="font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--leather);">${cigar.rating.toFixed(2)}</span>
                 </div>
@@ -3196,7 +3250,7 @@ window.compressImage = function(file) {
         const submitBtn = document.getElementById('journal-submit-btn');
         submitBtn.innerHTML = 'Update Ledger <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
         submitBtn.style.background = 'var(--gold)';
-        submitBtn.style.color = '#1A1A1A';
+        submitBtn.style.color = '#121212';
         
         const logWrapper = document.getElementById('journal-form-wrapper');
         const logChevron = document.getElementById('journal-form-chevron');
@@ -3376,10 +3430,10 @@ window.logSmoke = async function() {
                 let imageBadge = '';
                 if(log.image) {
                     window.imageRegistry[log.id] = log.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
                 }
                 
-                let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
+                let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
 
                 html += `
                 <div class="swipe-container">
@@ -3412,9 +3466,9 @@ window.logSmoke = async function() {
                         <div id="journal-details-${log.id}" style="display: none;">
                             <div style="display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; flex-wrap: wrap;">
                                 ${ratingBadge}
-                                <span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
-                                <span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-fire" style="color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
-                                <span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
+                                <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
+                                <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-fire" style="color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
+                                <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
                                 ${imageBadge}
                             </div>
                             
@@ -3535,7 +3589,7 @@ window.logSmoke = async function() {
         const submitBtn = document.getElementById('vault-submit-btn');
         submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
         submitBtn.style.background = 'var(--gold)';
-        submitBtn.style.color = '#1A1A1A';
+        submitBtn.style.color = '#121212';
 
         const vaultWrapper = document.getElementById('humidor-form-wrapper');
         const vaultChevron = document.getElementById('humidor-form-chevron');
@@ -3798,10 +3852,10 @@ window.storeCigar = async function() {
                 let imageBadge = '';
                 if(cigar.image) {
                     window.imageRegistry[cigar.id] = cigar.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
                 }
                 
-                let qtyBadge = `<span style="font-size: 10px; background: var(--surface-1); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
+                let qtyBadge = `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
                 
                 let attributesRow = '';
                 if (qtyBadge || imageBadge) {
@@ -3843,7 +3897,7 @@ window.storeCigar = async function() {
         
         // Hidden element helps satisfy JS updating logic for peak cigars
         const alertsEl = document.getElementById('stat-alerts');
-        if (alertsEl) alertsEl.innerText = readyAlertsCount;
+        if (alertsEl)alertsEl.innerText = readyAlertsCount;
         
         let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
         document.getElementById('stat-avg-aging-val').innerText = avgDays;
@@ -3899,9 +3953,9 @@ window.storeCigar = async function() {
         });
     });
   }
-
-
+  
 </script>
 
 </body>
 </html>
+
