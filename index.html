@@ -15,10 +15,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="manifest" href="manifest.json">
-<!-- Apple Specific PWA Tags -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Final Third">
+    <!-- Apple Specific PWA Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Final Third">
 
 
     <script>
@@ -45,21 +45,24 @@
             --surface-16dp: #363636; /* 15% */
             --surface-24dp: #383838; /* 16% */
 
+            /* Specific solid backgrounds for Login UI to prevent autofill bleed */
+            --login-panel-bg: #1A1A1A; 
+            --login-input-bg: #232323; 
+            --input-border: #363636; /* Solid border prevents Safari autofill yellow bleed */
+
             --bg-gradient-start: var(--surface-01dp);
             --bg-gradient-end: var(--bg-base);
             --layer2-grad-start: var(--surface-02dp);
             --layer2-grad-end: var(--surface-01dp);
             
-            /* Replaced generic surfaces with specific elevation mappings */
             --surface-1: var(--surface-02dp);
             --surface-2: var(--surface-04dp);
             
-            /* Converted glass variables to opaque elevation surfaces for proper depth expression */
             --surface-glass-bento: var(--surface-02dp);
             --border-glass-bento: rgba(255, 255, 255, 0.05);
             
             /* Contrast & Accessibility */
-            --text-main: #FFFFFF; /* 100% White */
+            --text-main: #FFFFFF; 
             --text-dim: rgba(255, 255, 255, 0.70);
             --border-subtle: rgba(255, 255, 255, 0.12);
             
@@ -70,6 +73,11 @@
             --danger: #EF4444; 
             --mint: #4ADE80;
 
+            /* Dynamic RGBs for Opacity Handling */
+            --leather-rgb: 212, 175, 55;
+            --mint-rgb: 74, 222, 128;
+            --danger-rgb: 239, 68, 68;
+
             --btn-leather: #D4AF37; 
             --btn-gold: #F1C40F;    
             
@@ -79,6 +87,9 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --overlay-bg: rgba(0, 0, 0, 0.6);
             --stat-bg-end: var(--bg-base);
+
+            /* Login specific contrast gradient */
+            --login-top-grad: rgba(0, 0, 0, 0.85);
             
             --font-sans: 'Inter', -apple-system, sans-serif;
             --font-serif: 'DM Serif Display', Georgia, serif;
@@ -88,18 +99,30 @@
         /* --- LIGHT THEME (PREMIUM PARCHMENT & ESPRESSO) --- */
         [data-theme="light"] {
             --bg-base: #F7F5F0; 
+            
+            /* Fully mapping surfaces to prevent dark grey bleed-through */
+            --surface-00dp: #F7F5F0;
+            --surface-01dp: #FDFBF7; /* Badges & minor surfaces */
+            --surface-02dp: #FFFFFF; /* Primary Cards */
+            --surface-03dp: #FFFFFF;
+            --surface-04dp: #F0EDE4; /* Insets & inputs */
+            --surface-06dp: #FFFFFF;
+            --surface-08dp: #FFFFFF;
+            --surface-12dp: #FFFFFF;
+            --surface-16dp: #FFFFFF;
+            --surface-24dp: #FFFFFF; /* Modals */
+
+            /* Specific solid backgrounds for Login UI */
+            --login-panel-bg: #FFFFFF; 
+            --login-input-bg: #FDFBF7; 
+            --input-border: #E2DDD3; /* Solid border */
+
             --bg-gradient-start: #FFFFFF;
             --bg-gradient-end: #EBE7DF;
             --layer2-grad-start: #FFFFFF;
             --layer2-grad-end: #F0EDE4;
             --surface-1: #FFFFFF;
             --surface-2: #F0EDE4;
-            
-            --surface-02dp: #FFFFFF;
-            --surface-04dp: #FFFFFF;
-            --surface-08dp: #FFFFFF;
-            --surface-16dp: #FFFFFF;
-            --surface-24dp: #FFFFFF;
             
             --surface-glass-bento: rgba(255, 255, 255, 0.6);
             --border-glass-bento: rgba(194, 150, 98, 0.25);
@@ -108,20 +131,29 @@
             --text-dim: #6B7280;
             --border-subtle: #E2DDD3;
 
-            --leather: #D4AF37; 
-            --gold: #F1C40F; 
+            /* Darker accents to meet WCAG contrast guidelines on white */
+            --leather: #B38B22; 
+            --gold: #C59B08; 
             --danger: #EF4444;
             --mint: #22C55E;
+
+            /* RGB Maps for Light Mode */
+            --leather-rgb: 179, 139, 34;
+            --mint-rgb: 34, 197, 94;
+            --danger-rgb: 239, 68, 68;
 
             --btn-leather: #D4AF37; 
             --btn-gold: #F1C40F;    
             
             --shadow-subtle: rgba(0,0,0,0.04);
-            --shadow-strong: rgba(0,0,0,0.08);
-            --shadow-layer3: rgba(0,0,0,0.06);
+            --shadow-strong: rgba(0,0,0,0.1);
+            --shadow-layer3: rgba(0,0,0,0.08);
             --glass-border: rgba(0, 0, 0, 0.04);
             --overlay-bg: rgba(26, 28, 35, 0.6);
             --stat-bg-end: #F7F5F0;
+
+            /* Login specific contrast gradient (Dark shadow for light mode top) */
+            --login-top-grad: rgba(0, 0, 0, 0.35);
         }
 
         /* --- GLOBAL RESET --- */
@@ -141,7 +173,8 @@
             position: relative;
             overflow: hidden;
             background-image: 
-                radial-gradient(circle at 50% -10%, rgba(212, 175, 55, 0.12) 0%, transparent 55%),
+                radial-gradient(circle at 50% -10%, rgba(var(--leather-rgb), 0.25) 0%, transparent 50%),
+                linear-gradient(180deg, var(--login-top-grad) 0%, transparent 60%),
                 linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-base) 100%);
         }
 
@@ -168,14 +201,15 @@
 
         /* Material Elevated Panel (24dp) */
         .glass-panel {
-            background: var(--surface-80dp);
+            background: var(--login-panel-bg);
             border: 1px solid var(--border-subtle);
             border-radius: 32px;
             padding: 32px 24px;
             width: 100%;
             position: relative;
             z-index: 2;
-            box-shadow: 0 16px 24px rgba(0,0,0,0.4), 0 6px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 16px 32px var(--shadow-strong);
+            transition: background-color 0.3s ease;
         }
 
         .welcome-heading {
@@ -195,7 +229,7 @@
             padding: 0 10px;
         }
 
-        /* Luxury Input Fields (01dp surface inside 24dp dialog) */
+        /* Luxury Input Fields */
         .input-group {
             position: relative;
             margin-bottom: 20px;
@@ -214,14 +248,16 @@
 
         .luxury-input {
             width: 100%;
-            background: var(--surface-01dp);
-            border: 1px solid var(--border-subtle);
+            background: var(--login-input-bg);
+            border: 1px solid var(--input-border);
             border-radius: 16px;
             color: var(--text-main);
             padding: 20px 20px 20px 52px; 
             font-size: 15px;
             font-weight: 500;
             outline: none;
+            appearance: none;
+            -webkit-appearance: none;
             transition: all 0.3s ease;
             font-family: var(--font-sans);
         }
@@ -229,27 +265,28 @@
         .luxury-input:focus {
             border-color: var(--leather);
             background: var(--surface-04dp);
-            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
+            box-shadow: 0 0 0 4px rgba(var(--leather-rgb), 0.15);
         }
 
         .luxury-input:focus + .input-icon,
-.input-group:focus-within .input-icon {
-    color: var(--leather);
-}
+        .input-group:focus-within .input-icon {
+            color: var(--leather);
+        }
 
-.luxury-input:-webkit-autofill,
-.luxury-input:-webkit-autofill:hover, 
-.luxury-input:-webkit-autofill:focus, 
-.luxury-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px var(--surface-01dp) inset !important;
-    -webkit-text-fill-color: var(--text-main) !important;
-    transition: background-color 5000s ease-in-out 0s;
-}
+        .luxury-input:-webkit-autofill,
+        .luxury-input:-webkit-autofill:hover, 
+        .luxury-input:-webkit-autofill:focus, 
+        .luxury-input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px var(--login-input-bg) inset !important;
+            -webkit-text-fill-color: var(--text-main) !important;
+            border: 1px solid var(--input-border) !important; /* Forces solid border over Safari yellow */
+            transition: background-color 5000s ease-in-out 0s;
+        }
 
-/* Primary Button */
-.btn-cigar-band {
-    width: 100%;
-    background: var(--leather);
+        /* Primary Button */
+        .btn-cigar-band {
+            width: 100%;
+            background: var(--btn-leather);
             color: #121212;
             padding: 20px;
             border-radius: 16px;
@@ -412,12 +449,11 @@
             width: 100%;
         }
 
-        /* Material Elevated Cards (02dp) */
         .log-card, .stat-box, .glass-bento { 
             background: var(--surface-02dp) !important;
             border-radius: 16px; 
             border: 1px solid var(--border-glass-bento) !important;
-            box-shadow: 0 4px 5px rgba(0,0,0,0.14), 0 1px 10px rgba(0,0,0,0.12);
+            box-shadow: 0 4px 5px rgba(0,0,0,0.05), 0 1px 10px rgba(0,0,0,0.03); /* Softened default shadow */
             position: relative; 
             transition: transform 0.2s, background-color 0.3s, border-color 0.3s; 
         }
@@ -457,7 +493,7 @@
 
         .stat-icon { font-size: 18px; color: var(--text-dim); margin-bottom: 6px; transition: color 0.3s; }
         .stat-box p { font-size: 9px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin: 0; text-align: center; }
-        .stat-box h2 { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--text-main); line-height: 1; text-shadow: 0 2px 8px var(--shadow-subtle); margin: 4px 0 2px 0; }
+        .stat-box h2 { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--text-main); line-height: 1; margin: 4px 0 2px 0; }
         .stat-sub { font-size: 9px; color: var(--text-dim); font-weight: 600; text-align: center; }
 
         /* Icon specific colors */
@@ -473,16 +509,17 @@
         
         .badge { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; }
         
-        .badge-indigo { background: rgba(212, 175, 55, 0.1); color: var(--leather); border: 1px solid rgba(212, 175, 55, 0.3); }
-        .badge-mint { background: rgba(74, 222, 128, 0.1); color: var(--mint); border: 1px solid rgba(74, 222, 128, 0.3); }
-        .badge-rose { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
-        .badge-amber { background: var(--surface-1); color: var(--text-main); border: 1px solid var(--border-subtle); }
+        /* Updated dynamic translucent badges */
+        .badge-indigo { background: rgba(var(--leather-rgb), 0.1); color: var(--leather); border: 1px solid rgba(var(--leather-rgb), 0.3); }
+        .badge-mint { background: rgba(var(--mint-rgb), 0.1); color: var(--mint); border: 1px solid rgba(var(--mint-rgb), 0.3); }
+        .badge-rose { background: rgba(var(--danger-rgb), 0.1); color: var(--danger); border: 1px solid rgba(var(--danger-rgb), 0.3); }
+        .badge-amber { background: var(--surface-01dp); color: var(--text-main); border: 1px solid var(--border-subtle); }
 
         /* Custom Humidor Status Badges with Animation */
         @keyframes humidorPulse {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(var(--leather-rgb), 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(var(--leather-rgb), 0); }
+            100% { box-shadow: 0 0 0 0 rgba(var(--leather-rgb), 0); }
         }
         @keyframes humidorBreathe {
             0%, 100% { opacity: 0.4; }
@@ -490,7 +527,7 @@
         }
         .humidor-badge-ready { 
             background: transparent; 
-            color: var(--gold); 
+            color: var(--leather); 
             border: 1px solid var(--leather); 
             animation: humidorPulse 2s infinite; 
         }
@@ -570,7 +607,7 @@
         .swipe-front:active { cursor: grabbing; }
 
         /* --- FORMS & INPUTS --- */
-        .form-input { width: 100%; background: var(--surface-04dp); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s, background-color 0.3s; box-sizing: border-box; }
+        .form-input { width: 100%; background: var(--surface-04dp); border: 1px solid var(--input-border); color: var(--text-main); padding: 16px 20px; border-radius: 14px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; margin-bottom: 16px; outline: none; transition: border 0.3s, background-color 0.3s; box-sizing: border-box; }
         .form-input:focus { border-color: var(--leather); }
         .form-input::placeholder { color: var(--text-dim); }
         .form-select { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%20fill%3D%22none%22%20stroke%3D%22%2394A3B8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 16px auto; }
@@ -580,7 +617,7 @@
         input[type="date"]::-webkit-date-and-time-value { text-align: left; }
         
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); opacity: 1; transition: filter 0.3s; }
-        [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.3); }
+        [data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
 
         .empty-state { background: var(--surface-01dp); border: 1px solid var(--border-subtle); text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; font-weight: 700; border-radius: 16px; text-transform: uppercase; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: background-color 0.3s; }
 
@@ -603,7 +640,7 @@
             overflow-y: auto;
             z-index: 1000;
             display: none;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 16px var(--shadow-strong);
         }
         .autocomplete-item {
             padding: 14px 20px;
@@ -651,7 +688,7 @@
             align-items: center; 
             padding: 8px 12px; 
             margin-bottom: max(20px, env(safe-area-inset-bottom)); 
-            box-shadow: 0 8px 16px rgba(0,0,0,0.6); 
+            box-shadow: 0 8px 16px var(--shadow-strong); 
             pointer-events: auto; 
         }
         .nav-item { 
@@ -682,36 +719,31 @@
         }
         .nav-item.active { 
             color: var(--leather); 
-            background: rgba(212, 175, 55, 0.12); 
-            border: 1px solid rgba(212, 175, 55, 0.3); 
+            background: rgba(var(--leather-rgb), 0.12); 
+            border: 1px solid rgba(var(--leather-rgb), 0.3); 
             opacity: 1; 
         }
         .nav-item.active span { 
             color: var(--leather); 
         }
-        [data-theme="light"] .bottom-dock { 
-            background: var(--surface-08dp); 
-            border: 1px solid rgba(194, 150, 98, 0.3); 
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1); 
-        }
 
         /* Action Sheet & Modals (16dp to 24dp) */
         .action-sheet-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--overlay-bg); backdrop-filter: blur(5px); z-index: 2000; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .action-sheet-overlay.active { opacity: 1; pointer-events: auto; }
-        .action-sheet { background: var(--surface-16dp); border-radius: 28px 28px 0 0; padding: 24px 24px max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s; border-top: 1px solid var(--border-subtle); box-shadow: 0 -8px 16px rgba(0,0,0,0.6); }
+        .action-sheet { background: var(--surface-16dp); border-radius: 28px 28px 0 0; padding: 24px 24px max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s; border-top: 1px solid var(--border-subtle); box-shadow: 0 -8px 24px var(--shadow-strong); }
         .action-sheet-overlay.active .action-sheet { transform: translateY(0); }
         .action-btn { width: 100%; background: var(--surface-02dp); color: var(--text-main); padding: 18px; font-size: 15px; font-weight: 700; font-family: var(--font-sans); border-radius: 12px; margin-bottom: 12px; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
         .action-btn.cancel { background: transparent; color: var(--danger); margin-bottom: 0; margin-top: 4px; border: 1px solid var(--border-subtle); }
 
         /* Photo Lightbox specific styling */
         #lightbox-overlay { justify-content: center; align-items: center; padding: 24px; z-index: 3000; }
-        #lightbox-img { max-width: 100%; max-height: 80vh; border-radius: 16px; box-shadow: 0 16px 24px rgba(0,0,0,0.8); object-fit: contain; }
+        #lightbox-img { max-width: 100%; max-height: 80vh; border-radius: 16px; box-shadow: 0 16px 32px var(--shadow-layer3); object-fit: contain; }
         .lightbox-close { position: absolute; top: max(24px, env(safe-area-inset-top)); right: 24px; background: var(--surface-24dp); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px var(--shadow-strong); border: 1px solid var(--border-subtle); }
         
         /* --- CIGAR REVIEW MODAL (24dp) --- */
         .modal-overlay { display: none; position: fixed; z-index: 2500; left: 0; top: 0; width: 100%; height: 100%; background-color: var(--overlay-bg); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background-color: var(--surface-24dp); padding: 24px; border-radius: 24px; width: 85%; max-width: 350px; color: var(--text-main); text-align: center; box-shadow: 0 16px 24px rgba(0,0,0,0.6); font-family: var(--font-sans); border: 1px solid var(--border-subtle); position: relative; transition: background-color 0.3s; }
+        .modal-content { background-color: var(--surface-24dp); padding: 24px; border-radius: 24px; width: 85%; max-width: 350px; color: var(--text-main); text-align: center; box-shadow: 0 16px 32px var(--shadow-strong); font-family: var(--font-sans); border: 1px solid var(--border-subtle); position: relative; transition: background-color 0.3s; }
         .close-modal { position: absolute; top: 16px; right: 20px; color: var(--text-dim); font-size: 24px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
         .close-modal:hover { color: var(--text-main); }
         .modal-subtitle { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
@@ -730,7 +762,7 @@
         .custom-dialog-box {
             background: var(--surface-24dp); border-radius: 24px; padding: 24px;
             width: 85%; max-width: 350px; border: 1px solid var(--border-subtle);
-            box-shadow: 0 16px 24px rgba(0,0,0,0.6); text-align: center; font-family: var(--font-sans);
+            box-shadow: 0 16px 32px var(--shadow-strong); text-align: center; font-family: var(--font-sans);
         }
         .custom-dialog-title { font-family: var(--font-serif); font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
         .custom-dialog-msg { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; font-weight: 500; }
@@ -946,9 +978,9 @@
                 </div>
 
                 <!-- LOG A SMOKE BENTO BOX (02dp to 01dp gradient) -->
-                <div style="background: linear-gradient(135deg, var(--surface-02dp) 0%, var(--surface-01dp) 100%); border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 5px rgba(0,0,0,0.14);">
+                <div style="background: linear-gradient(135deg, var(--surface-02dp) 0%, var(--surface-01dp) 100%); border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 5px rgba(0,0,0,0.05);">
                     <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1;">
-                        <div style="background: rgba(212, 175, 55, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather); flex-shrink: 0;">
+                        <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather); flex-shrink: 0;">
                             <i class="fa-solid fa-fire" style="font-size: 16px;"></i>
                         </div>
                         <div>
@@ -970,7 +1002,7 @@
                     </div>
 
                     <!-- Dynamic Proportional Timeline Bar -->
-                    <div id="aging-progress-bar" style="display: flex; width: 100%; height: 8px; border-radius: 4px; margin-bottom: 16px; overflow: hidden; background: var(--surface-04dp); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);">
+                    <div id="aging-progress-bar" style="display: flex; width: 100%; height: 8px; border-radius: 4px; margin-bottom: 16px; overflow: hidden; background: var(--surface-04dp); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
                         <!-- Desaturated colors for WCAG AA Dark Theme compliance -->
                         <div id="bar-tier-1" style="width: 25%; background: #4ADE80; transition: width 0.5s ease;"></div>
                         <div id="bar-tier-2" style="width: 25%; background: #FACC15; transition: width 0.5s ease;"></div>
@@ -1607,7 +1639,7 @@
                 <div style="text-align: center; margin-bottom: 32px;">
                     <div style="position: relative; display: inline-block; cursor: pointer;" onclick="openAvatarActionSheet()">
                         <img id="profile-avatar-img" src="" style="width: 150px; height: 150px; border-radius: 36px; object-fit: cover; background: var(--surface-04dp); display: block; border: 4px solid var(--surface-01dp);">
-                        <div style="position: absolute; bottom: -4px; right: -4px; background: var(--leather); color: #121212; border-radius: 12px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border: 4px solid var(--surface-01dp); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                        <div style="position: absolute; bottom: -4px; right: -4px; background: var(--btn-leather); color: #121212; border-radius: 12px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border: 4px solid var(--surface-01dp); box-shadow: 0 4px 12px var(--shadow-strong);">
                             <i class="fa-solid fa-camera" style="font-size: 16px;"></i>
                         </div>
                     </div>
@@ -1626,33 +1658,33 @@
                     <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
                         <i class="fa-solid fa-hourglass-half" style="color: var(--leather); font-size: 16px; margin-bottom: 12px; opacity: 0.8;"></i>
                         <div style="display: flex; align-items: center; width: 100%; gap: 6px; margin-bottom: 16px;">
-                            <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3));"></div>
+                            <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(var(--leather-rgb), 0.3));"></div>
                             <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; white-space: nowrap;">Average Aging</div>
-                            <div style="flex: 1; height: 1px; background: linear-gradient(270deg, transparent, rgba(212, 175, 55, 0.3));"></div>
+                            <div style="flex: 1; height: 1px; background: linear-gradient(270deg, transparent, rgba(var(--leather-rgb), 0.3));"></div>
                         </div>
                         <div id="stat-avg-aging-val" style="font-family: var(--font-serif); font-size: 38px; color: var(--text-main); line-height: 1; font-weight: 400;">0</div>
                         <div style="font-size: 10px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; margin-top: 8px; margin-bottom: 20px;">DAYS</div>
-                        <div id="stat-aging-pill" style="margin-top: auto; border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 4px 12px; font-size: 9px; color: var(--leather); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;">&bull; EMPTY &bull;</div>
+                        <div id="stat-aging-pill" style="margin-top: auto; border: 1px solid rgba(var(--leather-rgb),0.4); border-radius: 12px; padding: 4px 12px; font-size: 9px; color: var(--leather); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;">&bull; EMPTY &bull;</div>
                     </div>
 
                     <!-- CENTRAL DECORATIVE DIVIDER -->
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 24px; flex-shrink: 0;">
-                        <div style="width: 1px; flex: 1; background: linear-gradient(to bottom, transparent, rgba(212, 175, 55, 0.2) 20%);"></div>
-                        <i class="fa-solid fa-diamond" style="color: rgba(212, 175, 55, 0.4); font-size: 6px; margin: 12px 0;"></i>
-                        <div style="width: 1px; flex: 1; background: linear-gradient(to top, transparent, rgba(212, 175, 55, 0.2) 20%);"></div>
+                        <div style="width: 1px; flex: 1; background: linear-gradient(to bottom, transparent, rgba(var(--leather-rgb), 0.2) 20%);"></div>
+                        <i class="fa-solid fa-diamond" style="color: rgba(var(--leather-rgb), 0.4); font-size: 6px; margin: 12px 0;"></i>
+                        <div style="width: 1px; flex: 1; background: linear-gradient(to top, transparent, rgba(var(--leather-rgb), 0.2) 20%);"></div>
                     </div>
 
                     <!-- RIGHT COLUMN (VALUE) -->
                     <div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
                         <i class="fa-solid fa-box-archive" style="color: var(--leather); font-size: 16px; margin-bottom: 12px; opacity: 0.8;"></i>
                         <div style="display: flex; align-items: center; width: 100%; gap: 6px; margin-bottom: 16px;">
-                            <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3));"></div>
+                            <div style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(var(--leather-rgb), 0.3));"></div>
                             <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; white-space: nowrap;">Humidor Value</div>
-                            <div style="flex: 1; height: 1px; background: linear-gradient(270deg, transparent, rgba(212, 175, 55, 0.3));"></div>
+                            <div style="flex: 1; height: 1px; background: linear-gradient(270deg, transparent, rgba(var(--leather-rgb), 0.3));"></div>
                         </div>
                         <div id="stat-humidor-value-val" style="font-family: var(--font-serif); font-size: 38px; color: var(--leather); line-height: 1; font-weight: 400;">$0</div>
                         <div style="font-size: 10px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; margin-top: 8px; margin-bottom: 20px;">EST. TOTAL</div>
-                        <div id="stat-value-pill" style="margin-top: auto; border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 12px; padding: 4px 12px; font-size: 9px; color: var(--mint); background: rgba(74, 222, 128, 0.1); font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;"><i class="fa-solid fa-arrow-trend-up"></i> +$0 this month</div>
+                        <div id="stat-value-pill" style="margin-top: auto; border: 1px solid rgba(var(--mint-rgb), 0.3); border-radius: 12px; padding: 4px 12px; font-size: 9px; color: var(--mint); background: rgba(var(--mint-rgb), 0.1); font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;"><i class="fa-solid fa-arrow-trend-up"></i> +$0 this month</div>
                     </div>
 
                 </div>
@@ -1688,7 +1720,7 @@
                 <!-- Theme Toggle Button -->
                 <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 32px; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleTheme()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="background: rgba(212, 175, 55, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                        <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
                             <i id="theme-icon" class="fa-solid fa-moon"></i>
                         </div>
                         <div>
@@ -1704,7 +1736,7 @@
                 <!-- Daily Selection Default Preference -->
                 <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleDailyCigarPreference()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="background: rgba(212, 175, 55, 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                        <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
                             <i id="daily-pref-icon" class="fa-solid fa-up-right-and-down-left-from-center"></i>
                         </div>
                         <div>
@@ -1717,7 +1749,7 @@
                     </div>
                 </div>
 
-                <button class="btn-primary" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); width: 100%; border: none; border-radius: 12px;" onclick="handleLogout()">
+                <button class="btn-primary" style="background: rgba(var(--danger-rgb), 0.1); color: var(--danger); width: 100%; border: none; border-radius: 12px;" onclick="handleLogout()">
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
                 </button>
                 
@@ -1729,7 +1761,7 @@
 
         </div> <!-- END LAYER 3 CONTAINER -->
 
-                <!-- FLOATING BOTTOM DOCK -->
+        <!-- FLOATING BOTTOM DOCK -->
         <div class="bottom-dock-wrapper">
             <nav class="bottom-dock">
                 <div class="nav-item active" onclick="switchTab('view-home', 0)">
@@ -1754,8 +1786,6 @@
                 </div>
             </nav>
         </div>
-
-
 
     </div> 
 </div>
@@ -2454,7 +2484,7 @@
                     <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(c.brand)}</div>
                     <div style="font-size: 12px; color: var(--text-dim); font-weight: 600;">${escapeHTML(c.vitola)} • Qty: ${qty}</div>
                 </div>
-                <div style="background: rgba(212, 175, 55, 0.15); width: 32px; height: 32px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                <div style="background: rgba(var(--leather-rgb), 0.15); width: 32px; height: 32px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
                     <i class="fa-solid fa-arrow-right" style="font-size: 14px;"></i>
                 </div>
             </div>`;
@@ -3861,10 +3891,10 @@ window.storeCigar = async function() {
                 let imageBadge = '';
                 if(cigar.image) {
                     window.imageRegistry[cigar.id] = cigar.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
                 }
                 
-                let qtyBadge = `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
+                let qtyBadge = `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
                 
                 let attributesRow = '';
                 if (qtyBadge || imageBadge) {
@@ -3906,7 +3936,7 @@ window.storeCigar = async function() {
         
         // Hidden element helps satisfy JS updating logic for peak cigars
         const alertsEl = document.getElementById('stat-alerts');
-        if (alertsEl)alertsEl.innerText = readyAlertsCount;
+        if (alertsEl) alertsEl.innerText = readyAlertsCount;
         
         let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
         document.getElementById('stat-avg-aging-val').innerText = avgDays;
@@ -3950,7 +3980,7 @@ window.storeCigar = async function() {
     };
 </script>
 
-    <script>
+<script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
@@ -3962,7 +3992,6 @@ window.storeCigar = async function() {
         });
     });
   }
-  
 </script>
 
 </body>
