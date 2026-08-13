@@ -785,19 +785,23 @@
             background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); 
         }
         .bottom-dock { 
-            width: calc(100% - 32px); 
-            max-width: 390px; 
-            background: var(--surface-08dp); 
-            border: 1px solid var(--border-subtle); 
-            border-radius: 32px; 
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center; 
-            padding: 8px 12px; 
-            margin-bottom: max(20px, env(safe-area-inset-bottom)); 
-            box-shadow: 0 8px 16px var(--shadow-strong); 
-            pointer-events: auto; 
-        }
+    width: calc(100% - 32px); 
+    max-width: 390px; 
+    background: var(--surface-08dp); 
+    border: 1px solid var(--border-subtle); 
+    border-radius: 32px; 
+    display: flex; 
+    justify-content: space-around; 
+    align-items: center; 
+    padding: 8px 12px; 
+    
+    /* Force the dock lower. Adjust this number up or down to dial it in! */
+    margin-bottom: 16px; 
+    
+    box-shadow: 0 8px 16px var(--shadow-strong); 
+    pointer-events: auto; 
+}
+
         .nav-item { 
             color: var(--text-dim); 
             font-size: 20px; 
