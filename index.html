@@ -168,7 +168,6 @@
         #login-environment { 
             justify-content: flex-start; 
             align-items: center; 
-            /* Added safe area padding for dynamic island */
             padding: calc(20px + env(safe-area-inset-top)) 24px 20px 24px; 
             text-align: center; 
             position: relative;
@@ -371,16 +370,29 @@
         .btn-secondary.attached { background: var(--surface-04dp); color: var(--leather); border: 1px solid var(--leather); border-style: solid; }
 
         /* --- PERSISTENT DYNAMIC HEADER STYLES (LAYERS 1 & 2) --- */
+        
+        /* Grid Transition Wrapper for Butter-Smooth Layer 1 Collapse */
+        #layer-1-wrapper {
+            display: grid;
+            grid-template-rows: 1fr;
+            transition: grid-template-rows 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        #layer-1-inner {
+            min-height: 0; /* Crucial for grid collapse trick */
+            overflow: hidden;
+            transition: opacity 0.3s ease;
+        }
+
         #daily-cigar-header {
             text-align: center;
             background: var(--bg-base);
-            /* Padding accounts for notch. Will transition out on scroll */
-            padding: calc(20px + env(safe-area-inset-top)) 16px 40px 16px;
-            max-height: 250px; 
-            overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), 
-                        padding 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), 
-                        opacity 0.3s ease;
+            /* Pushed down further for Dynamic Island */
+            padding-top: calc(35px + env(safe-area-inset-top)); 
+            padding-bottom: 30px;
+            padding-left: 16px;
+            padding-right: 16px;
+            position: relative;
         }
 
         #layer-2-container {
@@ -390,7 +402,7 @@
             position: relative;
             border-top: 1px solid var(--border-subtle);
             z-index: 5;
-            transition: padding 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: padding 0.45s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         #layer-2-chevron {
@@ -419,7 +431,7 @@
             font-size: 28px; 
             font-weight: 800; 
             color: var(--text-main);
-            transition: font-size 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: font-size 0.45s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         #dynamic-layer-2-subtitle {
@@ -433,14 +445,14 @@
             font-family: var(--font-sans);
             max-height: 20px;
             overflow: hidden;
-            transition: opacity 0.3s ease, max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), margin-top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: opacity 0.3s ease, max-height 0.45s cubic-bezier(0.25, 1, 0.5, 1), margin-top 0.45s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* SCROLL STATE 1: Hide Layer 1 completely */
-        #main-environment.scroll-state-1 #daily-cigar-header {
-            max-height: 0;
-            padding-top: 0;
-            padding-bottom: 0;
+        /* SCROLL STATE 1: Hide Layer 1 perfectly smoothly */
+        #main-environment.scroll-state-1 #layer-1-wrapper {
+            grid-template-rows: 0fr;
+        }
+        #main-environment.scroll-state-1 #layer-1-inner {
             opacity: 0;
         }
         #main-environment.scroll-state-1 #layer-2-container {
@@ -454,7 +466,7 @@
 
         /* SCROLL STATE 2: Compact Layer 2 */
         #main-environment.scroll-state-2 #layer-2-container {
-            padding-top: calc(10px + env(safe-area-inset-top)); 
+            padding-top: calc(12px + env(safe-area-inset-top)); 
             padding-bottom: 46px; 
         }
         #main-environment.scroll-state-2 #dynamic-layer-2-title {
@@ -998,22 +1010,25 @@
     <!-- MAIN APP SHELL -->
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
-        <!-- LAYER 1: PERSISTENT HEADER (00dp) -->
-        <div id="daily-cigar-header">
-            
-            <!-- COLLAPSED STATE -->
-            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
-                <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    Today's Selection <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i>
-                </span>
-            </div>
+        <!-- LAYER 1: PERSISTENT HEADER (00dp) WITH GRID WRAPPER FOR SMOOTH COLLAPSE -->
+        <div id="layer-1-wrapper">
+            <div id="layer-1-inner">
+                <div id="daily-cigar-header">
+                    <!-- COLLAPSED STATE -->
+                    <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                        <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            Today's Selection <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i>
+                        </span>
+                    </div>
 
-            <!-- EXPANDED STATE -->
-            <div id="daily-cigar-expanded" style="margin-top: -8px;">
-                <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
-                    <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
-                    <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
-                    <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
+                    <!-- EXPANDED STATE -->
+                    <div id="daily-cigar-expanded" style="margin-top: -8px;">
+                        <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
+                            <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
+                            <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
+                            <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2003,10 +2018,10 @@
             
             if (st > 80) {
                 mainEnv.classList.add('scroll-state-1', 'scroll-state-2');
-            } else if (st > 20) {
+            } else if (st > 40) {
                 mainEnv.classList.add('scroll-state-1');
                 mainEnv.classList.remove('scroll-state-2');
-            } else {
+            } else if (st < 10) { // Hysteresis: only revert when near the very top
                 mainEnv.classList.remove('scroll-state-1', 'scroll-state-2');
             }
         });
