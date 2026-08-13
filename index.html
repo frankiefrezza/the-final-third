@@ -46,9 +46,9 @@
             --surface-24dp: #383838; /* 16% */
 
             /* Specific solid backgrounds for Login UI to prevent autofill bleed */
-            --login-panel-bg: #111111; /* Darkened for higher contrast */
-            --login-input-bg: #1A1A1A; /* Darkened slightly to sit in panel better */
-            --input-border: #282828;   /* Darkened border to stop bright edges */
+            --login-panel-bg: #1A1A1A; 
+            --login-input-bg: #232323; 
+            --input-border: #363636; /* Solid border prevents Safari autofill yellow bleed */
 
             --bg-gradient-start: var(--surface-01dp);
             --bg-gradient-end: var(--bg-base);
@@ -159,27 +159,16 @@
         /* --- GLOBAL RESET --- */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        html, body {
-            overscroll-behavior-y: none; /* Modern iOS lock */
-            overflow: hidden; /* Fallback lock */
-            width: 100%;
-            height: 100%;
-            position: fixed; /* Ultimate iOS viewport lock */
-            top: 0;
-            left: 0;
-        }
-        
-        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; transition: background-color 0.3s; }
-        
-        #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); height: 100%; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px var(--shadow-strong); transition: background-color 0.3s; }
-        .app-environment { display: none; width: 100%; height: 100%; flex-direction: column; }
+        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; min-height: 100dvh; transition: background-color 0.3s; }
+        #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); min-height: 100vh; min-height: 100dvh; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px var(--shadow-strong); transition: background-color 0.3s; }
+        .app-environment { display: none; width: 100%; min-height: 100vh; flex-direction: column; }
         .app-environment.active { display: flex; }
 
         /* --- LUXURY LOGIN REDESIGN --- */
         #login-environment { 
             justify-content: flex-start; 
             align-items: center; 
-            padding: calc(20px + env(safe-area-inset-top)) 24px 20px 24px; 
+            padding: 20px 24px; 
             text-align: center; 
             position: relative;
             overflow: hidden;
@@ -269,8 +258,6 @@
             outline: none;
             appearance: none;
             -webkit-appearance: none;
-            box-shadow: none; /* Prevents native shadows */
-            background-clip: padding-box; /* Stops background bleed on edges */
             transition: all 0.3s ease;
             font-family: var(--font-sans);
         }
@@ -286,17 +273,13 @@
             color: var(--leather);
         }
 
-        /* Strictly enforced autofill overrides to kill Safari/Chrome yellow glow */
         .luxury-input:-webkit-autofill,
         .luxury-input:-webkit-autofill:hover, 
         .luxury-input:-webkit-autofill:focus, 
         .luxury-input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 100px var(--login-input-bg) inset !important;
+            -webkit-box-shadow: 0 0 0 30px var(--login-input-bg) inset !important;
             -webkit-text-fill-color: var(--text-main) !important;
-            border: 1px solid var(--input-border) !important; 
-            outline: none !important; 
-            background-clip: padding-box !important;
-            border-radius: 16px !important;
+            border: 1px solid var(--input-border) !important; /* Forces solid border over Safari yellow */
             transition: background-color 5000s ease-in-out 0s;
         }
 
@@ -380,104 +363,14 @@
         .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 12px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
         .btn-secondary.attached { background: var(--surface-04dp); color: var(--leather); border: 1px solid var(--leather); border-style: solid; }
 
-        /* --- PERSISTENT DYNAMIC HEADER STYLES (LAYERS 1 & 2) --- */
-        
-        /* Hardware accelerated max-height transition wrapper for fluid, un-snappy collapse */
-        #layer-1-wrapper {
-            /* Increased to comfortably hold extra padding without snapping */
-            max-height: 260px; 
-            overflow: hidden;
-            opacity: 1;
-            transform-origin: top;
-            will-change: max-height, opacity, transform;
-            /* Luxurious, deceleration-heavy Apple easing curve (easeOutExpo) */
-            transition: max-height 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
-                        opacity 0.4s ease-out,
-                        transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        #daily-cigar-header {
+        /* --- PERSISTENT HEADER (LAYER 1) --- */
+        .dash-header {
             text-align: center;
+            padding: 20px 16px;
             background: var(--bg-base);
-            /* Refined padding to match requested screenshot */
-            padding-top: calc(20px + env(safe-area-inset-top)); 
-            padding-bottom: 35px; 
-            padding-left: 16px;
-            padding-right: 16px;
-            position: relative;
         }
 
-        #layer-2-container {
-            background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%);
-            border-radius: 40px 40px 0 0;
-            padding: 20px 24px 56px 24px;
-            position: relative;
-            border-top: 1px solid var(--border-subtle);
-            z-index: 5;
-            will-change: padding;
-            transition: padding 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        #dynamic-layer-2-title {
-            display: block; 
-            font-size: 28px; 
-            font-weight: 800; 
-            color: var(--text-main);
-            will-change: font-size;
-            transition: font-size 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        #dynamic-layer-2-subtitle {
-            color: var(--text-dim); 
-            font-weight: 700; 
-            font-size: 11px; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            margin-top: 6px; 
-            display: block; 
-            font-family: var(--font-sans);
-            max-height: 30px;
-            opacity: 1;
-            overflow: hidden;
-            will-change: max-height, opacity, margin-top;
-            transition: opacity 0.3s ease-out, 
-                        max-height 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
-                        margin-top 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        /* SCROLL STATE 1: Hide Layer 1 smoothly with a receding depth effect */
-        #main-environment.scroll-state-1 #layer-1-wrapper {
-            max-height: 0;
-            opacity: 0;
-            transform: translateY(-10px) scale(0.98); 
-        }
-        #main-environment.scroll-state-1 #layer-2-container {
-            /* Layer 2 seamlessly inherits the safe area padding when it hits the top */
-            padding-top: calc(20px + env(safe-area-inset-top)); 
-        }
-
-        /* SCROLL STATE 2: Compact Layer 2 */
-        #main-environment.scroll-state-2 #layer-2-container {
-            padding-top: calc(12px + env(safe-area-inset-top)); 
-            padding-bottom: 46px; 
-        }
-        #main-environment.scroll-state-2 #dynamic-layer-2-title {
-            font-size: 22px !important;
-        }
-        #main-environment.scroll-state-2 #dynamic-layer-2-subtitle {
-            opacity: 0;
-            max-height: 0;
-            margin-top: 0;
-        }
-
-        /* GLOBAL TOGGLE DISABLE STATE: Erases Layer 1 */
-        #main-environment.daily-cigar-disabled #layer-1-wrapper {
-            display: none !important;
-        }
-        #main-environment.daily-cigar-disabled #layer-2-container {
-            padding-top: calc(20px + env(safe-area-inset-top)); 
-        }
-
+        /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
         
         /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
@@ -785,23 +678,19 @@
             background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); 
         }
         .bottom-dock { 
-    width: calc(100% - 32px); 
-    max-width: 390px; 
-    background: var(--surface-08dp); 
-    border: 1px solid var(--border-subtle); 
-    border-radius: 32px; 
-    display: flex; 
-    justify-content: space-around; 
-    align-items: center; 
-    padding: 8px 12px; 
-    
-    /* Force the dock lower. Adjust this number up or down to dial it in! */
-    margin-bottom: 16px; 
-    
-    box-shadow: 0 8px 16px var(--shadow-strong); 
-    pointer-events: auto; 
-}
-
+            width: calc(100% - 32px); 
+            max-width: 390px; 
+            background: var(--surface-08dp); 
+            border: 1px solid var(--border-subtle); 
+            border-radius: 32px; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            padding: 8px 12px; 
+            margin-bottom: max(20px, env(safe-area-inset-bottom)); 
+            box-shadow: 0 8px 16px var(--shadow-strong); 
+            pointer-events: auto; 
+        }
         .nav-item { 
             color: var(--text-dim); 
             font-size: 20px; 
@@ -1014,29 +903,39 @@
     <!-- MAIN APP SHELL -->
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
-        <!-- LAYER 1: PERSISTENT HEADER (00dp) WITH GRID WRAPPER FOR SMOOTH COLLAPSE -->
-        <div id="layer-1-wrapper">
-            <div id="layer-1-inner">
-                <div id="daily-cigar-header">
-                    <!-- TODAY'S SELECTION CONTENT -->
-                    <div id="daily-cigar-expanded">
-                        <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
-                            <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
-                            <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
-                            <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
-                        </div>
-                    </div>
+        <!-- LAYER 1: PERSISTENT HEADER (00dp) -->
+        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 40px;">
+            
+            <!-- COLLAPSED STATE -->
+            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    Today's Selection <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i>
+                </span>
+            </div>
+
+            <!-- EXPANDED STATE -->
+            <div id="daily-cigar-expanded" style="margin-top: -8px;">
+                <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
+                    <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
+                    <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
+                    <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
                 </div>
             </div>
         </div>
 
         <!-- LAYER 2: DYNAMIC TITLE LAYER (01dp) -->
-        <div id="layer-2-container">
+        <div style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-radius: 40px 40px 0 0; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--border-subtle); z-index: 5;">
+            
+            <!-- LAYER 2 ATTACHED CHEVRON (Hides when Layer 1 Collapses) -->
+            <div id="layer-2-chevron" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); cursor: pointer; color: var(--leather); padding: 2px 16px; display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-bottom: none; border-radius: 12px 12px 0 0; width: 60px; height: 20px; transition: transform 0.2s, background 0.3s; z-index: 10;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='translateX(-50%) scale(0.95)'" onmouseup="this.style.transform='translateX(-50%) scale(1)'" onmouseleave="this.style.transform='translateX(-50%) scale(1)'" ontouchstart="this.style.transform='translateX(-50%) scale(0.95)'" ontouchend="this.style.transform='translateX(-50%) scale(1)'">
+                <i class="fa-solid fa-chevron-up" style="font-size: 10px;"></i>
+            </div>
+
             <div class="greeting" id="greeting-container">
-                <span id="dynamic-layer-2-title">
+                <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800; color: var(--text-main);">
                     Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">Smiljan</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
                 </span>
-                <span id="dynamic-layer-2-subtitle">Vault Overview</span>
+                <span id="dynamic-layer-2-subtitle" style="color: var(--text-dim); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; display: block; font-family: var(--font-sans);">Vault Overview</span>
             </div>
         </div>
 
@@ -1838,15 +1737,15 @@
                 <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleDailyCigarPreference()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
-                            <i class="fa-solid fa-calendar-day"></i>
+                            <i id="daily-pref-icon" class="fa-solid fa-up-right-and-down-left-from-center"></i>
                         </div>
                         <div>
                             <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Daily Selection</div>
-                            <div id="daily-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Enabled</div>
+                            <div id="daily-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Default Expanded</div>
                         </div>
                     </div>
-                    <div id="daily-pref-toggle" style="color: var(--mint); font-size: 20px; transition: color 0.3s ease;">
-                        <i class="fa-solid fa-toggle-on"></i>
+                    <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
+                        <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
                     </div>
                 </div>
 
@@ -1862,7 +1761,7 @@
 
         </div> <!-- END LAYER 3 CONTAINER -->
 
-        <!-- 🚨 THE FLOATING BOTTOM DOCK MUST GO HERE 🚨 -->
+        <!-- FLOATING BOTTOM DOCK -->
         <div class="bottom-dock-wrapper">
             <nav class="bottom-dock">
                 <div class="nav-item active" onclick="switchTab('view-home', 0)">
@@ -1888,10 +1787,9 @@
             </nav>
         </div>
 
-    </div> <!-- THIS closes main-environment -->
-</div> <!-- THIS closes app-container -->
+    </div> 
+</div>
 
-<!-- MODALS START DOWN HERE -->
 <!-- LOG A SMOKE MODAL -->
 <div id="log-smoke-modal" class="action-sheet-overlay" onclick="closeLogSmokeModal(event)">
     <div class="action-sheet" onclick="event.stopPropagation()" style="height: 85vh; display: flex; flex-direction: column; padding-bottom: max(24px, env(safe-area-inset-bottom));">
@@ -2001,31 +1899,6 @@
 </div>
 
 <script type="module">
-
-    // --- SCROLL ANIMATION ENGINE ---
-    let scrollTicking = false;
-    document.querySelectorAll('.view-section').forEach(section => {
-        section.addEventListener('scroll', function() {
-            if (!scrollTicking) {
-                window.requestAnimationFrame(() => {
-                    const st = Math.max(0, this.scrollTop); 
-                    const mainEnv = document.getElementById('main-environment');
-                    
-                    if (st > 100) {
-                        mainEnv.classList.add('scroll-state-1', 'scroll-state-2');
-                    } else if (st > 50) {
-                        mainEnv.classList.add('scroll-state-1');
-                        mainEnv.classList.remove('scroll-state-2');
-                    } else if (st < 15) {
-                        mainEnv.classList.remove('scroll-state-1', 'scroll-state-2');
-                    }
-                    
-                    scrollTicking = false;
-                });
-                scrollTicking = true;
-            }
-        });
-    });
 
     // --- PAIRING GUIDE ENGINE ---
     const leafProfiles = {
@@ -2204,37 +2077,67 @@
         }
     };
 
-    // --- DAILY SELECTION SETTINGS TOGGLE ---
-    window.toggleDailyCigarPreference = function() {
-        const currentState = localStorage.getItem('finalThirdDailyPref') || 'on';
-        if (currentState === 'on') {
-            localStorage.setItem('finalThirdDailyPref', 'off');
+    // --- DAILY SELECTION ENGINE ---
+    window.toggleDailyCigarLayer = function() {
+        const expanded = document.getElementById('daily-cigar-expanded');
+        const collapsed = document.getElementById('daily-cigar-collapsed');
+        const chevron = document.getElementById('layer-2-chevron'); 
+        
+        if (expanded.style.display === 'none') {
+            expanded.style.display = 'block';
+            collapsed.style.display = 'none';
+            if(chevron) chevron.style.display = 'flex'; 
         } else {
-            localStorage.setItem('finalThirdDailyPref', 'on');
+            expanded.style.display = 'none';
+            collapsed.style.display = 'block';
+            if(chevron) chevron.style.display = 'none'; 
         }
-        window.applyDailyCigarPreference();
+    };
+
+    window.toggleDailyCigarPreference = function() {
+        const icon = document.getElementById('daily-pref-icon');
+        const text = document.getElementById('daily-pref-text');
+        const currentState = localStorage.getItem('finalThirdDailyPref') || 'expanded';
+        
+        if (currentState === 'expanded') {
+            localStorage.setItem('finalThirdDailyPref', 'collapsed');
+            if(icon) icon.className = 'fa-solid fa-down-left-and-up-right-to-center';
+            if(text) text.innerText = 'Default Collapsed';
+            
+            document.getElementById('daily-cigar-expanded').style.display = 'none';
+            document.getElementById('daily-cigar-collapsed').style.display = 'block';
+            if(document.getElementById('layer-2-chevron')) document.getElementById('layer-2-chevron').style.display = 'none'; 
+        } else {
+            localStorage.setItem('finalThirdDailyPref', 'expanded');
+            if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
+            if(text) text.innerText = 'Default Expanded';
+            
+            document.getElementById('daily-cigar-expanded').style.display = 'block';
+            document.getElementById('daily-cigar-collapsed').style.display = 'none';
+            if(document.getElementById('layer-2-chevron')) document.getElementById('layer-2-chevron').style.display = 'flex'; 
+        }
     };
 
     window.applyDailyCigarPreference = function() {
-        const savedPref = localStorage.getItem('finalThirdDailyPref') || 'on';
+        const savedPref = localStorage.getItem('finalThirdDailyPref') || 'expanded';
+        const icon = document.getElementById('daily-pref-icon');
         const text = document.getElementById('daily-pref-text');
-        const toggleIcon = document.getElementById('daily-pref-toggle');
-        const mainEnv = document.getElementById('main-environment');
+        const expanded = document.getElementById('daily-cigar-expanded');
+        const collapsed = document.getElementById('daily-cigar-collapsed');
+        const chevron = document.getElementById('layer-2-chevron'); 
         
-        if (savedPref === 'off') {
-            mainEnv.classList.add('daily-cigar-disabled');
-            if(text) text.innerText = 'Disabled';
-            if(toggleIcon) {
-                toggleIcon.innerHTML = '<i class="fa-solid fa-toggle-off"></i>';
-                toggleIcon.style.color = 'var(--text-dim)';
-            }
+        if (savedPref === 'collapsed') {
+            if(expanded) expanded.style.display = 'none';
+            if(collapsed) collapsed.style.display = 'block';
+            if(chevron) chevron.style.display = 'none'; 
+            if(icon) icon.className = 'fa-solid fa-down-left-and-up-right-to-center';
+            if(text) text.innerText = 'Default Collapsed';
         } else {
-            mainEnv.classList.remove('daily-cigar-disabled');
-            if(text) text.innerText = 'Enabled';
-            if(toggleIcon) {
-                toggleIcon.innerHTML = '<i class="fa-solid fa-toggle-on"></i>';
-                toggleIcon.style.color = 'var(--mint)';
-            }
+            if(expanded) expanded.style.display = 'block';
+            if(collapsed) collapsed.style.display = 'none';
+            if(chevron) chevron.style.display = 'flex'; 
+            if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
+            if(text) text.innerText = 'Default Expanded';
         }
     };
 
@@ -3115,9 +3018,6 @@ window.compressImage = function(file) {
         const targetView = document.getElementById(targetViewId);
         targetView.classList.add('active');
         targetView.scrollTop = 0; 
-
-        // Important: Remove scroll states so header re-expands fully when changing tabs
-        document.getElementById('main-environment').classList.remove('scroll-state-1', 'scroll-state-2');
 
         const layer3 = document.querySelector('.layer-3-container');
         layer3.classList.remove('slide-anim');
@@ -4056,7 +3956,7 @@ window.storeCigar = async function() {
         // Execute Updated Top 3 Palate Mapping Logic
         const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
         
-                if (totalValidWrappers > 0) {
+        if (totalValidWrappers > 0) {
             let wrapperHtml = '';
             const top3 = sortedWrappers.slice(0, 3);
             const badgeClasses = ['badge-indigo', 'badge-mint', 'badge-amber'];
@@ -4080,7 +3980,7 @@ window.storeCigar = async function() {
     };
 </script>
 
-<!-- <script>
+<script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
@@ -4092,7 +3992,7 @@ window.storeCigar = async function() {
         });
     });
   }
-</script> -->
+</script>
 
 </body>
 </html>
