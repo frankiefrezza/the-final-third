@@ -371,24 +371,20 @@
 
         /* --- PERSISTENT DYNAMIC HEADER STYLES (LAYERS 1 & 2) --- */
         
-        /* Grid Transition Wrapper for Butter-Smooth Layer 1 Collapse */
+        /* Hardware accelerated max-height transition wrapper for fluid collapse */
         #layer-1-wrapper {
-            display: grid;
-            grid-template-rows: 1fr;
-            transition: grid-template-rows 0.45s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        
-        #layer-1-inner {
-            min-height: 0; /* Crucial for grid collapse trick */
+            max-height: 250px; 
             overflow: hidden;
-            transition: opacity 0.3s ease;
+            opacity: 1;
+            will-change: max-height, opacity;
+            transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease-out;
         }
 
         #daily-cigar-header {
             text-align: center;
             background: var(--bg-base);
-            /* Pushed down further for Dynamic Island */
-            padding-top: calc(35px + env(safe-area-inset-top)); 
+            /* Pushed down further to 40px to safely clear the Dynamic Island */
+            padding-top: calc(40px + env(safe-area-inset-top)); 
             padding-bottom: 30px;
             padding-left: 16px;
             padding-right: 16px;
@@ -402,7 +398,8 @@
             position: relative;
             border-top: 1px solid var(--border-subtle);
             z-index: 5;
-            transition: padding 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: padding;
+            transition: padding 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         #layer-2-chevron {
@@ -431,7 +428,8 @@
             font-size: 28px; 
             font-weight: 800; 
             color: var(--text-main);
-            transition: font-size 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: font-size;
+            transition: font-size 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         #dynamic-layer-2-subtitle {
@@ -443,16 +441,16 @@
             margin-top: 6px; 
             display: block; 
             font-family: var(--font-sans);
-            max-height: 20px;
+            max-height: 30px;
+            opacity: 1;
             overflow: hidden;
-            transition: opacity 0.3s ease, max-height 0.45s cubic-bezier(0.25, 1, 0.5, 1), margin-top 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: max-height, opacity, margin-top;
+            transition: opacity 0.3s ease-out, max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), margin-top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         /* SCROLL STATE 1: Hide Layer 1 perfectly smoothly */
         #main-environment.scroll-state-1 #layer-1-wrapper {
-            grid-template-rows: 0fr;
-        }
-        #main-environment.scroll-state-1 #layer-1-inner {
+            max-height: 0;
             opacity: 0;
         }
         #main-environment.scroll-state-1 #layer-2-container {
@@ -2011,18 +2009,26 @@
 <script type="module">
 
     // --- SCROLL ANIMATION ENGINE ---
+    let scrollTicking = false;
     document.querySelectorAll('.view-section').forEach(section => {
         section.addEventListener('scroll', function() {
-            const st = this.scrollTop;
-            const mainEnv = document.getElementById('main-environment');
-            
-            if (st > 80) {
-                mainEnv.classList.add('scroll-state-1', 'scroll-state-2');
-            } else if (st > 40) {
-                mainEnv.classList.add('scroll-state-1');
-                mainEnv.classList.remove('scroll-state-2');
-            } else if (st < 10) { // Hysteresis: only revert when near the very top
-                mainEnv.classList.remove('scroll-state-1', 'scroll-state-2');
+            if (!scrollTicking) {
+                window.requestAnimationFrame(() => {
+                    const st = this.scrollTop;
+                    const mainEnv = document.getElementById('main-environment');
+                    
+                    // Smoother thresholds with wider gaps to prevent flickering
+                    if (st > 100) {
+                        mainEnv.classList.add('scroll-state-1', 'scroll-state-2');
+                    } else if (st > 50) {
+                        mainEnv.classList.add('scroll-state-1');
+                        mainEnv.classList.remove('scroll-state-2');
+                    } else if (st < 15) {
+                        mainEnv.classList.remove('scroll-state-1', 'scroll-state-2');
+                    }
+                    scrollTicking = false;
+                });
+                scrollTicking = true;
             }
         });
     });
