@@ -370,15 +370,102 @@
         .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 12px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
         .btn-secondary.attached { background: var(--surface-04dp); color: var(--leather); border: 1px solid var(--leather); border-style: solid; }
 
-        /* --- PERSISTENT HEADER (LAYER 1) --- */
-        .dash-header {
+        /* --- PERSISTENT DYNAMIC HEADER STYLES (LAYERS 1 & 2) --- */
+        #daily-cigar-header {
             text-align: center;
-            /* Added safe-area-inset-top so dynamic island doesn't block the header */
-            padding: calc(20px + env(safe-area-inset-top)) 16px 20px 16px;
             background: var(--bg-base);
+            /* Padding accounts for notch. Will transition out on scroll */
+            padding: calc(20px + env(safe-area-inset-top)) 16px 40px 16px;
+            max-height: 250px; 
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                        padding 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                        opacity 0.3s ease;
         }
 
-        /* --- DYNAMIC TITLE (LAYER 2) --- */
+        #layer-2-container {
+            background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%);
+            border-radius: 40px 40px 0 0;
+            padding: 20px 24px 56px 24px;
+            position: relative;
+            border-top: 1px solid var(--border-subtle);
+            z-index: 5;
+            transition: padding 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        #layer-2-chevron {
+            position: absolute; 
+            top: -20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            cursor: pointer; 
+            color: var(--leather); 
+            padding: 2px 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: var(--surface-01dp); 
+            border: 1px solid var(--border-subtle); 
+            border-bottom: none; 
+            border-radius: 12px 12px 0 0; 
+            width: 60px; 
+            height: 20px; 
+            z-index: 10;
+            transition: opacity 0.3s ease, transform 0.2s, background 0.3s;
+        }
+
+        #dynamic-layer-2-title {
+            display: block; 
+            font-size: 28px; 
+            font-weight: 800; 
+            color: var(--text-main);
+            transition: font-size 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        #dynamic-layer-2-subtitle {
+            color: var(--text-dim); 
+            font-weight: 700; 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            margin-top: 6px; 
+            display: block; 
+            font-family: var(--font-sans);
+            max-height: 20px;
+            overflow: hidden;
+            transition: opacity 0.3s ease, max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), margin-top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* SCROLL STATE 1: Hide Layer 1 completely */
+        #main-environment.scroll-state-1 #daily-cigar-header {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            opacity: 0;
+        }
+        #main-environment.scroll-state-1 #layer-2-container {
+            /* Layer 2 takes over the safe area padding when it hits the top */
+            padding-top: calc(20px + env(safe-area-inset-top)); 
+        }
+        #main-environment.scroll-state-1 #layer-2-chevron {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* SCROLL STATE 2: Compact Layer 2 */
+        #main-environment.scroll-state-2 #layer-2-container {
+            padding-top: calc(10px + env(safe-area-inset-top)); 
+            padding-bottom: 46px; 
+        }
+        #main-environment.scroll-state-2 #dynamic-layer-2-title {
+            font-size: 22px !important;
+        }
+        #main-environment.scroll-state-2 #dynamic-layer-2-subtitle {
+            opacity: 0;
+            max-height: 0;
+            margin-top: 0;
+        }
+
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
         
         /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
@@ -912,7 +999,7 @@
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
         <!-- LAYER 1: PERSISTENT HEADER (00dp) -->
-        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 40px;">
+        <div id="daily-cigar-header">
             
             <!-- COLLAPSED STATE -->
             <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
@@ -932,18 +1019,18 @@
         </div>
 
         <!-- LAYER 2: DYNAMIC TITLE LAYER (01dp) -->
-        <div style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-radius: 40px 40px 0 0; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--border-subtle); z-index: 5;">
+        <div id="layer-2-container">
             
             <!-- LAYER 2 ATTACHED CHEVRON (Hides when Layer 1 Collapses) -->
-            <div id="layer-2-chevron" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); cursor: pointer; color: var(--leather); padding: 2px 16px; display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-bottom: none; border-radius: 12px 12px 0 0; width: 60px; height: 20px; transition: transform 0.2s, background 0.3s; z-index: 10;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='translateX(-50%) scale(0.95)'" onmouseup="this.style.transform='translateX(-50%) scale(1)'" onmouseleave="this.style.transform='translateX(-50%) scale(1)'" ontouchstart="this.style.transform='translateX(-50%) scale(0.95)'" ontouchend="this.style.transform='translateX(-50%) scale(1)'">
+            <div id="layer-2-chevron" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='translateX(-50%) scale(0.95)'" onmouseup="this.style.transform='translateX(-50%) scale(1)'" onmouseleave="this.style.transform='translateX(-50%) scale(1)'" ontouchstart="this.style.transform='translateX(-50%) scale(0.95)'" ontouchend="this.style.transform='translateX(-50%) scale(1)'">
                 <i class="fa-solid fa-chevron-up" style="font-size: 10px;"></i>
             </div>
 
             <div class="greeting" id="greeting-container">
-                <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800; color: var(--text-main);">
+                <span id="dynamic-layer-2-title">
                     Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">Smiljan</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
                 </span>
-                <span id="dynamic-layer-2-subtitle" style="color: var(--text-dim); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; display: block; font-family: var(--font-sans);">Vault Overview</span>
+                <span id="dynamic-layer-2-subtitle">Vault Overview</span>
             </div>
         </div>
 
@@ -1907,6 +1994,23 @@
 </div>
 
 <script type="module">
+
+    // --- SCROLL ANIMATION ENGINE ---
+    document.querySelectorAll('.view-section').forEach(section => {
+        section.addEventListener('scroll', function() {
+            const st = this.scrollTop;
+            const mainEnv = document.getElementById('main-environment');
+            
+            if (st > 80) {
+                mainEnv.classList.add('scroll-state-1', 'scroll-state-2');
+            } else if (st > 20) {
+                mainEnv.classList.add('scroll-state-1');
+                mainEnv.classList.remove('scroll-state-2');
+            } else {
+                mainEnv.classList.remove('scroll-state-1', 'scroll-state-2');
+            }
+        });
+    });
 
     // --- PAIRING GUIDE ENGINE ---
     const leafProfiles = {
@@ -3026,6 +3130,9 @@ window.compressImage = function(file) {
         const targetView = document.getElementById(targetViewId);
         targetView.classList.add('active');
         targetView.scrollTop = 0; 
+
+        // Important: Remove scroll states so header re-expands fully when changing tabs
+        document.getElementById('main-environment').classList.remove('scroll-state-1', 'scroll-state-2');
 
         const layer3 = document.querySelector('.layer-3-container');
         layer3.classList.remove('slide-anim');
