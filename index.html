@@ -46,9 +46,9 @@
             --surface-24dp: #383838; /* 16% */
 
             /* Specific solid backgrounds for Login UI to prevent autofill bleed */
-            --login-panel-bg: #1A1A1A; 
-            --login-input-bg: #232323; 
-            --input-border: #363636; /* Solid border prevents Safari autofill yellow bleed */
+            --login-panel-bg: #111111; /* Darkened for higher contrast */
+            --login-input-bg: #1A1A1A; /* Darkened slightly to sit in panel better */
+            --input-border: #282828;   /* Darkened border to stop bright edges */
 
             --bg-gradient-start: var(--surface-01dp);
             --bg-gradient-end: var(--bg-base);
@@ -168,7 +168,8 @@
         #login-environment { 
             justify-content: flex-start; 
             align-items: center; 
-            padding: 20px 24px; 
+            /* Added safe area padding for dynamic island */
+            padding: calc(20px + env(safe-area-inset-top)) 24px 20px 24px; 
             text-align: center; 
             position: relative;
             overflow: hidden;
@@ -258,6 +259,8 @@
             outline: none;
             appearance: none;
             -webkit-appearance: none;
+            box-shadow: none; /* Prevents native shadows */
+            background-clip: padding-box; /* Stops background bleed on edges */
             transition: all 0.3s ease;
             font-family: var(--font-sans);
         }
@@ -273,13 +276,17 @@
             color: var(--leather);
         }
 
+        /* Strictly enforced autofill overrides to kill Safari/Chrome yellow glow */
         .luxury-input:-webkit-autofill,
         .luxury-input:-webkit-autofill:hover, 
         .luxury-input:-webkit-autofill:focus, 
         .luxury-input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px var(--login-input-bg) inset !important;
+            -webkit-box-shadow: 0 0 0 100px var(--login-input-bg) inset !important;
             -webkit-text-fill-color: var(--text-main) !important;
-            border: 1px solid var(--input-border) !important; /* Forces solid border over Safari yellow */
+            border: 1px solid var(--input-border) !important; 
+            outline: none !important; 
+            background-clip: padding-box !important;
+            border-radius: 16px !important;
             transition: background-color 5000s ease-in-out 0s;
         }
 
@@ -366,7 +373,8 @@
         /* --- PERSISTENT HEADER (LAYER 1) --- */
         .dash-header {
             text-align: center;
-            padding: 20px 16px;
+            /* Added safe-area-inset-top so dynamic island doesn't block the header */
+            padding: calc(20px + env(safe-area-inset-top)) 16px 20px 16px;
             background: var(--bg-base);
         }
 
@@ -3980,7 +3988,7 @@ window.storeCigar = async function() {
     };
 </script>
 
-<script>
+<!-- <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
@@ -3992,8 +4000,7 @@ window.storeCigar = async function() {
         });
     });
   }
-</script>
+</script> -->
 
 </body>
 </html>
-
