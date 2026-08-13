@@ -407,27 +407,6 @@
             transition: padding 0.7s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        #layer-2-chevron {
-            position: absolute; 
-            top: -20px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            cursor: pointer; 
-            color: var(--leather); 
-            padding: 2px 16px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: var(--surface-01dp); 
-            border: 1px solid var(--border-subtle); 
-            border-bottom: none; 
-            border-radius: 12px 12px 0 0; 
-            width: 60px; 
-            height: 20px; 
-            z-index: 10;
-            transition: opacity 0.3s ease, transform 0.2s, background 0.3s;
-        }
-
         #dynamic-layer-2-title {
             display: block; 
             font-size: 28px; 
@@ -464,10 +443,6 @@
         #main-environment.scroll-state-1 #layer-2-container {
             /* Layer 2 seamlessly inherits the safe area padding when it hits the top */
             padding-top: calc(20px + env(safe-area-inset-top)); 
-        }
-        #main-environment.scroll-state-1 #layer-2-chevron {
-            opacity: 0;
-            pointer-events: none;
         }
 
         /* SCROLL STATE 2: Compact Layer 2 */
@@ -1021,9 +996,9 @@
             <div id="layer-1-inner">
                 <div id="daily-cigar-header">
                     <!-- COLLAPSED STATE -->
-                    <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                    <div id="daily-cigar-collapsed" style="display: none; padding: 6px 14px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content;">
                         <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            Today's Selection <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i>
+                            Today's Selection
                         </span>
                     </div>
 
@@ -1041,12 +1016,6 @@
 
         <!-- LAYER 2: DYNAMIC TITLE LAYER (01dp) -->
         <div id="layer-2-container">
-            
-            <!-- LAYER 2 ATTACHED CHEVRON (Hides when Layer 1 Collapses) -->
-            <div id="layer-2-chevron" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='translateX(-50%) scale(0.95)'" onmouseup="this.style.transform='translateX(-50%) scale(1)'" onmouseleave="this.style.transform='translateX(-50%) scale(1)'" ontouchstart="this.style.transform='translateX(-50%) scale(0.95)'" ontouchend="this.style.transform='translateX(-50%) scale(1)'">
-                <i class="fa-solid fa-chevron-up" style="font-size: 10px;"></i>
-            </div>
-
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title">
                     Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">Smiljan</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
