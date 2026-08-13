@@ -371,19 +371,24 @@
 
         /* --- PERSISTENT DYNAMIC HEADER STYLES (LAYERS 1 & 2) --- */
         
-        /* Hardware accelerated max-height transition wrapper for fluid collapse */
+        /* Hardware accelerated max-height transition wrapper for fluid, un-snappy collapse */
         #layer-1-wrapper {
-            max-height: 250px; 
+            /* Tightly bounded max-height prevents the invisible "dead zone" snapping issue */
+            max-height: 180px; 
             overflow: hidden;
             opacity: 1;
-            will-change: max-height, opacity;
-            transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease-out;
+            transform-origin: top;
+            will-change: max-height, opacity, transform;
+            /* Luxurious, deceleration-heavy Apple easing curve (easeOutExpo) */
+            transition: max-height 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
+                        opacity 0.4s ease-out,
+                        transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         #daily-cigar-header {
             text-align: center;
             background: var(--bg-base);
-            /* Pushed down further to 40px to safely clear the Dynamic Island */
+            /* Pushed down further to safely clear the Dynamic Island */
             padding-top: calc(40px + env(safe-area-inset-top)); 
             padding-bottom: 30px;
             padding-left: 16px;
@@ -399,7 +404,7 @@
             border-top: 1px solid var(--border-subtle);
             z-index: 5;
             will-change: padding;
-            transition: padding 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: padding 0.7s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         #layer-2-chevron {
@@ -429,7 +434,7 @@
             font-weight: 800; 
             color: var(--text-main);
             will-change: font-size;
-            transition: font-size 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: font-size 0.7s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         #dynamic-layer-2-subtitle {
@@ -445,16 +450,19 @@
             opacity: 1;
             overflow: hidden;
             will-change: max-height, opacity, margin-top;
-            transition: opacity 0.3s ease-out, max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), margin-top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: opacity 0.3s ease-out, 
+                        max-height 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
+                        margin-top 0.7s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* SCROLL STATE 1: Hide Layer 1 perfectly smoothly */
+        /* SCROLL STATE 1: Hide Layer 1 smoothly with a receding depth effect */
         #main-environment.scroll-state-1 #layer-1-wrapper {
             max-height: 0;
             opacity: 0;
+            transform: translateY(-10px) scale(0.98); 
         }
         #main-environment.scroll-state-1 #layer-2-container {
-            /* Layer 2 takes over the safe area padding when it hits the top */
+            /* Layer 2 seamlessly inherits the safe area padding when it hits the top */
             padding-top: calc(20px + env(safe-area-inset-top)); 
         }
         #main-environment.scroll-state-1 #layer-2-chevron {
@@ -4132,3 +4140,4 @@ window.storeCigar = async function() {
 
 </body>
 </html>
+
