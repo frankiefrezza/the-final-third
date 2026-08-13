@@ -372,29 +372,32 @@
         /* --- PERSISTENT DYNAMIC HEADER STYLES (LAYERS 1 & 2) --- */
         
         /* Hardware accelerated max-height transition wrapper for fluid, un-snappy collapse */
-        #layer-1-wrapper {
-            /* Tightly bounded max-height prevents the invisible "dead zone" snapping issue */
-            max-height: 180px; 
-            overflow: hidden;
-            opacity: 1;
-            transform-origin: top;
-            will-change: max-height, opacity, transform;
-            /* Luxurious, deceleration-heavy Apple easing curve (easeOutExpo) */
-            transition: max-height 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
-                        opacity 0.4s ease-out,
-                        transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-        }
+#layer-1-wrapper {
+    /* Tightly bounded max-height prevents the invisible "dead zone" snapping issue */
+    max-height: 220px; /* <--- CHANGED FROM 180px TO 220px */
+    overflow: hidden;
+    opacity: 1;
+    transform-origin: top;
+    will-change: max-height, opacity, transform;
+    /* Luxurious, deceleration-heavy Apple easing curve (easeOutExpo) */
+    transition: max-height 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
+                opacity 0.4s ease-out,
+                transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+        
 
         #daily-cigar-header {
-            text-align: center;
-            background: var(--bg-base);
-            /* Pushed down further to safely clear the Dynamic Island */
-            padding-top: calc(40px + env(safe-area-inset-top)); 
-            padding-bottom: 30px;
-            padding-left: 16px;
-            padding-right: 16px;
-            position: relative;
-        }
+    text-align: center;
+    background: var(--bg-base);
+    /* Pushed down further to safely clear the Dynamic Island */
+    padding-top: calc(40px + env(safe-area-inset-top)); 
+    padding-bottom: 56px; /* <--- CHANGED FROM 30px TO 56px */
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+}
+
 
         #layer-2-container {
             background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%);
