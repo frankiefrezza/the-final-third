@@ -364,11 +364,13 @@
         .btn-secondary.attached { background: var(--surface-04dp); color: var(--leather); border: 1px solid var(--leather); border-style: solid; }
 
         /* --- PERSISTENT HEADER (LAYER 1) --- */
-        .dash-header {
-            text-align: center;
-            padding: 20px 16px;
-            background: var(--bg-base);
-        }
+.dash-header {
+    text-align: center;
+    /* Adds the safe-area inset to the top padding */
+    padding: calc(20px + env(safe-area-inset-top)) 16px 20px 16px;
+    background: var(--bg-base);
+}
+
 
         /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
