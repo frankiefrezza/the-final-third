@@ -372,32 +372,30 @@
         /* --- PERSISTENT DYNAMIC HEADER STYLES (LAYERS 1 & 2) --- */
         
         /* Hardware accelerated max-height transition wrapper for fluid, un-snappy collapse */
-#layer-1-wrapper {
-    /* Tightly bounded max-height prevents the invisible "dead zone" snapping issue */
-    max-height: 220px; /* <--- CHANGED FROM 180px TO 220px */
-    overflow: hidden;
-    opacity: 1;
-    transform-origin: top;
-    will-change: max-height, opacity, transform;
-    /* Luxurious, deceleration-heavy Apple easing curve (easeOutExpo) */
-    transition: max-height 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
-                opacity 0.4s ease-out,
-                transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-        
+        #layer-1-wrapper {
+            /* Increased to comfortably hold extra padding without snapping */
+            max-height: 220px; 
+            overflow: hidden;
+            opacity: 1;
+            transform-origin: top;
+            will-change: max-height, opacity, transform;
+            /* Luxurious, deceleration-heavy Apple easing curve (easeOutExpo) */
+            transition: max-height 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
+                        opacity 0.4s ease-out,
+                        transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+        }
 
         #daily-cigar-header {
-    text-align: center;
-    background: var(--bg-base);
-    /* Pushed down further to safely clear the Dynamic Island */
-    padding-top: calc(40px + env(safe-area-inset-top)); 
-    padding-bottom: 56px; /* <--- CHANGED FROM 30px TO 56px */
-    padding-left: 16px;
-    padding-right: 16px;
-    position: relative;
-}
-
+            text-align: center;
+            background: var(--bg-base);
+            /* Pushed down further to safely clear the Dynamic Island */
+            padding-top: calc(40px + env(safe-area-inset-top)); 
+            /* Extra space added here so text breathes above Layer 2 */
+            padding-bottom: 56px; 
+            padding-left: 16px;
+            padding-right: 16px;
+            position: relative;
+        }
 
         #layer-2-container {
             background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%);
@@ -460,6 +458,14 @@
             opacity: 0;
             max-height: 0;
             margin-top: 0;
+        }
+
+        /* GLOBAL TOGGLE DISABLE STATE: Erases Layer 1 */
+        #main-environment.daily-cigar-disabled #layer-1-wrapper {
+            display: none !important;
+        }
+        #main-environment.daily-cigar-disabled #layer-2-container {
+            padding-top: calc(20px + env(safe-area-inset-top)); 
         }
 
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
@@ -998,15 +1004,8 @@
         <div id="layer-1-wrapper">
             <div id="layer-1-inner">
                 <div id="daily-cigar-header">
-                    <!-- COLLAPSED STATE -->
-                    <div id="daily-cigar-collapsed" style="display: none; padding: 6px 14px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content;">
-                        <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            Today's Selection
-                        </span>
-                    </div>
-
-                    <!-- EXPANDED STATE -->
-                    <div id="daily-cigar-expanded" style="margin-top: -8px;">
+                    <!-- TODAY'S SELECTION CONTENT -->
+                    <div id="daily-cigar-expanded">
                         <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
                             <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
                             <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
@@ -1825,15 +1824,15 @@
                 <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleDailyCigarPreference()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
-                            <i id="daily-pref-icon" class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                            <i class="fa-solid fa-calendar-day"></i>
                         </div>
                         <div>
                             <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Daily Selection</div>
-                            <div id="daily-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Default Expanded</div>
+                            <div id="daily-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Enabled</div>
                         </div>
                     </div>
-                    <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
-                        <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
+                    <div id="daily-pref-toggle" style="color: var(--mint); font-size: 20px; transition: color 0.3s ease;">
+                        <i class="fa-solid fa-toggle-on"></i>
                     </div>
                 </div>
 
@@ -1997,14 +1996,17 @@
                     const st = this.scrollTop;
                     const mainEnv = document.getElementById('main-environment');
                     
-                    // Smoother thresholds with wider gaps to prevent flickering
-                    if (st > 100) {
-                        mainEnv.classList.add('scroll-state-1', 'scroll-state-2');
-                    } else if (st > 50) {
-                        mainEnv.classList.add('scroll-state-1');
-                        mainEnv.classList.remove('scroll-state-2');
-                    } else if (st < 15) {
-                        mainEnv.classList.remove('scroll-state-1', 'scroll-state-2');
+                    // Prevent scroll animations if the user disabled Layer 1 entirely
+                    if (!mainEnv.classList.contains('daily-cigar-disabled')) {
+                        // Smoother thresholds with wider gaps to prevent flickering
+                        if (st > 100) {
+                            mainEnv.classList.add('scroll-state-1', 'scroll-state-2');
+                        } else if (st > 50) {
+                            mainEnv.classList.add('scroll-state-1');
+                            mainEnv.classList.remove('scroll-state-2');
+                        } else if (st < 15) {
+                            mainEnv.classList.remove('scroll-state-1', 'scroll-state-2');
+                        }
                     }
                     scrollTicking = false;
                 });
@@ -2190,67 +2192,37 @@
         }
     };
 
-    // --- DAILY SELECTION ENGINE ---
-    window.toggleDailyCigarLayer = function() {
-        const expanded = document.getElementById('daily-cigar-expanded');
-        const collapsed = document.getElementById('daily-cigar-collapsed');
-        const chevron = document.getElementById('layer-2-chevron'); 
-        
-        if (expanded.style.display === 'none') {
-            expanded.style.display = 'block';
-            collapsed.style.display = 'none';
-            if(chevron) chevron.style.display = 'flex'; 
-        } else {
-            expanded.style.display = 'none';
-            collapsed.style.display = 'block';
-            if(chevron) chevron.style.display = 'none'; 
-        }
-    };
-
+    // --- DAILY SELECTION SETTINGS TOGGLE ---
     window.toggleDailyCigarPreference = function() {
-        const icon = document.getElementById('daily-pref-icon');
-        const text = document.getElementById('daily-pref-text');
-        const currentState = localStorage.getItem('finalThirdDailyPref') || 'expanded';
-        
-        if (currentState === 'expanded') {
-            localStorage.setItem('finalThirdDailyPref', 'collapsed');
-            if(icon) icon.className = 'fa-solid fa-down-left-and-up-right-to-center';
-            if(text) text.innerText = 'Default Collapsed';
-            
-            document.getElementById('daily-cigar-expanded').style.display = 'none';
-            document.getElementById('daily-cigar-collapsed').style.display = 'block';
-            if(document.getElementById('layer-2-chevron')) document.getElementById('layer-2-chevron').style.display = 'none'; 
+        const currentState = localStorage.getItem('finalThirdDailyPref') || 'on';
+        if (currentState === 'on') {
+            localStorage.setItem('finalThirdDailyPref', 'off');
         } else {
-            localStorage.setItem('finalThirdDailyPref', 'expanded');
-            if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
-            if(text) text.innerText = 'Default Expanded';
-            
-            document.getElementById('daily-cigar-expanded').style.display = 'block';
-            document.getElementById('daily-cigar-collapsed').style.display = 'none';
-            if(document.getElementById('layer-2-chevron')) document.getElementById('layer-2-chevron').style.display = 'flex'; 
+            localStorage.setItem('finalThirdDailyPref', 'on');
         }
+        window.applyDailyCigarPreference();
     };
 
     window.applyDailyCigarPreference = function() {
-        const savedPref = localStorage.getItem('finalThirdDailyPref') || 'expanded';
-        const icon = document.getElementById('daily-pref-icon');
+        const savedPref = localStorage.getItem('finalThirdDailyPref') || 'on';
         const text = document.getElementById('daily-pref-text');
-        const expanded = document.getElementById('daily-cigar-expanded');
-        const collapsed = document.getElementById('daily-cigar-collapsed');
-        const chevron = document.getElementById('layer-2-chevron'); 
+        const toggleIcon = document.getElementById('daily-pref-toggle');
+        const mainEnv = document.getElementById('main-environment');
         
-        if (savedPref === 'collapsed') {
-            if(expanded) expanded.style.display = 'none';
-            if(collapsed) collapsed.style.display = 'block';
-            if(chevron) chevron.style.display = 'none'; 
-            if(icon) icon.className = 'fa-solid fa-down-left-and-up-right-to-center';
-            if(text) text.innerText = 'Default Collapsed';
+        if (savedPref === 'off') {
+            mainEnv.classList.add('daily-cigar-disabled');
+            if(text) text.innerText = 'Disabled';
+            if(toggleIcon) {
+                toggleIcon.innerHTML = '<i class="fa-solid fa-toggle-off"></i>';
+                toggleIcon.style.color = 'var(--text-dim)';
+            }
         } else {
-            if(expanded) expanded.style.display = 'block';
-            if(collapsed) collapsed.style.display = 'none';
-            if(chevron) chevron.style.display = 'flex'; 
-            if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
-            if(text) text.innerText = 'Default Expanded';
+            mainEnv.classList.remove('daily-cigar-disabled');
+            if(text) text.innerText = 'Enabled';
+            if(toggleIcon) {
+                toggleIcon.innerHTML = '<i class="fa-solid fa-toggle-on"></i>';
+                toggleIcon.style.color = 'var(--mint)';
+            }
         }
     };
 
