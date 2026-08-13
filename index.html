@@ -388,8 +388,8 @@
         #daily-cigar-header {
             text-align: center;
             background: var(--bg-base);
-            /* Pushed down further to safely clear the Dynamic Island */
-            padding-top: calc(40px + env(safe-area-inset-top)); 
+            /* Increased from 40px to 60px to clear the Dynamic Island securely and add top-breathing room */
+            padding-top: calc(60px + env(safe-area-inset-top)); 
             /* Extra space added here so text breathes above Layer 2 */
             padding-bottom: 56px; 
             padding-left: 16px;
@@ -4084,4 +4084,3 @@ window.storeCigar = async function() {
 
 </body>
 </html>
-
