@@ -364,13 +364,12 @@
         .btn-secondary.attached { background: var(--surface-04dp); color: var(--leather); border: 1px solid var(--leather); border-style: solid; }
 
         /* --- PERSISTENT HEADER (LAYER 1) --- */
-.dash-header {
-    text-align: center;
-    /* Adds the safe-area inset to the top padding */
-    padding: calc(20px + env(safe-area-inset-top)) 16px 20px 16px;
-    background: var(--bg-base);
-}
-
+        .dash-header {
+            text-align: center;
+            /* Using env() correctly pushes the header below the Dynamic Island/Notch */
+            padding: calc(20px + env(safe-area-inset-top)) 16px 20px 16px;
+            background: var(--bg-base);
+        }
 
         /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
@@ -906,17 +905,8 @@
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
         <!-- LAYER 1: PERSISTENT HEADER (00dp) -->
-        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 40px;">
-            
-            <!-- COLLAPSED STATE -->
-            <div id="daily-cigar-collapsed" style="display: none; cursor: pointer; padding: 2px 14px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; margin: 0 auto -16px auto; max-width: fit-content; transition: transform 0.2s;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
-                <span style="font-size: 9px; font-weight: 800; color: var(--leather); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    Today's Selection <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i>
-                </span>
-            </div>
-
-            <!-- EXPANDED STATE -->
-            <div id="daily-cigar-expanded" style="margin-top: -8px;">
+        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 32px;">
+            <div id="daily-cigar-expanded">
                 <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
                     <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
                     <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
@@ -926,13 +916,8 @@
         </div>
 
         <!-- LAYER 2: DYNAMIC TITLE LAYER (01dp) -->
-        <div style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-radius: 40px 40px 0 0; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--border-subtle); z-index: 5;">
+        <div id="layer-2-container" style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-radius: 40px 40px 0 0; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--border-subtle); z-index: 5; transition: all 0.3s ease;">
             
-            <!-- LAYER 2 ATTACHED CHEVRON (Hides when Layer 1 Collapses) -->
-            <div id="layer-2-chevron" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); cursor: pointer; color: var(--leather); padding: 2px 16px; display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-bottom: none; border-radius: 12px 12px 0 0; width: 60px; height: 20px; transition: transform 0.2s, background 0.3s; z-index: 10;" onclick="toggleDailyCigarLayer()" onmousedown="this.style.transform='translateX(-50%) scale(0.95)'" onmouseup="this.style.transform='translateX(-50%) scale(1)'" onmouseleave="this.style.transform='translateX(-50%) scale(1)'" ontouchstart="this.style.transform='translateX(-50%) scale(0.95)'" ontouchend="this.style.transform='translateX(-50%) scale(1)'">
-                <i class="fa-solid fa-chevron-up" style="font-size: 10px;"></i>
-            </div>
-
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800; color: var(--text-main);">
                     Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">Smiljan</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
@@ -1735,15 +1720,15 @@
                     </div>
                 </div>
 
-                <!-- Daily Selection Default Preference -->
+                <!-- Daily Selection Enable/Disable Toggle -->
                 <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleDailyCigarPreference()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
-                            <i id="daily-pref-icon" class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                            <i id="daily-pref-icon" class="fa-solid fa-eye"></i>
                         </div>
                         <div>
                             <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Daily Selection</div>
-                            <div id="daily-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Default Expanded</div>
+                            <div id="daily-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Enabled</div>
                         </div>
                     </div>
                     <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
@@ -2080,66 +2065,43 @@
     };
 
     // --- DAILY SELECTION ENGINE ---
-    window.toggleDailyCigarLayer = function() {
-        const expanded = document.getElementById('daily-cigar-expanded');
-        const collapsed = document.getElementById('daily-cigar-collapsed');
-        const chevron = document.getElementById('layer-2-chevron'); 
-        
-        if (expanded.style.display === 'none') {
-            expanded.style.display = 'block';
-            collapsed.style.display = 'none';
-            if(chevron) chevron.style.display = 'flex'; 
-        } else {
-            expanded.style.display = 'none';
-            collapsed.style.display = 'block';
-            if(chevron) chevron.style.display = 'none'; 
-        }
-    };
-
     window.toggleDailyCigarPreference = function() {
-        const icon = document.getElementById('daily-pref-icon');
-        const text = document.getElementById('daily-pref-text');
-        const currentState = localStorage.getItem('finalThirdDailyPref') || 'expanded';
+        const currentState = localStorage.getItem('finalThirdDailyPref') || 'enabled';
         
-        if (currentState === 'expanded') {
-            localStorage.setItem('finalThirdDailyPref', 'collapsed');
-            if(icon) icon.className = 'fa-solid fa-down-left-and-up-right-to-center';
-            if(text) text.innerText = 'Default Collapsed';
-            
-            document.getElementById('daily-cigar-expanded').style.display = 'none';
-            document.getElementById('daily-cigar-collapsed').style.display = 'block';
-            if(document.getElementById('layer-2-chevron')) document.getElementById('layer-2-chevron').style.display = 'none'; 
+        if (currentState === 'enabled') {
+            localStorage.setItem('finalThirdDailyPref', 'disabled');
         } else {
-            localStorage.setItem('finalThirdDailyPref', 'expanded');
-            if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
-            if(text) text.innerText = 'Default Expanded';
-            
-            document.getElementById('daily-cigar-expanded').style.display = 'block';
-            document.getElementById('daily-cigar-collapsed').style.display = 'none';
-            if(document.getElementById('layer-2-chevron')) document.getElementById('layer-2-chevron').style.display = 'flex'; 
+            localStorage.setItem('finalThirdDailyPref', 'enabled');
         }
+        window.applyDailyCigarPreference();
     };
 
     window.applyDailyCigarPreference = function() {
-        const savedPref = localStorage.getItem('finalThirdDailyPref') || 'expanded';
+        const savedPref = localStorage.getItem('finalThirdDailyPref') || 'enabled';
         const icon = document.getElementById('daily-pref-icon');
         const text = document.getElementById('daily-pref-text');
-        const expanded = document.getElementById('daily-cigar-expanded');
-        const collapsed = document.getElementById('daily-cigar-collapsed');
-        const chevron = document.getElementById('layer-2-chevron'); 
         
-        if (savedPref === 'collapsed') {
-            if(expanded) expanded.style.display = 'none';
-            if(collapsed) collapsed.style.display = 'block';
-            if(chevron) chevron.style.display = 'none'; 
-            if(icon) icon.className = 'fa-solid fa-down-left-and-up-right-to-center';
-            if(text) text.innerText = 'Default Collapsed';
+        const headerLayer1 = document.getElementById('daily-cigar-header');
+        const layer2 = document.getElementById('layer-2-container');
+        
+        if (savedPref === 'disabled') {
+            if(icon) icon.className = 'fa-solid fa-eye-slash';
+            if(text) text.innerText = 'Disabled';
+            if(headerLayer1) headerLayer1.style.display = 'none';
+            if(layer2) {
+                layer2.style.paddingTop = 'calc(20px + env(safe-area-inset-top))';
+                layer2.style.borderRadius = '0';
+                layer2.style.borderTop = 'none';
+            }
         } else {
-            if(expanded) expanded.style.display = 'block';
-            if(collapsed) collapsed.style.display = 'none';
-            if(chevron) chevron.style.display = 'flex'; 
-            if(icon) icon.className = 'fa-solid fa-up-right-and-down-left-from-center';
-            if(text) text.innerText = 'Default Expanded';
+            if(icon) icon.className = 'fa-solid fa-eye';
+            if(text) text.innerText = 'Enabled';
+            if(headerLayer1) headerLayer1.style.display = 'block';
+            if(layer2) {
+                layer2.style.paddingTop = '20px';
+                layer2.style.borderRadius = '40px 40px 0 0';
+                layer2.style.borderTop = '1px solid var(--border-subtle)';
+            }
         }
     };
 
@@ -3998,4 +3960,3 @@ window.storeCigar = async function() {
 
 </body>
 </html>
-
