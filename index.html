@@ -369,6 +369,7 @@
             /* Using env() correctly pushes the header below the Dynamic Island/Notch */
             padding: calc(20px + env(safe-area-inset-top)) 16px 20px 16px;
             background: var(--bg-base);
+            transition: padding-bottom 0.3s ease;
         }
 
         /* --- DYNAMIC TITLE (LAYER 2) --- */
@@ -1637,7 +1638,6 @@
                         </div>
                     </div>
                     <div id="profile-display-name-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; cursor: pointer; transition: opacity 0.2s;" onclick="openPersonalInfoModal()">
-
                         <span id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main);">Smiljan</span>
                         <i class="fa-solid fa-circle-info" style="color: var(--text-dim); font-size: 14px;"></i>
                     </div>
@@ -2123,21 +2123,30 @@
         const text = document.getElementById('daily-pref-text');
         
         const headerLayer1 = document.getElementById('daily-cigar-header');
+        const expandedContent = document.getElementById('daily-cigar-expanded');
         const layer2 = document.getElementById('layer-2-container');
         
         if (savedPref === 'disabled') {
             if(icon) icon.className = 'fa-solid fa-eye-slash';
             if(text) text.innerText = 'Disabled';
-            if(headerLayer1) headerLayer1.style.display = 'none';
+            if(expandedContent) expandedContent.style.display = 'none';
+            if(headerLayer1) {
+                headerLayer1.style.display = 'block';
+                headerLayer1.style.paddingBottom = '16px'; 
+            }
             if(layer2) {
-                layer2.style.paddingTop = 'calc(20px + env(safe-area-inset-top))';
-                layer2.style.borderRadius = '0';
-                layer2.style.borderTop = 'none';
+                layer2.style.paddingTop = '20px';
+                layer2.style.borderRadius = '40px 40px 0 0';
+                layer2.style.borderTop = '1px solid var(--border-subtle)';
             }
         } else {
             if(icon) icon.className = 'fa-solid fa-eye';
             if(text) text.innerText = 'Enabled';
-            if(headerLayer1) headerLayer1.style.display = 'block';
+            if(expandedContent) expandedContent.style.display = 'block';
+            if(headerLayer1) {
+                headerLayer1.style.display = 'block';
+                headerLayer1.style.paddingBottom = '32px'; 
+            }
             if(layer2) {
                 layer2.style.paddingTop = '20px';
                 layer2.style.borderRadius = '40px 40px 0 0';
@@ -3976,7 +3985,7 @@ window.storeCigar = async function() {
                             <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
                         </button>
                         <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
-                            <i class="fa-solid fa-trash"></i> Remove
+                            <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
                         </button>
                     </div>
                     
@@ -4035,7 +4044,7 @@ window.storeCigar = async function() {
                 wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
             });
             wrapperContainer.innerHTML = wrapperHtml;
-        } else {
+                } else {
             wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
         }
     };
@@ -4064,4 +4073,3 @@ window.storeCigar = async function() {
 
 </body>
 </html>
-
