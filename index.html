@@ -367,7 +367,7 @@
         .dash-header {
             text-align: center;
             /* Using env() correctly pushes the header below the Dynamic Island/Notch */
-            padding: calc(20px + env(safe-area-inset-top)) 16px 20px 16px;
+            padding: calc(20px + env(safe-area-inset-top)) 16px 32px 16px;
             background: var(--bg-base);
             transition: padding-bottom 0.3s ease;
         }
@@ -906,11 +906,16 @@
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
         <!-- LAYER 1: PERSISTENT HEADER (00dp) -->
-        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 32px;">
-            <div id="daily-cigar-expanded">
+        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 32px; transition: padding-bottom 0.3s ease;">
+            
+            <div style="text-align: center; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 8px;" onclick="toggleDailyCigarExpand()">
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span>
+                <i id="daily-cigar-chevron" class="fa-solid fa-chevron-down" style="color: var(--text-dim); font-size: 10px; transition: transform 0.3s ease;"></i>
+            </div>
+            
+            <div id="daily-cigar-expanded" style="transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 150px; opacity: 1; overflow: hidden;">
                 <div style="text-align: center; cursor: pointer;" onclick="openCigarModal()">
-                    <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span><br>
-                    <strong id="daily-cigar-display" style="margin-top: 2px; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
+                    <strong id="daily-cigar-display" style="margin-top: 0; font-size: 22px; color: var(--text-main); display: block; font-family: var(--font-serif); font-weight: 800; letter-spacing: -0.5px;">Loading...</strong>
                     <span style="font-size: 10px; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-circle-info"></i> Tap for more info</span>
                 </div>
             </div>
@@ -1100,8 +1105,8 @@
                         </button>
                         
                         <div style="display: flex; gap: 12px; width: 100%;">
-                            <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()" style="flex: 1; margin-bottom: 0;">Add to Humidor <i class="fa-solid fa-lock"></i></button>
                             <button id="vault-clear-btn" class="btn-secondary" onclick="clearHumidorForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
+                            <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()" style="flex: 1; margin-bottom: 0;">Add to Humidor <i class="fa-solid fa-lock"></i></button>
                         </div>
                     </div>
 
@@ -1239,8 +1244,8 @@
                     </button>
 
                     <div style="display: flex; gap: 12px; width: 100%;">
-                        <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()" style="flex: 1; margin-bottom: 0;">Commit to Ledger <i class="fa-solid fa-check"></i></button>
                         <button id="journal-clear-btn" class="btn-secondary" onclick="clearJournalForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
+                        <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()" style="flex: 1; margin-bottom: 0;">Commit to Ledger <i class="fa-solid fa-check"></i></button>
                     </div>
                 </div>
 
@@ -2119,33 +2124,42 @@
 
     window.applyDailyCigarPreference = function() {
         const savedPref = localStorage.getItem('finalThirdDailyPref') || 'enabled';
+        const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
+        
         const icon = document.getElementById('daily-pref-icon');
         const text = document.getElementById('daily-pref-text');
         
         const headerLayer1 = document.getElementById('daily-cigar-header');
-        const expandedContent = document.getElementById('daily-cigar-expanded');
+        const exp = document.getElementById('daily-cigar-expanded');
+        const chev = document.getElementById('daily-cigar-chevron');
         const layer2 = document.getElementById('layer-2-container');
         
         if (savedPref === 'disabled') {
             if(icon) icon.className = 'fa-solid fa-eye-slash';
             if(text) text.innerText = 'Disabled';
-            if(expandedContent) expandedContent.style.display = 'none';
-            if(headerLayer1) {
-                headerLayer1.style.display = 'block';
-                headerLayer1.style.paddingBottom = '16px'; 
-            }
+            
+            if(headerLayer1) headerLayer1.style.display = 'none';
+            
             if(layer2) {
-                layer2.style.paddingTop = '20px';
-                layer2.style.borderRadius = '40px 40px 0 0';
-                layer2.style.borderTop = '1px solid var(--border-subtle)';
+                layer2.style.paddingTop = 'calc(20px + env(safe-area-inset-top))';
+                layer2.style.borderRadius = '0';
+                layer2.style.borderTop = 'none';
             }
         } else {
             if(icon) icon.className = 'fa-solid fa-eye';
             if(text) text.innerText = 'Enabled';
-            if(expandedContent) expandedContent.style.display = 'block';
+            
             if(headerLayer1) {
                 headerLayer1.style.display = 'block';
-                headerLayer1.style.paddingBottom = '32px'; 
+                if (expandedPref) {
+                    if(exp) { exp.style.maxHeight = '150px'; exp.style.opacity = '1'; }
+                    if(chev) chev.className = 'fa-solid fa-chevron-down';
+                    headerLayer1.style.paddingBottom = '32px';
+                } else {
+                    if(exp) { exp.style.maxHeight = '0'; exp.style.opacity = '0'; }
+                    if(chev) chev.className = 'fa-solid fa-chevron-up';
+                    headerLayer1.style.paddingBottom = '24px';
+                }
             }
             if(layer2) {
                 layer2.style.paddingTop = '20px';
@@ -2153,6 +2167,16 @@
                 layer2.style.borderTop = '1px solid var(--border-subtle)';
             }
         }
+    };
+
+    window.toggleDailyCigarExpand = function() {
+        const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
+        if (expandedPref) {
+            localStorage.setItem('finalThirdDailyExpanded', 'false');
+        } else {
+            localStorage.setItem('finalThirdDailyExpanded', 'true');
+        }
+        window.applyDailyCigarPreference();
     };
 
     // --- DOSSIER PERSONAL INFO MODAL ---
@@ -3924,9 +3948,7 @@ window.storeCigar = async function() {
                 
                 return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
             });
-        }
-
-        if (humidorSortOrder === 'alpha') {
+        }        if (humidorSortOrder === 'alpha') {
             displayList.sort((a, b) => a.brand.localeCompare(b.brand));
         } else {
             // Safe sort fallback
@@ -4044,7 +4066,7 @@ window.storeCigar = async function() {
                 wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
             });
             wrapperContainer.innerHTML = wrapperHtml;
-                } else {
+        } else {
             wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
         }
     };
@@ -4057,19 +4079,7 @@ window.storeCigar = async function() {
     };
 </script>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          console.log('ServiceWorker registered successfully');
-        })
-        .catch(err => {
-          console.error('ServiceWorker registration failed: ', err);
-        });
-    });
-  }
-</script>
+<!-- Note: The Service Worker registration block has been removed for now to stop offline caching -->
 
 </body>
 </html>
