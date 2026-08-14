@@ -801,6 +801,55 @@
 
         /* Specifically adjust Desaturated Danger for Material Dark Accessibility */
         .text-danger { color: var(--danger); }
+
+                /* --- DYNAMIC HEADER COLLAPSE (NATIVE SCROLL ENGINE) --- */
+        body.header-collapsed #daily-cigar-header {
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+        body.header-collapsed #layer-2-container {
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            opacity: 0 !important;
+            border-top: none !important;
+            pointer-events: none;
+        }
+
+        body.header-collapsed .layer-3-container {
+            margin-top: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+
+        body.header-collapsed .view-section {
+            /* Adds safe area padding back so Layer 3 doesn't go under the iPhone Notch */
+            padding-top: calc(32px + env(safe-area-inset-top)) !important;
+        }
+
+        /* Smooth spring-like transitions for the native feel */
+        #daily-cigar-header, #layer-2-container {
+            max-height: 250px; /* Safe upper limit for transitions */
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
+                        padding 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
+                        opacity 0.3s ease !important;
+        }
+
+        .layer-3-container {
+            transition: margin-top 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
+                        border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
+                        box-shadow 0.4s ease, background-color 0.3s !important;
+        }
+
+        .view-section {
+            transition: padding-top 0.4s cubic-bezier(0.32, 0.72, 0, 1) !important;
+        }
+
         
     </style>
 </head>
@@ -1966,7 +2015,7 @@
     window.currentSuggestedDrink = "";
     window.currentSuggestedWrapper = "";
 
-        window.generatePairing = function() {
+    window.generatePairing = function() {
         const wrapperKey = document.getElementById("pairing-wrapper").value;
         const binderKey = document.getElementById("pairing-binder").value;
         
@@ -4044,8 +4093,7 @@ window.storeCigar = async function() {
             });
         }
         
-        list.innerHTML = html;
-        countStat.innerText = totalAgingQuantity; 
+        list.innerHTML = html;        countStat.innerText = totalAgingQuantity; 
         
         // Hidden element helps satisfy JS updating logic for peak cigars
         const alertsEl = document.getElementById('stat-alerts');
@@ -4091,6 +4139,59 @@ window.storeCigar = async function() {
             await deleteDoc(doc(db, "humidor", id));
         }
     };
+
+    // --- NATIVE SCROLL COLLAPSE ENGINE ---
+    let lastScrollTop = 0;
+    window.isHeaderCollapsed = false;
+    const SCROLL_THRESHOLD = 15; // Requires a deliberate swipe to prevent jitter
+
+    window.handleAppScroll = function(e) {
+        const st = e.target.scrollTop;
+        
+        // 1. If we bounce past the top (iOS rubber-banding), ALWAYS expand the header
+        if (st <= 0) {
+            if (window.isHeaderCollapsed) {
+                window.isHeaderCollapsed = false;
+                document.body.classList.remove('header-collapsed');
+            }
+            lastScrollTop = 0;
+            return;
+        }
+
+        const delta = st - lastScrollTop;
+
+        // 2. Scrolling Down -> Hide Headers (Only after scrolling past 80px)
+        if (delta > SCROLL_THRESHOLD && st > 80) { 
+            if (!window.isHeaderCollapsed) {
+                window.isHeaderCollapsed = true;
+                document.body.classList.add('header-collapsed');
+            }
+            lastScrollTop = st; 
+        } 
+        // 3. Scrolling Up -> Show Headers
+        else if (delta < -SCROLL_THRESHOLD) {
+            if (window.isHeaderCollapsed) {
+                window.isHeaderCollapsed = false;
+                document.body.classList.remove('header-collapsed');
+            }
+            lastScrollTop = st; 
+        }
+    };
+
+    // Attach passive listener to ensure scrolling remains 60fps
+    document.querySelectorAll('.view-section').forEach(section => {
+        section.addEventListener('scroll', window.handleAppScroll, { passive: true });
+    });
+
+    // OVERRIDE TABS: Force headers to expand whenever a new tab is clicked
+    const originalSwitchTab = window.switchTab;
+    window.switchTab = function(targetViewId, dockIndex) {
+        window.isHeaderCollapsed = false;
+        document.body.classList.remove('header-collapsed');
+        lastScrollTop = 0;
+        originalSwitchTab(targetViewId, dockIndex); // Run the original tab logic
+    };
+
 </script>
 
 <!-- Note: The Service Worker registration block has been removed for now to stop offline caching -->
