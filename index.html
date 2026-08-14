@@ -373,7 +373,7 @@
         .dash-header {
             text-align: center;
             /* Using env() correctly pushes the header below the Dynamic Island/Notch */
-            padding: calc(20px + env(safe-area-inset-top)) 16px 32px 16px;
+            padding: calc(20px + env(safe-area-inset-top, 0px)) 16px 32px 16px;
             background: var(--bg-base);
             transition: padding-bottom 0.3s ease;
         }
@@ -381,6 +381,34 @@
         /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
         
+        /* ------------------------------------------------------------- */
+        /* --- DYNAMIC HEADER COLLAPSE (MULTI-STAGE GPU ENGINE) --- */
+        /* ------------------------------------------------------------- */
+        :root {
+            /* Dynamic Header Shift initialized - updated by JS */
+            --header-shift: -150px;
+        }
+
+        /* --- GPU Animation Preparations --- */
+        #daily-cigar-header, #layer-2-container {
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s ease !important;
+            will-change: transform, opacity;
+            transform-origin: top center;
+        }
+
+        #dynamic-layer-2-title {
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1) !important;
+            will-change: transform;
+            transform-origin: left top;
+            display: inline-block;
+        }
+
+        #dynamic-layer-2-subtitle {
+            transition: opacity 0.25s ease, transform 0.4s cubic-bezier(0.32, 0.72, 0, 1) !important;
+            will-change: opacity, transform;
+            display: inline-block;
+        }
+
         /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
         .layer-3-container { 
             background-color: var(--bg-base);
@@ -392,14 +420,71 @@
             box-shadow: 0 -8px 24px var(--shadow-layer3); 
             overflow: hidden; 
             z-index: 15; 
-            transition: background-color 0.3s; 
+            
+            transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), 
+                        border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
+                        box-shadow 0.4s ease, 
+                        background-color 0.3s !important;
+            will-change: transform, border-radius;
+            
+            /* Allow it to stretch down so we don't see empty background space when it shifts up */
+            margin-bottom: -300px !important;
+            padding-bottom: 300px !important;
+        }
+
+        /* --- STAGE 1: Layer 3 partially collapses into Layer 2 --- */
+        body.header-stage-1 .layer-3-container,
+        body.header-stage-2 .layer-3-container {
+            /* Flatten shadow during movement */
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important; 
+        }
+
+        body.header-stage-1 .layer-3-container {
+            transform: translateY(-46px); /* Move up slightly into Layer 2 */
+        }
+        
+        body.header-stage-1 #dynamic-layer-2-title {
+            transform: scale(0.75) translateY(-4px); /* Title shrinks */
+        }
+
+        body.header-stage-1 #dynamic-layer-2-subtitle {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        /* --- STAGE 2: Layer 2 & 1 completely collapse --- */
+        body.header-stage-2 #layer-2-container {
+            opacity: 0 !important;
+            transform: translateY(-20px) scale(0.98);
+            pointer-events: none;
+        }
+        
+        body.header-stage-2 #daily-cigar-header {
+            opacity: 0 !important;
+            transform: translateY(-10px);
+            pointer-events: none;
+        }
+
+        body.header-stage-2 .layer-3-container {
+            /* Full shift to the top */
+            transform: translateY(calc(var(--header-shift) + env(safe-area-inset-top, 0px)));
+            border-radius: 0 !important;
+            box-shadow: none !important;
         }
 
         /* --- VIEW SECTIONS & ANIMATIONS --- */
-        .view-section { position: absolute; top: 0; bottom: 0; left: 0; right: 0; padding: 32px 16px calc(110px + env(safe-area-inset-bottom)) 16px; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .view-section { 
+            position: absolute; 
+            top: 0; bottom: 0; left: 0; right: 0; 
+            /* Pad bottom heavily to offset the container stretch, preserving the actual scroll bounds */
+            padding: 32px 16px calc(410px + env(safe-area-inset-bottom, 0px)) 16px; 
+            display: none; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+        }
         .view-section.active { display: block; }
         
-        .layer-3-container.slide-anim { animation: cardSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .view-section.slide-anim { animation: cardSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
         @keyframes cardSlide { 
             0% { opacity: 0; transform: translateY(60px); } 
@@ -802,55 +887,6 @@
         /* Specifically adjust Desaturated Danger for Material Dark Accessibility */
         .text-danger { color: var(--danger); }
 
-                /* --- DYNAMIC HEADER COLLAPSE (NATIVE SCROLL ENGINE) --- */
-        body.header-collapsed #daily-cigar-header {
-            max-height: 0 !important;
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            opacity: 0 !important;
-            pointer-events: none;
-        }
-
-        body.header-collapsed #layer-2-container {
-            max-height: 0 !important;
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            opacity: 0 !important;
-            border-top: none !important;
-            pointer-events: none;
-        }
-
-        body.header-collapsed .layer-3-container {
-            margin-top: 0 !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-        }
-
-        body.header-collapsed .view-section {
-            /* Adds safe area padding back so Layer 3 doesn't go under the iPhone Notch */
-            padding-top: calc(32px + env(safe-area-inset-top)) !important;
-        }
-
-        /* Smooth spring-like transitions for the native feel */
-        #daily-cigar-header, #layer-2-container {
-            max-height: 250px; /* Safe upper limit for transitions */
-            overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
-                        padding 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
-                        opacity 0.3s ease !important;
-        }
-
-        .layer-3-container {
-            transition: margin-top 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
-                        border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
-                        box-shadow 0.4s ease, background-color 0.3s !important;
-        }
-
-        .view-section {
-            transition: padding-top 0.4s cubic-bezier(0.32, 0.72, 0, 1) !important;
-        }
-
-        
     </style>
 </head>
 <body>
@@ -961,7 +997,7 @@
     <div id="main-environment" class="app-environment" style="display: none; flex-direction: column; height: 100vh;">
         
         <!-- LAYER 1: PERSISTENT HEADER (00dp) -->
-        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 32px; transition: padding-bottom 0.3s ease;">
+        <div id="daily-cigar-header" class="dash-header" style="position: relative; padding-bottom: 32px;">
             
             <div style="text-align: center; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 8px;" onclick="toggleDailyCigarExpand()">
                 <span style="font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; opacity: 0.8; text-transform: uppercase;">TODAY'S SELECTION:</span>
@@ -977,7 +1013,7 @@
         </div>
 
         <!-- LAYER 2: DYNAMIC TITLE LAYER (01dp) -->
-        <div id="layer-2-container" style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-radius: 40px 40px 0 0; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--border-subtle); z-index: 5; transition: all 0.3s ease;">
+        <div id="layer-2-container" style="background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%); border-radius: 40px 40px 0 0; padding: 20px 24px 56px 24px; position: relative; border-top: 1px solid var(--border-subtle); z-index: 5;">
             
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800; color: var(--text-main);">
@@ -2202,7 +2238,7 @@
             if(headerLayer1) headerLayer1.style.display = 'none';
             
             if(layer2) {
-                layer2.style.paddingTop = 'calc(20px + env(safe-area-inset-top))';
+                layer2.style.paddingTop = 'calc(20px + env(safe-area-inset-top, 0px))';
                 layer2.style.borderRadius = '0';
                 layer2.style.borderTop = 'none';
                 layer2.style.background = 'var(--bg-base)';
@@ -2230,6 +2266,9 @@
                 layer2.style.background = 'linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%)';
             }
         }
+        
+        // Wait for visual transitions to finish, then calculate dynamic shift amount
+        setTimeout(window.updateHeaderShift, 350);
     };
 
     window.toggleDailyCigarExpand = function() {
@@ -3004,1177 +3043,1208 @@ window.compressImage = function(file) {
     });
 };
 
-    window.compressAvatar = function(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = event => {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 400; 
-                    const MAX_HEIGHT = 400;
-                    let width = img.width;
-                    let height = img.height;
+window.compressAvatar = function(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 400; 
+                const MAX_HEIGHT = 400;
+                let width = img.width;
+                let height = img.height;
 
-                    if (width > height) {
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                    } else {
-                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6)); 
-                };
-                img.onerror = error => reject(error);
-            };
-            reader.onerror = error => reject(error);
-        });
-    };
-
-    window.handleCigarImageUpload = async function(event, type) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        try {
-            const compressedBase64 = await window.compressImage(file);
-            if (type === 'vault') {
-                currentVaultImage = compressedBase64;
-                const btn = document.getElementById('vault-photo-btn');
-                btn.classList.add('attached');
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
-            } else if (type === 'journal') {
-                currentLogImage = compressedBase64;
-                const btn = document.getElementById('log-photo-btn');
-                btn.classList.add('attached');
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
-            }
-        } catch (error) {
-            await window.customAlert("Error processing image.", "Upload Failed");
-        }
-    };
-
-    window.openLightbox = function(docId) {
-        const urlStr = window.imageRegistry[docId];
-        if(urlStr) {
-            document.getElementById('lightbox-img').src = urlStr;
-            document.getElementById('lightbox-overlay').classList.add('active');
-        }
-    };
-
-    window.closeLightbox = function(event) {
-        document.getElementById('lightbox-overlay').classList.remove('active');
-        setTimeout(() => { document.getElementById('lightbox-img').src = ""; }, 300);
-    };
-
-    window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
-    window.closeAvatarActionSheet = function(event) { document.getElementById('avatar-action-sheet').classList.remove('active'); };
-
-    window.handleAvatarUpload = async function(event) {
-        const file = event.target.files[0];
-        if(!file) return;
-        try {
-            document.getElementById('profile-avatar-img').style.opacity = '0.5'; // Processing state
-            const compressedBase64 = await window.compressAvatar(file);
-            const imageUrl = await uploadImageToStorage(compressedBase64, 'avatar');
-            
-            document.getElementById('profile-avatar-img').src = imageUrl;
-            document.getElementById('profile-avatar-img').style.opacity = '1';
-            localStorage.setItem('finalThirdAvatar', imageUrl); 
-            
-            if (auth.currentUser) {
-                await setDoc(doc(db, "users", auth.currentUser.uid), { avatar: imageUrl }, { merge: true });
-            }
-        } catch (error) {
-            console.error("Avatar upload failed:", error);
-            document.getElementById('profile-avatar-img').style.opacity = '1';
-        }
-    };
-
-    window.editUsername = async function() {
-        const newName = await window.customPrompt("Enter your new username:", window.currentUserName, "Edit Username");
-        if (newName && newName.trim() !== "" && newName.trim() !== window.currentUserName) {
-            try {
-                await updateProfile(auth.currentUser, { displayName: newName.trim() });
-                window.currentUserName = newName.trim();
-                document.getElementById('display-name').innerText = window.currentUserName;
-                document.getElementById('profile-display-name').innerText = window.currentUserName;
-                
-                // If modal is open, dynamically update it too
-                const modalUsername = document.getElementById('modal-info-username');
-                if (modalUsername) modalUsername.innerText = window.currentUserName;
-            } catch (error) {
-                await window.customAlert("Failed to update username: " + error.message, "Error");
-            }
-        }
-    };
-
-    window.openDeleteActionSheet = function() { document.getElementById('delete-action-sheet').classList.add('active'); };
-    window.closeDeleteActionSheet = function(event) { document.getElementById('delete-action-sheet').classList.remove('active'); };
-
-    window.handleDeleteAccount = async function() {
-        const email = document.getElementById('delete-email').value;
-        const password = document.getElementById('delete-password').value;
-        
-        if (!email || !password) {
-            await window.customAlert("Please enter email and password to confirm deletion.", "Required Fields");
-            return;
-        }
-        if (!(await window.customConfirm("Are you absolutely sure? All of your logs and humidor data will be permanently wiped.", "Confirm Deletion", true))) return;
-
-        const user = auth.currentUser;
-        const credential = EmailAuthProvider.credential(email, password);
-
-        try {
-            await reauthenticateWithCredential(user, credential);
-            
-            const batch = writeBatch(db);
-            const humidorQ = query(collection(db, "humidor"), where("uid", "==", user.uid));
-            const humidorSnaps = await getDocs(humidorQ);
-            humidorSnaps.forEach(docSnap => batch.delete(docSnap.ref));
-            
-            const journalQ = query(collection(db, "journal"), where("uid", "==", user.uid));
-            const journalSnaps = await getDocs(journalQ);
-            journalSnaps.forEach(docSnap => batch.delete(docSnap.ref));
-            
-            const userDocRef = doc(db, "users", user.uid);
-            batch.delete(userDocRef);
-            
-            await batch.commit();
-
-            await deleteUser(user);
-            
-            await window.customAlert("Account and all associated data have been permanently erased.", "Account Deleted");
-            closeDeleteActionSheet();
-        } catch (error) {
-            await window.customAlert("Deletion failed: " + error.message, "Error");
-        }
-    };
-
-    window.switchTab = function(targetViewId, dockIndex) {
-        document.querySelectorAll('.view-section').forEach(el => {
-            el.classList.remove('active');
-        });
-        
-        const targetView = document.getElementById(targetViewId);
-        targetView.classList.add('active');
-        targetView.scrollTop = 0; 
-
-        const layer3 = document.querySelector('.layer-3-container');
-        layer3.classList.remove('slide-anim');
-        void layer3.offsetWidth; 
-        layer3.classList.add('slide-anim');
-        
-        document.querySelectorAll('.nav-item').forEach((el, index) => {
-            if (dockIndex !== null && index === dockIndex) {
-                el.classList.add('active');
-            } else {
-                el.classList.remove('active');
-            }
-        });
-        
-        const greetingContainer = document.getElementById('greeting-container');
-        const titleEl = document.getElementById('dynamic-layer-2-title');
-        const subtitleEl = document.getElementById('dynamic-layer-2-subtitle');
-        
-        greetingContainer.classList.remove('text-slide-up');
-        greetingContainer.style.opacity = 0; 
-
-        setTimeout(() => {
-            if(dockIndex === 0) {
-                titleEl.innerHTML = `Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">${window.currentUserName}</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>`;
-                subtitleEl.innerText = "Vault Overview";
-            } else if(dockIndex === 1) {
-                titleEl.innerText = "Humidor.";
-                subtitleEl.innerText = "Logistics & Storage";
-            } else if(dockIndex === 2) {
-                titleEl.innerText = "Journal.";
-                subtitleEl.innerText = "Tasting Ledger";
-            } else if(dockIndex === 3) {
-                titleEl.innerText = "Info.";
-                subtitleEl.innerText = "Guides & Education";
-            } else if(dockIndex === 4) {
-                titleEl.innerText = "Profile.";
-                subtitleEl.innerText = "Data & Analytics";
-            }
-            
-            greetingContainer.style.opacity = ''; 
-            void greetingContainer.offsetWidth; 
-            greetingContainer.classList.add('text-slide-up');
-        }, 50);  
-    };
-
-    window.showAuthView = function(viewId) {
-        document.querySelectorAll('.auth-view').forEach(el => el.classList.remove('active'));
-        document.getElementById('auth-' + viewId).classList.add('active');
-    };
-
-    window.handleLogin = async function() {
-        const email = document.getElementById('signin-email').value;
-        const password = document.getElementById('signin-password').value;
-        if(!email || !password) {
-            await window.customAlert("Please enter email and password.", "Required Fields");
-            return;
-        }
-        
-        document.getElementById('signin-btn').innerHTML = 'Logging In...';
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-            await window.customAlert("Login failed: " + error.message, "Error");
-            document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
-        }
-    };
-
-    window.handleSignUp = async function() {
-        const username = document.getElementById('signup-username').value.trim();
-        const email = document.getElementById('signup-email').value;
-        const password = document.getElementById('signup-password').value;
-        const confirm = document.getElementById('signup-confirm').value;
-        
-        if(!username || !email || !password) {
-            await window.customAlert("Please fill in all fields.", "Required Fields");
-            return;
-        }
-        if(password !== confirm) {
-            await window.customAlert("Passwords do not match.", "Error");
-            return;
-        }
-        
-        document.getElementById('signup-btn').innerHTML = 'Registering...';
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(userCredential.user, { displayName: username });
-            window.currentUserName = username;
-        } catch (error) {
-            await window.customAlert("Sign up failed: " + error.message, "Error");
-            document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
-        }
-    };
-
-    window.handleResetPassword = async function() {
-        const email = document.getElementById('reset-email').value;
-        if(!email) {
-            await window.customAlert("Please enter your email address.", "Required Field");
-            return;
-        }
-        
-        document.getElementById('reset-btn').innerHTML = 'Sending...';
-        try {
-            await sendPasswordResetEmail(auth, email);
-            await window.customAlert("Password reset email sent! Check your inbox.", "Success");
-            showAuthView('signin');
-            document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
-            document.getElementById('reset-email').value = '';
-        } catch (error) {
-            await window.customAlert("Reset failed: " + error.message, "Error");
-            document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
-        }
-    };
-
-    window.handleLogout = async function() {
-        await signOut(auth);
-    };
-
-    let unsubscribeHumidor = null;
-    let unsubscribeJournal = null;
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            document.getElementById('login-environment').classList.remove('active');
-            document.getElementById('main-environment').style.display = 'flex';
-            document.getElementById('main-environment').classList.add('active');
-            
-            // Request Notification Permissions if needed
-            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-                Notification.requestPermission();
-            }
-            
-            window.updateThemeUI(document.documentElement.getAttribute('data-theme'));
-            
-            window.currentUserName = user.displayName || user.email.split('@')[0]; 
-            
-            window.applyDailyCigarPreference();
-            initializeDates();
-            loadDailyCigar();
-            loadBrandLibrary(); 
-            
-            document.getElementById('profile-display-name').innerText = window.currentUserName;
-
-            const localAvatar = localStorage.getItem('finalThirdAvatar');
-            if(localAvatar) {
-                document.getElementById('profile-avatar-img').src = localAvatar;
-            }
-
-            try {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if(userDoc.exists() && userDoc.data().avatar) {
-                    const cloudAvatar = userDoc.data().avatar;
-                    document.getElementById('profile-avatar-img').src = cloudAvatar;
-                    localStorage.setItem('finalThirdAvatar', cloudAvatar); 
-                } else if (localAvatar) {
-                    await setDoc(doc(db, "users", user.uid), { avatar: localAvatar }, { merge: true });
+                if (width > height) {
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                } else {
+                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
                 }
-            } catch(e) { 
-                console.error("Avatar sync error. Check Firebase Rules.", e); 
-            }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.6)); 
+            };
+            img.onerror = error => reject(error);
+        };
+        reader.onerror = error => reject(error);
+    });
+};
+
+window.handleCigarImageUpload = async function(event, type) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+        const compressedBase64 = await window.compressImage(file);
+        if (type === 'vault') {
+            currentVaultImage = compressedBase64;
+            const btn = document.getElementById('vault-photo-btn');
+            btn.classList.add('attached');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+        } else if (type === 'journal') {
+            currentLogImage = compressedBase64;
+            const btn = document.getElementById('log-photo-btn');
+            btn.classList.add('attached');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+        }
+    } catch (error) {
+        await window.customAlert("Error processing image.", "Upload Failed");
+    }
+};
+
+window.openLightbox = function(docId) {
+    const urlStr = window.imageRegistry[docId];
+    if(urlStr) {
+        document.getElementById('lightbox-img').src = urlStr;
+        document.getElementById('lightbox-overlay').classList.add('active');
+    }
+};
+
+window.closeLightbox = function(event) {
+    document.getElementById('lightbox-overlay').classList.remove('active');
+    setTimeout(() => { document.getElementById('lightbox-img').src = ""; }, 300);
+};
+
+window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
+window.closeAvatarActionSheet = function(event) { document.getElementById('avatar-action-sheet').classList.remove('active'); };
+
+window.handleAvatarUpload = async function(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+    try {
+        document.getElementById('profile-avatar-img').style.opacity = '0.5'; // Processing state
+        const compressedBase64 = await window.compressAvatar(file);
+        const imageUrl = await uploadImageToStorage(compressedBase64, 'avatar');
+        
+        document.getElementById('profile-avatar-img').src = imageUrl;
+        document.getElementById('profile-avatar-img').style.opacity = '1';
+        localStorage.setItem('finalThirdAvatar', imageUrl); 
+        
+        if (auth.currentUser) {
+            await setDoc(doc(db, "users", auth.currentUser.uid), { avatar: imageUrl }, { merge: true });
+        }
+    } catch (error) {
+        console.error("Avatar upload failed:", error);
+        document.getElementById('profile-avatar-img').style.opacity = '1';
+    }
+};
+
+window.editUsername = async function() {
+    const newName = await window.customPrompt("Enter your new username:", window.currentUserName, "Edit Username");
+    if (newName && newName.trim() !== "" && newName.trim() !== window.currentUserName) {
+        try {
+            await updateProfile(auth.currentUser, { displayName: newName.trim() });
+            window.currentUserName = newName.trim();
+            document.getElementById('display-name').innerText = window.currentUserName;
+            document.getElementById('profile-display-name').innerText = window.currentUserName;
             
-            switchTab('view-home', 0);
+            // If modal is open, dynamically update it too
+            const modalUsername = document.getElementById('modal-info-username');
+            if (modalUsername) modalUsername.innerText = window.currentUserName;
+        } catch (error) {
+            await window.customAlert("Failed to update username: " + error.message, "Error");
+        }
+    }
+};
 
-            document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
-            document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
+window.openDeleteActionSheet = function() { document.getElementById('delete-action-sheet').classList.add('active'); };
+window.closeDeleteActionSheet = function(event) { document.getElementById('delete-action-sheet').classList.remove('active'); };
 
-            unsubscribeHumidor = onSnapshot(query(collection(db, "humidor"), where("uid", "==", user.uid)), (snapshot) => {
-                humidorInventory = [];
-                snapshot.forEach((doc) => { humidorInventory.push({ id: doc.id, ...doc.data() }); });
-                renderHumidor();
-                checkAgingAlerts(humidorInventory);
-            });
+window.handleDeleteAccount = async function() {
+    const email = document.getElementById('delete-email').value;
+    const password = document.getElementById('delete-password').value;
+    
+    if (!email || !password) {
+        await window.customAlert("Please enter email and password to confirm deletion.", "Required Fields");
+        return;
+    }
+    if (!(await window.customConfirm("Are you absolutely sure? All of your logs and humidor data will be permanently wiped.", "Confirm Deletion", true))) return;
 
-            unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid)), (snapshot) => {
-                journalHistory = [];
-                snapshot.forEach((doc) => { journalHistory.push({ id: doc.id, ...doc.data() }); });
-                renderJournal();
-            });
+    const user = auth.currentUser;
+    const credential = EmailAuthProvider.credential(email, password);
 
+    try {
+        await reauthenticateWithCredential(user, credential);
+        
+        const batch = writeBatch(db);
+        const humidorQ = query(collection(db, "humidor"), where("uid", "==", user.uid));
+        const humidorSnaps = await getDocs(humidorQ);
+        humidorSnaps.forEach(docSnap => batch.delete(docSnap.ref));
+        
+        const journalQ = query(collection(db, "journal"), where("uid", "==", user.uid));
+        const journalSnaps = await getDocs(journalQ);
+        journalSnaps.forEach(docSnap => batch.delete(docSnap.ref));
+        
+        const userDocRef = doc(db, "users", user.uid);
+        batch.delete(userDocRef);
+        
+        await batch.commit();
+
+        await deleteUser(user);
+        
+        await window.customAlert("Account and all associated data have been permanently erased.", "Account Deleted");
+        closeDeleteActionSheet();
+    } catch (error) {
+        await window.customAlert("Deletion failed: " + error.message, "Error");
+    }
+};
+
+window.switchTab = function(targetViewId, dockIndex) {
+    // 1. Reset header collapse state on tab switch
+    window.currentStage = 0;
+    document.body.classList.remove('header-stage-1', 'header-stage-2');
+    
+    // 2. Clear out active and animation classes from all views
+    document.querySelectorAll('.view-section').forEach(el => {
+        el.classList.remove('active');
+        el.classList.remove('slide-anim'); 
+    });
+    
+    // 3. Set the new active tab
+    const targetView = document.getElementById(targetViewId);
+    targetView.classList.add('active');
+    targetView.scrollTop = 0; 
+
+    // 4. Apply slide animation SPECIFICALLY to the active tab content
+    void targetView.offsetWidth; 
+    targetView.classList.add('slide-anim');
+    
+    document.querySelectorAll('.nav-item').forEach((el, index) => {
+        if (dockIndex !== null && index === dockIndex) {
+            el.classList.add('active');
         } else {
-            document.getElementById('main-environment').classList.remove('active');
-            document.getElementById('main-environment').style.display = 'none';
-            document.getElementById('login-environment').classList.add('active');
-            showAuthView('signin');
-            
-            document.getElementById('signin-email').value = '';
-            document.getElementById('signin-password').value = '';
-            document.getElementById('signup-username').value = '';
-            document.getElementById('signup-email').value = '';
-            document.getElementById('signup-password').value = '';
-            document.getElementById('signup-confirm').value = '';
-            document.getElementById('delete-email').value = '';
-            document.getElementById('delete-password').value = '';
-            
-            if(unsubscribeHumidor) unsubscribeHumidor();
-            if(unsubscribeJournal) unsubscribeJournal();
+            el.classList.remove('active');
         }
     });
+    
+    const greetingContainer = document.getElementById('greeting-container');
+    const titleEl = document.getElementById('dynamic-layer-2-title');
+    const subtitleEl = document.getElementById('dynamic-layer-2-subtitle');
+    
+    greetingContainer.classList.remove('text-slide-up');
+    greetingContainer.style.opacity = 0; 
 
-    window.renderFavorites = function() {
-        const favContainer = document.getElementById('home-favorites-list');
-        const ratedCigars = journalHistory.filter(c => c.rating);
+    setTimeout(() => {
+        if(dockIndex === 0) {
+            titleEl.innerHTML = `Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">${window.currentUserName}</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>`;
+            subtitleEl.innerText = "Vault Overview";
+        } else if(dockIndex === 1) {
+            titleEl.innerText = "Humidor.";
+            subtitleEl.innerText = "Logistics & Storage";
+        } else if(dockIndex === 2) {
+            titleEl.innerText = "Journal.";
+            subtitleEl.innerText = "Tasting Ledger";
+        } else if(dockIndex === 3) {
+            titleEl.innerText = "Info.";
+            subtitleEl.innerText = "Guides & Education";
+        } else if(dockIndex === 4) {
+            titleEl.innerText = "Profile.";
+            subtitleEl.innerText = "Data & Analytics";
+        }
         
-        if (ratedCigars.length > 0) {
-            const sum = ratedCigars.reduce((acc, curr) => acc + curr.rating, 0);
-            document.getElementById('stat-avg').innerText = (sum / ratedCigars.length).toFixed(1);
-        } else {
-            document.getElementById('stat-avg').innerText = "0.0";
+        greetingContainer.style.opacity = ''; 
+        void greetingContainer.offsetWidth; 
+        greetingContainer.classList.add('text-slide-up');
+    }, 50);  
+};
+
+window.showAuthView = function(viewId) {
+    document.querySelectorAll('.auth-view').forEach(el => el.classList.remove('active'));
+    document.getElementById('auth-' + viewId).classList.add('active');
+};
+
+window.handleLogin = async function() {
+    const email = document.getElementById('signin-email').value;
+    const password = document.getElementById('signin-password').value;
+    if(!email || !password) {
+        await window.customAlert("Please enter email and password.", "Required Fields");
+        return;
+    }
+    
+    document.getElementById('signin-btn').innerHTML = 'Logging In...';
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+        await window.customAlert("Login failed: " + error.message, "Error");
+        document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
+    }
+};
+
+window.handleSignUp = async function() {
+    const username = document.getElementById('signup-username').value.trim();
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    const confirm = document.getElementById('signup-confirm').value;
+    
+    if(!username || !email || !password) {
+        await window.customAlert("Please fill in all fields.", "Required Fields");
+        return;
+    }
+    if(password !== confirm) {
+        await window.customAlert("Passwords do not match.", "Error");
+        return;
+    }
+    
+    document.getElementById('signup-btn').innerHTML = 'Registering...';
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: username });
+        window.currentUserName = username;
+    } catch (error) {
+        await window.customAlert("Sign up failed: " + error.message, "Error");
+        document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
+    }
+};
+
+window.handleResetPassword = async function() {
+    const email = document.getElementById('reset-email').value;
+    if(!email) {
+        await window.customAlert("Please enter your email address.", "Required Field");
+        return;
+    }
+    
+    document.getElementById('reset-btn').innerHTML = 'Sending...';
+    try {
+        await sendPasswordResetEmail(auth, email);
+        await window.customAlert("Password reset email sent! Check your inbox.", "Success");
+        showAuthView('signin');
+        document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
+        document.getElementById('reset-email').value = '';
+    } catch (error) {
+        await window.customAlert("Reset failed: " + error.message, "Error");
+        document.getElementById('reset-btn').innerHTML = 'Send Link <i class="fa-solid fa-envelope"></i>';
+    }
+};
+
+window.handleLogout = async function() {
+    await signOut(auth);
+};
+
+let unsubscribeHumidor = null;
+let unsubscribeJournal = null;
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        document.getElementById('login-environment').classList.remove('active');
+        document.getElementById('main-environment').style.display = 'flex';
+        document.getElementById('main-environment').classList.add('active');
+        
+        // Request Notification Permissions if needed
+        if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission();
+        }
+        
+        window.updateThemeUI(document.documentElement.getAttribute('data-theme'));
+        
+        window.currentUserName = user.displayName || user.email.split('@')[0]; 
+        
+        window.applyDailyCigarPreference();
+        initializeDates();
+        loadDailyCigar();
+        loadBrandLibrary(); 
+        
+        document.getElementById('profile-display-name').innerText = window.currentUserName;
+
+        const localAvatar = localStorage.getItem('finalThirdAvatar');
+        if(localAvatar) {
+            document.getElementById('profile-avatar-img').src = localAvatar;
         }
 
-        const sorted = ratedCigars.sort((a,b) => b.rating - a.rating).slice(0, 5);
-
-        if (sorted.length === 0) {
-            favContainer.innerHTML = `
-            <div class="empty-state">
-                <i class="fa-solid fa-star" style="font-size: 20px; opacity: 0.3;"></i>
-                <span>No rated cigars</span>
-            </div>`;
-            return;
+        try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if(userDoc.exists() && userDoc.data().avatar) {
+                const cloudAvatar = userDoc.data().avatar;
+                document.getElementById('profile-avatar-img').src = cloudAvatar;
+                localStorage.setItem('finalThirdAvatar', cloudAvatar); 
+            } else if (localAvatar) {
+                await setDoc(doc(db, "users", user.uid), { avatar: localAvatar }, { merge: true });
+            }
+        } catch(e) { 
+            console.error("Avatar sync error. Check Firebase Rules.", e); 
         }
+        
+        switchTab('view-home', 0);
 
-        let html = '<div class="glass-bento" style="border-radius: 20px; padding: 8px 20px;">';
-        sorted.forEach((cigar, index) => {
-            const borderStr = index < sorted.length - 1 ? 'border-bottom: 1px solid var(--border-subtle);' : '';
-            html += `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; ${borderStr}">
-                <div>
-                    <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
-                    <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
-                </div>
-                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; background: var(--surface-01dp); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                    <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
-                    <span style="font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--leather);">${cigar.rating.toFixed(2)}</span>
-                </div>
-            </div>`;
+        document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
+        document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
+
+        unsubscribeHumidor = onSnapshot(query(collection(db, "humidor"), where("uid", "==", user.uid)), (snapshot) => {
+            humidorInventory = [];
+            snapshot.forEach((doc) => { humidorInventory.push({ id: doc.id, ...doc.data() }); });
+            renderHumidor();
+            checkAgingAlerts(humidorInventory);
         });
-        html += '</div>';
-        favContainer.innerHTML = html;
-    };
 
-    window.editJournalLog = function(id) {
-        window.closeAllSwipes(); 
+        unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid)), (snapshot) => {
+            journalHistory = [];
+            snapshot.forEach((doc) => { journalHistory.push({ id: doc.id, ...doc.data() }); });
+            renderJournal();
+        });
+
+    } else {
+        document.getElementById('main-environment').classList.remove('active');
+        document.getElementById('main-environment').style.display = 'none';
+        document.getElementById('login-environment').classList.add('active');
+        showAuthView('signin');
         
-        const log = journalHistory.find(l => l.id === id);
-        if(!log) return;
-
-        editingJournalId = id;
-        document.getElementById('log-date').value = log.date || '';
-        document.getElementById('log-brand').value = log.brand || '';
-        document.getElementById('log-vitola').value = log.vitola || '';
-        document.getElementById('log-ring-gauge').value = log.ring !== '-' ? log.ring : '';
-        document.getElementById('log-wrapper').value = log.wrapper || '';
-        document.getElementById('log-cut').value = log.cut !== 'N/A' ? log.cut : '';
-        document.getElementById('log-light').value = log.light !== 'N/A' ? log.light : '';
-        document.getElementById('log-pairing').value = log.pairing !== 'None' ? log.pairing : '';
-        document.getElementById('log-rating').value = log.rating || '';
-        document.getElementById('log-notes').value = log.notes !== 'No notes.' ? log.notes : '';
-
-        currentLogImage = log.image || null;
-        const photoBtn = document.getElementById('log-photo-btn');
-        if(currentLogImage) {
-            photoBtn.classList.add('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
-        } else {
-            photoBtn.classList.remove('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-        }
-
-        const submitBtn = document.getElementById('journal-submit-btn');
-        submitBtn.innerHTML = 'Update Ledger <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
-        submitBtn.style.background = 'var(--gold)';
-        submitBtn.style.color = '#121212';
+        document.getElementById('signin-email').value = '';
+        document.getElementById('signin-password').value = '';
+        document.getElementById('signup-username').value = '';
+        document.getElementById('signup-email').value = '';
+        document.getElementById('signup-password').value = '';
+        document.getElementById('signup-confirm').value = '';
+        document.getElementById('delete-email').value = '';
+        document.getElementById('delete-password').value = '';
         
-        const logWrapper = document.getElementById('journal-form-wrapper');
-        const logChevron = document.getElementById('journal-form-chevron');
-        if (logWrapper && logWrapper.style.display === 'none') {
-            logWrapper.style.display = 'block';
-            logChevron.style.transform = 'rotate(180deg)';
-        }
-        
-        document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
-    };
+        if(unsubscribeHumidor) unsubscribeHumidor();
+        if(unsubscribeJournal) unsubscribeJournal();
+    }
+});
 
-    window.clearJournalForm = function() {
-        document.getElementById('log-brand').value = '';
-        document.getElementById('log-vitola').value = '';
-        document.getElementById('log-ring-gauge').value = '';
-        document.getElementById('log-wrapper').value = '';
-        document.getElementById('log-cut').selectedIndex = 0;
-        document.getElementById('log-light').selectedIndex = 0;
-        document.getElementById('log-pairing').value = '';
-        document.getElementById('log-rating').selectedIndex = 0;
-        document.getElementById('log-notes').value = '';
-        
-        currentLogImage = null;
-        document.getElementById('log-image-upload').value = "";
-        const photoBtn = document.getElementById('log-photo-btn');
+window.renderFavorites = function() {
+    const favContainer = document.getElementById('home-favorites-list');
+    const ratedCigars = journalHistory.filter(c => c.rating);
+    
+    if (ratedCigars.length > 0) {
+        const sum = ratedCigars.reduce((acc, curr) => acc + curr.rating, 0);
+        document.getElementById('stat-avg').innerText = (sum / ratedCigars.length).toFixed(1);
+    } else {
+        document.getElementById('stat-avg').innerText = "0.0";
+    }
+
+    const sorted = ratedCigars.sort((a,b) => b.rating - a.rating).slice(0, 5);
+
+    if (sorted.length === 0) {
+        favContainer.innerHTML = `
+        <div class="empty-state">
+            <i class="fa-solid fa-star" style="font-size: 20px; opacity: 0.3;"></i>
+            <span>No rated cigars</span>
+        </div>`;
+        return;
+    }
+
+    let html = '<div class="glass-bento" style="border-radius: 20px; padding: 8px 20px;">';
+    sorted.forEach((cigar, index) => {
+        const borderStr = index < sorted.length - 1 ? 'border-bottom: 1px solid var(--border-subtle);' : '';
+        html += `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; ${borderStr}">
+            <div>
+                <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
+                <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
+            </div>
+            <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; background: var(--surface-01dp); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
+                <span style="font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--leather);">${cigar.rating.toFixed(2)}</span>
+            </div>
+        </div>`;
+    });
+    html += '</div>';
+    favContainer.innerHTML = html;
+};
+
+window.editJournalLog = function(id) {
+    window.closeAllSwipes(); 
+    
+    const log = journalHistory.find(l => l.id === id);
+    if(!log) return;
+
+    editingJournalId = id;
+    document.getElementById('log-date').value = log.date || '';
+    document.getElementById('log-brand').value = log.brand || '';
+    document.getElementById('log-vitola').value = log.vitola || '';
+    document.getElementById('log-ring-gauge').value = log.ring !== '-' ? log.ring : '';
+    document.getElementById('log-wrapper').value = log.wrapper || '';
+    document.getElementById('log-cut').value = log.cut !== 'N/A' ? log.cut : '';
+    document.getElementById('log-light').value = log.light !== 'N/A' ? log.light : '';
+    document.getElementById('log-pairing').value = log.pairing !== 'None' ? log.pairing : '';
+    document.getElementById('log-rating').value = log.rating || '';
+    document.getElementById('log-notes').value = log.notes !== 'No notes.' ? log.notes : '';
+
+    currentLogImage = log.image || null;
+    const photoBtn = document.getElementById('log-photo-btn');
+    if(currentLogImage) {
+        photoBtn.classList.add('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+    } else {
         photoBtn.classList.remove('attached');
         photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-        
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('log-date').value = today;
-        
-        editingJournalId = null;
-        const submitBtn = document.getElementById('journal-submit-btn');
-        submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
-        submitBtn.style.background = '';
-        submitBtn.style.color = '';
-    };
+    }
+
+    const submitBtn = document.getElementById('journal-submit-btn');
+    submitBtn.innerHTML = 'Update Ledger <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
+    submitBtn.style.background = 'var(--gold)';
+    submitBtn.style.color = '#121212';
+    
+    const logWrapper = document.getElementById('journal-form-wrapper');
+    const logChevron = document.getElementById('journal-form-chevron');
+    if (logWrapper && logWrapper.style.display === 'none') {
+        logWrapper.style.display = 'block';
+        logChevron.style.transform = 'rotate(180deg)';
+    }
+    
+    document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.clearJournalForm = function() {
+    document.getElementById('log-brand').value = '';
+    document.getElementById('log-vitola').value = '';
+    document.getElementById('log-ring-gauge').value = '';
+    document.getElementById('log-wrapper').value = '';
+    document.getElementById('log-cut').selectedIndex = 0;
+    document.getElementById('log-light').selectedIndex = 0;
+    document.getElementById('log-pairing').value = '';
+    document.getElementById('log-rating').selectedIndex = 0;
+    document.getElementById('log-notes').value = '';
+    
+    currentLogImage = null;
+    document.getElementById('log-image-upload').value = "";
+    const photoBtn = document.getElementById('log-photo-btn');
+    photoBtn.classList.remove('attached');
+    photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+    
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('log-date').value = today;
+    
+    editingJournalId = null;
+    const submitBtn = document.getElementById('journal-submit-btn');
+    submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+    submitBtn.style.background = '';
+    submitBtn.style.color = '';
+};
 
 window.logSmoke = async function() {
-    const date = document.getElementById('log-date').value;
-    const brand = document.getElementById('log-brand').value;
-    const vitola = document.getElementById('log-vitola').value;
-    const ring = document.getElementById('log-ring-gauge').value;
-    const wrapper = document.getElementById('log-wrapper').value;
-    const cut = document.getElementById('log-cut').value;
-    const light = document.getElementById('log-light').value;
-    const pairing = document.getElementById('log-pairing').value;
-    const rating = document.getElementById('log-rating').value;
-    const notes = document.getElementById('log-notes').value;
-    const submitBtn = document.getElementById('journal-submit-btn');
+const date = document.getElementById('log-date').value;
+const brand = document.getElementById('log-brand').value;
+const vitola = document.getElementById('log-vitola').value;
+const ring = document.getElementById('log-ring-gauge').value;
+const wrapper = document.getElementById('log-wrapper').value;
+const cut = document.getElementById('log-cut').value;
+const light = document.getElementById('log-light').value;
+const pairing = document.getElementById('log-pairing').value;
+const rating = document.getElementById('log-rating').value;
+const notes = document.getElementById('log-notes').value;
+const submitBtn = document.getElementById('journal-submit-btn');
 
-    if(!brand) { 
-        await window.customAlert("Please enter the brand to log.", "Missing Data");
-        return; 
-    }
+if(!brand) { 
+    await window.customAlert("Please enter the brand to log.", "Missing Data");
+    return; 
+}
 
-    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-    submitBtn.disabled = true;
+submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+submitBtn.disabled = true;
 
-    try {
-        const newLog = {
-            uid: auth.currentUser.uid,
-            date: date || new Date().toISOString().split('T')[0],
-            brand,
-            vitola: vitola || "Unknown",
-            ring: ring || "-",
-            wrapper: wrapper || "Unknown",
-            cut: cut || "N/A",
-            light: light || "N/A",
-            pairing: pairing || "None",
-            rating: rating ? parseFloat(rating) : null,
-            notes: notes || "No notes.",
-            image: currentLogImage // Saving the scaled Base64 string directly
-        };
+try {
+    const newLog = {
+        uid: auth.currentUser.uid,
+        date: date || new Date().toISOString().split('T')[0],
+        brand,
+        vitola: vitola || "Unknown",
+        ring: ring || "-",
+        wrapper: wrapper || "Unknown",
+        cut: cut || "N/A",
+        light: light || "N/A",
+        pairing: pairing || "None",
+        rating: rating ? parseFloat(rating) : null,
+        notes: notes || "No notes.",
+        image: currentLogImage // Saving the scaled Base64 string directly
+    };
 
-        if (editingJournalId) {
-            await updateDoc(doc(db, "journal", editingJournalId), newLog);
-            editingJournalId = null;
-            submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
-            submitBtn.style.background = '';
-            submitBtn.style.color = '';
-        } else {
-            await addDoc(collection(db, "journal"), newLog);
-            submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
-        }
-        
-        await window.checkAndAddNewBrand(brand);
-        
-        window.clearJournalForm();
-        
-    } catch (e) {
-        console.error("Error adding document: ", e);
+    if (editingJournalId) {
+        await updateDoc(doc(db, "journal", editingJournalId), newLog);
+        editingJournalId = null;
         submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
-    } finally {
-        submitBtn.disabled = false;
+        submitBtn.style.background = '';
+        submitBtn.style.color = '';
+    } else {
+        await addDoc(collection(db, "journal"), newLog);
+        submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+    }
+    
+    await window.checkAndAddNewBrand(brand);
+    
+    window.clearJournalForm();
+    
+} catch (e) {
+    console.error("Error adding document: ", e);
+    submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+} finally {
+    submitBtn.disabled = false;
+}
+};
+
+// --- SORT ENGINE & EXPAND ENGINE ---
+window.toggleHumidorSort = function() {
+    humidorSortOrder = humidorSortOrder === 'date' ? 'alpha' : 'date';
+    document.getElementById('humidor-sort-btn').innerHTML = humidorSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
+    debouncedRenderHumidor();
+};
+
+window.toggleJournalSort = function() {
+    journalSortOrder = journalSortOrder === 'date' ? 'alpha' : 'date';
+    document.getElementById('journal-sort-btn').innerHTML = journalSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
+    debouncedRenderJournal();
+};
+
+window.toggleJournalExpand = function(id, event) {
+    event.stopPropagation(); // Shield the swipe engine from tap interactions
+    const details = document.getElementById('journal-details-' + id);
+    const icon = document.getElementById('journal-chevron-' + id);
+    if(details.style.display === 'none') {
+        details.style.display = 'block';
+        icon.style.transform = 'rotate(180deg)';
+    } else {
+        details.style.display = 'none';
+        icon.style.transform = 'rotate(0deg)';
     }
 };
 
-    // --- SORT ENGINE & EXPAND ENGINE ---
-    window.toggleHumidorSort = function() {
-        humidorSortOrder = humidorSortOrder === 'date' ? 'alpha' : 'date';
-        document.getElementById('humidor-sort-btn').innerHTML = humidorSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
-        debouncedRenderHumidor();
-    };
+window.debouncedRenderJournal = debounce(() => renderJournal(), 250);
 
-    window.toggleJournalSort = function() {
-        journalSortOrder = journalSortOrder === 'date' ? 'alpha' : 'date';
-        document.getElementById('journal-sort-btn').innerHTML = journalSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
-        debouncedRenderJournal();
-    };
+window.renderJournal = function() {
+    const journalList = document.getElementById('journal-history-list');
+    const homeList = document.getElementById('home-recent-list');
+    const countStat = document.getElementById('stat-smoked'); 
     
-    window.toggleJournalExpand = function(id, event) {
-        event.stopPropagation(); // Shield the swipe engine from tap interactions
-        const details = document.getElementById('journal-details-' + id);
-        const icon = document.getElementById('journal-chevron-' + id);
-        if(details.style.display === 'none') {
-            details.style.display = 'block';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            details.style.display = 'none';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    };
+    window.activeSwipeCard = null; 
 
-    window.debouncedRenderJournal = debounce(() => renderJournal(), 250);
-
-    window.renderJournal = function() {
-        const journalList = document.getElementById('journal-history-list');
-        const homeList = document.getElementById('home-recent-list');
-        const countStat = document.getElementById('stat-smoked'); 
+    if(journalHistory.length === 0) {
+        journalList.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
+                <span>No smokes logged yet</span>
+            </div>`;
+        homeList.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
+                <span>No recent logs</span>
+            </div>`;
+        countStat.innerText = '0';
         
-        window.activeSwipeCard = null; 
+        document.getElementById('profile-mechanics-ring').innerText = "N/A Gauge";
+        document.getElementById('profile-mechanics-cut').innerText = "N/A Cut";
+        document.getElementById('profile-mechanics-light').innerText = "N/A Light";
+        
+        renderFavorites();
+        return;
+    }
 
-        if(journalHistory.length === 0) {
-            journalList.innerHTML = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>No smokes logged yet</span>
-                </div>`;
-            homeList.innerHTML = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>No recent logs</span>
-                </div>`;
-            countStat.innerText = '0';
+    // --- FILTER & SORT LOGIC ---
+    const searchInput = document.getElementById('journal-search');
+    // Grab the input, make it lowercase, and strip out punctuation using Regex
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
+    
+    let displayList = [...journalHistory];
+    
+    if (searchTerm) {
+        displayList = displayList.filter(log => {
+            // Strip punctuation from the stored brand and vitola before comparing
+            const normalizedBrand = log.brand.toLowerCase().replace(/[^\w\s]/g, '');
+            const normalizedVitola = log.vitola.toLowerCase().replace(/[^\w\s]/g, '');
             
-            document.getElementById('profile-mechanics-ring').innerText = "N/A Gauge";
-            document.getElementById('profile-mechanics-cut').innerText = "N/A Cut";
-            document.getElementById('profile-mechanics-light').innerText = "N/A Light";
+            return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
+        });
+    }
+
+    if (journalSortOrder === 'alpha') {
+        displayList.sort((a, b) => a.brand.localeCompare(b.brand));
+    } else {
+        displayList.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    let html = '';
+    if (displayList.length === 0) {
+        html = `
+            <div class="empty-state">
+                <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
+                <span>No results found</span>
+            </div>`;
+    } else {
+        displayList.forEach(log => {
+            let imageBadge = '';
+            if(log.image) {
+                window.imageRegistry[log.id] = log.image;
+                imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+            }
             
-            renderFavorites();
-            return;
-        }
+            let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
 
-        // --- FILTER & SORT LOGIC ---
-        const searchInput = document.getElementById('journal-search');
-        // Grab the input, make it lowercase, and strip out punctuation using Regex
-        const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
-        
-        let displayList = [...journalHistory];
-        
-        if (searchTerm) {
-            displayList = displayList.filter(log => {
-                // Strip punctuation from the stored brand and vitola before comparing
-                const normalizedBrand = log.brand.toLowerCase().replace(/[^\w\s]/g, '');
-                const normalizedVitola = log.vitola.toLowerCase().replace(/[^\w\s]/g, '');
+            html += `
+            <div class="swipe-container">
+                <div class="swipe-actions">
+                    <button class="swipe-action-btn swipe-action-edit" onclick="editJournalLog('${log.id}')">
+                        <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                    </button>
+                    <button class="swipe-action-btn swipe-action-delete" onclick="removeJournalLog('${log.id}')">
+                        <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                    </button>
+                </div>
                 
-                return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
-            });
-        }
-
-        if (journalSortOrder === 'alpha') {
-            displayList.sort((a, b) => a.brand.localeCompare(b.brand));
-        } else {
-            displayList.sort((a, b) => new Date(b.date) - new Date(a.date));
-        }
-
-        let html = '';
-        if (displayList.length === 0) {
-            html = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>No results found</span>
-                </div>`;
-        } else {
-            displayList.forEach(log => {
-                let imageBadge = '';
-                if(log.image) {
-                    window.imageRegistry[log.id] = log.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
-                }
-                
-                let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
-
-                html += `
-                <div class="swipe-container">
-                    <div class="swipe-actions">
-                        <button class="swipe-action-btn swipe-action-edit" onclick="editJournalLog('${log.id}')">
-                            <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
-                        </button>
-                        <button class="swipe-action-btn swipe-action-delete" onclick="removeJournalLog('${log.id}')">
-                            <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
-                        </button>
+                <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
+                    
+                    <!-- Visible Summary Block -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+                        <div style="flex: 1; padding-right: 12px;">
+                            <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(log.brand)}</div>
+                            <div class="log-meta">${escapeHTML(log.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(log.ring)}</span> • ${escapeHTML(log.wrapper)}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                            <div class="badge badge-amber">${escapeHTML(log.date)}</div>
+                            <button onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="toggleJournalExpand('${log.id}', event)" id="journal-chevron-${log.id}" style="background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; transition: transform 0.3s; margin-top: 4px; font-size: 14px;">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                        </div>
                     </div>
                     
-                    <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
-                        
-                        <!-- Visible Summary Block -->
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
-                            <div style="flex: 1; padding-right: 12px;">
-                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(log.brand)}</div>
-                                <div class="log-meta">${escapeHTML(log.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(log.ring)}</span> • ${escapeHTML(log.wrapper)}</div>
-                            </div>
-                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                                <div class="badge badge-amber">${escapeHTML(log.date)}</div>
-                                <button onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="toggleJournalExpand('${log.id}', event)" id="journal-chevron-${log.id}" style="background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; transition: transform 0.3s; margin-top: 4px; font-size: 14px;">
-                                    <i class="fa-solid fa-chevron-down"></i>
-                                </button>
-                            </div>
+                    <!-- Hidden Collapsible Details Block -->
+                    <div id="journal-details-${log.id}" style="display: none;">
+                        <div style="display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; flex-wrap: wrap;">
+                            ${ratingBadge}
+                            <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
+                            <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-fire" style="color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
+                            <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
+                            ${imageBadge}
                         </div>
                         
-                        <!-- Hidden Collapsible Details Block -->
-                        <div id="journal-details-${log.id}" style="display: none;">
-                            <div style="display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; flex-wrap: wrap;">
-                                ${ratingBadge}
-                                <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
-                                <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-fire" style="color: var(--gold);"></i> ${escapeHTML(log.light)}</span>
-                                <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
-                                ${imageBadge}
-                            </div>
-                            
-                            <div style="font-size: 13px; color: var(--text-dim); margin-top: 12px; font-style: italic; line-height: 1.4;">"${escapeHTML(log.notes)}"</div>
-                        </div>
+                        <div style="font-size: 13px; color: var(--text-dim); margin-top: 12px; font-style: italic; line-height: 1.4;">"${escapeHTML(log.notes)}"</div>
+                    </div>
 
-                    </div>
-                </div>`;
-            });
-        }
-        journalList.innerHTML = html;
-        
-        let homeHtml = '';
-        // Sort home recent list cleanly by date regardless of filter
-        [...journalHistory].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 2).forEach(log => {
-            homeHtml += `
-            <div class="log-card" style="margin-bottom: 12px;">
-                <div class="log-header" style="margin-bottom: 0;">
-                    <div>
-                        <div class="log-title">${escapeHTML(log.brand)}</div>
-                        <div class="log-meta">${escapeHTML(log.date)}</div>
-                    </div>
-                    <div class="badge badge-indigo">Smoked</div>
                 </div>
             </div>`;
         });
-        homeList.innerHTML = homeHtml;
-
-        countStat.innerText = journalHistory.length; 
-        
-        const ringBadge = document.getElementById('profile-mechanics-ring');
-        const cutBadge = document.getElementById('profile-mechanics-cut');
-        const lightBadge = document.getElementById('profile-mechanics-light');
-
-        const ringCounts = {};
-        const cutCounts = {};
-        const lightCounts = {};
-        
-        journalHistory.forEach(log => {
-            if(log.ring && log.ring !== "-") ringCounts[log.ring] = (ringCounts[log.ring] || 0) + 1;
-            if(log.cut && log.cut !== "N/A") cutCounts[log.cut] = (cutCounts[log.cut] || 0) + 1;
-            if(log.light && log.light !== "N/A") lightCounts[log.light] = (lightCounts[log.light] || 0) + 1;
-        });
-
-        const getTop = (counts, defaultStr) => {
-            let top = defaultStr;
-            let max = 0;
-            for (const [key, count] of Object.entries(counts)) {
-                if (count > max) { max = count; top = key; }
-            }
-            return top;
-        };
-
-        const topRing = getTop(ringCounts, 'N/A');
-        const topCut = getTop(cutCounts, 'N/A Cut');
-        const topLight = getTop(lightCounts, 'N/A Light');
-
-        ringBadge.innerText = topRing === 'N/A' ? 'N/A Gauge' : `${topRing} Ring`;
-        cutBadge.innerText = topCut;
-        lightBadge.innerText = topLight;
-        
-        renderFavorites();
-    };
-
-    window.removeJournalLog = async function(id) {
-        window.closeAllSwipes();
-        if(await window.customConfirm("Remove this log from your journal?", "Remove Log", true)) {
-            await deleteDoc(doc(db, "journal", id));
-        }
-    };
-
-    // --- AGING ENGINE LOGIC (UPDATED WITH DYNAMIC PROGRESS & DIMMING) ---
+    }
+    journalList.innerHTML = html;
     
-    document.getElementById('vault-date').addEventListener('change', function(e) {
-        if (!e.target.value) return;
-        const acquired = new Date(e.target.value + 'T00:00:00');
-        acquired.setDate(acquired.getDate() + 7);
-        const minTargetStr = acquired.toISOString().split('T')[0];
-        document.getElementById('vault-target-date').min = minTargetStr;
-        
-        const currentTarget = document.getElementById('vault-target-date').value;
-        if (!currentTarget || new Date(currentTarget + 'T00:00:00') < acquired) {
-            document.getElementById('vault-target-date').value = minTargetStr;
-        }
+    let homeHtml = '';
+    // Sort home recent list cleanly by date regardless of filter
+    [...journalHistory].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 2).forEach(log => {
+        homeHtml += `
+        <div class="log-card" style="margin-bottom: 12px;">
+            <div class="log-header" style="margin-bottom: 0;">
+                <div>
+                    <div class="log-title">${escapeHTML(log.brand)}</div>
+                    <div class="log-meta">${escapeHTML(log.date)}</div>
+                </div>
+                <div class="badge badge-indigo">Smoked</div>
+            </div>
+        </div>`;
+    });
+    homeList.innerHTML = homeHtml;
+
+    countStat.innerText = journalHistory.length; 
+    
+    const ringBadge = document.getElementById('profile-mechanics-ring');
+    const cutBadge = document.getElementById('profile-mechanics-cut');
+    const lightBadge = document.getElementById('profile-mechanics-light');
+
+    const ringCounts = {};
+    const cutCounts = {};
+    const lightCounts = {};
+    
+    journalHistory.forEach(log => {
+        if(log.ring && log.ring !== "-") ringCounts[log.ring] = (ringCounts[log.ring] || 0) + 1;
+        if(log.cut && log.cut !== "N/A") cutCounts[log.cut] = (cutCounts[log.cut] || 0) + 1;
+        if(log.light && log.light !== "N/A") lightCounts[log.light] = (lightCounts[log.light] || 0) + 1;
     });
 
-    window.editCigar = function(id) {
-        window.closeAllSwipes(); 
-        
-        const cigar = humidorInventory.find(c => c.id === id);
-        if(!cigar) return;
-
-        editingVaultId = id;
-        document.getElementById('vault-brand').value = cigar.brand || '';
-        document.getElementById('vault-quantity').value = cigar.quantity || 1;
-        document.getElementById('vault-vitola').value = cigar.vitola || '';
-        document.getElementById('vault-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
-        document.getElementById('vault-wrapper').value = cigar.wrapper || '';
-        document.getElementById('vault-price').value = cigar.price || '';
-        
-        if (cigar.acquiredDate) {
-            document.getElementById('vault-date').value = new Date(cigar.acquiredDate).toISOString().split('T')[0];
+    const getTop = (counts, defaultStr) => {
+        let top = defaultStr;
+        let max = 0;
+        for (const [key, count] of Object.entries(counts)) {
+            if (count > max) { max = count; top = key; }
         }
-        if (cigar.targetDate) {
-            document.getElementById('vault-target-date').value = new Date(cigar.targetDate).toISOString().split('T')[0];
-        }
-        
-        currentVaultImage = cigar.image || null;
-        const photoBtn = document.getElementById('vault-photo-btn');
-        if(currentVaultImage) {
-            photoBtn.classList.add('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
-        } else {
-            photoBtn.classList.remove('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-        }
-
-        const submitBtn = document.getElementById('vault-submit-btn');
-        submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
-        submitBtn.style.background = 'var(--gold)';
-        submitBtn.style.color = '#121212';
-
-        const vaultWrapper = document.getElementById('humidor-form-wrapper');
-        const vaultChevron = document.getElementById('humidor-form-chevron');
-        if (vaultWrapper && vaultWrapper.style.display === 'none') {
-            vaultWrapper.style.display = 'block';
-            vaultChevron.style.transform = 'rotate(180deg)';
-        }
-
-        document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
+        return top;
     };
 
-    window.clearHumidorForm = function() {
-        document.getElementById('vault-brand').value = '';
-        document.getElementById('vault-quantity').value = '1';
-        document.getElementById('vault-ring-gauge').value = '';
-        document.getElementById('vault-price').value = '';
-        document.getElementById('vault-vitola').value = '';
-        document.getElementById('vault-wrapper').value = '';
-        
-        currentVaultImage = null;
-        document.getElementById('vault-image-upload').value = "";
-        const photoBtn = document.getElementById('vault-photo-btn');
-        photoBtn.classList.remove('attached');
-        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-        
-        initializeDates();
-        
-        editingVaultId = null;
-        const submitBtn = document.getElementById('vault-submit-btn');
-        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-        submitBtn.style.background = '';
-        submitBtn.style.color = '';
-    };
+    const topRing = getTop(ringCounts, 'N/A');
+    const topCut = getTop(cutCounts, 'N/A Cut');
+    const topLight = getTop(lightCounts, 'N/A Light');
 
-window.storeCigar = async function() {
-    const brand = document.getElementById('vault-brand').value;
-    const qtyVal = document.getElementById('vault-quantity').value;
-    const vitola = document.getElementById('vault-vitola').value;
-    const ring = document.getElementById('vault-ring-gauge').value;
-    const wrapper = document.getElementById('vault-wrapper').value;
-    const priceVal = document.getElementById('vault-price').value;
-    const acquiredDate = document.getElementById('vault-date').value;
-    const targetDate = document.getElementById('vault-target-date').value;
-    const submitBtn = document.getElementById('vault-submit-btn');
+    ringBadge.innerText = topRing === 'N/A' ? 'N/A Gauge' : `${topRing} Ring`;
+    cutBadge.innerText = topCut;
+    lightBadge.innerText = topLight;
+    
+    renderFavorites();
+};
 
-    if(!brand || !acquiredDate || !targetDate) { 
-        await window.customAlert("Please enter the brand, date acquired, and target peak date.", "Missing Data");
-        return; 
-    }
-
-    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-    submitBtn.disabled = true;
-
-    const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
-    const targetTime = new Date(targetDate + 'T00:00:00').getTime();
-
-    try {
-        const newCigar = {
-            uid: auth.currentUser.uid,
-            brand,
-            quantity: parseInt(qtyVal) || 1,
-            vitola: vitola || "Unknown",
-            ring: ring || "-",
-            wrapper: wrapper || "Unknown",
-            price: priceVal ? parseFloat(priceVal) : null,
-            targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
-            acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
-            image: currentVaultImage // Saving the scaled Base64 string directly
-        };
-
-        if (editingVaultId) {
-            await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
-            editingVaultId = null;
-            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-            submitBtn.style.background = '';
-            submitBtn.style.color = '';
-        } else {
-            await addDoc(collection(db, "humidor"), newCigar);
-            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-        }
-        
-        await window.checkAndAddNewBrand(brand);
-        
-        window.clearHumidorForm();
-
-    } catch (e) {
-        console.error("Error adding document: ", e);
-        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-    } finally {
-        submitBtn.disabled = false;
+window.removeJournalLog = async function(id) {
+    window.closeAllSwipes();
+    if(await window.customConfirm("Remove this log from your journal?", "Remove Log", true)) {
+        await deleteDoc(doc(db, "journal", id));
     }
 };
 
-    window.debouncedRenderHumidor = debounce(() => renderHumidor(), 250);
+// --- AGING ENGINE LOGIC (UPDATED WITH DYNAMIC PROGRESS & DIMMING) ---
 
-    window.renderHumidor = function() {
-        const list = document.getElementById('humidor-inventory-list');
-        const countStat = document.getElementById('stat-collection'); 
+document.getElementById('vault-date').addEventListener('change', function(e) {
+    if (!e.target.value) return;
+    const acquired = new Date(e.target.value + 'T00:00:00');
+    acquired.setDate(acquired.getDate() + 7);
+    const minTargetStr = acquired.toISOString().split('T')[0];
+    document.getElementById('vault-target-date').min = minTargetStr;
+    
+    const currentTarget = document.getElementById('vault-target-date').value;
+    if (!currentTarget || new Date(currentTarget + 'T00:00:00') < acquired) {
+        document.getElementById('vault-target-date').value = minTargetStr;
+    }
+});
+
+window.editCigar = function(id) {
+    window.closeAllSwipes(); 
+    
+    const cigar = humidorInventory.find(c => c.id === id);
+    if(!cigar) return;
+
+    editingVaultId = id;
+    document.getElementById('vault-brand').value = cigar.brand || '';
+    document.getElementById('vault-quantity').value = cigar.quantity || 1;
+    document.getElementById('vault-vitola').value = cigar.vitola || '';
+    document.getElementById('vault-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
+    document.getElementById('vault-wrapper').value = cigar.wrapper || '';
+    document.getElementById('vault-price').value = cigar.price || '';
+    
+    if (cigar.acquiredDate) {
+        document.getElementById('vault-date').value = new Date(cigar.acquiredDate).toISOString().split('T')[0];
+    }
+    if (cigar.targetDate) {
+        document.getElementById('vault-target-date').value = new Date(cigar.targetDate).toISOString().split('T')[0];
+    }
+    
+    currentVaultImage = cigar.image || null;
+    const photoBtn = document.getElementById('vault-photo-btn');
+    if(currentVaultImage) {
+        photoBtn.classList.add('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+    } else {
+        photoBtn.classList.remove('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+    }
+
+    const submitBtn = document.getElementById('vault-submit-btn');
+    submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
+    submitBtn.style.background = 'var(--gold)';
+    submitBtn.style.color = '#121212';
+
+    const vaultWrapper = document.getElementById('humidor-form-wrapper');
+    const vaultChevron = document.getElementById('humidor-form-chevron');
+    if (vaultWrapper && vaultWrapper.style.display === 'none') {
+        vaultWrapper.style.display = 'block';
+        vaultChevron.style.transform = 'rotate(180deg)';
+    }
+
+    document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.clearHumidorForm = function() {
+    document.getElementById('vault-brand').value = '';
+    document.getElementById('vault-quantity').value = '1';
+    document.getElementById('vault-ring-gauge').value = '';
+    document.getElementById('vault-price').value = '';
+    document.getElementById('vault-vitola').value = '';
+    document.getElementById('vault-wrapper').value = '';
+    
+    currentVaultImage = null;
+    document.getElementById('vault-image-upload').value = "";
+    const photoBtn = document.getElementById('vault-photo-btn');
+    photoBtn.classList.remove('attached');
+    photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+    
+    initializeDates();
+    
+    editingVaultId = null;
+    const submitBtn = document.getElementById('vault-submit-btn');
+    submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+    submitBtn.style.background = '';
+    submitBtn.style.color = '';
+};
+
+window.storeCigar = async function() {
+const brand = document.getElementById('vault-brand').value;
+const qtyVal = document.getElementById('vault-quantity').value;
+const vitola = document.getElementById('vault-vitola').value;
+const ring = document.getElementById('vault-ring-gauge').value;
+const wrapper = document.getElementById('vault-wrapper').value;
+const priceVal = document.getElementById('vault-price').value;
+const acquiredDate = document.getElementById('vault-date').value;
+const targetDate = document.getElementById('vault-target-date').value;
+const submitBtn = document.getElementById('vault-submit-btn');
+
+if(!brand || !acquiredDate || !targetDate) { 
+    await window.customAlert("Please enter the brand, date acquired, and target peak date.", "Missing Data");
+    return; 
+}
+
+submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+submitBtn.disabled = true;
+
+const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
+const targetTime = new Date(targetDate + 'T00:00:00').getTime();
+
+try {
+    const newCigar = {
+        uid: auth.currentUser.uid,
+        brand,
+        quantity: parseInt(qtyVal) || 1,
+        vitola: vitola || "Unknown",
+        ring: ring || "-",
+        wrapper: wrapper || "Unknown",
+        price: priceVal ? parseFloat(priceVal) : null,
+        targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
+        acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
+        image: currentVaultImage // Saving the scaled Base64 string directly
+    };
+
+    if (editingVaultId) {
+        await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
+        editingVaultId = null;
+        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = '';
+        submitBtn.style.color = '';
+    } else {
+        await addDoc(collection(db, "humidor"), newCigar);
+        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+    }
+    
+    await window.checkAndAddNewBrand(brand);
+    
+    window.clearHumidorForm();
+
+} catch (e) {
+    console.error("Error adding document: ", e);
+    submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+} finally {
+    submitBtn.disabled = false;
+}
+};
+
+window.debouncedRenderHumidor = debounce(() => renderHumidor(), 250);
+
+window.renderHumidor = function() {
+    const list = document.getElementById('humidor-inventory-list');
+    const countStat = document.getElementById('stat-collection'); 
+    
+    window.activeSwipeCard = null; 
+
+    const wrapperContainer = document.getElementById('profile-wrapper-stats-container');
+
+    if(humidorInventory.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
+                <span>Humidor is currently empty</span>
+            </div>`;
+        countStat.innerText = '0';
+        document.getElementById('stat-alerts').innerText = '0';
         
-        window.activeSwipeCard = null; 
+        document.getElementById('stat-avg-aging-val').innerText = '0';
+        document.getElementById('stat-humidor-value-val').innerText = '$0';
+        document.getElementById('stat-aging-pill').innerHTML = '&bull; EMPTY &bull;';
+        document.getElementById('stat-value-pill').innerHTML = '<i class="fa-solid fa-arrow-trend-up"></i> +$0 this month';
+        
+        wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
+        
+        // Handle empty dashboard graphics
+        document.getElementById('label-tier-1').style.opacity = '0.3';
+        document.getElementById('label-tier-2').style.opacity = '0.3';
+        document.getElementById('label-tier-3').style.opacity = '0.3';
+        document.getElementById('label-tier-4').style.opacity = '0.3';
+        
+        document.getElementById('bar-tier-1').style.width = '25%';
+        document.getElementById('bar-tier-2').style.width = '25%';
+        document.getElementById('bar-tier-3').style.width = '25%';
+        document.getElementById('bar-tier-4').style.width = '25%';
+        
+        return;
+    }
 
-        const wrapperContainer = document.getElementById('profile-wrapper-stats-container');
+    const now = Date.now();
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
 
-        if(humidorInventory.length === 0) {
-            list.innerHTML = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>Humidor is currently empty</span>
-                </div>`;
-            countStat.innerText = '0';
-            document.getElementById('stat-alerts').innerText = '0';
-            
-            document.getElementById('stat-avg-aging-val').innerText = '0';
-            document.getElementById('stat-humidor-value-val').innerText = '$0';
-            document.getElementById('stat-aging-pill').innerHTML = '&bull; EMPTY &bull;';
-            document.getElementById('stat-value-pill').innerHTML = '<i class="fa-solid fa-arrow-trend-up"></i> +$0 this month';
-            
-            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
-            
-            // Handle empty dashboard graphics
-            document.getElementById('label-tier-1').style.opacity = '0.3';
-            document.getElementById('label-tier-2').style.opacity = '0.3';
-            document.getElementById('label-tier-3').style.opacity = '0.3';
-            document.getElementById('label-tier-4').style.opacity = '0.3';
-            
-            document.getElementById('bar-tier-1').style.width = '25%';
-            document.getElementById('bar-tier-2').style.width = '25%';
-            document.getElementById('bar-tier-3').style.width = '25%';
-            document.getElementById('bar-tier-4').style.width = '25%';
-            
-            return;
+    let totalValue = 0;
+    let totalAgedDays = 0;
+    let readyAlertsCount = 0;
+    let totalQuantity = 0;
+    let monthlyAddedValue = 0;
+
+    // --- DYNAMIC AGING CALCULATOR ---
+    let tier1 = 0; // 0-30
+    let tier2 = 0; // 31-90
+    let tier3 = 0; // 91-180
+    let tier4 = 0; // 180+
+    let totalAgingQuantity = 0;
+
+    const wrapperCounts = {};
+    let totalValidWrappers = 0;
+
+    humidorInventory.forEach(c => {
+        const msPerDay = 1000 * 60 * 60 * 24;
+        // Fallback for legacy items missing acquiredDate
+        const acqDate = c.acquiredDate || now;
+        let days = Math.floor((now - acqDate) / msPerDay);
+        if (days < 0) days = 0;
+        
+        let qty = c.quantity || 1;
+        totalAgingQuantity += qty;
+        
+        if (days <= 30) tier1 += qty;
+        else if (days <= 90) tier2 += qty;
+        else if (days <= 180) tier3 += qty;
+        else tier4 += qty;
+        
+        totalAgedDays += days;
+        
+        const cigarTotalVal = (c.price || 0) * qty;
+        totalValue += cigarTotalVal;
+
+        // Check if acquired this current calendar month/year
+        const acqObj = new Date(acqDate);
+        if (acqObj.getFullYear() === currentYear && acqObj.getMonth() === currentMonth) {
+            monthlyAddedValue += cigarTotalVal;
         }
 
-        const now = Date.now();
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth();
+        const targetDate = c.targetDate || (acqDate + 7 * msPerDay);
+        let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
+        if (totalTargetDays <= 0) totalTargetDays = 1; 
+        
+        let progress = (days / totalTargetDays) * 100;
+        if (progress >= 100) readyAlertsCount += qty;
 
-        let totalValue = 0;
-        let totalAgedDays = 0;
-        let readyAlertsCount = 0;
-        let totalQuantity = 0;
-        let monthlyAddedValue = 0;
+        // Palate Mapping Logic
+        if(c.wrapper && c.wrapper !== "Unknown") {
+            wrapperCounts[c.wrapper] = (wrapperCounts[c.wrapper] || 0) + qty;
+            totalValidWrappers += qty;
+        }
+    });
 
-        // --- DYNAMIC AGING CALCULATOR ---
-        let tier1 = 0; // 0-30
-        let tier2 = 0; // 31-90
-        let tier3 = 0; // 91-180
-        let tier4 = 0; // 180+
-        let totalAgingQuantity = 0;
+    document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
+    document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
+    document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
+    document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
+    
+    // Dynamic Opacity Dimming
+    document.getElementById('label-tier-1').style.opacity = tier1 === 0 ? '0.3' : '1';
+    document.getElementById('label-tier-2').style.opacity = tier2 === 0 ? '0.3' : '1';
+    document.getElementById('label-tier-3').style.opacity = tier3 === 0 ? '0.3' : '1';
+    document.getElementById('label-tier-4').style.opacity = tier4 === 0 ? '0.3' : '1';
+    
+    // Dynamic Proportional Widths
+    if (totalAgingQuantity > 0) {
+        document.getElementById('bar-tier-1').style.width = `${(tier1 / totalAgingQuantity) * 100}%`;
+        document.getElementById('bar-tier-2').style.width = `${(tier2 / totalAgingQuantity) * 100}%`;
+        document.getElementById('bar-tier-3').style.width = `${(tier3 / totalAgingQuantity) * 100}%`;
+        document.getElementById('bar-tier-4').style.width = `${(tier4 / totalAgingQuantity) * 100}%`;
+    }
 
-        const wrapperCounts = {};
-        let totalValidWrappers = 0;
+    // --- FILTER & SORT LOGIC ---
+    const searchInput = document.getElementById('humidor-search');
+    // Grab the input, make it lowercase, and strip out punctuation using Regex
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
+    
+    let displayList = [...humidorInventory];
+    
+    if (searchTerm) {
+        displayList = displayList.filter(cigar => {
+            // Strip punctuation from the stored brand and vitola before comparing
+            const normalizedBrand = cigar.brand.toLowerCase().replace(/[^\w\s]/g, '');
+            const normalizedVitola = cigar.vitola.toLowerCase().replace(/[^\w\s]/g, '');
+            
+            return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
+        });
+    }        
+    if (humidorSortOrder === 'alpha') {
+        displayList.sort((a, b) => a.brand.localeCompare(b.brand));
+    } else {
+        // Safe sort fallback
+        displayList.sort((a, b) => (b.acquiredDate || 0) - (a.acquiredDate || 0));
+    }
 
-        humidorInventory.forEach(c => {
+    let html = '';
+    if (displayList.length === 0) {
+        html = `
+            <div class="empty-state">
+                <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
+                <span>No results found</span>
+            </div>`;
+    } else {
+        displayList.forEach(cigar => {
             const msPerDay = 1000 * 60 * 60 * 24;
-            // Fallback for legacy items missing acquiredDate
-            const acqDate = c.acquiredDate || now;
-            let days = Math.floor((now - acqDate) / msPerDay);
-            if (days < 0) days = 0;
+            const cigarQty = cigar.quantity || 1;
+            totalQuantity += cigarQty;
             
-            let qty = c.quantity || 1;
-            totalAgingQuantity += qty;
-            
-            if (days <= 30) tier1 += qty;
-            else if (days <= 90) tier2 += qty;
-            else if (days <= 180) tier3 += qty;
-            else tier4 += qty;
-            
-            totalAgedDays += days;
-            
-            const cigarTotalVal = (c.price || 0) * qty;
-            totalValue += cigarTotalVal;
+            const acqDate = cigar.acquiredDate || now;
+            let daysAged = Math.floor((now - acqDate) / msPerDay);
+            if (daysAged < 0) daysAged = 0; 
 
-            // Check if acquired this current calendar month/year
-            const acqObj = new Date(acqDate);
-            if (acqObj.getFullYear() === currentYear && acqObj.getMonth() === currentMonth) {
-                monthlyAddedValue += cigarTotalVal;
-            }
-
-            const targetDate = c.targetDate || (acqDate + 7 * msPerDay);
+            const targetDate = cigar.targetDate || (acqDate + 7 * msPerDay);
             let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
             if (totalTargetDays <= 0) totalTargetDays = 1; 
             
-            let progress = (days / totalTargetDays) * 100;
-            if (progress >= 100) readyAlertsCount += qty;
+            let progress = (daysAged / totalTargetDays) * 100;
+            if (progress > 100) progress = 100;
+            if (progress < 0) progress = 0; 
 
-            // Palate Mapping Logic
-            if(c.wrapper && c.wrapper !== "Unknown") {
-                wrapperCounts[c.wrapper] = (wrapperCounts[c.wrapper] || 0) + qty;
-                totalValidWrappers += qty;
-            }
-        });
+            let isReady = progress >= 100;
+            let badgeClass = isReady ? 'humidor-badge-ready' : 'humidor-badge-aging';
+            let statusIcon = isReady ? '<i class="fa-solid fa-fire"></i> ' : '<i class="fa-solid fa-hourglass-half"></i> ';
+            let statusText = isReady ? 'Peak' : 'Aging';
 
-        document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
-        document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
-        document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
-        document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
-        
-        // Dynamic Opacity Dimming
-        document.getElementById('label-tier-1').style.opacity = tier1 === 0 ? '0.3' : '1';
-        document.getElementById('label-tier-2').style.opacity = tier2 === 0 ? '0.3' : '1';
-        document.getElementById('label-tier-3').style.opacity = tier3 === 0 ? '0.3' : '1';
-        document.getElementById('label-tier-4').style.opacity = tier4 === 0 ? '0.3' : '1';
-        
-        // Dynamic Proportional Widths
-        if (totalAgingQuantity > 0) {
-            document.getElementById('bar-tier-1').style.width = `${(tier1 / totalAgingQuantity) * 100}%`;
-            document.getElementById('bar-tier-2').style.width = `${(tier2 / totalAgingQuantity) * 100}%`;
-            document.getElementById('bar-tier-3').style.width = `${(tier3 / totalAgingQuantity) * 100}%`;
-            document.getElementById('bar-tier-4').style.width = `${(tier4 / totalAgingQuantity) * 100}%`;
-        }
-
-        // --- FILTER & SORT LOGIC ---
-        const searchInput = document.getElementById('humidor-search');
-        // Grab the input, make it lowercase, and strip out punctuation using Regex
-        const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
-        
-        let displayList = [...humidorInventory];
-        
-        if (searchTerm) {
-            displayList = displayList.filter(cigar => {
-                // Strip punctuation from the stored brand and vitola before comparing
-                const normalizedBrand = cigar.brand.toLowerCase().replace(/[^\w\s]/g, '');
-                const normalizedVitola = cigar.vitola.toLowerCase().replace(/[^\w\s]/g, '');
-                
-                return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
-            });
-        }        if (humidorSortOrder === 'alpha') {
-            displayList.sort((a, b) => a.brand.localeCompare(b.brand));
-        } else {
-            // Safe sort fallback
-            displayList.sort((a, b) => (b.acquiredDate || 0) - (a.acquiredDate || 0));
-        }
-
-        let html = '';
-        if (displayList.length === 0) {
-            html = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>No results found</span>
-                </div>`;
-        } else {
-            displayList.forEach(cigar => {
-                const msPerDay = 1000 * 60 * 60 * 24;
-                const cigarQty = cigar.quantity || 1;
-                totalQuantity += cigarQty;
-                
-                const acqDate = cigar.acquiredDate || now;
-                let daysAged = Math.floor((now - acqDate) / msPerDay);
-                if (daysAged < 0) daysAged = 0; 
-
-                const targetDate = cigar.targetDate || (acqDate + 7 * msPerDay);
-                let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
-                if (totalTargetDays <= 0) totalTargetDays = 1; 
-                
-                let progress = (daysAged / totalTargetDays) * 100;
-                if (progress > 100) progress = 100;
-                if (progress < 0) progress = 0; 
-
-                let isReady = progress >= 100;
-                let badgeClass = isReady ? 'humidor-badge-ready' : 'humidor-badge-aging';
-                let statusIcon = isReady ? '<i class="fa-solid fa-fire"></i> ' : '<i class="fa-solid fa-hourglass-half"></i> ';
-                let statusText = isReady ? 'Peak' : 'Aging';
-
-                let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
-                
-                let imageBadge = '';
-                if(cigar.image) {
-                    window.imageRegistry[cigar.id] = cigar.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
-                }
-                
-                let qtyBadge = `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
-                
-                let attributesRow = '';
-                if (qtyBadge || imageBadge) {
-                    attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${imageBadge}</div>`;
-                }
-
-                html += `
-                <div class="swipe-container">
-                    <div class="swipe-actions">
-                        <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
-                            <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
-                        </button>
-                        <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
-                            <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
-                        </button>
-                    </div>
-                    
-                    <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
-                        <div class="log-header">
-                            <div style="flex: 1; padding-right: 12px;">
-                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
-                                <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
-                            </div>
-                            <div class="badge ${badgeClass}">${statusIcon}${statusText}</div>
-                        </div>
-                        ${attributesRow}
-                        <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
-                        <div class="timeline-footer">
-                            <span>Aged: ${daysAged} Days</span>
-                            <span>Target: ${totalTargetDays} Days</span>
-                        </div>
-                    </div>
-                </div>`;
-            });
-        }
-        
-        list.innerHTML = html;        countStat.innerText = totalAgingQuantity; 
-        
-        // Hidden element helps satisfy JS updating logic for peak cigars
-        const alertsEl = document.getElementById('stat-alerts');
-        if (alertsEl) alertsEl.innerText = readyAlertsCount;
-        
-        let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
-        document.getElementById('stat-avg-aging-val').innerText = avgDays;
-        
-        let formattedValue = totalValue % 1 === 0 ? `$${totalValue.toLocaleString('en-US')}` : `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        document.getElementById('stat-humidor-value-val').innerText = formattedValue;
-        
-        let formattedMonthly = monthlyAddedValue % 1 === 0 ? `+$${monthlyAddedValue.toLocaleString('en-US')}` : `+$${monthlyAddedValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        document.getElementById('stat-value-pill').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${formattedMonthly} this month`;
-
-        let agingStatus = "&bull; JUST RESTING &bull;";
-        if (avgDays >= 180) agingStatus = "&bull; VINTAGE &bull;";
-        else if (avgDays >= 90) agingStatus = "&bull; WELL AGED &bull;";
-        else if (avgDays >= 30) agingStatus = "&bull; DEVELOPING &bull;";
-        document.getElementById('stat-aging-pill').innerHTML = agingStatus;
-        
-        // Execute Updated Top 3 Palate Mapping Logic
-        const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
-        
-        if (totalValidWrappers > 0) {
-            let wrapperHtml = '';
-            const top3 = sortedWrappers.slice(0, 3);
-            const badgeClasses = ['badge-indigo', 'badge-mint', 'badge-amber'];
+            let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
             
-            top3.forEach((item, index) => {
-                const pct = Math.round((item[1] / totalValidWrappers) * 100);
-                const badgeClass = badgeClasses[index] || 'badge-indigo';
-                wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
-            });
-            wrapperContainer.innerHTML = wrapperHtml;
-        } else {
-            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
-        }
-    };
+            let imageBadge = '';
+            if(cigar.image) {
+                window.imageRegistry[cigar.id] = cigar.image;
+                imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+            }
+            
+            let qtyBadge = `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
+            
+            let attributesRow = '';
+            if (qtyBadge || imageBadge) {
+                attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${imageBadge}</div>`;
+            }
 
-    window.removeCigar = async function(id) {
-        window.closeAllSwipes();
-        if(await window.customConfirm("Remove this cigar from your humidor?", "Remove Cigar", true)) {
-            await deleteDoc(doc(db, "humidor", id));
-        }
-    };
+            html += `
+            <div class="swipe-container">
+                <div class="swipe-actions">
+                    <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
+                        <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                    </button>
+                    <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
+                        <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                    </button>
+                </div>
+                
+                <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
+                    <div class="log-header">
+                        <div style="flex: 1; padding-right: 12px;">
+                            <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
+                            <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
+                        </div>
+                        <div class="badge ${badgeClass}">${statusIcon}${statusText}</div>
+                    </div>
+                    ${attributesRow}
+                    <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
+                    <div class="timeline-footer">
+                        <span>Aged: ${daysAged} Days</span>
+                        <span>Target: ${totalTargetDays} Days</span>
+                    </div>
+                </div>
+            </div>`;
+        });
+    }
+    
+    list.innerHTML = html;        
+    countStat.innerText = totalAgingQuantity; 
+    
+    // Hidden element helps satisfy JS updating logic for peak cigars
+    const alertsEl = document.getElementById('stat-alerts');
+    if (alertsEl) alertsEl.innerText = readyAlertsCount;
+    
+    let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
+    document.getElementById('stat-avg-aging-val').innerText = avgDays;
+    
+    let formattedValue = totalValue % 1 === 0 ? `$${totalValue.toLocaleString('en-US')}` : `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('stat-humidor-value-val').innerText = formattedValue;
+    
+    let formattedMonthly = monthlyAddedValue % 1 === 0 ? `+$${monthlyAddedValue.toLocaleString('en-US')}` : `+$${monthlyAddedValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('stat-value-pill').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${formattedMonthly} this month`;
 
-    // --- NATIVE SCROLL COLLAPSE ENGINE ---
-    let lastScrollTop = 0;
-    window.isHeaderCollapsed = false;
-    const SCROLL_THRESHOLD = 15; // Requires a deliberate swipe to prevent jitter
-
-    window.handleAppScroll = function(e) {
-        const st = e.target.scrollTop;
+    let agingStatus = "&bull; JUST RESTING &bull;";
+    if (avgDays >= 180) agingStatus = "&bull; VINTAGE &bull;";
+    else if (avgDays >= 90) agingStatus = "&bull; WELL AGED &bull;";
+    else if (avgDays >= 30) agingStatus = "&bull; DEVELOPING &bull;";
+    document.getElementById('stat-aging-pill').innerHTML = agingStatus;
+    
+    // Execute Updated Top 3 Palate Mapping Logic
+    const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
+    
+    if (totalValidWrappers > 0) {
+        let wrapperHtml = '';
+        const top3 = sortedWrappers.slice(0, 3);
+        const badgeClasses = ['badge-indigo', 'badge-mint', 'badge-amber'];
         
-        // 1. If we bounce past the top (iOS rubber-banding), ALWAYS expand the header
-        if (st <= 0) {
-            if (window.isHeaderCollapsed) {
-                window.isHeaderCollapsed = false;
-                document.body.classList.remove('header-collapsed');
-            }
-            lastScrollTop = 0;
-            return;
+        top3.forEach((item, index) => {
+            const pct = Math.round((item[1] / totalValidWrappers) * 100);
+            const badgeClass = badgeClasses[index] || 'badge-indigo';
+            wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
+        });
+        wrapperContainer.innerHTML = wrapperHtml;
+    } else {
+        wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
+    }
+};
+
+window.removeCigar = async function(id) {
+    window.closeAllSwipes();
+    if(await window.customConfirm("Remove this cigar from your humidor?", "Remove Cigar", true)) {
+        await deleteDoc(doc(db, "humidor", id));
+    }
+};
+
+// --- NATIVE SCROLL COLLAPSE ENGINE ---
+let lastScrollTop = 0;
+window.isHeaderCollapsed = false;
+const SCROLL_THRESHOLD = 15; // Requires a deliberate swipe to prevent jitter
+
+// Used for dynamic header offset based on device notch spacing
+window.updateHeaderShift = function() {
+    const header1 = document.getElementById('daily-cigar-header');
+    const header2 = document.getElementById('layer-2-container');
+    if (header1 && header2) {
+        const h1 = header1.offsetHeight || 0;
+        const h2 = header2.offsetHeight || 0;
+        // Negative value to shift Layer 3 up by exactly the combined height
+        document.documentElement.style.setProperty('--header-shift', `-${h1 + h2 - 40}px`);
+    }
+};
+
+// Call once to establish initial shift
+window.updateHeaderShift();
+
+window.handleAppScroll = function(e) {
+    const st = e.target.scrollTop;
+    
+    // 1. If we bounce past the top (iOS rubber-banding), ALWAYS expand the header
+    if (st <= 0) {
+        if (window.isHeaderCollapsed) {
+            window.isHeaderCollapsed = false;
+            document.body.classList.remove('header-collapsed');
+            document.body.classList.remove('header-stage-1', 'header-stage-2');
         }
+        lastScrollTop = 0;
+        return;
+    }
 
-        const delta = st - lastScrollTop;
+    const delta = st - lastScrollTop;
 
-        // 2. Scrolling Down -> Hide Headers (Only after scrolling past 80px)
-        if (delta > SCROLL_THRESHOLD && st > 80) { 
-            if (!window.isHeaderCollapsed) {
-                window.isHeaderCollapsed = true;
-                document.body.classList.add('header-collapsed');
+    // 2. Scrolling Down -> Hide Headers
+    if (delta > SCROLL_THRESHOLD && st > 20) { 
+        if (!document.body.classList.contains('header-stage-1') && !document.body.classList.contains('header-stage-2')) {
+            document.body.classList.add('header-stage-1');
+            window.isHeaderCollapsed = true;
+        } else if (document.body.classList.contains('header-stage-1') && st > 80) {
+            document.body.classList.remove('header-stage-1');
+            document.body.classList.add('header-stage-2');
+        }
+        lastScrollTop = st; 
+    } 
+    // 3. Scrolling Up -> Show Headers
+    else if (delta < -SCROLL_THRESHOLD) {
+        if (document.body.classList.contains('header-stage-2')) {
+            document.body.classList.remove('header-stage-2');
+            document.body.classList.add('header-stage-1');
+            lastScrollTop = st;
+        } else if (document.body.classList.contains('header-stage-1')) {
+            document.body.classList.remove('header-stage-1');
+            window.isHeaderCollapsed = false;
+            lastScrollTop = st;                 lastScrollTop = st; 
             }
-            lastScrollTop = st; 
-        } 
-        // 3. Scrolling Up -> Show Headers
-        else if (delta < -SCROLL_THRESHOLD) {
-            if (window.isHeaderCollapsed) {
-                window.isHeaderCollapsed = false;
-                document.body.classList.remove('header-collapsed');
-            }
-            lastScrollTop = st; 
         }
     };
 
@@ -4187,14 +4257,13 @@ window.storeCigar = async function() {
     const originalSwitchTab = window.switchTab;
     window.switchTab = function(targetViewId, dockIndex) {
         window.isHeaderCollapsed = false;
-        document.body.classList.remove('header-collapsed');
+        document.body.classList.remove('header-collapsed', 'header-stage-1', 'header-stage-2');
         lastScrollTop = 0;
         originalSwitchTab(targetViewId, dockIndex); // Run the original tab logic
     };
 
 </script>
 
-<!-- Note: The Service Worker registration block has been removed for now to stop offline caching -->
-
 </body>
 </html>
+
