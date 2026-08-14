@@ -26,6 +26,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Final Third">
 
+
     <script>
         // Check local storage immediately to prevent a white/dark flash of unstyled content
         const savedTheme = localStorage.getItem('finalThirdTheme') || 'dark';
@@ -1110,8 +1111,8 @@
                         </button>
                         
                         <div style="display: flex; gap: 12px; width: 100%;">
-                            <button id="vault-clear-btn" class="btn-secondary" onclick="clearHumidorForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
                             <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()" style="flex: 1; margin-bottom: 0;">Add to Humidor <i class="fa-solid fa-lock"></i></button>
+                            <button id="vault-clear-btn" class="btn-secondary" onclick="clearHumidorForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
                         </div>
                     </div>
 
@@ -1249,8 +1250,8 @@
                     </button>
 
                     <div style="display: flex; gap: 12px; width: 100%;">
-                        <button id="journal-clear-btn" class="btn-secondary" onclick="clearJournalForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
                         <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()" style="flex: 1; margin-bottom: 0;">Commit to Ledger <i class="fa-solid fa-check"></i></button>
+                        <button id="journal-clear-btn" class="btn-secondary" onclick="clearJournalForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
                     </div>
                 </div>
 
@@ -1967,7 +1968,7 @@
     window.currentSuggestedDrink = "";
     window.currentSuggestedWrapper = "";
 
-    window.generatePairing = function() {
+        window.generatePairing = function() {
         const wrapperKey = document.getElementById("pairing-wrapper").value;
         const binderKey = document.getElementById("pairing-binder").value;
         
@@ -3711,390 +3712,390 @@ window.logSmoke = async function() {
         document.getElementById('vault-quantity').value = cigar.quantity || 1;
         document.getElementById('vault-vitola').value = cigar.vitola || '';
         document.getElementById('vault-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
-        document.                document.getElementById('vault-wrapper').value = cigar.wrapper || '';
-                document.getElementById('vault-price').value = cigar.price || '';
-                
-                if (cigar.acquiredDate) {
-                    document.getElementById('vault-date').value = new Date(cigar.acquiredDate).toISOString().split('T')[0];
-                }
-                if (cigar.targetDate) {
-                    document.getElementById('vault-target-date').value = new Date(cigar.targetDate).toISOString().split('T')[0];
-                }
-                
-                currentVaultImage = cigar.image || null;
-                const photoBtn = document.getElementById('vault-photo-btn');
-                if(currentVaultImage) {
-                    photoBtn.classList.add('attached');
-                    photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
-                } else {
-                    photoBtn.classList.remove('attached');
-                    photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-                }
+        document.getElementById('vault-wrapper').value = cigar.wrapper || '';
+        document.getElementById('vault-price').value = cigar.price || '';
+        
+        if (cigar.acquiredDate) {
+            document.getElementById('vault-date').value = new Date(cigar.acquiredDate).toISOString().split('T')[0];
+        }
+        if (cigar.targetDate) {
+            document.getElementById('vault-target-date').value = new Date(cigar.targetDate).toISOString().split('T')[0];
+        }
+        
+        currentVaultImage = cigar.image || null;
+        const photoBtn = document.getElementById('vault-photo-btn');
+        if(currentVaultImage) {
+            photoBtn.classList.add('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+        } else {
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        }
 
-                const submitBtn = document.getElementById('vault-submit-btn');
-                submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
-                submitBtn.style.background = 'var(--gold)';
-                submitBtn.style.color = '#121212';
+        const submitBtn = document.getElementById('vault-submit-btn');
+        submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = 'var(--gold)';
+        submitBtn.style.color = '#121212';
 
-                const vaultWrapper = document.getElementById('humidor-form-wrapper');
-                const vaultChevron = document.getElementById('humidor-form-chevron');
-                if (vaultWrapper && vaultWrapper.style.display === 'none') {
-                    vaultWrapper.style.display = 'block';
-                    vaultChevron.style.transform = 'rotate(180deg)';
-                }
+        const vaultWrapper = document.getElementById('humidor-form-wrapper');
+        const vaultChevron = document.getElementById('humidor-form-chevron');
+        if (vaultWrapper && vaultWrapper.style.display === 'none') {
+            vaultWrapper.style.display = 'block';
+            vaultChevron.style.transform = 'rotate(180deg)';
+        }
 
-                document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
-            };
+        document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-            window.clearHumidorForm = function() {
-                document.getElementById('vault-brand').value = '';
-                document.getElementById('vault-quantity').value = '1';
-                document.getElementById('vault-ring-gauge').value = '';
-                document.getElementById('vault-price').value = '';
-                document.getElementById('vault-vitola').value = '';
-                document.getElementById('vault-wrapper').value = '';
-                
-                currentVaultImage = null;
-                document.getElementById('vault-image-upload').value = "";
-                const photoBtn = document.getElementById('vault-photo-btn');
-                photoBtn.classList.remove('attached');
-                photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-                
-                initializeDates();
-                
-                editingVaultId = null;
-                const submitBtn = document.getElementById('vault-submit-btn');
-                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-                submitBtn.style.background = '';
-                submitBtn.style.color = '';
-            };
+    window.clearHumidorForm = function() {
+        document.getElementById('vault-brand').value = '';
+        document.getElementById('vault-quantity').value = '1';
+        document.getElementById('vault-ring-gauge').value = '';
+        document.getElementById('vault-price').value = '';
+        document.getElementById('vault-vitola').value = '';
+        document.getElementById('vault-wrapper').value = '';
+        
+        currentVaultImage = null;
+        document.getElementById('vault-image-upload').value = "";
+        const photoBtn = document.getElementById('vault-photo-btn');
+        photoBtn.classList.remove('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        
+        initializeDates();
+        
+        editingVaultId = null;
+        const submitBtn = document.getElementById('vault-submit-btn');
+        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = '';
+        submitBtn.style.color = '';
+    };
 
-        window.storeCigar = async function() {
-            const brand = document.getElementById('vault-brand').value;
-            const qtyVal = document.getElementById('vault-quantity').value;
-            const vitola = document.getElementById('vault-vitola').value;
-            const ring = document.getElementById('vault-ring-gauge').value;
-            const wrapper = document.getElementById('vault-wrapper').value;
-            const priceVal = document.getElementById('vault-price').value;
-            const acquiredDate = document.getElementById('vault-date').value;
-            const targetDate = document.getElementById('vault-target-date').value;
-            const submitBtn = document.getElementById('vault-submit-btn');
+window.storeCigar = async function() {
+    const brand = document.getElementById('vault-brand').value;
+    const qtyVal = document.getElementById('vault-quantity').value;
+    const vitola = document.getElementById('vault-vitola').value;
+    const ring = document.getElementById('vault-ring-gauge').value;
+    const wrapper = document.getElementById('vault-wrapper').value;
+    const priceVal = document.getElementById('vault-price').value;
+    const acquiredDate = document.getElementById('vault-date').value;
+    const targetDate = document.getElementById('vault-target-date').value;
+    const submitBtn = document.getElementById('vault-submit-btn');
 
-            if(!brand || !acquiredDate || !targetDate) { 
-                await window.customAlert("Please enter the brand, date acquired, and target peak date.", "Missing Data");
-                return; 
-            }
+    if(!brand || !acquiredDate || !targetDate) { 
+        await window.customAlert("Please enter the brand, date acquired, and target peak date.", "Missing Data");
+        return; 
+    }
 
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-            submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+    submitBtn.disabled = true;
 
-            const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
-            const targetTime = new Date(targetDate + 'T00:00:00').getTime();
+    const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
+    const targetTime = new Date(targetDate + 'T00:00:00').getTime();
 
-            try {
-                const newCigar = {
-                    uid: auth.currentUser.uid,
-                    brand,
-                    quantity: parseInt(qtyVal) || 1,
-                    vitola: vitola || "Unknown",
-                    ring: ring || "-",
-                    wrapper: wrapper || "Unknown",
-                    price: priceVal ? parseFloat(priceVal) : null,
-                    targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
-                    acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
-                    image: currentVaultImage // Saving the scaled Base64 string directly
-                };
-
-                if (editingVaultId) {
-                    await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
-                    editingVaultId = null;
-                    submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-                    submitBtn.style.background = '';
-                    submitBtn.style.color = '';
-                } else {
-                    await addDoc(collection(db, "humidor"), newCigar);
-                    submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-                }
-                
-                await window.checkAndAddNewBrand(brand);
-                
-                window.clearHumidorForm();
-
-            } catch (e) {
-                console.error("Error adding document: ", e);
-                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-            } finally {
-                submitBtn.disabled = false;
-            }
+    try {
+        const newCigar = {
+            uid: auth.currentUser.uid,
+            brand,
+            quantity: parseInt(qtyVal) || 1,
+            vitola: vitola || "Unknown",
+            ring: ring || "-",
+            wrapper: wrapper || "Unknown",
+            price: priceVal ? parseFloat(priceVal) : null,
+            targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
+            acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
+            image: currentVaultImage // Saving the scaled Base64 string directly
         };
 
-            window.debouncedRenderHumidor = debounce(() => renderHumidor(), 250);
+        if (editingVaultId) {
+            await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
+            editingVaultId = null;
+            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+            submitBtn.style.background = '';
+            submitBtn.style.color = '';
+        } else {
+            await addDoc(collection(db, "humidor"), newCigar);
+            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+        }
+        
+        await window.checkAndAddNewBrand(brand);
+        
+        window.clearHumidorForm();
 
-            window.renderHumidor = function() {
-                const list = document.getElementById('humidor-inventory-list');
-                const countStat = document.getElementById('stat-collection'); 
+    } catch (e) {
+        console.error("Error adding document: ", e);
+        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+    } finally {
+        submitBtn.disabled = false;
+    }
+};
+
+    window.debouncedRenderHumidor = debounce(() => renderHumidor(), 250);
+
+    window.renderHumidor = function() {
+        const list = document.getElementById('humidor-inventory-list');
+        const countStat = document.getElementById('stat-collection'); 
+        
+        window.activeSwipeCard = null; 
+
+        const wrapperContainer = document.getElementById('profile-wrapper-stats-container');
+
+        if(humidorInventory.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>Humidor is currently empty</span>
+                </div>`;
+            countStat.innerText = '0';
+            document.getElementById('stat-alerts').innerText = '0';
+            
+            document.getElementById('stat-avg-aging-val').innerText = '0';
+            document.getElementById('stat-humidor-value-val').innerText = '$0';
+            document.getElementById('stat-aging-pill').innerHTML = '&bull; EMPTY &bull;';
+            document.getElementById('stat-value-pill').innerHTML = '<i class="fa-solid fa-arrow-trend-up"></i> +$0 this month';
+            
+            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
+            
+            // Handle empty dashboard graphics
+            document.getElementById('label-tier-1').style.opacity = '0.3';
+            document.getElementById('label-tier-2').style.opacity = '0.3';
+            document.getElementById('label-tier-3').style.opacity = '0.3';
+            document.getElementById('label-tier-4').style.opacity = '0.3';
+            
+            document.getElementById('bar-tier-1').style.width = '25%';
+            document.getElementById('bar-tier-2').style.width = '25%';
+            document.getElementById('bar-tier-3').style.width = '25%';
+            document.getElementById('bar-tier-4').style.width = '25%';
+            
+            return;
+        }
+
+        const now = Date.now();
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+
+        let totalValue = 0;
+        let totalAgedDays = 0;
+        let readyAlertsCount = 0;
+        let totalQuantity = 0;
+        let monthlyAddedValue = 0;
+
+        // --- DYNAMIC AGING CALCULATOR ---
+        let tier1 = 0; // 0-30
+        let tier2 = 0; // 31-90
+        let tier3 = 0; // 91-180
+        let tier4 = 0; // 180+
+        let totalAgingQuantity = 0;
+
+        const wrapperCounts = {};
+        let totalValidWrappers = 0;
+
+        humidorInventory.forEach(c => {
+            const msPerDay = 1000 * 60 * 60 * 24;
+            // Fallback for legacy items missing acquiredDate
+            const acqDate = c.acquiredDate || now;
+            let days = Math.floor((now - acqDate) / msPerDay);
+            if (days < 0) days = 0;
+            
+            let qty = c.quantity || 1;
+            totalAgingQuantity += qty;
+            
+            if (days <= 30) tier1 += qty;
+            else if (days <= 90) tier2 += qty;
+            else if (days <= 180) tier3 += qty;
+            else tier4 += qty;
+            
+            totalAgedDays += days;
+            
+            const cigarTotalVal = (c.price || 0) * qty;
+            totalValue += cigarTotalVal;
+
+            // Check if acquired this current calendar month/year
+            const acqObj = new Date(acqDate);
+            if (acqObj.getFullYear() === currentYear && acqObj.getMonth() === currentMonth) {
+                monthlyAddedValue += cigarTotalVal;
+            }
+
+            const targetDate = c.targetDate || (acqDate + 7 * msPerDay);
+            let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
+            if (totalTargetDays <= 0) totalTargetDays = 1; 
+            
+            let progress = (days / totalTargetDays) * 100;
+            if (progress >= 100) readyAlertsCount += qty;
+
+            // Palate Mapping Logic
+            if(c.wrapper && c.wrapper !== "Unknown") {
+                wrapperCounts[c.wrapper] = (wrapperCounts[c.wrapper] || 0) + qty;
+                totalValidWrappers += qty;
+            }
+        });
+
+        document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
+        
+        // Dynamic Opacity Dimming
+        document.getElementById('label-tier-1').style.opacity = tier1 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-2').style.opacity = tier2 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-3').style.opacity = tier3 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-4').style.opacity = tier4 === 0 ? '0.3' : '1';
+        
+        // Dynamic Proportional Widths
+        if (totalAgingQuantity > 0) {
+            document.getElementById('bar-tier-1').style.width = `${(tier1 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-2').style.width = `${(tier2 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-3').style.width = `${(tier3 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-4').style.width = `${(tier4 / totalAgingQuantity) * 100}%`;
+        }
+
+        // --- FILTER & SORT LOGIC ---
+        const searchInput = document.getElementById('humidor-search');
+        // Grab the input, make it lowercase, and strip out punctuation using Regex
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
+        
+        let displayList = [...humidorInventory];
+        
+        if (searchTerm) {
+            displayList = displayList.filter(cigar => {
+                // Strip punctuation from the stored brand and vitola before comparing
+                const normalizedBrand = cigar.brand.toLowerCase().replace(/[^\w\s]/g, '');
+                const normalizedVitola = cigar.vitola.toLowerCase().replace(/[^\w\s]/g, '');
                 
-                window.activeSwipeCard = null; 
+                return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
+            });
+        }        if (humidorSortOrder === 'alpha') {
+            displayList.sort((a, b) => a.brand.localeCompare(b.brand));
+        } else {
+            // Safe sort fallback
+            displayList.sort((a, b) => (b.acquiredDate || 0) - (a.acquiredDate || 0));
+        }
 
-                const wrapperContainer = document.getElementById('profile-wrapper-stats-container');
+        let html = '';
+        if (displayList.length === 0) {
+            html = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>No results found</span>
+                </div>`;
+        } else {
+            displayList.forEach(cigar => {
+                const msPerDay = 1000 * 60 * 60 * 24;
+                const cigarQty = cigar.quantity || 1;
+                totalQuantity += cigarQty;
+                
+                const acqDate = cigar.acquiredDate || now;
+                let daysAged = Math.floor((now - acqDate) / msPerDay);
+                if (daysAged < 0) daysAged = 0; 
 
-                if(humidorInventory.length === 0) {
-                    list.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
-                            <span>Humidor is currently empty</span>
-                        </div>`;
-                    countStat.innerText = '0';
-                    document.getElementById('stat-alerts').innerText = '0';
-                    
-                    document.getElementById('stat-avg-aging-val').innerText = '0';
-                    document.getElementById('stat-humidor-value-val').innerText = '$0';
-                    document.getElementById('stat-aging-pill').innerHTML = '&bull; EMPTY &bull;';
-                    document.getElementById('stat-value-pill').innerHTML = '<i class="fa-solid fa-arrow-trend-up"></i> +$0 this month';
-                    
-                    wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
-                    
-                    // Handle empty dashboard graphics
-                    document.getElementById('label-tier-1').style.opacity = '0.3';
-                    document.getElementById('label-tier-2').style.opacity = '0.3';
-                    document.getElementById('label-tier-3').style.opacity = '0.3';
-                    document.getElementById('label-tier-4').style.opacity = '0.3';
-                    
-                    document.getElementById('bar-tier-1').style.width = '25%';
-                    document.getElementById('bar-tier-2').style.width = '25%';
-                    document.getElementById('bar-tier-3').style.width = '25%';
-                    document.getElementById('bar-tier-4').style.width = '25%';
-                    
-                    return;
+                const targetDate = cigar.targetDate || (acqDate + 7 * msPerDay);
+                let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
+                if (totalTargetDays <= 0) totalTargetDays = 1; 
+                
+                let progress = (daysAged / totalTargetDays) * 100;
+                if (progress > 100) progress = 100;
+                if (progress < 0) progress = 0; 
+
+                let isReady = progress >= 100;
+                let badgeClass = isReady ? 'humidor-badge-ready' : 'humidor-badge-aging';
+                let statusIcon = isReady ? '<i class="fa-solid fa-fire"></i> ' : '<i class="fa-solid fa-hourglass-half"></i> ';
+                let statusText = isReady ? 'Peak' : 'Aging';
+
+                let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
+                
+                let imageBadge = '';
+                if(cigar.image) {
+                    window.imageRegistry[cigar.id] = cigar.image;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+                }
+                
+                let qtyBadge = `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
+                
+                let attributesRow = '';
+                if (qtyBadge || imageBadge) {
+                    attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${imageBadge}</div>`;
                 }
 
-                const now = Date.now();
-                const currentDate = new Date();
-                const currentYear = currentDate.getFullYear();
-                const currentMonth = currentDate.getMonth();
-
-                let totalValue = 0;
-                let totalAgedDays = 0;
-                let readyAlertsCount = 0;
-                let totalQuantity = 0;
-                let monthlyAddedValue = 0;
-
-                // --- DYNAMIC AGING CALCULATOR ---
-                let tier1 = 0; // 0-30
-                let tier2 = 0; // 31-90
-                let tier3 = 0; // 91-180
-                let tier4 = 0; // 180+
-                let totalAgingQuantity = 0;
-
-                const wrapperCounts = {};
-                let totalValidWrappers = 0;
-
-                humidorInventory.forEach(c => {
-                    const msPerDay = 1000 * 60 * 60 * 24;
-                    // Fallback for legacy items missing acquiredDate
-                    const acqDate = c.acquiredDate || now;
-                    let days = Math.floor((now - acqDate) / msPerDay);
-                    if (days < 0) days = 0;
+                html += `
+                <div class="swipe-container">
+                    <div class="swipe-actions">
+                        <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
+                            <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                        </button>
+                        <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
+                            <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                        </button>
+                    </div>
                     
-                    let qty = c.quantity || 1;
-                    totalAgingQuantity += qty;
-                    
-                    if (days <= 30) tier1 += qty;
-                    else if (days <= 90) tier2 += qty;
-                    else if (days <= 180) tier3 += qty;
-                    else tier4 += qty;
-                    
-                    totalAgedDays += days;
-                    
-                    const cigarTotalVal = (c.price || 0) * qty;
-                    totalValue += cigarTotalVal;
-
-                    // Check if acquired this current calendar month/year
-                    const acqObj = new Date(acqDate);
-                    if (acqObj.getFullYear() === currentYear && acqObj.getMonth() === currentMonth) {
-                        monthlyAddedValue += cigarTotalVal;
-                    }
-
-                    const targetDate = c.targetDate || (acqDate + 7 * msPerDay);
-                    let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
-                    if (totalTargetDays <= 0) totalTargetDays = 1; 
-                    
-                    let progress = (days / totalTargetDays) * 100;
-                    if (progress >= 100) readyAlertsCount += qty;
-
-                    // Palate Mapping Logic
-                    if(c.wrapper && c.wrapper !== "Unknown") {
-                        wrapperCounts[c.wrapper] = (wrapperCounts[c.wrapper] || 0) + qty;
-                        totalValidWrappers += qty;
-                    }
-                });
-
-                document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
-                document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
-                document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
-                document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
-                
-                // Dynamic Opacity Dimming
-                document.getElementById('label-tier-1').style.opacity = tier1 === 0 ? '0.3' : '1';
-                document.getElementById('label-tier-2').style.opacity = tier2 === 0 ? '0.3' : '1';
-                document.getElementById('label-tier-3').style.opacity = tier3 === 0 ? '0.3' : '1';
-                document.getElementById('label-tier-4').style.opacity = tier4 === 0 ? '0.3' : '1';
-                
-                // Dynamic Proportional Widths
-                if (totalAgingQuantity > 0) {
-                    document.getElementById('bar-tier-1').style.width = `${(tier1 / totalAgingQuantity) * 100}%`;
-                    document.getElementById('bar-tier-2').style.width = `${(tier2 / totalAgingQuantity) * 100}%`;
-                    document.getElementById('bar-tier-3').style.width = `${(tier3 / totalAgingQuantity) * 100}%`;
-                    document.getElementById('bar-tier-4').style.width = `${(tier4 / totalAgingQuantity) * 100}%`;
-                }
-
-                // --- FILTER & SORT LOGIC ---
-                const searchInput = document.getElementById('humidor-search');
-                // Grab the input, make it lowercase, and strip out punctuation using Regex
-                const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
-                
-                let displayList = [...humidorInventory];
-                
-                if (searchTerm) {
-                    displayList = displayList.filter(cigar => {
-                        // Strip punctuation from the stored brand and vitola before comparing
-                        const normalizedBrand = cigar.brand.toLowerCase().replace(/[^\w\s]/g, '');
-                        const normalizedVitola = cigar.vitola.toLowerCase().replace(/[^\w\s]/g, '');
-                        
-                        return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
-                    });
-                }        if (humidorSortOrder === 'alpha') {
-                    displayList.sort((a, b) => a.brand.localeCompare(b.brand));
-                } else {
-                    // Safe sort fallback
-                    displayList.sort((a, b) => (b.acquiredDate || 0) - (a.acquiredDate || 0));
-                }
-
-                let html = '';
-                if (displayList.length === 0) {
-                    html = `
-                        <div class="empty-state">
-                            <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
-                            <span>No results found</span>
-                        </div>`;
-                } else {
-                    displayList.forEach(cigar => {
-                        const msPerDay = 1000 * 60 * 60 * 24;
-                        const cigarQty = cigar.quantity || 1;
-                        totalQuantity += cigarQty;
-                        
-                        const acqDate = cigar.acquiredDate || now;
-                        let daysAged = Math.floor((now - acqDate) / msPerDay);
-                        if (daysAged < 0) daysAged = 0; 
-
-                        const targetDate = cigar.targetDate || (acqDate + 7 * msPerDay);
-                        let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
-                        if (totalTargetDays <= 0) totalTargetDays = 1; 
-                        
-                        let progress = (daysAged / totalTargetDays) * 100;
-                        if (progress > 100) progress = 100;
-                        if (progress < 0) progress = 0; 
-
-                        let isReady = progress >= 100;
-                        let badgeClass = isReady ? 'humidor-badge-ready' : 'humidor-badge-aging';
-                        let statusIcon = isReady ? '<i class="fa-solid fa-fire"></i> ' : '<i class="fa-solid fa-hourglass-half"></i> ';
-                        let statusText = isReady ? 'Peak' : 'Aging';
-
-                        let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
-                        
-                        let imageBadge = '';
-                        if(cigar.image) {
-                            window.imageRegistry[cigar.id] = cigar.image;
-                            imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
-                        }
-                        
-                        let qtyBadge = `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
-                        
-                        let attributesRow = '';
-                        if (qtyBadge || imageBadge) {
-                            attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${imageBadge}</div>`;
-                        }
-
-                        html += `
-                        <div class="swipe-container">
-                            <div class="swipe-actions">
-                                <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
-                                    <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
-                                </button>
-                                <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
-                                    <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
-                                </button>
+                    <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
+                        <div class="log-header">
+                            <div style="flex: 1; padding-right: 12px;">
+                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
+                                <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
                             </div>
-                            
-                            <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
-                                <div class="log-header">
-                                    <div style="flex: 1; padding-right: 12px;">
-                                        <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
-                                        <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
-                                    </div>
-                                    <div class="badge ${badgeClass}">${statusIcon}${statusText}</div>
-                                </div>
-                                ${attributesRow}
-                                <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
-                                <div class="timeline-footer">
-                                    <span>Aged: ${daysAged} Days</span>
-                                    <span>Target: ${totalTargetDays} Days</span>
-                                </div>
-                            </div>
-                        </div>`;
-                    });
-                }
-                
-                list.innerHTML = html;
-                countStat.innerText = totalAgingQuantity; 
-                
-                // Hidden element helps satisfy JS updating logic for peak cigars
-                const alertsEl = document.getElementById('stat-alerts');
-                if (alertsEl) alertsEl.innerText = readyAlertsCount;
-                
-                let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
-                document.getElementById('stat-avg-aging-val').innerText = avgDays;
-                
-                let formattedValue = totalValue % 1 === 0 ? `$${totalValue.toLocaleString('en-US')}` : `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-                document.getElementById('stat-humidor-value-val').innerText = formattedValue;
-                
-                let formattedMonthly = monthlyAddedValue % 1 === 0 ? `+$${monthlyAddedValue.toLocaleString('en-US')}` : `+$${monthlyAddedValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-                document.getElementById('stat-value-pill').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${formattedMonthly} this month`;
+                            <div class="badge ${badgeClass}">${statusIcon}${statusText}</div>
+                        </div>
+                        ${attributesRow}
+                        <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
+                        <div class="timeline-footer">
+                            <span>Aged: ${daysAged} Days</span>
+                            <span>Target: ${totalTargetDays} Days</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+        
+        list.innerHTML = html;
+        countStat.innerText = totalAgingQuantity; 
+        
+        // Hidden element helps satisfy JS updating logic for peak cigars
+        const alertsEl = document.getElementById('stat-alerts');
+        if (alertsEl) alertsEl.innerText = readyAlertsCount;
+        
+        let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
+        document.getElementById('stat-avg-aging-val').innerText = avgDays;
+        
+        let formattedValue = totalValue % 1 === 0 ? `$${totalValue.toLocaleString('en-US')}` : `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('stat-humidor-value-val').innerText = formattedValue;
+        
+        let formattedMonthly = monthlyAddedValue % 1 === 0 ? `+$${monthlyAddedValue.toLocaleString('en-US')}` : `+$${monthlyAddedValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('stat-value-pill').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${formattedMonthly} this month`;
 
-                let agingStatus = "&bull; JUST RESTING &bull;";
-                if (avgDays >= 180) agingStatus = "&bull; VINTAGE &bull;";
-                else if (avgDays >= 90) agingStatus = "&bull; WELL AGED &bull;";
-                else if (avgDays >= 30) agingStatus = "&bull; DEVELOPING &bull;";
-                document.getElementById('stat-aging-pill').innerHTML = agingStatus;
-                
-                // Execute Updated Top 3 Palate Mapping Logic
-                const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
-                
-                if (totalValidWrappers > 0) {
-                    let wrapperHtml = '';
-                    const top3 = sortedWrappers.slice(0, 3);
-                    const badgeClasses = ['badge-indigo', 'badge-mint', 'badge-amber'];
-                    
-                    top3.forEach((item, index) => {
-                        const pct = Math.round((item[1] / totalValidWrappers) * 100);
-                        const badgeClass = badgeClasses[index] || 'badge-indigo';
-                        wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
-                    });
-                    wrapperContainer.innerHTML = wrapperHtml;
-                } else {
-                    wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
-                }
-            };
+        let agingStatus = "&bull; JUST RESTING &bull;";
+        if (avgDays >= 180) agingStatus = "&bull; VINTAGE &bull;";
+        else if (avgDays >= 90) agingStatus = "&bull; WELL AGED &bull;";
+        else if (avgDays >= 30) agingStatus = "&bull; DEVELOPING &bull;";
+        document.getElementById('stat-aging-pill').innerHTML = agingStatus;
+        
+        // Execute Updated Top 3 Palate Mapping Logic
+        const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
+        
+        if (totalValidWrappers > 0) {
+            let wrapperHtml = '';
+            const top3 = sortedWrappers.slice(0, 3);
+            const badgeClasses = ['badge-indigo', 'badge-mint', 'badge-amber'];
+            
+            top3.forEach((item, index) => {
+                const pct = Math.round((item[1] / totalValidWrappers) * 100);
+                const badgeClass = badgeClasses[index] || 'badge-indigo';
+                wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
+            });
+            wrapperContainer.innerHTML = wrapperHtml;
+        } else {
+            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
+        }
+    };
 
-            window.removeCigar = async function(id) {
-                window.closeAllSwipes();
-                if(await window.customConfirm("Remove this cigar from your humidor?", "Remove Cigar", true)) {
-                    await deleteDoc(doc(db, "humidor", id));
-                }
-            };
-        </script>
+    window.removeCigar = async function(id) {
+        window.closeAllSwipes();
+        if(await window.customConfirm("Remove this cigar from your humidor?", "Remove Cigar", true)) {
+            await deleteDoc(doc(db, "humidor", id));
+        }
+    };
+</script>
 
-        <!-- Note: The Service Worker registration block has been removed for now to stop offline caching -->
+<!-- Note: The Service Worker registration block has been removed for now to stop offline caching -->
 
-        </body>
-        </html>
+</body>
+</html>
