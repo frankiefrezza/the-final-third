@@ -1098,7 +1098,10 @@
                             <i class="fa-solid fa-camera"></i> Add Picture
                         </button>
                         
-                        <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()">Add to Humidor <i class="fa-solid fa-lock"></i></button>
+                        <div style="display: flex; gap: 12px; width: 100%;">
+                            <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()" style="flex: 1; margin-bottom: 0;">Add to Humidor <i class="fa-solid fa-lock"></i></button>
+                            <button id="vault-clear-btn" class="btn-secondary" onclick="clearHumidorForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
+                        </div>
                     </div>
 
                 </div>
@@ -1234,7 +1237,10 @@
                         <i class="fa-solid fa-camera"></i> Add Picture
                     </button>
 
-                    <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()">Commit to Ledger <i class="fa-solid fa-check"></i></button> 
+                    <div style="display: flex; gap: 12px; width: 100%;">
+                        <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()" style="flex: 1; margin-bottom: 0;">Commit to Ledger <i class="fa-solid fa-check"></i></button>
+                        <button id="journal-clear-btn" class="btn-secondary" onclick="clearJournalForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
+                    </div>
                 </div>
 
                 <!-- JOURNAL HEADER WITH SEARCH & SORT -->
@@ -1630,8 +1636,11 @@
                             <i class="fa-solid fa-camera" style="font-size: 16px;"></i>
                         </div>
                     </div>
-                    <div id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 16px;">Smiljan</div>
-                    <div id="profile-display-email" style="font-size: 13px; color: var(--text-dim); font-weight: 600; margin-top: 4px;">user@email.com</div>
+                    <div id="profile-display-name-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; cursor: pointer; transition: opacity 0.2s;" onclick="openPersonalInfoModal()">
+
+                        <span id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main);">Smiljan</span>
+                        <i class="fa-solid fa-circle-info" style="color: var(--text-dim); font-size: 14px;"></i>
+                    </div>
                 </div>
 
                 <div class="section-header" style="margin-top: 0;">
@@ -1756,7 +1765,7 @@
                     <span>Home</span>
                 </div>
                 <div class="nav-item" onclick="switchTab('view-humidor', 1)">
-                    <i class="fa-solid fa-vault"></i>
+                    <i class="fa-solid fa-box-archive"></i>
                     <span>Humidor</span>
                 </div>
                 <div class="nav-item" onclick="switchTab('view-journal', 2)">
@@ -1868,6 +1877,38 @@
 
         <div id="info-modal-body" style="font-size: 14px; color: var(--text-dim); line-height: 1.6; max-height: 55vh; overflow-y: auto; padding-right: 4px;">
             <!-- Dynamic content injects here -->
+        </div>
+    </div>
+</div>
+
+<!-- PERSONAL INFO MODAL -->
+<div id="personal-info-modal" class="modal-overlay" onclick="closePersonalInfoModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="width: 85%; max-width: 380px; text-align: left; padding: 28px 24px;">
+        <span class="close-modal" onclick="closePersonalInfoModal(event)">&times;</span>
+        <p class="modal-subtitle" style="color: var(--leather);">MEMBER DOSSIER</p>
+        <h2 style="margin-bottom: 24px; font-family: var(--font-serif); font-size: 22px;">Personal Details</h2>
+        
+        <div style="margin-bottom: 16px;">
+            <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase;">Username</label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div id="modal-info-username" style="font-size: 16px; font-weight: 600; color: var(--text-main);"></div>
+                <i class="fa-solid fa-pen" style="color: var(--leather); font-size: 12px; cursor: pointer;" onclick="editUsername()"></i>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+            <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase;">Email Address</label>
+            <div id="modal-info-email" style="font-size: 16px; font-weight: 600; color: var(--text-main);"></div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase;">Date Joined</label>
+            <div id="modal-info-joined" style="font-size: 16px; font-weight: 600; color: var(--text-main);"></div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase;">Top Rated Cigar</label>
+            <div id="modal-info-favorite" style="font-size: 16px; font-weight: 600; color: var(--text-main);"></div>
         </div>
     </div>
 </div>
@@ -2104,6 +2145,46 @@
             }
         }
     };
+
+    // --- DOSSIER PERSONAL INFO MODAL ---
+    window.openPersonalInfoModal = function() {
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        document.getElementById('modal-info-username').innerText = window.currentUserName;
+        document.getElementById('modal-info-email').innerText = user.email;
+        
+        // Format join date
+        const joinDate = new Date(user.metadata.creationTime).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        document.getElementById('modal-info-joined').innerText = joinDate;
+        
+        // Determine Top Rated Cigar
+        let favorite = "No rated cigars yet";
+        if (journalHistory && journalHistory.length > 0) {
+            const ratedCigars = journalHistory.filter(c => c.rating != null && !isNaN(c.rating));
+            if (ratedCigars.length > 0) {
+                // Sort by highest rating, then by most recent date to break ties
+                ratedCigars.sort((a, b) => {
+                    if (b.rating !== a.rating) return b.rating - a.rating;
+                    return new Date(b.date) - new Date(a.date); 
+                });
+                const best = ratedCigars[0];
+                favorite = `${best.brand} ${best.vitola} (${best.rating.toFixed(2)})`;
+            }
+        }
+        document.getElementById('modal-info-favorite').innerText = favorite;
+        
+        document.getElementById('personal-info-modal').classList.add('active');
+    };
+
+    window.closePersonalInfoModal = function(event) {
+        document.getElementById('personal-info-modal').classList.remove('active');
+    };
+
 
     // --- CUSTOM DIALOG ENGINE GLOBALS ---
     window.showCustomDialog = function({ title, message, type = 'alert', defaultVal = '', isDanger = false }) {
@@ -2926,6 +3007,10 @@ window.compressImage = function(file) {
                 window.currentUserName = newName.trim();
                 document.getElementById('display-name').innerText = window.currentUserName;
                 document.getElementById('profile-display-name').innerText = window.currentUserName;
+                
+                // If modal is open, dynamically update it too
+                const modalUsername = document.getElementById('modal-info-username');
+                if (modalUsername) modalUsername.innerText = window.currentUserName;
             } catch (error) {
                 await window.customAlert("Failed to update username: " + error.message, "Error");
             }
@@ -3123,7 +3208,6 @@ window.compressImage = function(file) {
             loadBrandLibrary(); 
             
             document.getElementById('profile-display-name').innerText = window.currentUserName;
-            document.getElementById('profile-display-email').innerText = user.email;
 
             const localAvatar = localStorage.getItem('finalThirdAvatar');
             if(localAvatar) {
@@ -3265,6 +3349,33 @@ window.compressImage = function(file) {
         document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    window.clearJournalForm = function() {
+        document.getElementById('log-brand').value = '';
+        document.getElementById('log-vitola').value = '';
+        document.getElementById('log-ring-gauge').value = '';
+        document.getElementById('log-wrapper').value = '';
+        document.getElementById('log-cut').selectedIndex = 0;
+        document.getElementById('log-light').selectedIndex = 0;
+        document.getElementById('log-pairing').value = '';
+        document.getElementById('log-rating').selectedIndex = 0;
+        document.getElementById('log-notes').value = '';
+        
+        currentLogImage = null;
+        document.getElementById('log-image-upload').value = "";
+        const photoBtn = document.getElementById('log-photo-btn');
+        photoBtn.classList.remove('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('log-date').value = today;
+        
+        editingJournalId = null;
+        const submitBtn = document.getElementById('journal-submit-btn');
+        submitBtn.innerHTML = 'Commit to Ledger <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = '';
+        submitBtn.style.color = '';
+    };
+
 window.logSmoke = async function() {
     const date = document.getElementById('log-date').value;
     const brand = document.getElementById('log-brand').value;
@@ -3315,24 +3426,7 @@ window.logSmoke = async function() {
         
         await window.checkAndAddNewBrand(brand);
         
-        document.getElementById('log-brand').value = '';
-        document.getElementById('log-vitola').value = '';
-        document.getElementById('log-ring-gauge').value = '';
-        document.getElementById('log-wrapper').value = '';
-        document.getElementById('log-cut').selectedIndex = 0;
-        document.getElementById('log-light').selectedIndex = 0;
-        document.getElementById('log-pairing').value = '';
-        document.getElementById('log-rating').selectedIndex = 0;
-        document.getElementById('log-notes').value = '';
-        
-        currentLogImage = null;
-        document.getElementById('log-image-upload').value = "";
-        const photoBtn = document.getElementById('log-photo-btn');
-        photoBtn.classList.remove('attached');
-        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-        
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('log-date').value = today;
+        window.clearJournalForm();
         
     } catch (e) {
         console.error("Error adding document: ", e);
@@ -3512,8 +3606,8 @@ window.logSmoke = async function() {
         
         journalHistory.forEach(log => {
             if(log.ring && log.ring !== "-") ringCounts[log.ring] = (ringCounts[log.ring] || 0) + 1;
-            if(log.cut && log.cut !== "N/A") cutCounts[log.cut] = (log.cut || 0) + 1;
-            if(log.light && log.light !== "N/A") lightCounts[log.light] = (log.light || 0) + 1;
+            if(log.cut && log.cut !== "N/A") cutCounts[log.cut] = (cutCounts[log.cut] || 0) + 1;
+            if(log.light && log.light !== "N/A") lightCounts[log.light] = (lightCounts[log.light] || 0) + 1;
         });
 
         const getTop = (counts, defaultStr) => {
@@ -3604,6 +3698,29 @@ window.logSmoke = async function() {
         document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    window.clearHumidorForm = function() {
+        document.getElementById('vault-brand').value = '';
+        document.getElementById('vault-quantity').value = '1';
+        document.getElementById('vault-ring-gauge').value = '';
+        document.getElementById('vault-price').value = '';
+        document.getElementById('vault-vitola').value = '';
+        document.getElementById('vault-wrapper').value = '';
+        
+        currentVaultImage = null;
+        document.getElementById('vault-image-upload').value = "";
+        const photoBtn = document.getElementById('vault-photo-btn');
+        photoBtn.classList.remove('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        
+        initializeDates();
+        
+        editingVaultId = null;
+        const submitBtn = document.getElementById('vault-submit-btn');
+        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = '';
+        submitBtn.style.color = '';
+    };
+
 window.storeCigar = async function() {
     const brand = document.getElementById('vault-brand').value;
     const qtyVal = document.getElementById('vault-quantity').value;
@@ -3653,20 +3770,7 @@ window.storeCigar = async function() {
         
         await window.checkAndAddNewBrand(brand);
         
-        document.getElementById('vault-brand').value = '';
-        document.getElementById('vault-quantity').value = '1';
-        document.getElementById('vault-ring-gauge').value = '';
-        document.getElementById('vault-price').value = '';
-        document.getElementById('vault-vitola').value = '';
-        document.getElementById('vault-wrapper').value = '';
-        
-        currentVaultImage = null;
-        document.getElementById('vault-image-upload').value = "";
-        const photoBtn = document.getElementById('vault-photo-btn');
-        photoBtn.classList.remove('attached');
-        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-        
-        initializeDates();
+        window.clearHumidorForm();
 
     } catch (e) {
         console.error("Error adding document: ", e);
@@ -3872,7 +3976,7 @@ window.storeCigar = async function() {
                             <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
                         </button>
                         <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
-                            <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                            <i class="fa-solid fa-trash"></i> Remove
                         </button>
                     </div>
                     
@@ -3960,3 +4064,4 @@ window.storeCigar = async function() {
 
 </body>
 </html>
+
