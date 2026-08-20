@@ -3395,19 +3395,17 @@
             friendsList.innerHTML = '<div style="color: var(--text-dim); font-size: 13px; font-style: italic; text-align: center; padding: 12px 0;">No friends added yet.</div>';
         } else {
             friendsList.innerHTML = '<div style="text-align:center; color: var(--text-dim); font-size: 12px; padding: 12px 0;"><i class="fa-solid fa-spinner fa-spin"></i> Loading network...</div>';
-            try {
+                        try {
                 let friendsHtml = '';
-                const chunks = [];
-                for (let i = 0; i < myFriends.length; i += 10) {
-                    chunks.push(myFriends.slice(i, i + 10));
-                }
+                
+                // Fetch all friends directly by their document ID
+                const friendPromises = myFriends.map(friendUid => getDoc(doc(db, "users", friendUid)));
+                const friendSnaps = await Promise.all(friendPromises);
 
-                for (const chunk of chunks) {
-                    const q = query(collection(db, "users"), where("uid", "in", chunk));
-                    const snaps = await getDocs(q);
-                    snaps.forEach(docSnap => {
+                friendSnaps.forEach(docSnap => {
+                    if (docSnap.exists()) {
                         const f = docSnap.data();
-                        const actualUid = f.uid || docSnap.id;
+                        const actualUid = docSnap.id;
                         friendsHtml += `
                         <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 12px;">
@@ -3416,29 +3414,39 @@
                             </div>
                             <button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; color: var(--danger); border-color: var(--border-subtle);" onclick="removeFriend('${actualUid}', '${escapeHTML(f.username)}')">Remove</button>
                         </div>`;
-                    });
-                }
+                    }
+                });
+                
+                if(friendsHtml === '') friendsHtml = '<div style="color: var(--text-dim); font-size: 13px; font-style: italic; text-align: center; padding: 12px 0;">No friends found.</div>';
                 friendsList.innerHTML = friendsHtml;
             } catch (e) {
                 console.error("Error fetching friends:", e);
                 friendsList.innerHTML = '<div style="color: var(--danger); font-size: 13px; text-align: center;">Error loading friends.</div>';
             }
+
         }
     };
 
-    window.acceptFriendRequest = async function(fromUid, fromName) {
+        window.acceptFriendRequest = async function(fromUid, fromName) {
         try {
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { friends: arrayUnion(fromUid) });
-            await updateDoc(doc(db, "users", fromUid), { friends: arrayUnion(auth.currentUser.uid) });
-            await deleteDoc(doc(db, "users", auth.currentUser.uid, "friend_requests", fromUid));
+            // Remove 'await' so the UI does not freeze on a bad connection
+            updateDoc(doc(db, "users", auth.currentUser.uid), { friends: arrayUnion(fromUid) });
+            updateDoc(doc(db, "users", fromUid), { friends: arrayUnion(auth.currentUser.uid) });
+            deleteDoc(doc(db, "users", auth.currentUser.uid, "friend_requests", fromUid));
             
-            renderNetworkModal();
+            // Optimistically update the UI
+            if (!myFriends.includes(fromUid)) {
+                myFriends.push(fromUid);
+                renderNetworkModal();
+            }
+            
             window.customAlert(`You and ${fromName} are now friends!`, "Connected");
         } catch(e) {
             console.error(e);
             window.customAlert("Failed to accept request.", "Error");
         }
     };
+
     
     window.declineFriendRequest = async function(fromUid) {
         try {
@@ -3605,12 +3613,18 @@
                 renderJournal();
             });
 
-            unsubscribeUser = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+                        unsubscribeUser = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
                 if(docSnap.exists()) {
                     myFriends = docSnap.data().friends || [];
                     renderLoungeFeed(); 
+                    
+                    // Instantly refresh the modal if it is open
+                    if (document.getElementById('network-modal').classList.contains('active')) {
+                        renderNetworkModal();
+                    }
                 }
             });
+
 
             unsubscribeRequests = onSnapshot(collection(db, "users", user.uid, "friend_requests"), (snapshot) => {
                 myFriendRequests = [];
