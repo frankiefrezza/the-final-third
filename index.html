@@ -681,10 +681,23 @@
         }
         .swipe-action-btn:active { opacity: 0.8; }
         
-        .swipe-action-edit { 
+                .swipe-action-edit { 
             background: var(--btn-gold); 
             position: relative; 
         }
+
+        /* Attaches a smooth gold fade to the left edge of the edit button */
+        .swipe-action-edit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 100%; /* Anchors it exactly to the left edge */
+            width: 60px; /* How far out you want the fade to extend */
+            background: linear-gradient(to right, transparent, var(--btn-gold));
+            pointer-events: none;
+        }
+
         
         .swipe-action-delete { background: var(--danger); color: #FFFFFF; }
         
@@ -3082,27 +3095,41 @@
         }
     };
 
-    window.editUsername = async function() {
+        window.editUsername = async function() {
         const newName = await window.customPrompt("Enter your new username:", window.currentUserName, "Edit Username");
-        if (newName && newName.trim() !== "" && newName.trim() !== window.currentUserName) {
+        
+        // REMOVED the check that blocks updates if the name is the same.
+        // Now, pressing OK will FORCE a sync to the database no matter what.
+        if (newName && newName.trim() !== "") {
+            const cleanName = newName.trim();
             try {
-                await updateProfile(auth.currentUser, { displayName: newName.trim() });
-                window.currentUserName = newName.trim();
-                document.getElementById('display-name').innerText = window.currentUserName;
-                document.getElementById('profile-display-name').innerText = window.currentUserName;
+                await updateProfile(auth.currentUser, { displayName: cleanName });
+                window.currentUserName = cleanName;
+                
+                const displayEl = document.getElementById('display-name');
+                if (displayEl) displayEl.innerText = window.currentUserName;
+                
+                const profileDisplayEl = document.getElementById('profile-display-name');
+                if (profileDisplayEl) profileDisplayEl.innerText = window.currentUserName;
                 
                 const modalUsername = document.getElementById('modal-info-username');
                 if (modalUsername) modalUsername.innerText = window.currentUserName;
                 
+                // FORCE push to Firestore to guarantee the database catches up
                 await updateDoc(doc(db, "users", auth.currentUser.uid), { 
-                    username: newName.trim(),
-                    searchName: newName.trim().toLowerCase()
+                    username: cleanName,
+                    searchName: cleanName.toLowerCase()
                 });
+
+                // Let the user know the database caught the update
+                await window.customAlert("Profile synchronized successfully.", "Success");
+                
             } catch (error) {
                 await window.customAlert("Failed to update username: " + error.message, "Error");
             }
         }
     };
+
 
     window.openDeleteActionSheet = function() { document.getElementById('delete-action-sheet').classList.add('active'); };
     window.closeDeleteActionSheet = function(event) { document.getElementById('delete-action-sheet').classList.remove('active'); };
@@ -3364,7 +3391,7 @@
         document.getElementById('network-modal').classList.remove('active');
     };
 
-    window.renderNetworkModal = async function() {
+        window.renderNetworkModal = async function() {
         const reqList = document.getElementById('network-requests-list');
         const friendsList = document.getElementById('network-friends-list');
 
@@ -3378,12 +3405,12 @@
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <img src="${req.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
                         <div>
-                            <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(req.username)}</div>
+                            <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(req.username || 'Unnamed Smoker')}</div>
                             <div style="font-size: 10px; color: var(--text-dim);">Wants to connect</div>
                         </div>
                     </div>
                     <div style="display: flex; gap: 6px;">
-                        <button class="btn-primary" style="width: auto; margin:0; padding: 8px 12px; font-size: 11px;" onclick="acceptFriendRequest('${req.fromUid}', '${escapeHTML(req.username)}')">Accept</button>
+                        <button class="btn-primary" style="width: auto; margin:0; padding: 8px 12px; font-size: 11px;" onclick="acceptFriendRequest('${req.fromUid}', '${escapeHTML(req.username || 'Unnamed Smoker')}')">Accept</button>
                         <button class="btn-secondary" style="width: auto; margin:0; padding: 8px 12px; font-size: 11px; color: var(--danger); border-color: var(--danger);" onclick="declineFriendRequest('${req.fromUid}')"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>`;
@@ -3395,10 +3422,9 @@
             friendsList.innerHTML = '<div style="color: var(--text-dim); font-size: 13px; font-style: italic; text-align: center; padding: 12px 0;">No friends added yet.</div>';
         } else {
             friendsList.innerHTML = '<div style="text-align:center; color: var(--text-dim); font-size: 12px; padding: 12px 0;"><i class="fa-solid fa-spinner fa-spin"></i> Loading network...</div>';
-                        try {
+            try {
                 let friendsHtml = '';
                 
-                // Fetch all friends directly by their document ID
                 const friendPromises = myFriends.map(friendUid => getDoc(doc(db, "users", friendUid)));
                 const friendSnaps = await Promise.all(friendPromises);
 
@@ -3406,13 +3432,16 @@
                     if (docSnap.exists()) {
                         const f = docSnap.data();
                         const actualUid = docSnap.id;
+                        // Added fallback logic here:
+                        const displayName = f.username || f.email?.split('@')[0] || 'Unnamed Smoker';
+                        
                         friendsHtml += `
                         <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <img src="${f.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
-                                <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(f.username)}</div>
+                                <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(displayName)}</div>
                             </div>
-                            <button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; color: var(--danger); border-color: var(--border-subtle);" onclick="removeFriend('${actualUid}', '${escapeHTML(f.username)}')">Remove</button>
+                            <button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; color: var(--danger); border-color: var(--border-subtle);" onclick="removeFriend('${actualUid}', '${escapeHTML(displayName)}')">Remove</button>
                         </div>`;
                     }
                 });
@@ -3423,9 +3452,9 @@
                 console.error("Error fetching friends:", e);
                 friendsList.innerHTML = '<div style="color: var(--danger); font-size: 13px; text-align: center;">Error loading friends.</div>';
             }
-
         }
     };
+
 
         window.acceptFriendRequest = async function(fromUid, fromName) {
         try {
@@ -3566,7 +3595,7 @@
                 document.getElementById('profile-avatar-img').src = localAvatar;
             }
 
-            try {
+                                    try {
                 const userDocRef = doc(db, "users", user.uid);
                 const userDocSnap = await getDoc(userDocRef);
                 
@@ -3579,8 +3608,19 @@
                         friends: []
                     });
                 } else {
-                    if(userDocSnap.data().avatar) {
-                        const cloudAvatar = userDocSnap.data().avatar;
+                    const data = userDocSnap.data();
+                    
+                    // --- BULLETPROOF SELF-HEALING ---
+                    // If the database document exists but is missing the username for any reason, force patch it!
+                    if (!data.username || !data.searchName) {
+                        await updateDoc(userDocRef, {
+                            username: window.currentUserName,
+                            searchName: window.currentUserName.toLowerCase()
+                        });
+                    }
+
+                    if(data.avatar) {
+                        const cloudAvatar = data.avatar;
                         document.getElementById('profile-avatar-img').src = cloudAvatar;
                         localStorage.setItem('finalThirdAvatar', cloudAvatar); 
                     }
@@ -3588,6 +3628,8 @@
             } catch(e) { 
                 console.error("User sync error. Check Firebase Rules.", e); 
             }
+
+
             
             switchTab('view-home', 0);
 
