@@ -1381,15 +1381,15 @@
             <section id="view-lounge" class="view-section">
                 <div class="section-header" style="margin-top: 0;">
                     <div class="section-title">The Lounge</div>
-                    <div onclick="openFriendSearchModal()" style="color: var(--leather); padding: 6px 12px; display: flex; align-items: center; justify-content: center; background: rgba(var(--leather-rgb), 0.1); border-radius: 8px; border: 1px solid rgba(var(--leather-rgb), 0.3); font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">
-                        <i class="fa-solid fa-user-plus" style="margin-right: 6px;"></i> Add Friend
+                    <div style="display: flex; gap: 8px;">
+                        <div onclick="openNetworkModal()" style="color: var(--text-main); padding: 6px 12px; display: flex; align-items: center; justify-content: center; background: var(--surface-04dp); border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; position: relative;">
+                            <i class="fa-solid fa-user-group"></i>
+                            <div id="network-badge" style="display: none; position: absolute; top: -4px; right: -4px; background: var(--danger); width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--bg-base);"></div>
+                        </div>
+                        <div onclick="openFriendSearchModal()" style="color: var(--leather); padding: 6px 12px; display: flex; align-items: center; justify-content: center; background: rgba(var(--leather-rgb), 0.1); border-radius: 8px; border: 1px solid rgba(var(--leather-rgb), 0.3); font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Pending Requests Container -->
-                <div id="lounge-requests-container" style="display: none; margin-bottom: 24px;">
-                    <h3 style="font-size: 10px; color: var(--leather); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 12px;">Pending Requests</h3>
-                    <div id="lounge-requests-list"></div>
                 </div>
 
                 <!-- Feed Selector Toggle -->
@@ -1856,6 +1856,32 @@
     </div>
 </div>
 
+<!-- NETWORK & FRIENDS MODAL -->
+<div id="network-modal" class="action-sheet-overlay" onclick="closeNetworkModal(event)">
+    <div class="action-sheet" onclick="event.stopPropagation()" style="height: 85vh; display: flex; flex-direction: column; padding-bottom: max(24px, env(safe-area-inset-bottom));">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main);">My Network</div>
+            <div onclick="closeNetworkModal()" style="color: var(--text-dim); font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        
+        <div style="overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; padding-right: 4px;">
+            
+            <!-- Pending Requests -->
+            <h3 style="font-size: 11px; color: var(--leather); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;">Pending Requests</h3>
+            <div id="network-requests-list" style="margin-bottom: 24px;">
+                <div style="color: var(--text-dim); font-size: 13px; font-style: italic; text-align: center; padding: 12px 0;">No pending requests.</div>
+            </div>
+
+            <!-- Current Friends -->
+            <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;">My Friends</h3>
+            <div id="network-friends-list">
+                <div style="color: var(--text-dim); font-size: 13px; font-style: italic; text-align: center; padding: 12px 0;">No friends added yet.</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <!-- AVATAR MODAL -->
 <div id="avatar-action-sheet" class="action-sheet-overlay" onclick="closeAvatarActionSheet(event)">
     <div class="action-sheet" onclick="event.stopPropagation()">
@@ -1976,7 +2002,6 @@
         </div>
     </div>
 </div>
-
 <script type="module">
 
     // --- PAIRING GUIDE ENGINE ---
@@ -2020,7 +2045,6 @@
         const wrapper = leafProfiles.wrappers[wrapperKey];
         const binder = leafProfiles.binders[binderKey];
         
-        // Calculate intensity profile
         const totalIntensity = wrapper.strength + (binder.mod * 0.5);
         let bodyProfile = "Medium";
         if (totalIntensity <= 1.5) bodyProfile = "Mild";
@@ -2028,15 +2052,13 @@
         else if (totalIntensity > 3.5 && totalIntensity <= 4.5) bodyProfile = "Medium-Full";
         else if (totalIntensity > 4.5) bodyProfile = "Full";
 
-        // Generate a deterministic hash from the wrapper and binder combination
         const comboString = wrapperKey + "_" + binderKey;
         let hash = 0;
         for (let i = 0; i < comboString.length; i++) {
             hash = (hash << 5) - hash + comboString.charCodeAt(i);
-            hash |= 0; // Constrain to 32bit integer
+            hash |= 0; 
         }
         
-        // Use the absolute value of the hash to pick a specific drink from the array
         const drinkIndex = Math.abs(hash) % wrapper.drinks.length;
         const drinkTarget = wrapper.drinks[drinkIndex];
 
@@ -2048,7 +2070,6 @@
             `The wrapper brings <strong>${wrapper.notes}</strong>, while the binder <strong>${binder.effect}</strong>. ` +
             `This beverage cuts through the palate perfectly for this combination.`;
         
-        // Save state for the ledger button
         window.currentSuggestedDrink = drinkTarget.n;
         window.currentSuggestedWrapper = wrapper.name;
         
@@ -2066,15 +2087,13 @@
         
         switchTab('view-journal', 2);
         
-        // Open the log form if closed
         const logWrapper = document.getElementById('journal-form-wrapper');
         const logChevron = document.getElementById('journal-form-chevron');
         if (logWrapper && logWrapper.style.display === 'none') {
             logWrapper.style.display = 'block';
-            logChevron.style.transform = 'rotate(180deg)';
+            if (logChevron) logChevron.style.transform = 'rotate(180deg)';
         }
         
-        // Pre-fill
         document.getElementById('log-pairing').value = window.currentSuggestedDrink;
         document.getElementById('log-wrapper').value = window.currentSuggestedWrapper;
         
@@ -2224,7 +2243,6 @@
             }
         }
         
-        // Wait for visual transitions to finish, then calculate dynamic shift amount
         setTimeout(window.updateHeaderShift, 350);
     };
 
@@ -2246,7 +2264,6 @@
         document.getElementById('modal-info-username').innerText = window.currentUserName;
         document.getElementById('modal-info-email').innerText = user.email;
         
-        // Format join date
         const joinDate = new Date(user.metadata.creationTime).toLocaleDateString('en-US', { 
             year: 'numeric', 
             month: 'long', 
@@ -2254,12 +2271,10 @@
         });
         document.getElementById('modal-info-joined').innerText = joinDate;
         
-        // Determine Top Rated Cigar
         let favorite = "No rated cigars yet";
         if (journalHistory && journalHistory.length > 0) {
             const ratedCigars = journalHistory.filter(c => c.rating != null && !isNaN(c.rating));
             if (ratedCigars.length > 0) {
-                // Sort by highest rating, then by most recent date to break ties
                 ratedCigars.sort((a, b) => {
                     if (b.rating !== a.rating) return b.rating - a.rating;
                     return new Date(b.date) - new Date(a.date); 
@@ -2276,7 +2291,6 @@
     window.closePersonalInfoModal = function(event) {
         document.getElementById('personal-info-modal').classList.remove('active');
     };
-
 
     // --- CUSTOM DIALOG ENGINE GLOBALS ---
     window.showCustomDialog = function({ title, message, type = 'alert', defaultVal = '', isDanger = false }) {
@@ -2296,7 +2310,6 @@
             
             if (type === 'prompt') {
                 inputEl.value = defaultVal;
-                // Wait for display change to apply focus
                 setTimeout(() => { inputEl.focus(); inputEl.select(); }, 50);
             }
 
@@ -2331,15 +2344,14 @@
     window.customConfirm = (message, title = "Confirm", isDanger = false) => window.showCustomDialog({ title, message, type: 'confirm', isDanger });
     window.customPrompt = (message, defaultVal = "", title = "Input Required") => window.showCustomDialog({ title, message, type: 'prompt', defaultVal });
 
-
     let humidorInventory = [];
     let journalHistory = [];
     let editingVaultId = null;
     let editingJournalId = null;
     
     // Global States
-    let humidorSortOrder = 'date'; // 'date' | 'alpha'
-    let journalSortOrder = 'date'; // 'date' | 'alpha'
+    let humidorSortOrder = 'date'; 
+    let journalSortOrder = 'date'; 
     let currentVaultImage = null;
     let currentLogImage = null;
     window.imageRegistry = {}; 
@@ -2348,7 +2360,7 @@
     let myFriends = [];
     let myFriendRequests = [];
     let allPublicLogs = [];
-    let currentFeedTab = 'friends'; // 'friends' or 'global'
+    let currentFeedTab = 'friends'; 
 
     // --- HELPERS: XSS SANITIZATION & DEBOUNCING ---
     function escapeHTML(str) {
@@ -2404,7 +2416,7 @@
     let swipeStartY = null;
     let isSwiping = false;
     let isDragging = false; 
-    window.isDraggingCard = false; // Prevents tap events from firing after a swipe
+    window.isDraggingCard = false; 
     const maxSwipe = -140; 
 
     window.closeAllSwipes = function() {
@@ -2475,14 +2487,14 @@
         }
     }
 
-        function handleDragEnd(e) {
+    function handleDragEnd(e) {
         if (!isDragging) return;
         isDragging = false;
         
         if (isSwiping) {
             setTimeout(() => { window.isDraggingCard = false; }, 50);
         } else {
-            window.isDraggingCard = false; // Clear immediately for simple taps
+            window.isDraggingCard = false; 
         }
         
         if (e.target && e.target.closest && (e.target.closest('.swipe-actions') || e.target.closest('.share-action-btn'))) return; 
@@ -2540,7 +2552,6 @@
 
     const app = initializeApp(firebaseConfig);
     
-    // Enable persistent cache for offline data access
     const db = initializeFirestore(app, {
       localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) 
     });
@@ -2553,7 +2564,6 @@
     // --- CROWDSOURCING HELPER FUNCTION ---
     window.brandLibrary = [];
     
-    // Add Vitola and Wrapper Arrays
     window.vitolaLibrary = [
         "Petit Corona", "Corona", "Corona Gorda", "Lonsdale", "Panatela", "Lancero",
         "Rothschild", "Robusto", "Petit Robusto", "Toro", "Gordo", "Churchill",
@@ -2569,15 +2579,11 @@
     window.checkAndAddNewBrand = async function(brandName) {
         if (!brandName) return;
         
-        // Check if it already exists (case-insensitive)
         const exists = window.brandLibrary.some(b => b.toLowerCase() === brandName.toLowerCase());
         
         if (!exists) {
             try {
-                // 1. Add to the local array immediately so it works in the current session
                 window.brandLibrary.push(brandName);
-                
-                // 2. Append to the global Firestore document
                 await updateDoc(doc(db, "app_data", "cigar_library"), {
                     list: arrayUnion(brandName)
                 });
@@ -2682,13 +2688,13 @@
         document.getElementById('log-pairing').value = '';
         document.getElementById('log-rating').selectedIndex = 0;
         document.getElementById('log-notes').value = '';
-        document.getElementById('log-public').checked = true; // Default to share on quick log
+        document.getElementById('log-public').checked = true; 
         
         const logWrapper = document.getElementById('journal-form-wrapper');
         const logChevron = document.getElementById('journal-form-chevron');
         if (logWrapper && logWrapper.style.display === 'none') {
             logWrapper.style.display = 'block';
-            logChevron.style.transform = 'rotate(180deg)';
+            if (logChevron) logChevron.style.transform = 'rotate(180deg)';
         }
         
         document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
@@ -2696,7 +2702,6 @@
 
     window.handleHumidorCardClick = function(id, event) {
         if (window.isDraggingCard) return; 
-        // Card click currently disabled to prevent accidental actions. Detail view can go here in future.
     };
 
     function getDayOfYear() {
@@ -2713,12 +2718,8 @@
         const rawDay = getDayOfYear();
         const displayEl = document.getElementById('daily-cigar-display');
         
-        // Scramble the day using a prime multiplier to jump across the database
-        // Assuming your roster has 365 entries numbered 1 through 365
         const totalRosterCount = 365;
         const scrambledDay = ((rawDay * 157 + 31) % totalRosterCount) + 1;
-        
-        console.log(`[Daily Cigar] Raw Day: ${rawDay} -> Scrambled Doc ID: ${scrambledDay}`);
         
         try {
             const docRef = doc(db, "daily_roster", scrambledDay.toString());
@@ -2727,7 +2728,6 @@
             if (docSnap.exists()) {
                 displayEl.innerText = docSnap.data().name;
             } else {
-                console.warn(`[Daily Cigar] Document ID "${scrambledDay}" does NOT exist in your "daily_roster" collection. Falling back.`);
                 displayEl.innerText = "Padrón 60th Anniversary Perfecto"; 
             }
         } catch(e) {
@@ -2736,12 +2736,11 @@
         }
     }
 
-    // Check for a new cigar every hour in case the app stays open in the background
     setInterval(loadDailyCigar, 1000 * 60 * 60);
 
     // --- CLOUD STORAGE HELPER ---
     async function uploadImageToStorage(base64Data, folder) {
-        if (!base64Data || !base64Data.startsWith('data:image')) return base64Data; // Skips if already a URL or null
+        if (!base64Data || !base64Data.startsWith('data:image')) return base64Data; 
         const fileName = `${folder}_${Date.now()}.jpg`;
         const storageRef = ref(storage, `users/${auth.currentUser.uid}/${folder}/${fileName}`);
         await uploadString(storageRef, base64Data, 'data_url');
@@ -2756,16 +2755,12 @@
             
             if (libraryDoc.exists()) {
                 window.brandLibrary = libraryDoc.data().list || [];
-            } else {
-                console.warn("Brand library not found in this database!");
             }
         } catch (error) {
             console.error("Failed to load brand library:", error);
         }
     }
 
-    // Updated Autocomplete function accepts a function that returns the library array
-    // This ensures it always grabs the latest data from Firebase, even after it loads
     function setupAutocomplete(inputId, dropdownId, getLibraryFn) {
         const input = document.getElementById(inputId);
         const dropdown = document.getElementById(dropdownId);
@@ -2779,10 +2774,8 @@
                 return;
             }
 
-            // Grab the freshest state of the array right as you type
             const dataLibrary = getLibraryFn();
 
-            // Filter and sort: exact starting matches go to the top
             const matches = dataLibrary.filter(item => 
                 item.toLowerCase().includes(val)
             ).sort((a, b) => {
@@ -2791,8 +2784,8 @@
                 
                 if (aStarts && !bStarts) return -1;
                 if (!aStarts && bStarts) return 1;
-                return a.localeCompare(b); // Alphabetical sort for the rest
-            }).slice(0, 10); // Limit to 10 results for a clean UI
+                return a.localeCompare(b); 
+            }).slice(0, 10); 
 
             if (matches.length > 0) {
                 matches.forEach(match => {
@@ -2819,7 +2812,6 @@
         });
     }
     
-    // Initialize custom autocomplete listeners using getter functions `() => ...`
     setupAutocomplete('vault-brand', 'vault-autocomplete', () => window.brandLibrary);
     setupAutocomplete('log-brand', 'log-autocomplete', () => window.brandLibrary);
     
@@ -2828,7 +2820,6 @@
     
     setupAutocomplete('vault-wrapper', 'vault-wrapper-autocomplete', () => window.wrapperLibrary);
     setupAutocomplete('log-wrapper', 'log-wrapper-autocomplete', () => window.wrapperLibrary);
-
 
     // --- AGING NOTIFICATION ALERT ENGINE ---
     window.checkAgingAlerts = function(inventory) {
@@ -2855,14 +2846,12 @@
                 });
             } else {
                 const brands = newlyReady.map(c => escapeHTML(c.brand)).join(", ");
-                // Give the UI a second to render before triggering a blocking alert
                 setTimeout(async () => {
                     await window.customAlert(`Peak Aging Reached! The following cigars are ready: ${brands}`, "Aging Alert");
                 }, 500);
             }
         }
     };
-
 
     window.openCigarModal = function() {
         const displayEl = document.getElementById('daily-cigar-display');
@@ -2900,7 +2889,6 @@
         const now = Date.now();
         let html = '';
 
-        // Safely sort the inventory and fallback acquiredDate to 0 if undefined to prevent sorting NaN errors
         const sortedInventory = [...humidorInventory].sort((a, b) => {
             const dateA = a.acquiredDate || 0;
             const dateB = b.acquiredDate || 0;
@@ -2911,7 +2899,6 @@
         let titleText = "Full Aging Timeline";
 
         sortedInventory.forEach(cigar => {
-            // Safe fallback for legacy items that might lack an acquiredDate
             const acqTime = cigar.acquiredDate || now;
             let daysAged = Math.floor((now - acqTime) / (1000 * 60 * 60 * 24));
             if (daysAged < 0) daysAged = 0;
@@ -2981,7 +2968,6 @@
                 img.src = event.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    // Aggressively scale down to fit directly in the database
                     const MAX_WIDTH = 400;
                     const MAX_HEIGHT = 400;
                     let width = img.width;
@@ -3079,7 +3065,7 @@
         const file = event.target.files[0];
         if(!file) return;
         try {
-            document.getElementById('profile-avatar-img').style.opacity = '0.5'; // Processing state
+            document.getElementById('profile-avatar-img').style.opacity = '0.5';
             const compressedBase64 = await window.compressAvatar(file);
             const imageUrl = await uploadImageToStorage(compressedBase64, 'avatar');
             
@@ -3105,11 +3091,9 @@
                 document.getElementById('display-name').innerText = window.currentUserName;
                 document.getElementById('profile-display-name').innerText = window.currentUserName;
                 
-                // If modal is open, dynamically update it too
                 const modalUsername = document.getElementById('modal-info-username');
                 if (modalUsername) modalUsername.innerText = window.currentUserName;
                 
-                // Update global directory
                 await updateDoc(doc(db, "users", auth.currentUser.uid), { 
                     username: newName.trim(),
                     searchName: newName.trim().toLowerCase()
@@ -3163,22 +3147,18 @@
     };
 
     window.switchTab = function(targetViewId, dockIndex) {
-        // 1. Reset header collapse state on tab switch
         window.currentStage = 0;
         document.body.classList.remove('header-stage-1', 'header-stage-2');
         
-        // 2. Clear out active and animation classes from all views
         document.querySelectorAll('.view-section').forEach(el => {
             el.classList.remove('active');
             el.classList.remove('slide-anim'); 
         });
         
-        // 3. Set the new active tab
         const targetView = document.getElementById(targetViewId);
         targetView.classList.add('active');
         targetView.scrollTop = 0; 
 
-        // 4. Apply slide animation SPECIFICALLY to the active tab content
         void targetView.offsetWidth; 
         targetView.classList.add('slide-anim');
         
@@ -3264,7 +3244,6 @@
             await updateProfile(userCredential.user, { displayName: username });
             window.currentUserName = username;
             
-            // WRITE TO GLOBAL USER DIRECTORY ON SIGNUP
             await setDoc(doc(db, "users", userCredential.user.uid), {
                 uid: userCredential.user.uid,
                 username: username,
@@ -3303,9 +3282,7 @@
         await signOut(auth);
     };
 
-
     // --- LOUNGE / FRIEND LOGIC ENGINE ---
-
     window.openFriendSearchModal = function() {
         document.getElementById('friend-search-modal').classList.add('active');
         document.getElementById('friend-search-results').innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-dim);">Type a username to search.</div>';
@@ -3328,20 +3305,20 @@
         resultsEl.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-dim);"><i class="fa-solid fa-spinner fa-spin"></i> Searching...</div>';
         
         try {
-            // Simple prefix search using Firestore string bounds
             const q = query(collection(db, "users"), where("searchName", ">=", val), where("searchName", "<=", val + '\uf8ff'));
             const snaps = await getDocs(q);
             let html = '';
             
             snaps.forEach(docSnap => {
                 const u = docSnap.data();
-                if(u.uid === auth.currentUser.uid) return; // Hide self
+                const actualUid = u.uid || docSnap.id; 
+                if(actualUid === auth.currentUser.uid) return; 
                 
                 let actionBtn = '';
-                if(myFriends.includes(u.uid)) {
+                if(myFriends.includes(actualUid)) {
                     actionBtn = `<button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px;" disabled>Friends</button>`;
                 } else {
-                    actionBtn = `<button class="btn-primary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px;" onclick="sendFriendRequest('${u.uid}', '${escapeHTML(u.username)}')">Add</button>`;
+                    actionBtn = `<button class="btn-primary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px;" onclick="sendFriendRequest('${actualUid}', '${escapeHTML(u.username)}')">Add</button>`;
                 }
                 
                 html += `
@@ -3378,51 +3355,110 @@
         }
     };
 
-    window.renderFriendRequests = function() {
-        const container = document.getElementById('lounge-requests-container');
-        const list = document.getElementById('lounge-requests-list');
-        
-        if(!myFriendRequests || myFriendRequests.length === 0) {
-            container.style.display = 'none';
-            return;
-        }
-        
-        container.style.display = 'block';
-        let html = '';
-        myFriendRequests.forEach(req => {
-            html += `
-            <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <img src="${req.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
-                    <div>
-                        <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(req.username)}</div>
-                        <div style="font-size: 10px; color: var(--text-dim);">Wants to connect</div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn-primary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px;" onclick="acceptFriendRequest('${req.fromUid}')">Accept</button>
-                    <button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; color: var(--danger); border-color: var(--danger);" onclick="declineFriendRequest('${req.fromUid}')"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-            </div>`;
-        });
-        list.innerHTML = html;
+    window.openNetworkModal = async function() {
+        document.getElementById('network-modal').classList.add('active');
+        renderNetworkModal();
     };
 
-    window.acceptFriendRequest = async function(fromUid) {
+    window.closeNetworkModal = function(event) {
+        document.getElementById('network-modal').classList.remove('active');
+    };
+
+    window.renderNetworkModal = async function() {
+        const reqList = document.getElementById('network-requests-list');
+        const friendsList = document.getElementById('network-friends-list');
+
+        if (!myFriendRequests || myFriendRequests.length === 0) {
+            reqList.innerHTML = '<div style="color: var(--text-dim); font-size: 13px; font-style: italic; text-align: center; padding: 12px 0;">No pending requests.</div>';
+        } else {
+            let reqHtml = '';
+            myFriendRequests.forEach(req => {
+                reqHtml += `
+                <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="${req.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
+                        <div>
+                            <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(req.username)}</div>
+                            <div style="font-size: 10px; color: var(--text-dim);">Wants to connect</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn-primary" style="width: auto; margin:0; padding: 8px 12px; font-size: 11px;" onclick="acceptFriendRequest('${req.fromUid}', '${escapeHTML(req.username)}')">Accept</button>
+                        <button class="btn-secondary" style="width: auto; margin:0; padding: 8px 12px; font-size: 11px; color: var(--danger); border-color: var(--danger);" onclick="declineFriendRequest('${req.fromUid}')"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>`;
+            });
+            reqList.innerHTML = reqHtml;
+        }
+
+        if (!myFriends || myFriends.length === 0) {
+            friendsList.innerHTML = '<div style="color: var(--text-dim); font-size: 13px; font-style: italic; text-align: center; padding: 12px 0;">No friends added yet.</div>';
+        } else {
+            friendsList.innerHTML = '<div style="text-align:center; color: var(--text-dim); font-size: 12px; padding: 12px 0;"><i class="fa-solid fa-spinner fa-spin"></i> Loading network...</div>';
+            try {
+                let friendsHtml = '';
+                const chunks = [];
+                for (let i = 0; i < myFriends.length; i += 10) {
+                    chunks.push(myFriends.slice(i, i + 10));
+                }
+
+                for (const chunk of chunks) {
+                    const q = query(collection(db, "users"), where("uid", "in", chunk));
+                    const snaps = await getDocs(q);
+                    snaps.forEach(docSnap => {
+                        const f = docSnap.data();
+                        const actualUid = f.uid || docSnap.id;
+                        friendsHtml += `
+                        <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img src="${f.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
+                                <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(f.username)}</div>
+                            </div>
+                            <button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; color: var(--danger); border-color: var(--border-subtle);" onclick="removeFriend('${actualUid}', '${escapeHTML(f.username)}')">Remove</button>
+                        </div>`;
+                    });
+                }
+                friendsList.innerHTML = friendsHtml;
+            } catch (e) {
+                console.error("Error fetching friends:", e);
+                friendsList.innerHTML = '<div style="color: var(--danger); font-size: 13px; text-align: center;">Error loading friends.</div>';
+            }
+        }
+    };
+
+    window.acceptFriendRequest = async function(fromUid, fromName) {
         try {
             await updateDoc(doc(db, "users", auth.currentUser.uid), { friends: arrayUnion(fromUid) });
             await updateDoc(doc(db, "users", fromUid), { friends: arrayUnion(auth.currentUser.uid) });
             await deleteDoc(doc(db, "users", auth.currentUser.uid, "friend_requests", fromUid));
+            
+            renderNetworkModal();
+            window.customAlert(`You and ${fromName} are now friends!`, "Connected");
         } catch(e) {
             console.error(e);
+            window.customAlert("Failed to accept request.", "Error");
         }
     };
     
     window.declineFriendRequest = async function(fromUid) {
         try {
             await deleteDoc(doc(db, "users", auth.currentUser.uid, "friend_requests", fromUid));
+            renderNetworkModal();
         } catch(e) {
             console.error(e);
+        }
+    };
+
+    window.removeFriend = async function(friendUid, friendName) {
+        if(await window.customConfirm(`Remove ${friendName} from your friends list?`, "Remove Friend", true)) {
+            try {
+                await updateDoc(doc(db, "users", auth.currentUser.uid), { friends: arrayRemove(friendUid) });
+                await updateDoc(doc(db, "users", friendUid), { friends: arrayRemove(auth.currentUser.uid) });
+                renderNetworkModal();
+            } catch(e) {
+                console.error("Remove friend error", e);
+                window.customAlert("Could not remove friend. Check connection.", "Error");
+            }
         }
     };
 
@@ -3502,7 +3538,6 @@
             document.getElementById('main-environment').style.display = 'flex';
             document.getElementById('main-environment').classList.add('active');
             
-            // Request Notification Permissions if needed
             if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
                 Notification.requestPermission();
             }
@@ -3527,7 +3562,6 @@
                 const userDocRef = doc(db, "users", user.uid);
                 const userDocSnap = await getDoc(userDocRef);
                 
-                // MIGRATION / FALLBACK: If user doc doesn't exist (created before update), create it now
                 if(!userDocSnap.exists()) {
                     await setDoc(userDocRef, {
                         uid: user.uid,
@@ -3537,7 +3571,6 @@
                         friends: []
                     });
                 } else {
-                    // Update UI from cloud
                     if(userDocSnap.data().avatar) {
                         const cloudAvatar = userDocSnap.data().avatar;
                         document.getElementById('profile-avatar-img').src = cloudAvatar;
@@ -3553,7 +3586,6 @@
             document.getElementById('signin-btn').innerHTML = 'Log In <i class="fa-solid fa-arrow-right"></i>';
             document.getElementById('signup-btn').innerHTML = 'Register <i class="fa-solid fa-user-plus"></i>';
 
-            // ATTACH REAL-TIME LISTENERS
             unsubscribeHumidor = onSnapshot(query(collection(db, "humidor"), where("uid", "==", user.uid)), (snapshot) => {
                 humidorInventory = [];
                 snapshot.forEach((doc) => { humidorInventory.push({ id: doc.id, ...doc.data() }); });
@@ -3561,32 +3593,48 @@
                 checkAgingAlerts(humidorInventory);
             });
 
+            // BULLETPROOF: Filters out string values / legacy keys instantly on fetch
             unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid)), (snapshot) => {
                 journalHistory = [];
-                snapshot.forEach((doc) => { journalHistory.push({ id: doc.id, ...doc.data() }); });
+                snapshot.forEach((doc) => { 
+                    let d = doc.data();
+                    let r = parseFloat(d.rating ?? d.score);
+                    d.rating = isNaN(r) ? null : r;
+                    journalHistory.push({ id: doc.id, ...d }); 
+                });
                 renderJournal();
             });
 
-            // Listen to My Profile for Friends Array
             unsubscribeUser = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
                 if(docSnap.exists()) {
                     myFriends = docSnap.data().friends || [];
-                    renderLoungeFeed(); // Refresh feed when friends list changes
+                    renderLoungeFeed(); 
                 }
             });
 
-            // Listen to Incoming Friend Requests
             unsubscribeRequests = onSnapshot(collection(db, "users", user.uid, "friend_requests"), (snapshot) => {
                 myFriendRequests = [];
                 snapshot.forEach(doc => myFriendRequests.push({ id: doc.id, ...doc.data() }));
-                renderFriendRequests();
+                
+                const badge = document.getElementById('network-badge');
+                if (badge) {
+                    badge.style.display = myFriendRequests.length > 0 ? 'block' : 'none';
+                }
+                
+                if (document.getElementById('network-modal').classList.contains('active')) {
+                    renderNetworkModal();
+                }
             });
 
-            // Listen to Public Global Feed
+            // BULLETPROOF: Also filters out strings from public feeds to prevent UI crashes
             unsubscribePublicFeed = onSnapshot(query(collection(db, "journal"), where("isPublic", "==", true)), (snapshot) => {
                 allPublicLogs = [];
-                snapshot.forEach(doc => allPublicLogs.push({ id: doc.id, ...doc.data() }));
-                // Sort by date descending
+                snapshot.forEach(doc => {
+                    let d = doc.data();
+                    let r = parseFloat(d.rating ?? d.score);
+                    d.rating = isNaN(r) ? null : r;
+                    allPublicLogs.push({ id: doc.id, ...d });
+                });
                 allPublicLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
                 renderLoungeFeed();
             });
@@ -3606,7 +3654,6 @@
             document.getElementById('delete-email').value = '';
             document.getElementById('delete-password').value = '';
             
-            // Clean up listeners on logout
             if(unsubscribeHumidor) unsubscribeHumidor();
             if(unsubscribeJournal) unsubscribeJournal();
             if(unsubscribeUser) unsubscribeUser();
@@ -3617,12 +3664,13 @@
 
     window.renderFavorites = function() {
         const favContainer = document.getElementById('home-favorites-list');
-        const ratedCigars = journalHistory.filter(c => c.rating);
+        // Bulletproof check ensures it only maps real numbers, completely preventing NaN errors
+        const ratedCigars = journalHistory.filter(c => c.rating !== null && c.rating !== undefined);
         
         if (ratedCigars.length > 0) {
             const sum = ratedCigars.reduce((acc, curr) => acc + curr.rating, 0);
             document.getElementById('stat-avg').innerText = (sum / ratedCigars.length).toFixed(1);
-                } else {
+        } else {
             document.getElementById('stat-avg').innerText = "0.0";
         }
 
@@ -3656,6 +3704,401 @@
         favContainer.innerHTML = html;
     };
 
+
+    // --- HUMIDOR ENGINE (RESTORED) ---
+    document.getElementById('vault-date').addEventListener('change', function(e) {
+        if (!e.target.value) return;
+        const acquired = new Date(e.target.value + 'T00:00:00');
+        acquired.setDate(acquired.getDate() + 7);
+        const minTargetStr = acquired.toISOString().split('T')[0];
+        document.getElementById('vault-target-date').min = minTargetStr;
+        
+        const currentTarget = document.getElementById('vault-target-date').value;
+        if (!currentTarget || new Date(currentTarget + 'T00:00:00') < acquired) {
+            document.getElementById('vault-target-date').value = minTargetStr;
+        }
+    });
+
+    window.editCigar = function(id) {
+        window.closeAllSwipes(); 
+        
+        const cigar = humidorInventory.find(c => c.id === id);
+        if(!cigar) return;
+
+        editingVaultId = id;
+        document.getElementById('vault-brand').value = cigar.brand || '';
+        document.getElementById('vault-quantity').value = cigar.quantity || 1;
+        document.getElementById('vault-vitola').value = cigar.vitola || '';
+        document.getElementById('vault-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
+        document.getElementById('vault-wrapper').value = cigar.wrapper || '';
+        document.getElementById('vault-price').value = cigar.price || '';
+        
+        if (cigar.acquiredDate) {
+            document.getElementById('vault-date').value = new Date(cigar.acquiredDate).toISOString().split('T')[0];
+        }
+        if (cigar.targetDate) {
+            document.getElementById('vault-target-date').value = new Date(cigar.targetDate).toISOString().split('T')[0];
+        }
+        
+        currentVaultImage = cigar.image || null;
+        const photoBtn = document.getElementById('vault-photo-btn');
+        if(currentVaultImage) {
+            photoBtn.classList.add('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
+        } else {
+            photoBtn.classList.remove('attached');
+            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        }
+
+        const submitBtn = document.getElementById('vault-submit-btn');
+        submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = 'var(--gold)';
+        submitBtn.style.color = '#121212';
+
+        const vaultWrapper = document.getElementById('humidor-form-wrapper');
+        const vaultChevron = document.getElementById('humidor-form-chevron');
+        if (vaultWrapper && vaultWrapper.style.display === 'none') {
+            vaultWrapper.style.display = 'block';
+            if (vaultChevron) vaultChevron.style.transform = 'rotate(180deg)';
+        }
+
+        document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.clearHumidorForm = function() {
+        document.getElementById('vault-brand').value = '';
+        document.getElementById('vault-quantity').value = '1';
+        document.getElementById('vault-ring-gauge').value = '';
+        document.getElementById('vault-price').value = '';
+        document.getElementById('vault-vitola').value = '';
+        document.getElementById('vault-wrapper').value = '';
+        
+        currentVaultImage = null;
+        document.getElementById('vault-image-upload').value = "";
+        const photoBtn = document.getElementById('vault-photo-btn');
+        photoBtn.classList.remove('attached');
+        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
+        
+        initializeDates();
+        
+        editingVaultId = null;
+        const submitBtn = document.getElementById('vault-submit-btn');
+        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+        submitBtn.style.background = '';
+        submitBtn.style.color = '';
+    };
+
+    window.storeCigar = async function() {
+        const brand = document.getElementById('vault-brand').value;
+        const qtyVal = document.getElementById('vault-quantity').value;
+        const vitola = document.getElementById('vault-vitola').value;
+        const ring = document.getElementById('vault-ring-gauge').value;
+        const wrapper = document.getElementById('vault-wrapper').value;
+        const priceVal = document.getElementById('vault-price').value;
+        const acquiredDate = document.getElementById('vault-date').value;
+        const targetDate = document.getElementById('vault-target-date').value;
+        const submitBtn = document.getElementById('vault-submit-btn');
+
+        if(!brand || !acquiredDate || !targetDate) { 
+            await window.customAlert("Please enter the brand, date acquired, and target peak date.", "Missing Data");
+            return; 
+        }
+
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+        submitBtn.disabled = true;
+
+        const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
+        const targetTime = new Date(targetDate + 'T00:00:00').getTime();
+
+        try {
+            const newCigar = {
+                uid: auth.currentUser.uid,
+                brand,
+                quantity: parseInt(qtyVal) || 1,
+                vitola: vitola || "Unknown",
+                ring: ring || "-",
+                wrapper: wrapper || "Unknown",
+                price: priceVal ? parseFloat(priceVal) : null,
+                targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
+                acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
+                image: currentVaultImage
+            };
+
+            if (editingVaultId) {
+                await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
+                editingVaultId = null;
+                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+                submitBtn.style.background = '';
+                submitBtn.style.color = '';
+            } else {
+                await addDoc(collection(db, "humidor"), newCigar);
+                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+            }
+            
+            await window.checkAndAddNewBrand(brand);
+            window.clearHumidorForm();
+
+        } catch (e) {
+            console.error("Error adding document: ", e);
+            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+        } finally {
+            submitBtn.disabled = false;
+        }
+    };
+
+    window.debouncedRenderHumidor = debounce(() => renderHumidor(), 250);
+
+    window.renderHumidor = function() {
+        const list = document.getElementById('humidor-inventory-list');
+        const countStat = document.getElementById('stat-collection'); 
+        
+        window.activeSwipeCard = null; 
+
+        const wrapperContainer = document.getElementById('profile-wrapper-stats-container');
+
+        if(humidorInventory.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>Humidor is currently empty</span>
+                </div>`;
+            countStat.innerText = '0';
+            document.getElementById('stat-alerts').innerText = '0';
+            
+            document.getElementById('stat-avg-aging-val').innerText = '0';
+            document.getElementById('stat-humidor-value-val').innerText = '$0';
+            document.getElementById('stat-aging-pill').innerHTML = '&bull; EMPTY &bull;';
+            document.getElementById('stat-value-pill').innerHTML = '<i class="fa-solid fa-arrow-trend-up"></i> +$0 this month';
+            
+            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
+            
+            document.getElementById('label-tier-1').style.opacity = '0.3';
+            document.getElementById('label-tier-2').style.opacity = '0.3';
+            document.getElementById('label-tier-3').style.opacity = '0.3';
+            document.getElementById('label-tier-4').style.opacity = '0.3';
+            
+            document.getElementById('bar-tier-1').style.width = '25%';
+            document.getElementById('bar-tier-2').style.width = '25%';
+            document.getElementById('bar-tier-3').style.width = '25%';
+            document.getElementById('bar-tier-4').style.width = '25%';
+            
+            return;
+        }
+
+        const now = Date.now();
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+
+        let totalValue = 0;
+        let totalAgedDays = 0;
+        let readyAlertsCount = 0;
+        let totalQuantity = 0;
+        let monthlyAddedValue = 0;
+
+        let tier1 = 0; 
+        let tier2 = 0; 
+        let tier3 = 0; 
+        let tier4 = 0; 
+        let totalAgingQuantity = 0;
+
+        const wrapperCounts = {};
+        let totalValidWrappers = 0;
+
+        humidorInventory.forEach(c => {
+            const msPerDay = 1000 * 60 * 60 * 24;
+            const acqDate = c.acquiredDate || now;
+            let days = Math.floor((now - acqDate) / msPerDay);
+            if (days < 0) days = 0;
+            
+            let qty = c.quantity || 1;
+            totalAgingQuantity += qty;
+            
+            if (days <= 30) tier1 += qty;
+            else if (days <= 90) tier2 += qty;
+            else if (days <= 180) tier3 += qty;
+            else tier4 += qty;
+            
+            totalAgedDays += days;
+            
+            const cigarTotalVal = (c.price || 0) * qty;
+            totalValue += cigarTotalVal;
+
+            const acqObj = new Date(acqDate);
+            if (acqObj.getFullYear() === currentYear && acqObj.getMonth() === currentMonth) {
+                monthlyAddedValue += cigarTotalVal;
+            }
+
+            const targetDate = c.targetDate || (acqDate + 7 * msPerDay);
+            let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
+            if (totalTargetDays <= 0) totalTargetDays = 1; 
+            
+            let progress = (days / totalTargetDays) * 100;
+            if (progress >= 100) readyAlertsCount += qty;
+
+            if(c.wrapper && c.wrapper !== "Unknown") {
+                wrapperCounts[c.wrapper] = (wrapperCounts[c.wrapper] || 0) + qty;
+                totalValidWrappers += qty;
+            }
+        });
+
+        document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
+        document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
+        
+        document.getElementById('label-tier-1').style.opacity = tier1 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-2').style.opacity = tier2 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-3').style.opacity = tier3 === 0 ? '0.3' : '1';
+        document.getElementById('label-tier-4').style.opacity = tier4 === 0 ? '0.3' : '1';
+        
+        if (totalAgingQuantity > 0) {
+            document.getElementById('bar-tier-1').style.width = `${(tier1 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-2').style.width = `${(tier2 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-3').style.width = `${(tier3 / totalAgingQuantity) * 100}%`;
+            document.getElementById('bar-tier-4').style.width = `${(tier4 / totalAgingQuantity) * 100}%`;
+        }
+
+        const searchInput = document.getElementById('humidor-search');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
+        
+        let displayList = [...humidorInventory];
+        
+        if (searchTerm) {
+            displayList = displayList.filter(cigar => {
+                const normalizedBrand = cigar.brand.toLowerCase().replace(/[^\w\s]/g, '');
+                const normalizedVitola = cigar.vitola.toLowerCase().replace(/[^\w\s]/g, '');
+                return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
+            });
+        }        
+        if (humidorSortOrder === 'alpha') {
+            displayList.sort((a, b) => a.brand.localeCompare(b.brand));
+        } else {
+            displayList.sort((a, b) => (b.acquiredDate || 0) - (a.acquiredDate || 0));
+        }
+
+        let html = '';
+        if (displayList.length === 0) {
+            html = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
+                    <span>No results found</span>
+                </div>`;
+        } else {
+            displayList.forEach(cigar => {
+                const msPerDay = 1000 * 60 * 60 * 24;
+                const cigarQty = cigar.quantity || 1;
+                totalQuantity += cigarQty;
+                
+                const acqDate = cigar.acquiredDate || now;
+                let daysAged = Math.floor((now - acqDate) / msPerDay);
+                if (daysAged < 0) daysAged = 0; 
+
+                const targetDate = cigar.targetDate || (acqDate + 7 * msPerDay);
+                let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
+                if (totalTargetDays <= 0) totalTargetDays = 1; 
+                
+                let progress = (daysAged / totalTargetDays) * 100;
+                if (progress > 100) progress = 100;
+                if (progress < 0) progress = 0; 
+
+                let isReady = progress >= 100;
+                let badgeClass = isReady ? 'humidor-badge-ready' : 'humidor-badge-aging';
+                let statusIcon = isReady ? '<i class="fa-solid fa-fire"></i> ' : '<i class="fa-solid fa-hourglass-half"></i> ';
+                let statusText = isReady ? 'Peak' : 'Aging';
+
+                let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
+                
+                let imageBadge = '';
+                if(cigar.image) {
+                    window.imageRegistry[cigar.id] = cigar.image;
+                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+                }
+                
+                let qtyBadge = `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
+                
+                let attributesRow = '';
+                if (qtyBadge || imageBadge) {
+                    attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${imageBadge}</div>`;
+                }
+
+                html += `
+                <div class="swipe-container">
+                    <div class="swipe-actions">
+                        <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
+                            <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                        </button>
+                        <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
+                            <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                        </button>
+                    </div>
+                    
+                    <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
+                        <div class="log-header">
+                            <div style="flex: 1; padding-right: 12px;">
+                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
+                                <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
+                            </div>
+                            <div class="badge ${badgeClass}">${statusIcon}${statusText}</div>
+                        </div>
+                        ${attributesRow}
+                        <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
+                        <div class="timeline-footer">
+                            <span>Aged: ${daysAged} Days</span>
+                            <span>Target: ${totalTargetDays} Days</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+        
+        list.innerHTML = html;        
+        countStat.innerText = totalAgingQuantity; 
+        
+        const alertsEl = document.getElementById('stat-alerts');
+        if (alertsEl) alertsEl.innerText = readyAlertsCount;
+        
+        let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
+        document.getElementById('stat-avg-aging-val').innerText = avgDays;
+        
+        let formattedValue = totalValue % 1 === 0 ? `$${totalValue.toLocaleString('en-US')}` : `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('stat-humidor-value-val').innerText = formattedValue;
+        
+        let formattedMonthly = monthlyAddedValue % 1 === 0 ? `+$${monthlyAddedValue.toLocaleString('en-US')}` : `+$${monthlyAddedValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('stat-value-pill').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${formattedMonthly} this month`;
+
+        let agingStatus = "&bull; JUST RESTING &bull;";
+        if (avgDays >= 180) agingStatus = "&bull; VINTAGE &bull;";
+        else if (avgDays >= 90) agingStatus = "&bull; WELL AGED &bull;";
+        else if (avgDays >= 30) agingStatus = "&bull; DEVELOPING &bull;";
+        document.getElementById('stat-aging-pill').innerHTML = agingStatus;
+        
+        const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
+        
+        if (totalValidWrappers > 0) {
+            let wrapperHtml = '';
+            const top3 = sortedWrappers.slice(0, 3);
+            const badgeClasses = ['badge-indigo', 'badge-mint', 'badge-amber'];
+            
+            top3.forEach((item, index) => {
+                const pct = Math.round((item[1] / totalValidWrappers) * 100);
+                const badgeClass = badgeClasses[index] || 'badge-indigo';
+                wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
+            });
+            wrapperContainer.innerHTML = wrapperHtml;
+        } else {
+            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
+        }
+    };
+
+    window.removeCigar = async function(id) {
+        window.closeAllSwipes();
+        if(await window.customConfirm("Remove this cigar from your humidor?", "Remove Cigar", true)) {
+            await deleteDoc(doc(db, "humidor", id));
+        }
+    };
+
+    // --- JOURNAL ENGINE ---
     window.editJournalLog = function(id) {
         window.closeAllSwipes(); 
         
@@ -3694,7 +4137,7 @@
         const logChevron = document.getElementById('journal-form-chevron');
         if (logWrapper && logWrapper.style.display === 'none') {
             logWrapper.style.display = 'block';
-            logChevron.style.transform = 'rotate(180deg)';
+            if (logChevron) logChevron.style.transform = 'rotate(180deg)';
         }
         
         document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
@@ -3753,8 +4196,8 @@
         try {
             const newLog = {
                 uid: auth.currentUser.uid,
-                username: window.currentUserName, // Add username for the global feed
-                avatar: document.getElementById('profile-avatar-img').src, // Add avatar for the global feed
+                username: window.currentUserName, 
+                avatar: document.getElementById('profile-avatar-img').src, 
                 date: date || new Date().toISOString().split('T')[0],
                 brand,
                 vitola: vitola || "Unknown",
@@ -3766,7 +4209,7 @@
                 rating: rating ? parseFloat(rating) : null,
                 notes: notes || "No notes.",
                 isPublic: isPublic,
-                image: currentLogImage // Saving the scaled Base64 string directly
+                image: currentLogImage 
             };
 
             if (editingJournalId) {
@@ -3790,32 +4233,6 @@
         } finally {
             submitBtn.disabled = false;
         }
-    };
-
-    // --- SORT ENGINE & EXPAND ENGINE ---
-    window.toggleHumidorSort = function() {
-        humidorSortOrder = humidorSortOrder === 'date' ? 'alpha' : 'date';
-        document.getElementById('humidor-sort-btn').innerHTML = humidorSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
-        debouncedRenderHumidor();
-    };
-
-    window.toggleJournalSort = function() {
-        journalSortOrder = journalSortOrder === 'date' ? 'alpha' : 'date';
-        document.getElementById('journal-sort-btn').innerHTML = journalSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
-        debouncedRenderJournal();
-    };
-
-    window.toggleJournalExpand = function(id, event) {
-        event.stopPropagation(); // Shield the swipe engine from tap interactions
-        const details = document.getElementById('journal-details-' + id);
-        const icon = document.getElementById('journal-chevron-' + id);
-        if(details.style.display === 'none') {
-            details.style.display = 'block';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            details.style.display = 'none';
-            icon.style.transform = 'rotate(0deg)';
-                }
     };
 
     window.debouncedRenderJournal = debounce(() => renderJournal(), 250);
@@ -3848,16 +4265,13 @@
             return;
         }
 
-        // --- FILTER & SORT LOGIC ---
         const searchInput = document.getElementById('journal-search');
-        // Grab the input, make it lowercase, and strip out punctuation using Regex
         const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
         
         let displayList = [...journalHistory];
         
         if (searchTerm) {
             displayList = displayList.filter(log => {
-                // Strip punctuation from the stored brand and vitola before comparing
                 const normalizedBrand = log.brand.toLowerCase().replace(/[^\w\s]/g, '');
                 const normalizedVitola = log.vitola.toLowerCase().replace(/[^\w\s]/g, '');
                 
@@ -4000,56 +4414,74 @@
         }
     };
 
+    // --- SORT ENGINE & EXPAND ENGINE ---
+    window.toggleHumidorSort = function() {
+        humidorSortOrder = humidorSortOrder === 'date' ? 'alpha' : 'date';
+        document.getElementById('humidor-sort-btn').innerHTML = humidorSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
+        debouncedRenderHumidor();
+    };
+
+    window.toggleJournalSort = function() {
+        journalSortOrder = journalSortOrder === 'date' ? 'alpha' : 'date';
+        document.getElementById('journal-sort-btn').innerHTML = journalSortOrder === 'alpha' ? '<i class="fa-solid fa-calendar-days"></i>' : '<i class="fa-solid fa-arrow-down-a-z"></i>';
+        debouncedRenderJournal();
+    };
+
+    window.toggleJournalExpand = function(id, event) {
+        event.stopPropagation();
+        const details = document.getElementById('journal-details-' + id);
+        const icon = document.getElementById('journal-chevron-' + id);
+        if(details.style.display === 'none') {
+            details.style.display = 'block';
+            icon.style.transform = 'rotate(180deg)';
+        } else {
+            details.style.display = 'none';
+            icon.style.transform = 'rotate(0deg)';
+        }
+    };
+
     // --- SHARE CARD IMAGE GENERATOR ---
     window.generateShareCard = function(log) {
         return new Promise((resolve) => {
             const canvas = document.createElement('canvas');
             canvas.width = 1080;
-            canvas.height = 1080; // Square format, perfect for Instagram or text messages
+            canvas.height = 1080; 
             const ctx = canvas.getContext('2d');
 
-            // 1. Draw Background (Luxury Dark Surface)
             ctx.fillStyle = '#121212';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 2. Draw Inner Border (Gold/Leather Accent)
-            ctx.strokeStyle = '#D4AF37'; // var(--leather)
+            ctx.strokeStyle = '#D4AF37'; 
             ctx.lineWidth = 6;
             ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
 
-            // 3. Draw Header "TASTING LEDGER"
             ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
             ctx.font = 'bold 32px sans-serif';
             ctx.textAlign = 'center';
-            ctx.letterSpacing = '6px'; // Note: letterSpacing support varies, but helps where supported
+            ctx.letterSpacing = '6px'; 
             ctx.fillText('TASTING LEDGER', canvas.width / 2, 160);
 
-            // 4. Draw Cigar Brand (With Dynamic Scaling)
             ctx.fillStyle = '#FFFFFF';
             let brandFontSize = 90;
             ctx.font = `bold ${brandFontSize}px "DM Serif Display", serif, sans-serif`;
             
-            // Measure text and shrink font size until it fits safely inside the borders (180px buffer)
             while (ctx.measureText(log.brand).width > (canvas.width - 180) && brandFontSize > 30) {
                 brandFontSize -= 2;
                 ctx.font = `bold ${brandFontSize}px "DM Serif Display", serif, sans-serif`;
             }
             ctx.fillText(log.brand, canvas.width / 2, 280);
 
-            // 5. Draw Vitola & Wrapper (With Dynamic Scaling)
             ctx.fillStyle = '#D4AF37';
             let vitolaFontSize = 45;
             ctx.font = `bold ${vitolaFontSize}px sans-serif`;
             const vitolaText = `${log.vitola} • ${log.wrapper}`;
             
-            // Measure text and shrink font size until it fits safely
             while (ctx.measureText(vitolaText).width > (canvas.width - 180) && vitolaFontSize > 20) {
                 vitolaFontSize -= 2;
                 ctx.font = `bold ${vitolaFontSize}px sans-serif`;
             }
             ctx.fillText(vitolaText, canvas.width / 2, 360);
 
-            // 6. Draw Rating Badge (If it exists)
             let currentY = 460;
             if (log.rating) {
                 ctx.fillStyle = '#1A1A1A';
@@ -4057,23 +4489,20 @@
                 const badgeHeight = 90;
                 const badgeX = (canvas.width / 2) - (badgeWidth / 2);
                 
-                // Draw Rounded Rectangle for Badge
                 ctx.beginPath();
                 ctx.roundRect(badgeX, currentY, badgeWidth, badgeHeight, 20);
                 ctx.fill();
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Draw Rating Text inside Badge
                 ctx.fillStyle = '#D4AF37';
                 ctx.font = 'bold 45px monospace';
                 ctx.fillText(`★ ${log.rating.toFixed(2)}`, canvas.width / 2, currentY + 63);
-                currentY += 160; // Push next elements down
+                currentY += 160; 
             } else {
                 currentY += 50;
             }
 
-            // 7. Draw Tasting Notes (With text wrapping)
             if (log.notes && log.notes !== "No notes.") {
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
                 ctx.font = 'italic 38px sans-serif';
@@ -4098,7 +4527,6 @@
                 ctx.fillText(line, canvas.width / 2, currentY);
             }
 
-            // 8. Draw App Footer
             ctx.fillStyle = '#D4AF37';
             ctx.font = 'bold 35px "DM Serif Display", serif';
             ctx.fillText('The Final Third', canvas.width / 2, canvas.height - 120);
@@ -4107,7 +4535,6 @@
             ctx.font = '28px sans-serif';
             ctx.fillText('From the First Light to the Final Third', canvas.width / 2, canvas.height - 80);
 
-            // Convert canvas to a File object
             canvas.toBlob((blob) => {
                 const file = new File([blob], `${log.brand.replace(/\s+/g, '_')}_Review.jpg`, { type: 'image/jpeg' });
                 resolve(file);
@@ -4122,28 +4549,24 @@
         const log = journalHistory.find(l => l.id === id);
         if(!log) return;
 
-        // Temporarily change the share icon to a loading spinner
         const btn = event.currentTarget;
         const originalHtml = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-        btn.style.pointerEvents = 'none'; // Prevent double clicking
+        btn.style.pointerEvents = 'none';
 
         try {
-            // Generate the beautiful image card
             const imageFile = await window.generateShareCard(log);
             
             const shareTitle = `${log.brand} Tasting Notes`;
             const shareText = `I just logged a ${log.brand} ${log.vitola} on The Final Third.\n\nFrom the First Light to the Final Third.`;
 
-            // Check if the device supports sharing files natively
             if (navigator.canShare && navigator.canShare({ files: [imageFile] })) {
                 await navigator.share({
                     title: shareTitle,
                     text: shareText,
-                    files: [imageFile] // This attaches the image to the text message!
+                    files: [imageFile] 
                 });
             } 
-            // Fallback for browsers/devices that don't support file sharing
             else if (navigator.share) {
                 let fallbackText = shareText + `\n\nRating: ${log.rating ? log.rating.toFixed(2) : 'N/A'}/10\nNotes: "${log.notes}"`;
                 await navigator.share({
@@ -4151,7 +4574,6 @@
                     text: fallbackText
                 });
             } 
-            // Ultimate fallback for desktop browsers without share sheets
             else {
                 let fallbackText = shareText + `\n\nRating: ${log.rating ? log.rating.toFixed(2) : 'N/A'}/10\nNotes: "${log.notes}"`;
                 await navigator.clipboard.writeText(fallbackText);
@@ -4160,445 +4582,32 @@
         } catch (err) {
             console.log("Share cancelled or failed.", err);
         } finally {
-            // Restore the original icon
             btn.innerHTML = originalHtml;
             btn.style.pointerEvents = 'auto';
         }
     };
 
-    // --- AGING ENGINE LOGIC (UPDATED WITH DYNAMIC PROGRESS & DIMMING) ---
-
-    document.getElementById('vault-date').addEventListener('change', function(e) {
-        if (!e.target.value) return;
-        const acquired = new Date(e.target.value + 'T00:00:00');
-        acquired.setDate(acquired.getDate() + 7);
-        const minTargetStr = acquired.toISOString().split('T')[0];
-        document.getElementById('vault-target-date').min = minTargetStr;
-        
-        const currentTarget = document.getElementById('vault-target-date').value;
-        if (!currentTarget || new Date(currentTarget + 'T00:00:00') < acquired) {
-            document.getElementById('vault-target-date').value = minTargetStr;
-        }
-    });
-
-    window.editCigar = function(id) {
-        window.closeAllSwipes(); 
-        
-        const cigar = humidorInventory.find(c => c.id === id);
-        if(!cigar) return;
-
-        editingVaultId = id;
-        document.getElementById('vault-brand').value = cigar.brand || '';
-        document.getElementById('vault-quantity').value = cigar.quantity || 1;
-        document.getElementById('vault-vitola').value = cigar.vitola || '';
-        document.getElementById('vault-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
-        document.getElementById('vault-wrapper').value = cigar.wrapper || '';
-        document.getElementById('vault-price').value = cigar.price || '';
-        
-        if (cigar.acquiredDate) {
-            document.getElementById('vault-date').value = new Date(cigar.acquiredDate).toISOString().split('T')[0];
-        }
-        if (cigar.targetDate) {
-            document.getElementById('vault-target-date').value = new Date(cigar.targetDate).toISOString().split('T')[0];
-        }
-        
-        currentVaultImage = cigar.image || null;
-        const photoBtn = document.getElementById('vault-photo-btn');
-        if(currentVaultImage) {
-            photoBtn.classList.add('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-check"></i> Photo Attached (Tap to change)';
-        } else {
-            photoBtn.classList.remove('attached');
-            photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-        }
-
-        const submitBtn = document.getElementById('vault-submit-btn');
-        submitBtn.innerHTML = 'Update Humidor <i class="fa-solid fa-arrows-rotate" style="margin-left: 4px;"></i>';
-        submitBtn.style.background = 'var(--gold)';
-        submitBtn.style.color = '#121212';
-
-        const vaultWrapper = document.getElementById('humidor-form-wrapper');
-        const vaultChevron = document.getElementById('humidor-form-chevron');
-        if (vaultWrapper && vaultWrapper.style.display === 'none') {
-            vaultWrapper.style.display = 'block';
-            vaultChevron.style.transform = 'rotate(180deg)';
-        }
-
-        document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    window.clearHumidorForm = function() {
-        document.getElementById('vault-brand').value = '';
-        document.getElementById('vault-quantity').value = '1';
-        document.getElementById('vault-ring-gauge').value = '';
-        document.getElementById('vault-price').value = '';
-        document.getElementById('vault-vitola').value = '';
-        document.getElementById('vault-wrapper').value = '';
-        
-        currentVaultImage = null;
-        document.getElementById('vault-image-upload').value = "";
-        const photoBtn = document.getElementById('vault-photo-btn');
-        photoBtn.classList.remove('attached');
-        photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
-        
-        initializeDates();
-        
-        editingVaultId = null;
-        const submitBtn = document.getElementById('vault-submit-btn');
-        submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-        submitBtn.style.background = '';
-        submitBtn.style.color = '';
-    };
-
-    window.storeCigar = async function() {
-        const brand = document.getElementById('vault-brand').value;
-        const qtyVal = document.getElementById('vault-quantity').value;
-        const vitola = document.getElementById('vault-vitola').value;
-        const ring = document.getElementById('vault-ring-gauge').value;
-        const wrapper = document.getElementById('vault-wrapper').value;
-        const priceVal = document.getElementById('vault-price').value;
-        const acquiredDate = document.getElementById('vault-date').value;
-        const targetDate = document.getElementById('vault-target-date').value;
-        const submitBtn = document.getElementById('vault-submit-btn');
-
-        if(!brand || !acquiredDate || !targetDate) { 
-            await window.customAlert("Please enter the brand, date acquired, and target peak date.", "Missing Data");
-            return; 
-        }
-
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-        submitBtn.disabled = true;
-
-        const acqTime = new Date(acquiredDate + 'T00:00:00').getTime();
-        const targetTime = new Date(targetDate + 'T00:00:00').getTime();
-
-        try {
-            const newCigar = {
-                uid: auth.currentUser.uid,
-                brand,
-                quantity: parseInt(qtyVal) || 1,
-                vitola: vitola || "Unknown",
-                ring: ring || "-",
-                wrapper: wrapper || "Unknown",
-                price: priceVal ? parseFloat(priceVal) : null,
-                targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
-                acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
-                image: currentVaultImage // Saving the scaled Base64 string directly
-            };
-
-            if (editingVaultId) {
-                await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
-                editingVaultId = null;
-                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-                submitBtn.style.background = '';
-                submitBtn.style.color = '';
-            } else {
-                await addDoc(collection(db, "humidor"), newCigar);
-                submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-            }
-            
-            await window.checkAndAddNewBrand(brand);
-            
-            window.clearHumidorForm();
-
-        } catch (e) {
-            console.error("Error adding document: ", e);
-            submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
-        } finally {
-            submitBtn.disabled = false;
-        }
-    };
-
-    window.debouncedRenderHumidor = debounce(() => renderHumidor(), 250);
-
-    window.renderHumidor = function() {
-        const list = document.getElementById('humidor-inventory-list');
-        const countStat = document.getElementById('stat-collection'); 
-        
-        window.activeSwipeCard = null; 
-
-        const wrapperContainer = document.getElementById('profile-wrapper-stats-container');
-
-        if(humidorInventory.length === 0) {
-            list.innerHTML = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>Humidor is currently empty</span>
-                </div>`;
-            countStat.innerText = '0';
-            document.getElementById('stat-alerts').innerText = '0';
-            
-            document.getElementById('stat-avg-aging-val').innerText = '0';
-            document.getElementById('stat-humidor-value-val').innerText = '$0';
-            document.getElementById('stat-aging-pill').innerHTML = '&bull; EMPTY &bull;';
-            document.getElementById('stat-value-pill').innerHTML = '<i class="fa-solid fa-arrow-trend-up"></i> +$0 this month';
-            
-            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
-            
-            // Handle empty dashboard graphics
-            document.getElementById('label-tier-1').style.opacity = '0.3';
-            document.getElementById('label-tier-2').style.opacity = '0.3';
-            document.getElementById('label-tier-3').style.opacity = '0.3';
-            document.getElementById('label-tier-4').style.opacity = '0.3';
-            
-            document.getElementById('bar-tier-1').style.width = '25%';
-            document.getElementById('bar-tier-2').style.width = '25%';
-            document.getElementById('bar-tier-3').style.width = '25%';
-            document.getElementById('bar-tier-4').style.width = '25%';
-            
-            return;
-        }
-
-        const now = Date.now();
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth();
-
-        let totalValue = 0;
-        let totalAgedDays = 0;
-        let readyAlertsCount = 0;
-        let totalQuantity = 0;
-        let monthlyAddedValue = 0;
-
-        // --- DYNAMIC AGING CALCULATOR ---
-        let tier1 = 0; // 0-30
-        let tier2 = 0; // 31-90
-        let tier3 = 0; // 91-180
-        let tier4 = 0; // 180+
-        let totalAgingQuantity = 0;
-
-        const wrapperCounts = {};
-        let totalValidWrappers = 0;
-
-        humidorInventory.forEach(c => {
-            const msPerDay = 1000 * 60 * 60 * 24;
-            // Fallback for legacy items missing acquiredDate
-            const acqDate = c.acquiredDate || now;
-            let days = Math.floor((now - acqDate) / msPerDay);
-            if (days < 0) days = 0;
-            
-            let qty = c.quantity || 1;
-            totalAgingQuantity += qty;
-            
-            if (days <= 30) tier1 += qty;
-            else if (days <= 90) tier2 += qty;
-            else if (days <= 180) tier3 += qty;
-            else tier4 += qty;
-            
-            totalAgedDays += days;
-            
-            const cigarTotalVal = (c.price || 0) * qty;
-            totalValue += cigarTotalVal;
-
-            // Check if acquired this current calendar month/year
-            const acqObj = new Date(acqDate);
-            if (acqObj.getFullYear() === currentYear && acqObj.getMonth() === currentMonth) {
-                monthlyAddedValue += cigarTotalVal;
-            }
-
-            const targetDate = c.targetDate || (acqDate + 7 * msPerDay);
-            let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
-            if (totalTargetDays <= 0) totalTargetDays = 1; 
-            
-            let progress = (days / totalTargetDays) * 100;
-            if (progress >= 100) readyAlertsCount += qty;
-
-            // Palate Mapping Logic
-            if(c.wrapper && c.wrapper !== "Unknown") {
-                wrapperCounts[c.wrapper] = (wrapperCounts[c.wrapper] || 0) + qty;
-                totalValidWrappers += qty;
-            }
-        });
-
-        document.getElementById('aging-tier-1').innerText = `${tier1} cigar${tier1 === 1 ? '' : 's'}`;
-        document.getElementById('aging-tier-2').innerText = `${tier2} cigar${tier2 === 1 ? '' : 's'}`;
-        document.getElementById('aging-tier-3').innerText = `${tier3} cigar${tier3 === 1 ? '' : 's'}`;
-        document.getElementById('aging-tier-4').innerText = `${tier4} cigar${tier4 === 1 ? '' : 's'}`;
-        
-        // Dynamic Opacity Dimming
-        document.getElementById('label-tier-1').style.opacity = tier1 === 0 ? '0.3' : '1';
-        document.getElementById('label-tier-2').style.opacity = tier2 === 0 ? '0.3' : '1';
-        document.getElementById('label-tier-3').style.opacity = tier3 === 0 ? '0.3' : '1';
-        document.getElementById('label-tier-4').style.opacity = tier4 === 0 ? '0.3' : '1';
-        
-        // Dynamic Proportional Widths
-        if (totalAgingQuantity > 0) {
-            document.getElementById('bar-tier-1').style.width = `${(tier1 / totalAgingQuantity) * 100}%`;
-            document.getElementById('bar-tier-2').style.width = `${(tier2 / totalAgingQuantity) * 100}%`;
-            document.getElementById('bar-tier-3').style.width = `${(tier3 / totalAgingQuantity) * 100}%`;
-            document.getElementById('bar-tier-4').style.width = `${(tier4 / totalAgingQuantity) * 100}%`;
-        }
-
-        // --- FILTER & SORT LOGIC ---
-        const searchInput = document.getElementById('humidor-search');
-        // Grab the input, make it lowercase, and strip out punctuation using Regex
-        const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[^\w\s]/g, '') : '';
-        
-        let displayList = [...humidorInventory];
-        
-        if (searchTerm) {
-            displayList = displayList.filter(cigar => {
-                // Strip punctuation from the stored brand and vitola before comparing
-                const normalizedBrand = cigar.brand.toLowerCase().replace(/[^\w\s]/g, '');
-                const normalizedVitola = cigar.vitola.toLowerCase().replace(/[^\w\s]/g, '');
-                
-                return normalizedBrand.includes(searchTerm) || normalizedVitola.includes(searchTerm);
-            });
-        }        
-        if (humidorSortOrder === 'alpha') {
-            displayList.sort((a, b) => a.brand.localeCompare(b.brand));
-        } else {
-            // Safe sort fallback
-            displayList.sort((a, b) => (b.acquiredDate || 0) - (a.acquiredDate || 0));
-        }
-
-        let html = '';
-        if (displayList.length === 0) {
-            html = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
-                    <span>No results found</span>
-                </div>`;
-        } else {
-            displayList.forEach(cigar => {
-                const msPerDay = 1000 * 60 * 60 * 24;
-                const cigarQty = cigar.quantity || 1;
-                totalQuantity += cigarQty;
-                
-                const acqDate = cigar.acquiredDate || now;
-                let daysAged = Math.floor((now - acqDate) / msPerDay);
-                if (daysAged < 0) daysAged = 0; 
-
-                const targetDate = cigar.targetDate || (acqDate + 7 * msPerDay);
-                let totalTargetDays = Math.floor((targetDate - acqDate) / msPerDay);
-                if (totalTargetDays <= 0) totalTargetDays = 1; 
-                
-                let progress = (daysAged / totalTargetDays) * 100;
-                if (progress > 100) progress = 100;
-                if (progress < 0) progress = 0; 
-
-                let isReady = progress >= 100;
-                let badgeClass = isReady ? 'humidor-badge-ready' : 'humidor-badge-aging';
-                let statusIcon = isReady ? '<i class="fa-solid fa-fire"></i> ' : '<i class="fa-solid fa-hourglass-half"></i> ';
-                let statusText = isReady ? 'Peak' : 'Aging';
-
-                let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
-                
-                let imageBadge = '';
-                if(cigar.image) {
-                    window.imageRegistry[cigar.id] = cigar.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
-                }
-                
-                let qtyBadge = `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid rgba(var(--leather-rgb), 0.3); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-cubes"></i> QTY: ${cigarQty}</span>`;
-                
-                let attributesRow = '';
-                if (qtyBadge || imageBadge) {
-                    attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${imageBadge}</div>`;
-                }
-
-                html += `
-                <div class="swipe-container">
-                    <div class="swipe-actions">
-                        <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
-                            <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
-                        </button>
-                        <button class="swipe-action-btn swipe-action-delete" onclick="removeCigar('${cigar.id}')">
-                            <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
-                        </button>
-                    </div>
-                    
-                    <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
-                        <div class="log-header">
-                            <div style="flex: 1; padding-right: 12px;">
-                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
-                                <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
-                            </div>
-                            <div class="badge ${badgeClass}">${statusIcon}${statusText}</div>
-                        </div>
-                        ${attributesRow}
-                        <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
-                        <div class="timeline-footer">
-                            <span>Aged: ${daysAged} Days</span>
-                            <span>Target: ${totalTargetDays} Days</span>
-                        </div>
-                    </div>
-                </div>`;
-            });
-        }
-        
-        list.innerHTML = html;        
-        countStat.innerText = totalAgingQuantity; 
-        
-        // Hidden element helps satisfy JS updating logic for peak cigars
-        const alertsEl = document.getElementById('stat-alerts');
-        if (alertsEl) alertsEl.innerText = readyAlertsCount;
-        
-        let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
-        document.getElementById('stat-avg-aging-val').innerText = avgDays;
-        
-        let formattedValue = totalValue % 1 === 0 ? `$${totalValue.toLocaleString('en-US')}` : `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        document.getElementById('stat-humidor-value-val').innerText = formattedValue;
-        
-        let formattedMonthly = monthlyAddedValue % 1 === 0 ? `+$${monthlyAddedValue.toLocaleString('en-US')}` : `+$${monthlyAddedValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        document.getElementById('stat-value-pill').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${formattedMonthly} this month`;
-
-        let agingStatus = "&bull; JUST RESTING &bull;";
-        if (avgDays >= 180) agingStatus = "&bull; VINTAGE &bull;";
-        else if (avgDays >= 90) agingStatus = "&bull; WELL AGED &bull;";
-        else if (avgDays >= 30) agingStatus = "&bull; DEVELOPING &bull;";
-        document.getElementById('stat-aging-pill').innerHTML = agingStatus;
-        
-        // Execute Updated Top 3 Palate Mapping Logic
-        const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
-        
-        if (totalValidWrappers > 0) {
-            let wrapperHtml = '';
-            const top3 = sortedWrappers.slice(0, 3);
-            const badgeClasses = ['badge-indigo', 'badge-mint', 'badge-amber'];
-            
-            top3.forEach((item, index) => {
-                const pct = Math.round((item[1] / totalValidWrappers) * 100);
-                const badgeClass = badgeClasses[index] || 'badge-indigo';
-                wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
-            });
-            wrapperContainer.innerHTML = wrapperHtml;
-        } else {
-            wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
-        }
-    };
-
-    window.removeCigar = async function(id) {
-        window.closeAllSwipes();
-        if(await window.customConfirm("Remove this cigar from your humidor?", "Remove Cigar", true)) {
-            await deleteDoc(doc(db, "humidor", id));
-        }
-    };
 
     // --- NATIVE SCROLL COLLAPSE ENGINE ---
     let lastScrollTop = 0;
     window.isHeaderCollapsed = false;
-    const SCROLL_THRESHOLD = 15; // Requires a deliberate swipe to prevent jitter
+    const SCROLL_THRESHOLD = 15; 
 
-    // Used for dynamic header offset based on device notch spacing
     window.updateHeaderShift = function() {
         const header1 = document.getElementById('daily-cigar-header');
         const header2 = document.getElementById('layer-2-container');
         if (header1 && header2) {
             const h1 = header1.offsetHeight || 0;
             const h2 = header2.offsetHeight || 0;
-            // Negative value to shift Layer 3 up by exactly the combined height
             document.documentElement.style.setProperty('--header-shift', `-${h1 + h2 - 40}px`);
         }
     };
 
-    // Call once to establish initial shift
     window.updateHeaderShift();
 
     window.handleAppScroll = function(e) {
         const st = e.target.scrollTop;
         
-        // 1. If we bounce past the top (iOS rubber-banding), ALWAYS expand the header
         if (st <= 0) {
             if (window.isHeaderCollapsed) {
                 window.isHeaderCollapsed = false;
@@ -4611,7 +4620,6 @@
 
         const delta = st - lastScrollTop;
 
-        // 2. Scrolling Down -> Hide Headers
         if (delta > SCROLL_THRESHOLD && st > 20) { 
             if (!document.body.classList.contains('header-stage-1') && !document.body.classList.contains('header-stage-2')) {
                 document.body.classList.add('header-stage-1');
@@ -4622,7 +4630,6 @@
             }
             lastScrollTop = st; 
         } 
-        // 3. Scrolling Up -> Show Headers
         else if (delta < -SCROLL_THRESHOLD) {
             if (document.body.classList.contains('header-stage-2')) {
                 document.body.classList.remove('header-stage-2');
@@ -4636,18 +4643,16 @@
         }
     };
 
-    // Attach passive listener to ensure scrolling remains 60fps
     document.querySelectorAll('.view-section').forEach(section => {
         section.addEventListener('scroll', window.handleAppScroll, { passive: true });
     });
 
-    // OVERRIDE TABS: Force headers to expand whenever a new tab is clicked
     const originalSwitchTab = window.switchTab;
     window.switchTab = function(targetViewId, dockIndex) {
         window.isHeaderCollapsed = false;
         document.body.classList.remove('header-collapsed', 'header-stage-1', 'header-stage-2');
         lastScrollTop = 0;
-        originalSwitchTab(targetViewId, dockIndex); // Run the original tab logic
+        originalSwitchTab(targetViewId, dockIndex); 
     };
 
 </script>
