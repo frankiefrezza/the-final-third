@@ -1790,6 +1790,23 @@
                     </div>
                 </div>
 
+                                <!-- Feedback & Support Button -->
+                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 24px; transition: transform 0.2s;" onclick="openFeedbackModal()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Feedback & Support</div>
+                            <div style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Report bugs or request features</div>
+                        </div>
+                    </div>
+                    <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
+                        <i class="fa-solid fa-chevron-right" style="color: var(--text-dim); font-size: 11px;"></i>
+                    </div>
+                </div>
+
+
                 <button class="btn-primary" style="background: rgba(var(--danger-rgb), 0.1); color: var(--danger); width: 100%; border: none; border-radius: 12px;" onclick="handleLogout()">
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
                 </button>
@@ -2009,12 +2026,36 @@
         <div id="custom-dialog-title" class="custom-dialog-title">Notice</div>
         <div id="custom-dialog-msg" class="custom-dialog-msg"></div>
         <input type="text" id="custom-dialog-input" class="custom-dialog-input" autocomplete="off">
-        <div class="custom-dialog-actions">
+                <div class="custom-dialog-actions">
             <button id="custom-dialog-cancel" class="custom-dialog-btn custom-dialog-cancel">Cancel</button>
             <button id="custom-dialog-confirm" class="custom-dialog-btn custom-dialog-confirm">OK</button>
         </div>
     </div>
 </div>
+
+<!-- FEEDBACK MODAL -->
+<div id="feedback-action-sheet" class="action-sheet-overlay" onclick="closeFeedbackModal(event)">
+    <div class="action-sheet" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main);">Developer Feedback</div>
+            <div onclick="closeFeedbackModal()" style="color: var(--text-dim); font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.4;">Spot a bug or have an idea for a feature? Let us know. Your feedback goes directly to the development team.</p>
+        
+        <select id="feedback-type" class="form-input form-select" style="margin-bottom: 12px;">
+            <option value="Bug Report">Bug Report</option>
+            <option value="Feature Request">Feature Request</option>
+            <option value="General Feedback">General Feedback</option>
+        </select>
+        
+        <textarea id="feedback-text" class="form-input" placeholder="Please describe the issue or your idea here..." rows="4" style="resize: none; margin-bottom: 24px;"></textarea>
+        
+        <button id="feedback-submit-btn" class="btn-primary" style="margin-bottom: 0;" onclick="submitFeedback()">
+            Send Feedback <i class="fa-solid fa-paper-plane" style="margin-left: 4px;"></i>
+        </button>
+    </div>
+</div>
+
 <script type="module">
 
     // --- PAIRING GUIDE ENGINE ---
@@ -2353,11 +2394,57 @@
         });
     };
 
-    window.customAlert = (message, title = "Notice") => window.showCustomDialog({ title, message, type: 'alert' });
+        window.customAlert = (message, title = "Notice") => window.showCustomDialog({ title, message, type: 'alert' });
     window.customConfirm = (message, title = "Confirm", isDanger = false) => window.showCustomDialog({ title, message, type: 'confirm', isDanger });
     window.customPrompt = (message, defaultVal = "", title = "Input Required") => window.showCustomDialog({ title, message, type: 'prompt', defaultVal });
 
+    // --- FEEDBACK & SUPPORT ENGINE ---
+    window.openFeedbackModal = function() {
+        document.getElementById('feedback-text').value = '';
+        document.getElementById('feedback-type').selectedIndex = 0;
+        document.getElementById('feedback-action-sheet').classList.add('active');
+    };
+
+    window.closeFeedbackModal = function(event) {
+        document.getElementById('feedback-action-sheet').classList.remove('active');
+    };
+
+    window.submitFeedback = async function() {
+        const type = document.getElementById('feedback-type').value;
+        const text = document.getElementById('feedback-text').value.trim();
+        const btn = document.getElementById('feedback-submit-btn');
+
+        if (!text) {
+            await window.customAlert("Please enter a message before sending.", "Missing Information");
+            return;
+        }
+
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+        btn.disabled = true;
+
+        try {
+            await addDoc(collection(db, "app_feedback"), {
+                uid: auth.currentUser.uid,
+                username: window.currentUserName,
+                type: type,
+                message: text,
+                timestamp: Date.now(),
+                status: "New" 
+            });
+
+            await window.customAlert("Thank you! Your feedback has been sent directly to the development team.", "Feedback Received");
+            closeFeedbackModal();
+        } catch (error) {
+            console.error("Feedback error:", error);
+            await window.customAlert("Failed to send feedback. Please check your connection.", "Error");
+        } finally {
+            btn.innerHTML = 'Send Feedback <i class="fa-solid fa-paper-plane" style="margin-left: 4px;"></i>';
+            btn.disabled = false;
+        }
+    };
+
     let humidorInventory = [];
+
     let journalHistory = [];
     let editingVaultId = null;
     let editingJournalId = null;
