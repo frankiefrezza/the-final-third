@@ -26,7 +26,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Final Third">
 
-
     <script>
         // Check local storage immediately to prevent a white/dark flash of unstyled content
         const savedTheme = localStorage.getItem('finalThirdTheme') || 'dark';
@@ -285,7 +284,7 @@
         .luxury-input:-webkit-autofill:active {
             -webkit-box-shadow: 0 0 0 30px var(--login-input-bg) inset !important;
             -webkit-text-fill-color: var(--text-main) !important;
-            border: 1px solid var(--input-border) !important; /* Forces solid border over Safari yellow */
+            border: 1px solid var(--input-border) !important; 
             transition: background-color 5000s ease-in-out 0s;
         }
 
@@ -372,7 +371,6 @@
         /* --- PERSISTENT HEADER (LAYER 1) --- */
         .dash-header {
             text-align: center;
-            /* Using env() correctly pushes the header below the Dynamic Island/Notch */
             padding: calc(20px + env(safe-area-inset-top, 0px)) 16px 32px 16px;
             background: var(--bg-base);
             transition: padding-bottom 0.3s ease;
@@ -546,7 +544,7 @@
             background: var(--surface-02dp) !important;
             border-radius: 16px; 
             border: 1px solid var(--border-glass-bento) !important;
-            box-shadow: 0 4px 5px rgba(0,0,0,0.05), 0 1px 10px rgba(0,0,0,0.03); /* Softened default shadow */
+            box-shadow: 0 4px 5px rgba(0,0,0,0.05), 0 1px 10px rgba(0,0,0,0.03); 
             position: relative; 
             transition: transform 0.2s, background-color 0.3s, border-color 0.3s; 
         }
@@ -3686,7 +3684,7 @@ window.renderJournal = function() {
                 
                 <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
                     
-                                        <!-- Visible Summary Block -->
+                    <!-- Visible Summary Block -->
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
                         <div style="flex: 1; padding-right: 12px;">
                             <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(log.brand)}</div>
@@ -3717,7 +3715,6 @@ window.renderJournal = function() {
                         
                         <div style="font-size: 13px; color: var(--text-dim); margin-top: 12px; font-style: italic; line-height: 1.4;">"${escapeHTML(log.notes)}"</div>
                     </div>
-
 
                 </div>
             </div>`;
@@ -3784,6 +3781,123 @@ window.removeJournalLog = async function(id) {
     }
 };
 
+// --- SHARE CARD IMAGE GENERATOR ---
+window.generateShareCard = function(log) {
+    return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1080;
+        canvas.height = 1080; // Square format, perfect for Instagram or text messages
+        const ctx = canvas.getContext('2d');
+
+        // 1. Draw Background (Luxury Dark Surface)
+        ctx.fillStyle = '#121212';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 2. Draw Inner Border (Gold/Leather Accent)
+        ctx.strokeStyle = '#D4AF37'; // var(--leather)
+        ctx.lineWidth = 6;
+        ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
+
+        // 3. Draw Header "TASTING LEDGER"
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.letterSpacing = '6px'; // Note: letterSpacing support varies, but helps where supported
+        ctx.fillText('TASTING LEDGER', canvas.width / 2, 160);
+
+                // 4. Draw Cigar Brand (With Dynamic Scaling)
+        ctx.fillStyle = '#FFFFFF';
+        let brandFontSize = 90;
+        ctx.font = `bold ${brandFontSize}px "DM Serif Display", serif, sans-serif`;
+        
+        // Measure text and shrink font size until it fits safely inside the borders (180px buffer)
+        while (ctx.measureText(log.brand).width > (canvas.width - 180) && brandFontSize > 30) {
+            brandFontSize -= 2;
+            ctx.font = `bold ${brandFontSize}px "DM Serif Display", serif, sans-serif`;
+        }
+        ctx.fillText(log.brand, canvas.width / 2, 280);
+
+        // 5. Draw Vitola & Wrapper (With Dynamic Scaling)
+        ctx.fillStyle = '#D4AF37';
+        let vitolaFontSize = 45;
+        ctx.font = `bold ${vitolaFontSize}px sans-serif`;
+        const vitolaText = `${log.vitola} • ${log.wrapper}`;
+        
+        // Measure text and shrink font size until it fits safely
+        while (ctx.measureText(vitolaText).width > (canvas.width - 180) && vitolaFontSize > 20) {
+            vitolaFontSize -= 2;
+            ctx.font = `bold ${vitolaFontSize}px sans-serif`;
+        }
+        ctx.fillText(vitolaText, canvas.width / 2, 360);
+
+
+        // 6. Draw Rating Badge (If it exists)
+        let currentY = 460;
+        if (log.rating) {
+            ctx.fillStyle = '#1A1A1A';
+            const badgeWidth = 280;
+            const badgeHeight = 90;
+            const badgeX = (canvas.width / 2) - (badgeWidth / 2);
+            
+            // Draw Rounded Rectangle for Badge
+            ctx.beginPath();
+            ctx.roundRect(badgeX, currentY, badgeWidth, badgeHeight, 20);
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Rating Text inside Badge
+            ctx.fillStyle = '#D4AF37';
+            ctx.font = 'bold 45px monospace';
+            ctx.fillText(`★ ${log.rating.toFixed(2)}`, canvas.width / 2, currentY + 63);
+            currentY += 160; // Push next elements down
+        } else {
+            currentY += 50;
+        }
+
+        // 7. Draw Tasting Notes (With text wrapping)
+        if (log.notes && log.notes !== "No notes.") {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.font = 'italic 38px sans-serif';
+            ctx.textAlign = 'center';
+            
+            const words = `"${log.notes}"`.split(' ');
+            let line = '';
+            const maxWidth = 800;
+            const lineHeight = 55;
+
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    ctx.fillText(line, canvas.width / 2, currentY);
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, canvas.width / 2, currentY);
+        }
+
+        // 8. Draw App Footer
+        ctx.fillStyle = '#D4AF37';
+        ctx.font = 'bold 35px "DM Serif Display", serif';
+        ctx.fillText('The Final Third', canvas.width / 2, canvas.height - 120);
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.font = '28px sans-serif';
+        ctx.fillText('From the First Light to the Final Third', canvas.width / 2, canvas.height - 80);
+
+        // Convert canvas to a File object
+        canvas.toBlob((blob) => {
+            const file = new File([blob], `${log.brand.replace(/\s+/g, '_')}_Review.jpg`, { type: 'image/jpeg' });
+            resolve(file);
+        }, 'image/jpeg', 0.9);
+    });
+};
+
+
 window.shareJournalLog = async function(id, event) {
     if (event) event.stopPropagation();
     window.closeAllSwipes();
@@ -3791,27 +3905,47 @@ window.shareJournalLog = async function(id, event) {
     const log = journalHistory.find(l => l.id === id);
     if(!log) return;
 
-    let shareText = `I just logged a ${log.brand} ${log.vitola} on The Final Third.\n\n`;
-    if (log.rating) shareText += `Rating: ${log.rating.toFixed(2)} / 10\n`;
-    if (log.notes && log.notes !== "No notes.") shareText += `Notes: "${log.notes}"\n`;
-    shareText += `\nFrom the First Light to the Final Third.`;
+    // Temporarily change the share icon to a loading spinner
+    const btn = event.currentTarget;
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    btn.style.pointerEvents = 'none'; // Prevent double clicking
 
-    if (navigator.share) {
-        try {
+    try {
+        // Generate the beautiful image card
+        const imageFile = await window.generateShareCard(log);
+        
+        const shareTitle = `${log.brand} Tasting Notes`;
+        const shareText = `I just logged a ${log.brand} ${log.vitola} on The Final Third.\n\nFrom the First Light to the Final Third.`;
+
+        // Check if the device supports sharing files natively
+        if (navigator.canShare && navigator.canShare({ files: [imageFile] })) {
             await navigator.share({
-                title: `${log.brand} Tasting Notes`,
-                text: shareText
+                title: shareTitle,
+                text: shareText,
+                files: [imageFile] // This attaches the image to the text message!
             });
-        } catch (err) {
-            console.log("Share cancelled.", err);
-        }
-    } else {
-        try {
-            await navigator.clipboard.writeText(shareText);
+        } 
+        // Fallback for browsers/devices that don't support file sharing
+        else if (navigator.share) {
+            let fallbackText = shareText + `\n\nRating: ${log.rating ? log.rating.toFixed(2) : 'N/A'}/10\nNotes: "${log.notes}"`;
+            await navigator.share({
+                title: shareTitle,
+                text: fallbackText
+            });
+        } 
+        // Ultimate fallback for desktop browsers without share sheets
+        else {
+            let fallbackText = shareText + `\n\nRating: ${log.rating ? log.rating.toFixed(2) : 'N/A'}/10\nNotes: "${log.notes}"`;
+            await navigator.clipboard.writeText(fallbackText);
             window.customAlert("Share text copied to clipboard!", "Copied");
-        } catch (err) {
-            console.error("Clipboard failed", err);
         }
+    } catch (err) {
+        console.log("Share cancelled or failed.", err);
+    } finally {
+        // Restore the original icon
+        btn.innerHTML = originalHtml;
+        btn.style.pointerEvents = 'auto';
     }
 };
 
@@ -4102,7 +4236,7 @@ window.renderHumidor = function() {
     }
 
     let html = '';
-        if (displayList.length === 0) {
+    if (displayList.length === 0) {
         html = `
             <div class="empty-state">
                 <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; opacity: 0.3;"></i>
@@ -4146,7 +4280,7 @@ window.renderHumidor = function() {
                 attributesRow = `<div style="display: flex; gap: 8px; margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;">${qtyBadge}${imageBadge}</div>`;
             }
 
-            html += `
+                        html += `
             <div class="swipe-container">
                 <div class="swipe-actions">
                     <button class="swipe-action-btn swipe-action-edit" onclick="editCigar('${cigar.id}')">
@@ -4303,5 +4437,3 @@ window.switchTab = function(targetViewId, dockIndex) {
 
 </body>
 </html>
-
-
