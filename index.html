@@ -616,22 +616,39 @@
             0%, 100% { opacity: 0.4; }
             50% { opacity: 1; }
         }
-        .humidor-badge-ready { 
+                .humidor-badge-ready { 
             background: transparent; 
             color: var(--leather); 
             border: 1px solid var(--leather); 
             animation: humidorPulse 2s infinite; 
         }
-        .humidor-badge-aging { 
+         .humidor-badge-aging { 
             background: transparent; 
-            color: var(--text-dim); 
-            border: 1px dashed var(--border-subtle); 
+            color: var(--text-main); 
+            position: relative;
+            border: none;
+            z-index: 1;
+            padding: 6px 12px; /* Gives the text room to breathe inside the glowing border */
+        }
+        .humidor-badge-aging::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 3px; /* Increased Border thickness */
+            background: conic-gradient(var(--leather) var(--aging-progress, 0%), var(--border-subtle) 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
         }
         .humidor-badge-aging i { 
             animation: humidorBreathe 3s infinite ease-in-out; 
+            color: var(--leather); 
         }
         
         .progress-track { width: 100%; height: 6px; background: var(--surface-04dp); border-radius: 10px; overflow: hidden; margin-top: 14px; margin-bottom: 8px; }
+
         .progress-fill { height: 100%; background: var(--leather); border-radius: 10px; transition: width 0.5s ease; }
         .timeline-footer { font-family: var(--font-mono); display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-dim); }
 
@@ -4342,7 +4359,7 @@
                                 <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
                                 <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
                             </div>
-                            <div class="badge ${badgeClass}">${statusIcon}${statusText}</div>
+                            <div class="badge ${badgeClass}" style="--aging-progress: ${progress}%;">${statusIcon}${statusText}</div>
                         </div>
                         ${attributesRow}
                         <div class="progress-track"><div class="progress-fill" style="width: ${progress}%; background: ${progressColor};"></div></div>
