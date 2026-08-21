@@ -423,56 +423,31 @@
             box-shadow: 0 -8px 24px var(--shadow-layer3); 
             overflow: hidden; 
             z-index: 15; 
-            
-            transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), 
-                        border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
-                        box-shadow 0.4s ease, 
-                        background-color 0.3s !important;
-            will-change: transform, border-radius;
-            
-            /* Allow it to stretch down so we don't see empty background space when it shifts up */
-            margin-bottom: -300px !important;
-            padding-bottom: 300px !important;
+            transition: background-color 0.3s;
         }
 
-        /* --- STAGE 1: Layer 3 partially collapses into Layer 2 --- */
-        body.header-stage-1 .layer-3-container,
-        body.header-stage-2 .layer-3-container {
-            /* Flatten shadow during movement */
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important; 
+        /* --- BUTTER-SMOOTH COMPACT HEADER TRANSITION --- */
+        #layer-2-container {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
         }
 
-        body.header-stage-1 .layer-3-container {
-            transform: translateY(-46px); /* Move up slightly into Layer 2 */
-        }
-        
-        body.header-stage-1 #dynamic-layer-2-title {
-            transform: scale(0.75) translateY(-4px); /* Title shrinks */
-        }
-
-        body.header-stage-1 #dynamic-layer-2-subtitle {
-            opacity: 0;
-            transform: translateY(-10px);
+        body.app-scrolled #layer-2-container {
+            padding: 12px 24px !important;
+            background: var(--surface-08dp) !important;
+            box-shadow: 0 4px 12px var(--shadow-strong);
+            border-bottom: 1px solid var(--border-subtle);
         }
 
-        /* --- STAGE 2: Layer 2 & 1 completely collapse --- */
-        body.header-stage-2 #layer-2-container {
-            opacity: 0 !important;
-            transform: translateY(-20px) scale(0.98);
-            pointer-events: none;
-        }
-        
-        body.header-stage-2 #daily-cigar-header {
-            opacity: 0 !important;
-            transform: translateY(-10px);
-            pointer-events: none;
+        body.app-scrolled #dynamic-layer-2-title {
+            font-size: 18px !important;
+            transform: none !important;
         }
 
-        body.header-stage-2 .layer-3-container {
-            /* Full shift to the top */
-            transform: translateY(calc(var(--header-shift) + env(safe-area-inset-top, 0px)));
-            border-radius: 0 !important;
-            box-shadow: none !important;
+        body.app-scrolled #dynamic-layer-2-subtitle {
+            display: none !important; /* Hides description cleanly on scroll */
         }
 
         /* --- VIEW SECTIONS & ANIMATIONS --- */
@@ -2324,16 +2299,15 @@
                     headerLayer1.style.paddingBottom = '24px';
                 }
             }
-            if(layer2) {
+                        if(layer2) {
                 layer2.style.paddingTop = '20px';
                 layer2.style.borderRadius = '40px 40px 0 0';
                 layer2.style.borderTop = '1px solid var(--border-subtle)';
                 layer2.style.background = 'linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%)';
             }
         }
-        
-        setTimeout(window.updateHeaderShift, 350);
     };
+
 
     window.toggleDailyCigarExpand = function() {
         const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
@@ -4919,58 +4893,13 @@
     };
 
 
-    // --- NATIVE SCROLL COLLAPSE ENGINE ---
-    let lastScrollTop = 0;
-    window.isHeaderCollapsed = false;
-    const SCROLL_THRESHOLD = 15; 
-
-    window.updateHeaderShift = function() {
-        const header1 = document.getElementById('daily-cigar-header');
-        const header2 = document.getElementById('layer-2-container');
-        if (header1 && header2) {
-            const h1 = header1.offsetHeight || 0;
-            const h2 = header2.offsetHeight || 0;
-            document.documentElement.style.setProperty('--header-shift', `-${h1 + h2 - 40}px`);
-        }
-    };
-
-    window.updateHeaderShift();
-
+    // --- BUTTER-SMOOTH NATIVE SCROLL ENGINE ---
     window.handleAppScroll = function(e) {
         const st = e.target.scrollTop;
-        
-        if (st <= 0) {
-            if (window.isHeaderCollapsed) {
-                window.isHeaderCollapsed = false;
-                document.body.classList.remove('header-collapsed');
-                document.body.classList.remove('header-stage-1', 'header-stage-2');
-            }
-            lastScrollTop = 0;
-            return;
-        }
-
-        const delta = st - lastScrollTop;
-
-        if (delta > SCROLL_THRESHOLD && st > 20) { 
-            if (!document.body.classList.contains('header-stage-1') && !document.body.classList.contains('header-stage-2')) {
-                document.body.classList.add('header-stage-1');
-                window.isHeaderCollapsed = true;
-            } else if (document.body.classList.contains('header-stage-1') && st > 80) {
-                document.body.classList.remove('header-stage-1');
-                document.body.classList.add('header-stage-2');
-            }
-            lastScrollTop = st; 
-        } 
-        else if (delta < -SCROLL_THRESHOLD) {
-            if (document.body.classList.contains('header-stage-2')) {
-                document.body.classList.remove('header-stage-2');
-                document.body.classList.add('header-stage-1');
-                lastScrollTop = st;
-            } else if (document.body.classList.contains('header-stage-1')) {
-                document.body.classList.remove('header-stage-1');
-                window.isHeaderCollapsed = false;
-                lastScrollTop = st; 
-            }
+        if (st > 25) {
+            document.body.classList.add('app-scrolled');
+        } else {
+            document.body.classList.remove('app-scrolled');
         }
     };
 
@@ -4980,11 +4909,10 @@
 
     const originalSwitchTab = window.switchTab;
     window.switchTab = function(targetViewId, dockIndex) {
-        window.isHeaderCollapsed = false;
-        document.body.classList.remove('header-collapsed', 'header-stage-1', 'header-stage-2');
-        lastScrollTop = 0;
+        document.body.classList.remove('app-scrolled');
         originalSwitchTab(targetViewId, dockIndex); 
     };
+
 
 </script>
 </body>
