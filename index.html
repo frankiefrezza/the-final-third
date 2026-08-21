@@ -706,7 +706,23 @@
         }
 
         
-        .swipe-action-delete { background: var(--danger); color: #FFFFFF; }
+        .swipe-action-delete { 
+            background: var(--danger); 
+            color: #FFFFFF; 
+            position: relative; 
+        }
+
+        /* Attaches a smooth red fade to the left edge of the delete button */
+        .swipe-action-delete::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 100%; /* Anchors exactly to the left edge */
+            width: 80px; /* How far out the fade extends behind the card */
+            background: linear-gradient(to right, transparent, var(--danger));
+            pointer-events: none;
+        }
         
         .swipe-front {
             position: relative;
@@ -3501,15 +3517,25 @@
 
     function buildFriendHtml(uid, name, avatar, latestActivity = "No recent activity") {
         return `
-        <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <img src="${avatar}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
-                <div>
-                    <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(name)}</div>
-                    <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">${escapeHTML(latestActivity)}</div>
+        <div class="swipe-container" style="margin-bottom: 8px; border-radius: 12px;">
+            <div class="swipe-actions">
+                <button class="swipe-action-btn swipe-action-delete" style="width: 140px;" onclick="removeFriend('${uid}', '${escapeHTML(name)}')">
+                    <i class="fa-solid fa-user-xmark" style="font-size: 16px; margin-bottom: 4px;"></i> Remove
+                </button>
+            </div>
+            
+            <div class="swipe-front glass-bento" style="padding: 12px; margin-bottom: 0; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border-subtle);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <img src="${avatar}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(name)}</div>
+                        <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">${escapeHTML(latestActivity)}</div>
+                    </div>
+                </div>
+                <div style="color: var(--text-dim); opacity: 0.4; padding-right: 4px;">
+                    <i class="fa-solid fa-chevron-left" style="font-size: 12px;"></i>
                 </div>
             </div>
-            <button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; color: var(--danger); border-color: var(--border-subtle);" onclick="removeFriend('${uid}', '${escapeHTML(name)}')">Remove</button>
         </div>`;
     }
 
