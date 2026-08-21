@@ -3669,6 +3669,18 @@
         renderLoungeFeed();
     };
 
+    window.toggleUserFeed = function(uid) {
+        const container = document.getElementById('feed-container-' + uid);
+        const chevron = document.getElementById('feed-chevron-' + uid);
+        if (container.style.display === 'none') {
+            container.style.display = 'block';
+            chevron.style.transform = 'rotate(0deg)';
+        } else {
+            container.style.display = 'none';
+            chevron.style.transform = 'rotate(180deg)';
+        }
+    };
+
     window.renderLoungeFeed = function() {
         const feedList = document.getElementById('lounge-feed-list');
         
@@ -3689,36 +3701,84 @@
             return;
         }
 
-        let html = '';
+        // 1. Group the logs by User ID
+        const groupedLogs = {};
         filteredLogs.forEach(log => {
-            let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
-            let imageSection = log.image ? `<img src="${log.image}" style="width: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; margin-top: 12px; border: 1px solid var(--border-subtle); background: var(--surface-01dp);">` : '';
+            if (!groupedLogs[log.uid]) {
+                groupedLogs[log.uid] = {
+                    username: log.username || 'Unknown User',
+                    avatar: log.avatar || 'app-icon.png',
+                    logs: [],
+                    latestDate: new Date(log.date).getTime() || 0
+                };
+            }
+            groupedLogs[log.uid].logs.push(log);
+            
+            // Track newest log to sort the groups so active friends are at the top
+            const logTime = new Date(log.date).getTime() || 0;
+            if (logTime > groupedLogs[log.uid].latestDate) {
+                groupedLogs[log.uid].latestDate = logTime;
+            }
+        });
 
+        // 2. Convert to Array and Sort by Latest Activity
+        const sortedGroups = Object.keys(groupedLogs).map(uid => ({
+            uid,
+            ...groupedLogs[uid]
+        })).sort((a, b) => b.latestDate - a.latestDate);
+
+        // 3. Render HTML
+        let html = '';
+        sortedGroups.forEach(group => {
+            
+            // Render Collapsible User Header
             html += `
-            <div class="log-card" style="margin-bottom: 16px; padding: 20px;">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                    <img src="${log.avatar || 'app-icon.png'}" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-subtle);">
-
-                    <div>
-                        <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">${escapeHTML(log.username || 'Unknown User')}</div>
-                        <div style="font-size: 10px; color: var(--text-dim);">${escapeHTML(log.date)}</div>
+            <div class="user-feed-group" style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: var(--surface-01dp); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border-subtle); margin-bottom: 12px;" onclick="toggleUserFeed('${group.uid}')">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="${escapeHTML(group.avatar)}" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">${escapeHTML(group.username)}</div>
+                        <div class="badge badge-amber" style="font-size: 9px; padding: 4px 8px;">${group.logs.length} LOGS</div>
+                    </div>
+                    <div style="color: var(--text-dim); padding: 4px;">
+                        <i id="feed-chevron-${group.uid}" class="fa-solid fa-chevron-up" style="transition: transform 0.3s; font-size: 14px;"></i>
                     </div>
                 </div>
-                
-                <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">${escapeHTML(log.brand)}</div>
-                <div style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-bottom: 12px;">${escapeHTML(log.vitola)} • ${escapeHTML(log.wrapper)}</div>
-                
-                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-                    ${ratingBadge}
-                    <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
-                    <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
+                <div id="feed-container-${group.uid}" style="display: block;">
+            `;
+
+            // Render their individual logs inside the wrapper
+            group.logs.forEach(log => {
+                let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
+                let imageSection = log.image ? `<img src="${log.image}" style="width: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; margin-top: 12px; border: 1px solid var(--border-subtle); background: var(--surface-01dp);">` : '';
+
+                html += `
+                <div class="log-card" style="margin-bottom: 16px; padding: 20px; border-left: 2px solid var(--leather); border-radius: 12px 16px 16px 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                        <div style="flex: 1; padding-right: 12px;">
+                            <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; line-height: 1.2;">${escapeHTML(log.brand)}</div>
+                            <div style="font-size: 12px; color: var(--text-dim); font-weight: 600;">${escapeHTML(log.vitola)} • ${escapeHTML(log.wrapper)}</div>
+                        </div>
+                        <div class="badge badge-amber" style="font-size: 9px; white-space: nowrap;">${escapeHTML(log.date)}</div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+                        ${ratingBadge}
+                        <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
+                        <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
+                    </div>
+                    
+                    ${log.notes && log.notes !== "No notes." ? `<div style="font-size: 13px; color: var(--text-dim); font-style: italic; line-height: 1.5; border-left: 2px solid var(--leather); padding-left: 10px; margin-top: 8px;">"${escapeHTML(log.notes)}"</div>` : ''}
+                    
+                    ${imageSection}
+                </div>`;
+            });
+
+            html += `
                 </div>
-                
-                ${log.notes && log.notes !== "No notes." ? `<div style="font-size: 13px; color: var(--text-dim); font-style: italic; line-height: 1.5; border-left: 2px solid var(--leather); padding-left: 10px; margin-top: 8px;">"${escapeHTML(log.notes)}"</div>` : ''}
-                
-                ${imageSection}
             </div>`;
         });
+        
         feedList.innerHTML = html;
     };
 
