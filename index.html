@@ -3674,10 +3674,10 @@
         const chevron = document.getElementById('feed-chevron-' + uid);
         if (container.style.display === 'none') {
             container.style.display = 'block';
-            chevron.style.transform = 'rotate(0deg)';
+            chevron.style.transform = 'rotate(180deg)';
         } else {
             container.style.display = 'none';
-            chevron.style.transform = 'rotate(180deg)';
+            chevron.style.transform = 'rotate(0deg)';
         }
     };
 
@@ -3731,7 +3731,7 @@
         let html = '';
         sortedGroups.forEach(group => {
             
-            // Render Collapsible User Header
+            // Render Collapsible User Header (Default to closed)
             html += `
             <div class="user-feed-group" style="margin-bottom: 24px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: var(--surface-01dp); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border-subtle); margin-bottom: 12px;" onclick="toggleUserFeed('${group.uid}')">
@@ -3741,10 +3741,10 @@
                         <div class="badge badge-amber" style="font-size: 9px; padding: 4px 8px;">${group.logs.length} LOGS</div>
                     </div>
                     <div style="color: var(--text-dim); padding: 4px;">
-                        <i id="feed-chevron-${group.uid}" class="fa-solid fa-chevron-up" style="transition: transform 0.3s; font-size: 14px;"></i>
+                        <i id="feed-chevron-${group.uid}" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 14px;"></i>
                     </div>
                 </div>
-                <div id="feed-container-${group.uid}" style="display: block;">
+                <div id="feed-container-${group.uid}" style="display: none;">
             `;
 
             // Render their individual logs inside the wrapper
