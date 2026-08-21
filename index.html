@@ -401,16 +401,18 @@
         
         #layer-2-container {
             z-index: 10 !important; /* Safely behind Layer 3 so the curved card overlap works */
-            transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-radius 0.3s ease;
-            position: relative; 
+            transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.3s ease;
+            position: sticky; 
+            top: 0;
         }
 
         body.app-scrolled #layer-2-container {
-            padding: calc(12px + env(safe-area-inset-top, 0px)) 24px 8px 24px !important;
-            background: var(--surface-08dp) !important;
-            /* Drop shadow removed here, handled by Layer 3 inset to prevent z-index clipping */
-            border-bottom: 1px solid var(--border-subtle);
+            /* Tighter 28px bottom padding pulls Layer 3 up to close the gap */
+            padding: calc(12px + env(safe-area-inset-top, 0px)) 24px 28px 24px !important;
+            background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%) !important;
+            border-bottom: none !important;
             border-radius: 0 !important;
+            box-shadow: none !important;
         }
 
         #dynamic-layer-2-title {
@@ -421,7 +423,7 @@
 
         body.app-scrolled #dynamic-layer-2-title {
             transform: scale(0.7); 
-            margin-bottom: -10px; 
+            margin-bottom: -18px; /* Eats more of the scale's 'ghost space' */
         }
 
         #dynamic-layer-2-subtitle {
@@ -446,8 +448,7 @@
             border-top: 1px solid var(--border-subtle); 
             box-shadow: 0 -8px 24px var(--shadow-layer3); /* Shadow casts UP onto Layer 2 */
             overflow: hidden; 
-            z-index: 15; /* Sits ON TOP of Layer 2 */
-            transition: margin-top 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-top 0.3s ease;
+            z-index: 15; /* Sits permanently ON TOP of Layer 2 */
         }
 
         body.app-scrolled .layer-3-container {
