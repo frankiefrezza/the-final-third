@@ -383,60 +383,78 @@
             text-align: center;
             padding: calc(20px + env(safe-area-inset-top, 0px)) 16px 32px 16px;
             background: var(--bg-base);
-            transition: padding-bottom 0.3s ease;
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            max-height: 250px;
+            overflow: hidden;
         }
 
-        /* --- DYNAMIC TITLE (LAYER 2) --- */
-        .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
-        
-        /* ------------------------------------------------------------- */
-        /* --- DYNAMIC HEADER COLLAPSE (120FPS GPU ENGINE) --- */
-        /* ------------------------------------------------------------- */
+        body.app-scrolled .dash-header {
+            max-height: 0px !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+       /* --- DYNAMIC TITLE (LAYER 2) --- */
+        .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; position: relative; }
         
         #layer-2-container {
-            z-index: 5;
-            /* Slide up by 15px to dock tighter to the top */
-            transform: translateY(calc(var(--scroll-progress) * -15px));
-            will-change: transform;
+            z-index: 10 !important; /* Safely behind Layer 3 so the curved card overlap works */
+            transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-radius 0.3s ease;
+            position: relative; 
+        }
+
+        body.app-scrolled #layer-2-container {
+            padding: calc(12px + env(safe-area-inset-top, 0px)) 24px 8px 24px !important;
+            background: var(--surface-08dp) !important;
+            /* Drop shadow removed here, handled by Layer 3 inset to prevent z-index clipping */
+            border-bottom: 1px solid var(--border-subtle);
+            border-radius: 0 !important;
         }
 
         #dynamic-layer-2-title {
-            /* Scale down by 25% smoothly */
-            transform-origin: left center;
-            transform: scale(calc(1 - (var(--scroll-progress) * 0.25)));
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), margin-bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: inline-block;
-            will-change: transform;
+            transform-origin: left center; 
+        }
+
+        body.app-scrolled #dynamic-layer-2-title {
+            transform: scale(0.7); 
+            margin-bottom: -10px; 
         }
 
         #dynamic-layer-2-subtitle {
-            /* Fade out quickly as you scroll */
-            opacity: calc(1 - (var(--scroll-progress) * 1.5)) !important;
-            transform: translateY(calc(var(--scroll-progress) * -5px));
+            transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: block;
-            will-change: opacity, transform;
+        }
+
+        body.app-scrolled #dynamic-layer-2-subtitle {
+            opacity: 0 !important;
+            transform: translateY(-10px);
+            position: absolute;
+            pointer-events: none;
         }
 
         /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
         .layer-3-container { 
             background-color: var(--bg-base);
-            /* Morph the border radius to square */
-            border-radius: calc(40px - (var(--scroll-progress) * 40px)) calc(40px - (var(--scroll-progress) * 40px)) 0 0 !important; 
-            margin-top: -40px; 
+            border-radius: 40px 40px 0 0; 
+            margin-top: -40px; /* Overlaps Layer 2 to create the premium card curve */
             position: relative; 
             flex-grow: 1; 
             border-top: 1px solid var(--border-subtle); 
-            /* Fade out the deep shadow as it flattens */
-            box-shadow: 0 -8px 24px rgba(0,0,0, calc(0.8 - (var(--scroll-progress) * 0.8))); 
+            box-shadow: 0 -8px 24px var(--shadow-layer3); /* Shadow casts UP onto Layer 2 */
             overflow: hidden; 
-            z-index: 15; 
-            
-            /* Slide up fully over the old padding space */
-            transform: translateY(calc(var(--scroll-progress) * -50px));
-            will-change: transform, border-radius;
-            
-            /* Allow it to stretch down so we don't see empty background space when it shifts up */
-            margin-bottom: -300px !important;
-            padding-bottom: 300px !important;
+            z-index: 15; /* Sits ON TOP of Layer 2 */
+            transition: margin-top 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-top 0.3s ease;
+        }
+
+        body.app-scrolled .layer-3-container {
+            margin-top: 0; /* Drops down to sit flush exactly below the sticky header */
+            border-radius: 0; /* Flattens to match the header */
+            box-shadow: inset 0 8px 16px -8px var(--shadow-strong); /* Fakes Layer 2's drop shadow beautifully */
+            border-top: none;
         }
 
         /* --- VIEW SECTIONS & ANIMATIONS --- */
@@ -4885,17 +4903,14 @@
     };
 
 
-    // --- 120FPS CONTINUOUS NATIVE SCROLL ENGINE ---
+    // --- BUTTER-SMOOTH STICKY SCROLL ENGINE ---
     window.handleAppScroll = function(e) {
         const st = e.target.scrollTop;
-        
-        // Maps scroll position (0 to 60px) to a progress variable (0.0 to 1.0)
-        let progress = st / 60;
-        if (progress > 1) progress = 1;
-        if (progress < 0) progress = 0;
-        
-        // Push the continuous variable to CSS to hardware-animate the header seamlessly
-        document.documentElement.style.setProperty('--scroll-progress', progress);
+        if (st > 25) {
+            document.body.classList.add('app-scrolled');
+        } else {
+            document.body.classList.remove('app-scrolled');
+        }
     };
 
     document.querySelectorAll('.view-section').forEach(section => {
@@ -4904,8 +4919,7 @@
 
     const originalSwitchTab = window.switchTab;
     window.switchTab = function(targetViewId, dockIndex) {
-        // Reset header morph on tab change
-        document.documentElement.style.setProperty('--scroll-progress', 0);
+        document.body.classList.remove('app-scrolled');
         originalSwitchTab(targetViewId, dockIndex); 
     };
 
