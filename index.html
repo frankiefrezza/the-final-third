@@ -162,15 +162,23 @@
             --login-top-grad: rgba(0, 0, 0, 0.35);
         }
 
-         /* --- GLOBAL RESET --- */
+          /* --- GLOBAL RESET --- */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
+        :root {
+            --scroll-progress: 0; /* Drives the 120fps smooth header collapse */
+        }
+
         html, body {
-            overscroll-behavior-y: none; /* Keeps the bounce killed */
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Hard locks the viewport to stop native rubber-banding */
+            overscroll-behavior-y: none; 
+            touch-action: pan-y; /* Prioritize vertical scrolling globally */
         }
         
-        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; min-height: 100dvh; transition: background-color 0.3s; }
-        #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); min-height: 100vh; min-height: 100dvh; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px var(--shadow-strong); transition: background-color 0.3s; }
+        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; transition: background-color 0.3s; }
+        #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); height: 100%; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px var(--shadow-strong); transition: background-color 0.3s; }
         .app-environment { display: none; width: 100%; min-height: 100vh; flex-direction: column; }
         .app-environment.active { display: flex; }
 
@@ -385,69 +393,53 @@
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; }
         
         /* ------------------------------------------------------------- */
-        /* --- DYNAMIC HEADER COLLAPSE (MULTI-STAGE GPU ENGINE) --- */
+        /* --- DYNAMIC HEADER COLLAPSE (120FPS GPU ENGINE) --- */
         /* ------------------------------------------------------------- */
-        :root {
-            /* Dynamic Header Shift initialized - updated by JS */
-            --header-shift: -150px;
-        }
-
-        /* --- GPU Animation Preparations --- */
-        #daily-cigar-header, #layer-2-container {
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s ease !important;
-            will-change: transform, opacity;
-            transform-origin: top center;
+        
+        #layer-2-container {
+            z-index: 5;
+            /* Slide up by 15px to dock tighter to the top */
+            transform: translateY(calc(var(--scroll-progress) * -15px));
+            will-change: transform;
         }
 
         #dynamic-layer-2-title {
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1) !important;
-            will-change: transform;
-            transform-origin: left top;
+            /* Scale down by 25% smoothly */
+            transform-origin: left center;
+            transform: scale(calc(1 - (var(--scroll-progress) * 0.25)));
             display: inline-block;
+            will-change: transform;
         }
 
         #dynamic-layer-2-subtitle {
-            transition: opacity 0.25s ease, transform 0.4s cubic-bezier(0.32, 0.72, 0, 1) !important;
+            /* Fade out quickly as you scroll */
+            opacity: calc(1 - (var(--scroll-progress) * 1.5)) !important;
+            transform: translateY(calc(var(--scroll-progress) * -5px));
+            display: block;
             will-change: opacity, transform;
-            display: inline-block;
         }
 
         /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
         .layer-3-container { 
             background-color: var(--bg-base);
-            border-radius: 40px 40px 0 0; 
+            /* Morph the border radius to square */
+            border-radius: calc(40px - (var(--scroll-progress) * 40px)) calc(40px - (var(--scroll-progress) * 40px)) 0 0 !important; 
             margin-top: -40px; 
             position: relative; 
             flex-grow: 1; 
             border-top: 1px solid var(--border-subtle); 
-            box-shadow: 0 -8px 24px var(--shadow-layer3); 
+            /* Fade out the deep shadow as it flattens */
+            box-shadow: 0 -8px 24px rgba(0,0,0, calc(0.8 - (var(--scroll-progress) * 0.8))); 
             overflow: hidden; 
             z-index: 15; 
-            transition: background-color 0.3s;
-        }
-
-        /* --- BUTTER-SMOOTH COMPACT HEADER TRANSITION --- */
-        #layer-2-container {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
-        }
-
-        body.app-scrolled #layer-2-container {
-            padding: 12px 24px !important;
-            background: var(--surface-08dp) !important;
-            box-shadow: 0 4px 12px var(--shadow-strong);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        body.app-scrolled #dynamic-layer-2-title {
-            font-size: 18px !important;
-            transform: none !important;
-        }
-
-        body.app-scrolled #dynamic-layer-2-subtitle {
-            display: none !important; /* Hides description cleanly on scroll */
+            
+            /* Slide up fully over the old padding space */
+            transform: translateY(calc(var(--scroll-progress) * -50px));
+            will-change: transform, border-radius;
+            
+            /* Allow it to stretch down so we don't see empty background space when it shifts up */
+            margin-bottom: -300px !important;
+            padding-bottom: 300px !important;
         }
 
         /* --- VIEW SECTIONS & ANIMATIONS --- */
@@ -2570,14 +2562,17 @@
         const diffX = currentX - swipeStartX;
         const diffY = currentY - swipeStartY;
 
+        // FIXED: Hard bias towards vertical scrolling to stop diagonal drag interference
         if (!isSwiping) {
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
-                isSwiping = true;
-            } else if (Math.abs(diffY) > 10) {
+            if (Math.abs(diffY) > 5) {
+                // User is scrolling vertically. Instantly kill the horizontal swipe detector.
                 swipeStartX = null; 
                 isDragging = false;
                 swipeFront.parentElement.classList.remove('is-swiping');
                 return;
+            } else if (Math.abs(diffX) > 15) {
+                // Require a deliberate 15px horizontal drag to activate swipe-to-delete
+                isSwiping = true;
             }
         }
 
@@ -4893,14 +4888,17 @@
     };
 
 
-    // --- BUTTER-SMOOTH NATIVE SCROLL ENGINE ---
+    // --- 120FPS CONTINUOUS NATIVE SCROLL ENGINE ---
     window.handleAppScroll = function(e) {
         const st = e.target.scrollTop;
-        if (st > 25) {
-            document.body.classList.add('app-scrolled');
-        } else {
-            document.body.classList.remove('app-scrolled');
-        }
+        
+        // Maps scroll position (0 to 60px) to a progress variable (0.0 to 1.0)
+        let progress = st / 60;
+        if (progress > 1) progress = 1;
+        if (progress < 0) progress = 0;
+        
+        // Push the continuous variable to CSS to hardware-animate the header seamlessly
+        document.documentElement.style.setProperty('--scroll-progress', progress);
     };
 
     document.querySelectorAll('.view-section').forEach(section => {
@@ -4909,7 +4907,8 @@
 
     const originalSwitchTab = window.switchTab;
     window.switchTab = function(targetViewId, dockIndex) {
-        document.body.classList.remove('app-scrolled');
+        // Reset header morph on tab change
+        document.documentElement.style.setProperty('--scroll-progress', 0);
         originalSwitchTab(targetViewId, dockIndex); 
     };
 
