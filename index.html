@@ -170,15 +170,12 @@
         }
 
         html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* Hard locks the viewport to stop native rubber-banding */
-            overscroll-behavior-y: none; 
-            touch-action: pan-y; /* Prioritize vertical scrolling globally */
+            overscroll-behavior-y: none; /* Keeps the bounce killed */
+            touch-action: pan-y; /* Prioritizes vertical scroll without breaking the dock */
         }
         
-        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; transition: background-color 0.3s; }
-        #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); height: 100%; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px var(--shadow-strong); transition: background-color 0.3s; }
+        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; min-height: 100dvh; transition: background-color 0.3s; }
+        #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); min-height: 100vh; min-height: 100dvh; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px var(--shadow-strong); transition: background-color 0.3s; }
         .app-environment { display: none; width: 100%; min-height: 100vh; flex-direction: column; }
         .app-environment.active { display: flex; }
 
