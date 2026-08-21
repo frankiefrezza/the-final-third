@@ -166,12 +166,11 @@
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
         html, body {
-            overscroll-behavior-y: none; /* Kills the native iOS rubber-band bounce */
-            overflow: hidden; /* Locks the background viewport */
+            overscroll-behavior-y: none; /* Keeps the bounce killed */
         }
         
-        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; height: 100vh; height: 100dvh; transition: background-color 0.3s; }
-        #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); height: 100vh; height: 100dvh; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px var(--shadow-strong); transition: background-color 0.3s; }
+        body { font-family: var(--font-sans); background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; min-height: 100dvh; transition: background-color 0.3s; }
+        #app-container { width: 100%; max-width: 430px; background-color: var(--bg-base); min-height: 100vh; min-height: 100dvh; position: relative; display: flex; flex-direction: column; overflow-x: hidden; box-shadow: 0 0 40px var(--shadow-strong); transition: background-color 0.3s; }
         .app-environment { display: none; width: 100%; min-height: 100vh; flex-direction: column; }
         .app-environment.active { display: flex; }
 
