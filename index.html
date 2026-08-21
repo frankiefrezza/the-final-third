@@ -1205,6 +1205,15 @@
                                 <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
                             </div>
                         </div>
+                        
+                        <!-- PUBLIC TOGGLE FOR LOUNGE FEED (Humidor Share) -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 16px 20px; background: var(--surface-04dp); border-radius: 14px; border: 1px solid var(--border-subtle);">
+                            <div>
+                                <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">Share to Lounge</div>
+                                <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Let your friends see this addition</div>
+                            </div>
+                            <input type="checkbox" id="vault-public" checked style="width: 24px; height: 24px; accent-color: var(--leather); cursor: pointer;">
+                        </div>
 
                         <!-- Hidden Input and Visual Upload Button -->
                         <input type="file" id="vault-image-upload" accept="image/*" style="display: none;" onchange="handleCigarImageUpload(event, 'vault')">
@@ -3438,7 +3447,8 @@
                 html += `
                 <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <img src="${u.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
+                        <img src="${u.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
+
                         <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(u.username)}</div>
                     </div>
                     ${actionBtn}
@@ -3478,7 +3488,18 @@
         document.getElementById('network-modal').classList.remove('active');
     };
 
-        window.renderNetworkModal = async function() {
+    function buildFriendHtml(uid, name, avatar) {
+        return `
+        <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="${avatar}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
+                <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(name)}</div>
+            </div>
+            <button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; color: var(--danger); border-color: var(--border-subtle);" onclick="removeFriend('${uid}', '${escapeHTML(name)}')">Remove</button>
+        </div>`;
+    }
+
+    window.renderNetworkModal = async function() {
         const reqList = document.getElementById('network-requests-list');
         const friendsList = document.getElementById('network-friends-list');
 
@@ -3490,7 +3511,8 @@
                 reqHtml += `
                 <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <img src="${req.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
+                        <img src="${req.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
+
                         <div>
                             <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(req.username || 'Unnamed Smoker')}</div>
                             <div style="font-size: 10px; color: var(--text-dim);">Wants to connect</div>
@@ -3507,43 +3529,61 @@
 
         if (!myFriends || myFriends.length === 0) {
             friendsList.innerHTML = '<div style="color: var(--text-dim); font-size: 13px; font-style: italic; text-align: center; padding: 12px 0;">No friends added yet.</div>';
+            return;
+        }
+
+        // 1. Load instantly from local storage cache
+        const cachedFriends = JSON.parse(localStorage.getItem('finalThirdFriendsCache') || '{}');
+        let cachedHtml = '';
+
+        myFriends.forEach(friendUid => {
+            if (cachedFriends[friendUid]) {
+                const f = cachedFriends[friendUid];
+                cachedHtml += buildFriendHtml(friendUid, f.username, f.avatar);
+            }
+        });
+
+        if (cachedHtml !== '') {
+            friendsList.innerHTML = cachedHtml;
         } else {
             friendsList.innerHTML = '<div style="text-align:center; color: var(--text-dim); font-size: 12px; padding: 12px 0;"><i class="fa-solid fa-spinner fa-spin"></i> Loading network...</div>';
-            try {
-                let friendsHtml = '';
-                
-                const friendPromises = myFriends.map(friendUid => getDoc(doc(db, "users", friendUid)));
-                const friendSnaps = await Promise.all(friendPromises);
+        }
 
-                friendSnaps.forEach(docSnap => {
-                    if (docSnap.exists()) {
-                        const f = docSnap.data();
-                        const actualUid = docSnap.id;
-                        // Added fallback logic here:
-                        const displayName = f.username || f.email?.split('@')[0] || 'Unnamed Smoker';
-                        
-                        friendsHtml += `
-                        <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <img src="${f.avatar || 'app-icon.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
-                                <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(displayName)}</div>
-                            </div>
-                            <button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; color: var(--danger); border-color: var(--border-subtle);" onclick="removeFriend('${actualUid}', '${escapeHTML(displayName)}')">Remove</button>
-                        </div>`;
-                    }
-                });
-                
-                if(friendsHtml === '') friendsHtml = '<div style="color: var(--text-dim); font-size: 13px; font-style: italic; text-align: center; padding: 12px 0;">No friends found.</div>';
-                friendsList.innerHTML = friendsHtml;
-            } catch (e) {
-                console.error("Error fetching friends:", e);
-                friendsList.innerHTML = '<div style="color: var(--danger); font-size: 13px; text-align: center;">Error loading friends.</div>';
+        // 2. Fetch fresh data silently in background to update cache
+        try {
+            const friendPromises = myFriends.map(friendUid => getDoc(doc(db, "users", friendUid)));
+            const friendSnaps = await Promise.all(friendPromises);
+
+            let freshHtml = '';
+            let updatedCache = { ...cachedFriends };
+
+            friendSnaps.forEach(docSnap => {
+                if (docSnap.exists()) {
+                    const f = docSnap.data();
+                    const actualUid = docSnap.id;
+                    const displayName = f.username || f.email?.split('@')[0] || 'Unnamed Smoker';
+                    const avatar = f.avatar || 'app-icon.png';
+                    
+                    updatedCache[actualUid] = { username: displayName, avatar: avatar };
+                    freshHtml += buildFriendHtml(actualUid, displayName, avatar);
+                }
+            });
+            
+            localStorage.setItem('finalThirdFriendsCache', JSON.stringify(updatedCache));
+            
+            // Only swap HTML if it found valid data (prevents brief flash on slower connections)
+            if (freshHtml !== '') {
+                friendsList.innerHTML = freshHtml;
+            }
+        } catch (e) {
+            console.error("Error fetching friends:", e);
+            if (!cachedHtml) {
+                                friendsList.innerHTML = '<div style="color: var(--danger); font-size: 13px; text-align: center;">Error loading friends.</div>';
             }
         }
     };
 
-
-        window.acceptFriendRequest = async function(fromUid, fromName) {
+    window.acceptFriendRequest = async function(fromUid, fromName) {
         try {
             // Remove 'await' so the UI does not freeze on a bad connection
             updateDoc(doc(db, "users", auth.currentUser.uid), { friends: arrayUnion(fromUid) });
@@ -3625,7 +3665,8 @@
             html += `
             <div class="log-card" style="margin-bottom: 16px; padding: 20px;">
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                    <img src="${log.avatar || 'app-icon.png'}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
+                    <img src="${log.avatar || 'app-icon.png'}" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-subtle);">
+
                     <div>
                         <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">${escapeHTML(log.username || 'Unknown User')}</div>
                         <div style="font-size: 10px; color: var(--text-dim);">${escapeHTML(log.date)}</div>
@@ -3682,7 +3723,7 @@
                 document.getElementById('profile-avatar-img').src = localAvatar;
             }
 
-                                    try {
+            try {
                 const userDocRef = doc(db, "users", user.uid);
                 const userDocSnap = await getDoc(userDocRef);
                 
@@ -3715,8 +3756,6 @@
             } catch(e) { 
                 console.error("User sync error. Check Firebase Rules.", e); 
             }
-
-
             
             switchTab('view-home', 0);
 
@@ -3742,7 +3781,7 @@
                 renderJournal();
             });
 
-                        unsubscribeUser = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+            unsubscribeUser = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
                 if(docSnap.exists()) {
                     myFriends = docSnap.data().friends || [];
                     renderLoungeFeed(); 
@@ -3940,6 +3979,7 @@
         const priceVal = document.getElementById('vault-price').value;
         const acquiredDate = document.getElementById('vault-date').value;
         const targetDate = document.getElementById('vault-target-date').value;
+        const isPublic = document.getElementById('vault-public').checked;
         const submitBtn = document.getElementById('vault-submit-btn');
 
         if(!brand || !acquiredDate || !targetDate) { 
@@ -3976,6 +4016,28 @@
             } else {
                 await addDoc(collection(db, "humidor"), newCigar);
                 submitBtn.innerHTML = 'Add to Humidor <i class="fa-solid fa-lock" style="margin-left: 4px;"></i>';
+                
+                // --- SHARE RECENT ADDITION WITH FRIENDS (LOUNGE INTEGRATION) ---
+                if (isPublic) {
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    await addDoc(collection(db, "journal"), {
+                        uid: auth.currentUser.uid,
+                        username: window.currentUserName, 
+                        avatar: document.getElementById('profile-avatar-img').src, 
+                        date: todayStr,
+                        brand: `[New Addition] ${brand}`,
+                        vitola: vitola || "Unknown",
+                        ring: ring || "-",
+                        wrapper: wrapper || "Unknown",
+                        cut: "N/A",
+                        light: "N/A",
+                        pairing: "None",
+                        rating: null,
+                        notes: `Just added ${parseInt(qtyVal) || 1} to the humidor. Target aging: ${document.getElementById('vault-target-date').value}`,
+                        isPublic: true,
+                        image: currentVaultImage 
+                    });
+                }
             }
             
             await window.checkAndAddNewBrand(brand);
@@ -4801,4 +4863,3 @@
 </script>
 </body>
 </html>
-
