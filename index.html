@@ -38,17 +38,18 @@
             /* Base Surface #121212 for 15.8:1 contrast with 100% white */
             --bg-base: #121212; 
             
-            /* Elevation levels based on Material Design white overlays */
+            /* Elevation levels (Darkened for a stealthier, deeper contrast) */
             --surface-00dp: #121212;
-            --surface-01dp: #1E1E1E; /* 5% */
-            --surface-02dp: #232323; /* 7% */
-            --surface-03dp: #252525; /* 8% */
-            --surface-04dp: #272727; /* 9% */
-            --surface-06dp: #2C2C2C; /* 11% */
-            --surface-08dp: #2E2E2E; /* 12% */
-            --surface-12dp: #333333; /* 14% */
-            --surface-16dp: #363636; /* 15% */
-            --surface-24dp: #383838; /* 16% */
+            --surface-01dp: #161616; /* Minor elements (Was #1E1E1E) */
+            --surface-02dp: #1A1A1A; /* Cards & Bento Boxes (Was #232323) */
+            --surface-03dp: #1C1C1C; 
+            --surface-04dp: #1E1E1E; /* Inputs (Was #272727) */
+            --surface-06dp: #222222; 
+            --surface-08dp: #252525; /* Docks (Was #2E2E2E) */
+            --surface-12dp: #282828; 
+            --surface-16dp: #2A2A2A; /* Action Sheets (Was #363636) */
+            --surface-24dp: #2C2C2C; /* Modals (Was #383838) */
+
 
             /* Specific solid backgrounds for Login UI to prevent autofill bleed */
             --login-panel-bg: #1A1A1A; 
@@ -3982,11 +3983,13 @@
             return;
         }
 
-        let html = '<div class="glass-bento" style="border-radius: 20px; padding: 8px 20px;">';
+         let html = '<div class="glass-bento" style="border-radius: 20px; padding: 8px 20px;">';
         sorted.forEach((cigar, index) => {
-            const borderStr = index < sorted.length - 1 ? 'border-bottom: 1px solid var(--border-subtle);' : '';
+            // Uses a linear gradient background to create a tapered gold line that is strongest in the center
+            const borderStr = index < sorted.length - 1 ? 'background: linear-gradient(to right, transparent, rgba(var(--leather-rgb), 0.4) 50%, transparent) bottom center / 100% 2px no-repeat;' : '';
             html += `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; ${borderStr}">
+
                 <div>
                     <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
                     <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
