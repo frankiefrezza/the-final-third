@@ -3488,12 +3488,15 @@
         document.getElementById('network-modal').classList.remove('active');
     };
 
-    function buildFriendHtml(uid, name, avatar) {
+    function buildFriendHtml(uid, name, avatar, latestActivity = "No recent activity") {
         return `
         <div class="glass-bento" style="padding: 12px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <img src="${avatar}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
-                <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(name)}</div>
+                <div>
+                    <div style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHTML(name)}</div>
+                    <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">${escapeHTML(latestActivity)}</div>
+                </div>
             </div>
             <button class="btn-secondary" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; color: var(--danger); border-color: var(--border-subtle);" onclick="removeFriend('${uid}', '${escapeHTML(name)}')">Remove</button>
         </div>`;
@@ -3539,9 +3542,24 @@
         myFriends.forEach(friendUid => {
             if (cachedFriends[friendUid]) {
                 const f = cachedFriends[friendUid];
-                cachedHtml += buildFriendHtml(friendUid, f.username, f.avatar);
+                
+                const friendLogs = allPublicLogs.filter(log => log.uid === friendUid);
+                let latestAct = "No recent activity";
+                if (friendLogs.length > 0) {
+                    const latest = friendLogs[0];
+                    if (latest && latest.brand) {
+                        if (latest.brand.startsWith("[New Addition]")) {
+                            latestAct = `Added: ${latest.brand.replace("[New Addition] ", "")}`;
+                        } else {
+                            latestAct = `Smoked: ${latest.brand}`;
+                        }
+                    }
+                }
+                
+                cachedHtml += buildFriendHtml(friendUid, f.username, f.avatar, latestAct);
             }
         });
+
 
         if (cachedHtml !== '') {
             friendsList.innerHTML = cachedHtml;
@@ -3564,10 +3582,24 @@
                     const displayName = f.username || f.email?.split('@')[0] || 'Unnamed Smoker';
                     const avatar = f.avatar || 'app-icon.png';
                     
+                    const friendLogs = allPublicLogs.filter(log => log.uid === actualUid);
+                    let latestAct = "No recent activity";
+                    if (friendLogs.length > 0) {
+                        const latest = friendLogs[0];
+                        if (latest && latest.brand) {
+                            if (latest.brand.startsWith("[New Addition]")) {
+                                latestAct = `Added: ${latest.brand.replace("[New Addition] ", "")}`;
+                            } else {
+                                latestAct = `Smoked: ${latest.brand}`;
+                            }
+                        }
+                    }
+
                     updatedCache[actualUid] = { username: displayName, avatar: avatar };
-                    freshHtml += buildFriendHtml(actualUid, displayName, avatar);
+                    freshHtml += buildFriendHtml(actualUid, displayName, avatar, latestAct);
                 }
             });
+
             
             localStorage.setItem('finalThirdFriendsCache', JSON.stringify(updatedCache));
             
@@ -3808,7 +3840,7 @@
                 }
             });
 
-            // BULLETPROOF: Also filters out strings from public feeds to prevent UI crashes
+             // BULLETPROOF: Also filters out strings from public feeds to prevent UI crashes
             unsubscribePublicFeed = onSnapshot(query(collection(db, "journal"), where("isPublic", "==", true)), (snapshot) => {
                 allPublicLogs = [];
                 snapshot.forEach(doc => {
@@ -3819,7 +3851,13 @@
                 });
                 allPublicLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
                 renderLoungeFeed();
+                
+                // Triggers a live-update in the Network Modal if it's currently open
+                if (document.getElementById('network-modal').classList.contains('active')) {
+                    renderNetworkModal();
+                }
             });
+
 
         } else {
             document.getElementById('main-environment').classList.remove('active');
