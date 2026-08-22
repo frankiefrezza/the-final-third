@@ -3899,17 +3899,22 @@
                 checkAgingAlerts(humidorInventory);
             });
 
-            // BULLETPROOF: Filters out string values / legacy keys instantly on fetch
+                        // BULLETPROOF: Filters out string values / legacy keys instantly on fetch
             unsubscribeJournal = onSnapshot(query(collection(db, "journal"), where("uid", "==", user.uid)), (snapshot) => {
                 journalHistory = [];
                 snapshot.forEach((doc) => { 
                     let d = doc.data();
+                    
+                    // FIX: Ignore Humidor "Share to Lounge" announcements so they don't pollute the Journal
+                    if (d.brand && d.brand.startsWith("[New Addition]")) return;
+                    
                     let r = parseFloat(d.rating ?? d.score);
                     d.rating = isNaN(r) ? null : r;
                     journalHistory.push({ id: doc.id, ...d }); 
                 });
                 renderJournal();
             });
+
 
             unsubscribeUser = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
                 if(docSnap.exists()) {
