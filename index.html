@@ -406,14 +406,15 @@
             top: 0;
         }
 
-                        body.app-scrolled #layer-2-container {
-            /* Increased bottom padding to 64px so the text safely clears the overlapping curve */
-            padding: calc(12px + env(safe-area-inset-top, 0px)) 24px 64px 24px !important;
+                     body.app-scrolled #layer-2-container {
+            /* Pulls the padding tight against the Dynamic Island to remove the gap */
+            padding: calc(env(safe-area-inset-top, 0px) - 4px) 24px 64px 24px !important;
             background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%) !important;
             border-bottom: none !important;
             border-radius: 0 !important;
             box-shadow: none !important;
         }
+
 
 
 
@@ -423,10 +424,11 @@
             transform-origin: left center; 
         }
 
-        body.app-scrolled #dynamic-layer-2-title {
-            transform: scale(0.7); 
-            margin-bottom: -18px; /* Eats more of the scale's 'ghost space' */
+                body.app-scrolled #dynamic-layer-2-title {
+            transform: scale(0.7) translateY(-8px); /* Nudges the text itself slightly higher */
+            margin-bottom: -18px; 
         }
+
 
         #dynamic-layer-2-subtitle {
             transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
