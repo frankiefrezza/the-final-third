@@ -3778,7 +3778,7 @@
             <div class="user-feed-group" style="margin-bottom: 24px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: var(--surface-01dp); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border-subtle); margin-bottom: 12px;" onclick="toggleUserFeed('${group.uid}')">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <img src="${escapeHTML(group.avatar)}" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
+                                            <img src="${escapeHTML(group.avatar)}" onerror="this.onerror=null; this.src='app-icon.png';" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
                         <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">${escapeHTML(group.username)}</div>
                         <div class="badge badge-amber" style="font-size: 9px; padding: 4px 8px;">${group.logs.length} LOGS</div>
                     </div>
