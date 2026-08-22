@@ -406,14 +406,16 @@
             top: 0;
         }
 
-        body.app-scrolled #layer-2-container {
-            /* Tighter 28px bottom padding pulls Layer 3 up to close the gap */
-            padding: calc(12px + env(safe-area-inset-top, 0px)) 24px 28px 24px !important;
+                        body.app-scrolled #layer-2-container {
+            /* Increased bottom padding to 64px so the text safely clears the overlapping curve */
+            padding: calc(12px + env(safe-area-inset-top, 0px)) 24px 64px 24px !important;
             background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%) !important;
             border-bottom: none !important;
             border-radius: 0 !important;
             box-shadow: none !important;
         }
+
+
 
         #dynamic-layer-2-title {
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), margin-bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -451,12 +453,10 @@
             z-index: 15; /* Sits permanently ON TOP of Layer 2 */
         }
 
-        body.app-scrolled .layer-3-container {
-            margin-top: 0; /* Drops down to sit flush exactly below the sticky header */
-            border-radius: 0; /* Flattens to match the header */
-            box-shadow: inset 0 8px 16px -8px var(--shadow-strong); /* Fakes Layer 2's drop shadow beautifully */
-            border-top: none;
+                body.app-scrolled .layer-3-container {
+            /* We remove the overrides here so Layer 3 always keeps its top curve and drop-shadow */
         }
+
 
         /* --- VIEW SECTIONS & ANIMATIONS --- */
          .view-section { 
