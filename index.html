@@ -807,7 +807,7 @@
         [data-theme="light"] .bottom-dock-wrapper { 
             background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); 
         }
-        .bottom-dock { 
+                .bottom-dock { 
             width: calc(100% - 32px); 
             max-width: 390px; 
             background: var(--surface-08dp); 
@@ -817,10 +817,12 @@
             justify-content: space-around; 
             align-items: center; 
             padding: 8px 12px; 
-            margin-bottom: max(20px, env(safe-area-inset-bottom)); 
+            /* Adjusted to drop the dock down 12px closer to the bottom edge while still clearing the iPhone home bar */
+            margin-bottom: max(12px, calc(env(safe-area-inset-bottom) - 12px)); 
             box-shadow: 0 8px 16px var(--shadow-strong); 
             pointer-events: auto; 
         }
+
         .nav-item { 
             color: var(--text-dim); 
             font-size: 20px; 
