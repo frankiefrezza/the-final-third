@@ -2239,13 +2239,26 @@
         
         <textarea id="feedback-text" class="form-input" placeholder="Please describe the issue or your idea here..." rows="4" style="resize: none; margin-bottom: 24px;"></textarea>
         
-        <button id="feedback-submit-btn" class="btn-primary" style="margin-bottom: 0;" onclick="submitFeedback()">
+                <button id="feedback-submit-btn" class="btn-primary" style="margin-bottom: 0;" onclick="submitFeedback()">
             Send Feedback <i class="fa-solid fa-paper-plane" style="margin-left: 4px;"></i>
         </button>
     </div>
 </div>
 
+<!-- IN-APP TOAST NOTIFICATION -->
+<div id="app-toast" style="position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--surface-24dp); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 12px 20px; border-radius: 30px; box-shadow: 0 16px 32px rgba(0,0,0,0.4); z-index: 9999; display: flex; align-items: center; gap: 12px; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s; opacity: 0; width: 90%; max-width: 350px; cursor: pointer;" onclick="dismissToastAndGoToLounge()">
+    <img id="toast-avatar" src="app-icon.png" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-subtle);">
+    <div style="flex: 1; min-width: 0;">
+        <div id="toast-title" style="font-size: 13px; font-weight: 800; font-family: var(--font-sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;">Friend Activity</div>
+        <div id="toast-msg" style="font-size: 11px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Just logged a cigar.</div>
+    </div>
+    <div style="background: rgba(var(--leather-rgb), 0.15); width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
+        <i class="fa-solid fa-chevron-right" style="color: var(--leather); font-size: 10px;"></i>
+    </div>
+</div>
+
 <script type="module">
+
 
     // --- PAIRING GUIDE ENGINE ---
     const leafProfiles = {
@@ -2625,15 +2638,47 @@
         } catch (error) {
             console.error("Feedback error:", error);
             await window.customAlert("Failed to send feedback. Please check your connection.", "Error");
-        } finally {
+                } finally {
             btn.innerHTML = 'Send Feedback <i class="fa-solid fa-paper-plane" style="margin-left: 4px;"></i>';
             btn.disabled = false;
         }
     };
 
+    // --- TOAST NOTIFICATION ENGINE ---
+    let toastTimeout;
+    
+    window.showAppToast = function(avatar, title, msg) {
+        const toast = document.getElementById('app-toast');
+        document.getElementById('toast-avatar').src = avatar || 'app-icon.png';
+        document.getElementById('toast-title').innerText = title;
+        document.getElementById('toast-msg').innerText = msg;
+        
+        // Slide down (respecting iPhone safe areas)
+        toast.style.top = 'calc(env(safe-area-inset-top, 0px) + 20px)';
+        toast.style.opacity = '1';
+        
+        // Auto-hide after 4 seconds
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toast.style.top = '-100px';
+            toast.style.opacity = '0';
+        }, 4000); 
+    };
+
+    window.dismissToastAndGoToLounge = function() {
+        const toast = document.getElementById('app-toast');
+        toast.style.top = '-100px';
+        toast.style.opacity = '0';
+        
+        // Switch to the lounge and ensure the "Friends" feed is active
+        switchTab('view-lounge', 3);
+        switchFeedTab('friends');
+    };
+
     let humidorInventory = [];
 
     let journalHistory = [];
+
     let editingVaultId = null;
     let editingJournalId = null;
     
@@ -3969,10 +4014,11 @@
                     
                     // Hide regular notes since the footer absorbed the info
                     displayNotes = ''; 
-                } else {
+                                } else {
                     actionIndicator = `<div style="font-size: 10px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-top: 16px; border-top: 1px solid var(--border-subtle); padding-top: 12px; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-fire" style="color: var(--leather);"></i> SMOKED</div>`;
                     
                     displayNotes = log.notes && log.notes !== "No notes." ? `<div style="font-size: 13px; color: var(--text-dim); font-style: italic; line-height: 1.5; border-left: 2px solid var(--leather); padding-left: 10px; margin-top: 8px;">"${escapeHTML(log.notes)}"</div>` : '';
+
                     
                     mechanicsRow = `
                     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
@@ -4134,6 +4180,9 @@
                 }
             });
 
+                         // Flag to prevent the toast from firing 50 times when the app first loads
+            let isInitialPublicFeedLoad = true;
+
              // BULLETPROOF: Also filters out strings from public feeds to prevent UI crashes
             unsubscribePublicFeed = onSnapshot(query(collection(db, "journal"), where("isPublic", "==", true)), (snapshot) => {
                 allPublicLogs = [];
@@ -4150,10 +4199,37 @@
                 if (document.getElementById('network-modal').classList.contains('active')) {
                     renderNetworkModal();
                 }
+
+                // --- TRIGGER TOAST FOR NEW FRIEND ACTIVITY ---
+                if (!isInitialPublicFeedLoad) {
+                    snapshot.docChanges().forEach((change) => {
+                        // Only trigger if a NEW document was added
+                        if (change.type === "added") {
+                            const data = change.doc.data();
+                            
+                                                        // Check if the author is in your friends list and is NOT you
+                            if (data.uid !== auth.currentUser.uid && myFriends.includes(data.uid)) {
+                                const isHumidor = data.brand.startsWith("[New Addition]");
+                                const cleanBrand = isHumidor ? data.brand.replace("[New Addition] ", "") : data.brand;
+                                const actionText = isHumidor ? "Added to Humidor" : "Smoked";
+                                
+                                window.showAppToast(
+
+                                    data.avatar,
+                                    data.username || "A Friend",
+                                    `${actionText}: ${cleanBrand}`
+                                );
+                            }
+                        }
+                    });
+                }
+                
+                isInitialPublicFeedLoad = false;
             });
 
 
         } else {
+
             document.getElementById('main-environment').classList.remove('active');
             document.getElementById('main-environment').style.display = 'none';
             document.getElementById('login-environment').classList.add('active');
