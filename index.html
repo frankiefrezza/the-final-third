@@ -3789,32 +3789,68 @@
                 <div id="feed-container-${group.uid}" style="display: none;">
             `;
 
-            // Render their individual logs inside the wrapper
+                           // Render their individual logs inside the wrapper
             group.logs.forEach(log => {
+                // --- NEW TAG LOGIC ---
+                const isNew = (Date.now() - new Date(log.date).getTime()) < (48 * 60 * 60 * 1000);
+                const newBadge = isNew ? '<span class="badge badge-rose" style="padding: 2px 6px; font-size: 8px; margin-right: 6px; vertical-align: middle;">NEW</span>' : '';
+
                 let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
                 let imageSection = log.image ? `<img src="${log.image}" style="width: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; margin-top: 12px; border: 1px solid var(--border-subtle); background: var(--surface-01dp);">` : '';
+
+                // --- ACTION INDICATOR & NOTES LOGIC ---
+                const isHumidorAddition = log.brand.startsWith("[New Addition]");
+                let actionIndicator = '';
+                let displayNotes = '';
+                let displayBrand = log.brand;
+                let mechanicsRow = '';
+
+                if (isHumidorAddition) {
+                    // Clean up the brand title
+                    displayBrand = displayBrand.replace("[New Addition] ", "");
+                    
+                    // Extract quantity and date from the auto-generated note via Regex
+                    let qtyMatch = log.notes ? log.notes.match(/Just added (\d+)/) : null;
+                    let qty = qtyMatch ? qtyMatch[1] : "1";
+                    
+                    let dateMatch = log.notes ? log.notes.match(/Target aging: ([\d-]+)/) : null;
+                    let target = dateMatch ? ` &bull; PEAK: ${dateMatch[1]}` : "";
+                    
+                    actionIndicator = `<div style="font-size: 10px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-top: 16px; border-top: 1px solid var(--border-subtle); padding-top: 12px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;"><i class="fa-solid fa-box-archive" style="color: var(--leather);"></i> Stashed in Humidor &bull; QTY: ${qty}${target}</div>`;
+                    
+                    // Hide regular notes since the footer absorbed the info
+                    displayNotes = ''; 
+                } else {
+                    actionIndicator = `<div style="font-size: 10px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-top: 16px; border-top: 1px solid var(--border-subtle); padding-top: 12px; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-fire" style="color: var(--leather);"></i> Smoked & Logged</div>`;
+                    
+                    displayNotes = log.notes && log.notes !== "No notes." ? `<div style="font-size: 13px; color: var(--text-dim); font-style: italic; line-height: 1.5; border-left: 2px solid var(--leather); padding-left: 10px; margin-top: 8px;">"${escapeHTML(log.notes)}"</div>` : '';
+                    
+                    mechanicsRow = `
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+                        ${ratingBadge}
+                        <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
+                        <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
+                    </div>`;
+                }
 
                 html += `
                 <div class="log-card" style="margin-bottom: 16px; padding: 20px; border-left: 2px solid var(--leather); border-radius: 12px 16px 16px 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                         <div style="flex: 1; padding-right: 12px;">
-                            <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; line-height: 1.2;">${escapeHTML(log.brand)}</div>
+                            <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; line-height: 1.2;">${newBadge}${escapeHTML(displayBrand)}</div>
                             <div style="font-size: 12px; color: var(--text-dim); font-weight: 600;">${escapeHTML(log.vitola)} • ${escapeHTML(log.wrapper)}</div>
                         </div>
                         <div class="badge badge-amber" style="font-size: 9px; white-space: nowrap;">${escapeHTML(log.date)}</div>
                     </div>
                     
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-                        ${ratingBadge}
-                        <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-scissors" style="color: var(--leather);"></i> ${escapeHTML(log.cut)}</span>
-                        <span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--text-main); font-weight: 600; border: 1px solid var(--border-subtle);"><i class="fa-solid fa-martini-glass" style="color: var(--walnut);"></i> ${escapeHTML(log.pairing)}</span>
-                    </div>
-                    
-                    ${log.notes && log.notes !== "No notes." ? `<div style="font-size: 13px; color: var(--text-dim); font-style: italic; line-height: 1.5; border-left: 2px solid var(--leather); padding-left: 10px; margin-top: 8px;">"${escapeHTML(log.notes)}"</div>` : ''}
-                    
+                    ${mechanicsRow}
+                    ${displayNotes}
                     ${imageSection}
+                    ${actionIndicator}
                 </div>`;
             });
+
+
 
             html += `
                 </div>
@@ -4343,9 +4379,14 @@
                     <span>No results found</span>
                 </div>`;
         } else {
-            displayList.forEach(cigar => {
+                        displayList.forEach(cigar => {
                 const msPerDay = 1000 * 60 * 60 * 24;
                 const cigarQty = cigar.quantity || 1;
+                
+                // --- NEW TAG LOGIC ---
+                const isNew = (Date.now() - (cigar.acquiredDate || Date.now())) < (24 * 60 * 60 * 1000);
+                const newBadge = isNew ? '<span class="badge badge-rose" style="padding: 2px 6px; font-size: 8px; margin-right: 6px; vertical-align: middle;">NEW</span>' : '';
+
                 totalQuantity += cigarQty;
                 
                 const acqDate = cigar.acquiredDate || now;
@@ -4393,10 +4434,11 @@
                     
                     <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
                         <div class="log-header">
-                            <div style="flex: 1; padding-right: 12px;">
-                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(cigar.brand)}</div>
+                                                        <div style="flex: 1; padding-right: 12px;">
+                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${newBadge}${escapeHTML(cigar.brand)}</div>
                                 <div class="log-meta">${escapeHTML(cigar.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(cigar.ring)}</span> • ${escapeHTML(cigar.wrapper)}</div>
                             </div>
+
                             <div style="display: flex; flex-direction: column; align-items: stretch; min-width: 100px;">
                                 <div class="badge ${badgeClass}" style="--aging-progress: ${progress}%; margin-bottom: 8px; width: 100%; box-sizing: border-box;">${statusIcon}${statusText}</div>
                                 <div style="font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-dim); line-height: 1.4; letter-spacing: 0.5px; padding: 0 4px;">
@@ -4670,9 +4712,14 @@
                     <span>No results found</span>
                 </div>`;
         } else {
-            displayList.forEach(log => {
+                        displayList.forEach(log => {
+                // --- NEW TAG LOGIC ---
+                const isNew = (Date.now() - new Date(log.date).getTime()) < (24 * 60 * 60 * 1000);
+                const newBadge = isNew ? '<span class="badge badge-rose" style="padding: 2px 6px; font-size: 8px; margin-right: 6px; vertical-align: middle;">NEW</span>' : '';
+
                 let imageBadge = '';
                 if(log.image) {
+
                     window.imageRegistry[log.id] = log.image;
                     imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
                 }
@@ -4693,12 +4740,13 @@
                     
                     <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;">
                         
-                        <!-- Visible Summary Block -->
+                                                <!-- Visible Summary Block -->
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
                             <div style="flex: 1; padding-right: 12px;">
-                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${escapeHTML(log.brand)}</div>
+                                <div class="log-title" style="line-height: 1.3; margin-bottom: 4px;">${newBadge}${escapeHTML(log.brand)}</div>
                                 <div class="log-meta">${escapeHTML(log.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(log.ring)}</span> • ${escapeHTML(log.wrapper)}</div>
                             </div>
+
                             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <button type="button" class="share-action-btn" onclick="shareJournalLog('${log.id}', event)" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" style="background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 0; font-size: 14px; transition: color 0.2s;">
@@ -4732,16 +4780,21 @@
         }
         journalList.innerHTML = html;
         
-        let homeHtml = '';
+                let homeHtml = '';
         // Sort home recent list cleanly by date regardless of filter
         [...journalHistory].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 2).forEach(log => {
+            // --- NEW TAG LOGIC ---
+            const isNew = (Date.now() - new Date(log.date).getTime()) < (24 * 60 * 60 * 1000);
+            const newBadge = isNew ? '<span class="badge badge-rose" style="padding: 2px 6px; font-size: 8px; margin-right: 6px; vertical-align: middle;">NEW</span>' : '';
+
             homeHtml += `
             <div class="log-card" style="margin-bottom: 12px;">
                 <div class="log-header" style="margin-bottom: 0;">
                     <div>
-                        <div class="log-title">${escapeHTML(log.brand)}</div>
+                        <div class="log-title">${newBadge}${escapeHTML(log.brand)}</div>
                         <div class="log-meta">${escapeHTML(log.date)}</div>
                     </div>
+
                     <div class="badge badge-indigo">Smoked</div>
                 </div>
             </div>`;
@@ -4824,99 +4877,161 @@
     };
 
     // --- SHARE CARD IMAGE GENERATOR ---
-    window.generateShareCard = function(log) {
+            window.generateShareCard = function(log) {
         return new Promise((resolve) => {
             const canvas = document.createElement('canvas');
             canvas.width = 1080;
             canvas.height = 1080; 
             const ctx = canvas.getContext('2d');
 
-            ctx.fillStyle = '#121212';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Detect current theme
+            const isLightMode = document.documentElement.getAttribute('data-theme') === 'light';
+            
+            // Map exact CSS hex colors
+            const colors = {
+                bg: isLightMode ? '#F7F5F0' : '#121212',
+                border: isLightMode ? '#B38B22' : '#D4AF37',
+                textMain: isLightMode ? '#1A1C23' : '#FFFFFF',
+                textSubtle: isLightMode ? 'rgba(26, 28, 35, 0.5)' : 'rgba(255, 255, 255, 0.5)',
+                textNotes: isLightMode ? 'rgba(26, 28, 35, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+                badgeBg: isLightMode ? '#FFFFFF' : '#1A1A1A',
+                badgeBorder: isLightMode ? '#E2DDD3' : '#363636'
+            };
 
-            ctx.strokeStyle = '#D4AF37'; 
-            ctx.lineWidth = 6;
+            // Background & Border
+            ctx.fillStyle = colors.bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = colors.border;
+            ctx.lineWidth = 4; 
             ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.font = 'bold 32px sans-serif';
+            // Set global alignment to Top & Center for absolute vertical precision
             ctx.textAlign = 'center';
-            ctx.letterSpacing = '6px'; 
-            ctx.fillText('TASTING LEDGER', canvas.width / 2, 160);
+            ctx.textBaseline = 'top';
 
-            ctx.fillStyle = '#FFFFFF';
-            let brandFontSize = 90;
-            ctx.font = `bold ${brandFontSize}px "DM Serif Display", serif, sans-serif`;
+            // --- 1. HEADER ---
+            ctx.fillStyle = colors.textSubtle;
+            ctx.font = 'bold 26px sans-serif';
+            ctx.letterSpacing = '8px'; 
+            ctx.fillText('TASTING LEDGER', canvas.width / 2, 130);
             
-            while (ctx.measureText(log.brand).width > (canvas.width - 180) && brandFontSize > 30) {
-                brandFontSize -= 2;
-                ctx.font = `bold ${brandFontSize}px "DM Serif Display", serif, sans-serif`;
-            }
-            ctx.fillText(log.brand, canvas.width / 2, 280);
+            // CRITICAL FIX: Reset letter spacing immediately to prevent iOS from shifting everything right
+            ctx.letterSpacing = '0px'; 
 
-            ctx.fillStyle = '#D4AF37';
+            // --- 2. PRE-CALCULATE DYNAMIC CONTENT SIZES ---
+            
+            // Brand Name (Bolder and Larger)
+            let brandFontSize = 110; 
+            ctx.font = `900 ${brandFontSize}px "DM Serif Display", serif, sans-serif`;
+            while (ctx.measureText(log.brand).width > (canvas.width - 180) && brandFontSize > 40) {
+                brandFontSize -= 2;
+                ctx.font = `900 ${brandFontSize}px "DM Serif Display", serif, sans-serif`;
+            }
+
+            // Vitola
             let vitolaFontSize = 45;
             ctx.font = `bold ${vitolaFontSize}px sans-serif`;
             const vitolaText = `${log.vitola} • ${log.wrapper}`;
-            
-            while (ctx.measureText(vitolaText).width > (canvas.width - 180) && vitolaFontSize > 20) {
+            while (ctx.measureText(vitolaText).width > (canvas.width - 180) && vitolaFontSize > 25) {
                 vitolaFontSize -= 2;
                 ctx.font = `bold ${vitolaFontSize}px sans-serif`;
             }
-            ctx.fillText(vitolaText, canvas.width / 2, 360);
 
-            let currentY = 460;
+            // Notes wrapping
+            let noteLines = [];
+            if (log.notes && log.notes !== "No notes.") {
+                ctx.font = 'italic 34px sans-serif';
+                const words = `"${log.notes}"`.split(' ');
+                let currentLine = '';
+                
+                for(let n = 0; n < words.length; n++) {
+                    const testLine = currentLine + words[n] + ' ';
+                    if (ctx.measureText(testLine).width > 800 && n > 0) {
+                        noteLines.push(currentLine.trim());
+                        currentLine = words[n] + ' ';
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                if (currentLine) noteLines.push(currentLine.trim());
+            }
+
+            // --- 3. CALCULATE TOTAL HEIGHT & VERTICAL CENTERING ---
+            let contentHeight = brandFontSize; 
+            contentHeight += 24; // Gap under brand
+            contentHeight += vitolaFontSize; 
+
             if (log.rating) {
-                ctx.fillStyle = '#1A1A1A';
-                const badgeWidth = 280;
-                const badgeHeight = 90;
+                contentHeight += 60; // Gap over badge
+                contentHeight += 80; // Badge height
+            }
+
+            if (noteLines.length > 0) {
+                contentHeight += 60; // Gap over notes
+                contentHeight += (noteLines.length * 48); // Notes line height
+            }
+
+            // Center vertically between Header (Y=180) and Footer (Y=900)
+            let currentY = 540 - (contentHeight / 2);
+
+            // --- 4. DRAW DYNAMIC CONTENT ---
+
+            // Draw Brand
+            ctx.fillStyle = colors.textMain;
+            ctx.font = `900 ${brandFontSize}px "DM Serif Display", serif, sans-serif`;
+            ctx.fillText(log.brand, canvas.width / 2, currentY);
+            currentY += brandFontSize + 24;
+
+            // Draw Vitola
+            ctx.fillStyle = colors.border;
+            ctx.font = `bold ${vitolaFontSize}px sans-serif`;
+            ctx.fillText(vitolaText, canvas.width / 2, currentY);
+            currentY += vitolaFontSize;
+
+            // Draw Badge
+            if (log.rating) {
+                currentY += 60;
+                const badgeWidth = 260;
+                const badgeHeight = 80;
                 const badgeX = (canvas.width / 2) - (badgeWidth / 2);
                 
+                ctx.fillStyle = colors.badgeBg;
                 ctx.beginPath();
-                ctx.roundRect(badgeX, currentY, badgeWidth, badgeHeight, 20);
+                ctx.roundRect(badgeX, currentY, badgeWidth, badgeHeight, 16);
                 ctx.fill();
+                
+                ctx.strokeStyle = isLightMode ? colors.border : colors.badgeBorder;
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                ctx.fillStyle = '#D4AF37';
-                ctx.font = 'bold 45px monospace';
-                ctx.fillText(`★ ${log.rating.toFixed(2)}`, canvas.width / 2, currentY + 63);
-                currentY += 160; 
-            } else {
-                currentY += 50;
-            }
-
-            if (log.notes && log.notes !== "No notes.") {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.font = 'italic 38px sans-serif';
-                ctx.textAlign = 'center';
+                ctx.fillStyle = colors.border;
+                ctx.font = 'bold 42px monospace';
+                // Offset top baseline slightly to visually center in the box
+                ctx.fillText(`★ ${log.rating.toFixed(2)}`, canvas.width / 2, currentY + 20);
                 
-                const words = `"${log.notes}"`.split(' ');
-                let line = '';
-                const maxWidth = 800;
-                const lineHeight = 55;
-
-                for(let n = 0; n < words.length; n++) {
-                    const testLine = line + words[n] + ' ';
-                    const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidth && n > 0) {
-                        ctx.fillText(line, canvas.width / 2, currentY);
-                        line = words[n] + ' ';
-                        currentY += lineHeight;
-                    } else {
-                        line = testLine;
-                    }
-                }
-                ctx.fillText(line, canvas.width / 2, currentY);
+                currentY += badgeHeight;
             }
 
-            ctx.fillStyle = '#D4AF37';
-            ctx.font = 'bold 35px "DM Serif Display", serif';
-            ctx.fillText('The Final Third', canvas.width / 2, canvas.height - 120);
+            // Draw Notes
+            if (noteLines.length > 0) {
+                currentY += 60;
+                ctx.fillStyle = colors.textNotes;
+                ctx.font = 'italic 34px sans-serif';
+                for (let line of noteLines) {
+                    ctx.fillText(line, canvas.width / 2, currentY);
+                    currentY += 48; // Line height
+                }
+            }
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-            ctx.font = '28px sans-serif';
-            ctx.fillText('From the First Light to the Final Third', canvas.width / 2, canvas.height - 80);
+            // --- 5. FOOTER ---
+            ctx.fillStyle = colors.border;
+            ctx.font = 'bold 32px "DM Serif Display", serif';
+            ctx.fillText('The Final Third', canvas.width / 2, 920);
+
+            ctx.fillStyle = colors.textSubtle;
+            ctx.font = '22px sans-serif';
+            ctx.letterSpacing = '2px';
+            ctx.fillText('From the First Light to the Final Third', canvas.width / 2, 960);
 
             canvas.toBlob((blob) => {
                 const file = new File([blob], `${log.brand.replace(/\s+/g, '_')}_Review.jpg`, { type: 'image/jpeg' });
@@ -4924,6 +5039,8 @@
             }, 'image/jpeg', 0.9);
         });
     };
+
+
 
     window.shareJournalLog = async function(id, event) {
         if (event) event.stopPropagation();
