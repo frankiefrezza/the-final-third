@@ -1289,40 +1289,84 @@
                         </div>
                     </div>
 
-                    <div id="humidor-form-wrapper" style="display: none; padding-top: 8px;">
-                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-                            <div class="autocomplete-wrapper" style="flex: 1;">
+                                        <div id="humidor-form-wrapper" style="display: none; padding-top: 8px;">
+                        
+                        <!-- Brand & Line -->
+                        <div style="margin-bottom: 12px;">
+                            <div class="autocomplete-wrapper" style="width: 100%;">
                                 <input type="text" id="vault-brand" class="form-input" placeholder="Brand & Line (e.g., Arturo Fuente OpusX)" style="margin-bottom: 0; width: 100%;" autocomplete="off">
                                 <div id="vault-autocomplete" class="autocomplete-dropdown"></div>
                             </div>
-                            <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 75px; text-align: center; padding: 16px 8px;">
+                        </div>
+
+                        <!-- Quantity Selector with Fast-Tap Package Chips -->
+                        <div style="background: var(--surface-04dp); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;">Quantity</span>
+                                <input type="number" id="vault-quantity" class="form-input" value="1" min="1" inputmode="numeric" pattern="[0-9]*" oninput="updatePriceBreakdown()" onfocus="setTimeout(() => this.select(), 10);" onclick="this.select();" title="Quantity" style="margin-bottom: 0; width: 70px; text-align: center; padding: 8px; height: 36px;">
+                            </div>
+                                                        <div style="display: flex; gap: 4px; width: 100%;">
+                                <button type="button" class="badge badge-amber" style="flex: 1; cursor: pointer; border-radius: 8px; padding: 8px 0; font-size: 10px;" onclick="setVaultQuantity(1)">1x</button>
+                                <button type="button" class="badge badge-amber" style="flex: 1; cursor: pointer; border-radius: 8px; padding: 8px 0; font-size: 10px;" onclick="setVaultQuantity(5)">5x</button>
+                                <button type="button" class="badge badge-amber" style="flex: 1; cursor: pointer; border-radius: 8px; padding: 8px 0; font-size: 10px;" onclick="setVaultQuantity(10)">10x</button>
+                                <button type="button" class="badge badge-amber" style="flex: 1; cursor: pointer; border-radius: 8px; padding: 8px 0; font-size: 10px;" onclick="setVaultQuantity(20)">20x</button>
+                                <button type="button" class="badge badge-amber" style="flex: 1; cursor: pointer; border-radius: 8px; padding: 8px 0; font-size: 10px;" onclick="setVaultQuantity(25)">25x</button>
+                            </div>
+
                         </div>
                         
+                        <!-- Vitola (Auto-Links Ring Gauge) & Ring Gauge -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div class="autocomplete-wrapper">
-                                <input type="text" id="vault-vitola" class="form-input" placeholder="Vitola" autocomplete="off" style="margin-bottom: 0; width: 100%;">
+                                <input type="text" id="vault-vitola" class="form-input" placeholder="Vitola" autocomplete="off" style="margin-bottom: 0; width: 100%;" oninput="checkVitolaRingDefault(this.value, 'vault-ring-gauge')">
                                 <div id="vault-vitola-autocomplete" class="autocomplete-dropdown"></div>
                             </div>
                             <input type="number" id="vault-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
                         </div>
+
+                                                <!-- Wrapper with Visual Swatch & Price with Live Per-Stick Breakdown -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                            <div class="autocomplete-wrapper">
-                                <input type="text" id="vault-wrapper" class="form-input" placeholder="Wrapper" autocomplete="off" style="margin-bottom: 0; width: 100%;">
+                            <div class="autocomplete-wrapper" style="position: relative; align-self: start;">
+                                <input type="text" id="vault-wrapper" class="form-input" placeholder="Wrapper" autocomplete="off" style="margin-bottom: 0; width: 100%; padding-right: 36px;" oninput="updateWrapperSwatch('vault-wrapper', 'vault-wrapper-swatch')">
+                                <div id="vault-wrapper-swatch" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border-radius: 5px; border: 1px solid var(--border-subtle); opacity: 0.3; transition: all 0.3s; pointer-events: none;"></div>
                                 <div id="vault-wrapper-autocomplete" class="autocomplete-dropdown"></div>
                             </div>
-                            <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;">
+                            <div>
+                                <input type="number" id="vault-price" class="form-input" placeholder="Price ($)" step="0.01" style="margin-bottom: 0;" oninput="updatePriceBreakdown()">
+                                <span id="vault-price-breakdown" style="font-size: 10px; color: var(--leather); font-family: var(--font-mono); font-weight: 700; margin-top: 4px; display: block; min-height: 14px; padding-left: 4px;"></span>
+                            </div>
                         </div>
+
                         
-                        <div style="display: flex; gap: 12px; margin-top: 16px; margin-bottom: 16px; width: 100%;">
-                            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                                <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
-                                <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+                        <!-- Dates & Target Aging Quick-Tap Presets -->
+                        <div style="background: var(--surface-04dp); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 14px; margin-top: 12px; margin-bottom: 16px;">
+                            <div style="display: flex; gap: 12px; width: 100%;">
+                                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                                    <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Acquired</label>
+                                    <input type="date" id="vault-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;" onchange="updatePlannedRestBadge()">
+                                </div>
+                                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                                    <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
+                                    <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;" onchange="updatePlannedRestBadge()">
+                                </div>
                             </div>
-                            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                                <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; padding-left: 4px;">Target Peak</label>
-                                <input type="date" id="vault-target-date" class="form-input" style="margin-bottom: 0; padding: 12px 8px; font-size: 13px; letter-spacing: -0.5px; width: 100%;">
+
+                                                        <!-- Aging Preset Chips (Segmented Row) -->
+                            <div style="display: flex; width: 100%; margin-top: 12px; border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; background: var(--surface-01dp);">
+                                <button type="button" style="flex: 1; cursor: pointer; background: transparent; border: none; border-right: 1px solid var(--border-subtle); color: var(--text-main); font-size: 10px; font-weight: 700; padding: 10px 0;" onclick="setTargetPeakOffset(30)">+30D</button>
+                                <button type="button" style="flex: 1; cursor: pointer; background: transparent; border: none; border-right: 1px solid var(--border-subtle); color: var(--text-main); font-size: 10px; font-weight: 700; padding: 10px 0;" onclick="setTargetPeakOffset(60)">+60D</button>
+                                <button type="button" style="flex: 1; cursor: pointer; background: transparent; border: none; border-right: 1px solid var(--border-subtle); color: var(--text-main); font-size: 10px; font-weight: 700; padding: 10px 0;" onclick="setTargetPeakOffset(90)">+90D</button>
+                                <button type="button" style="flex: 1; cursor: pointer; background: transparent; border: none; border-right: 1px solid var(--border-subtle); color: var(--text-main); font-size: 10px; font-weight: 700; padding: 10px 0;" onclick="setTargetPeakOffset(180)">+180D</button>
+                                <button type="button" style="flex: 1; cursor: pointer; background: transparent; border: none; color: var(--text-main); font-size: 10px; font-weight: 700; padding: 10px 0;" onclick="setTargetPeakOffset(365)">+1YR</button>
+                            </div>
+
+                            
+                            <!-- Live Planned Aging Counter -->
+                            <div id="vault-aging-plan-badge" style="font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; text-align: center; border-top: 1px solid var(--border-subtle); padding-top: 8px;">
+                                <i class="fa-solid fa-hourglass-half" style="color: var(--leather);"></i> Planned Rest: <span style="color: var(--leather);">7 Days</span>
                             </div>
                         </div>
+
                         
                         <!-- PUBLIC TOGGLE FOR LOUNGE FEED (Humidor Share) -->
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 16px 20px; background: var(--surface-04dp); border-radius: 14px; border: 1px solid var(--border-subtle);">
@@ -1400,9 +1444,10 @@
                         <input type="number" id="log-ring-gauge" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                        <div class="autocomplete-wrapper">
-                            <input type="text" id="log-wrapper" class="form-input" placeholder="Wrapper" autocomplete="off" style="margin-bottom: 0; width: 100%;">
+                                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                        <div class="autocomplete-wrapper" style="position: relative; align-self: start;">
+                            <input type="text" id="log-wrapper" class="form-input" placeholder="Wrapper" autocomplete="off" style="margin-bottom: 0; width: 100%; padding-right: 36px;" oninput="updateWrapperSwatch('log-wrapper', 'log-wrapper-swatch')">
+                            <div id="log-wrapper-swatch" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border-radius: 5px; border: 1px solid var(--border-subtle); opacity: 0.3; transition: all 0.3s; pointer-events: none;"></div>
                             <div id="log-wrapper-autocomplete" class="autocomplete-dropdown"></div>
                         </div>
                         <select id="log-cut" class="form-input form-select" style="margin-bottom: 0;">
@@ -1413,6 +1458,7 @@
                             <option value="Punch">Punch</option>
                         </select>
                     </div>
+
 
                     <!-- Mechanics Tracking & Pairings -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
@@ -1426,49 +1472,24 @@
                         <input type="text" id="log-pairing" class="form-input" placeholder="Pairing (e.g., Bourbon)" style="margin-bottom: 0;">
                     </div>
 
-                    <!-- Rating Block -->
-                    <div style="margin-top: 16px; margin-bottom: 16px;">
-                        <select id="log-rating" class="form-input form-select" style="margin-bottom: 0;">
-                            <option value="" disabled selected>Rating (1-10)</option>
-                            <option value="10">10.00</option>
-                            <option value="9.75">9.75</option>
-                            <option value="9.5">9.50</option>
-                            <option value="9.25">9.25</option>
-                            <option value="9">9.00</option>
-                            <option value="8.75">8.75</option>
-                            <option value="8.5">8.50</option>
-                            <option value="8.25">8.25</option>
-                            <option value="8">8.00</option>
-                            <option value="7.75">7.75</option>
-                            <option value="7.5">7.50</option>
-                            <option value="7.25">7.25</option>
-                            <option value="7">7.00</option>
-                            <option value="6.75">6.75</option>
-                            <option value="6.5">6.50</option>
-                            <option value="6.25">6.25</option>
-                            <option value="6">6.00</option>
-                            <option value="5.75">5.75</option>
-                            <option value="5.5">5.50</option>
-                            <option value="5.25">5.25</option>
-                            <option value="5">5.00</option>
-                            <option value="4.75">4.75</option>
-                            <option value="4.5">4.50</option>
-                            <option value="4.25">4.25</option>
-                            <option value="4">4.00</option>
-                            <option value="3.75">3.75</option>
-                            <option value="3.5">3.50</option>
-                            <option value="3.25">3.25</option>
-                            <option value="3">3.00</option>
-                            <option value="2.75">2.75</option>
-                            <option value="2.5">2.50</option>
-                            <option value="2.25">2.25</option>
-                            <option value="2">2.00</option>
-                            <option value="1.75">1.75</option>
-                            <option value="1.5">1.50</option>
-                            <option value="1.25">1.25</option>
-                            <option value="1">1.00</option>
-                        </select>
+                    <!-- Interactive Rating Slider -->
+                    <div style="margin-top: 16px; margin-bottom: 16px; background: var(--surface-04dp); padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border-subtle);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;">Tasting Score</span>
+                            <div style="display: inline-flex; align-items: center; gap: 6px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                                <i class="fa-solid fa-star" style="color: var(--leather); font-size: 11px;"></i>
+                                <span id="rating-slider-display" style="font-family: var(--font-mono); font-size: 14px; font-weight: 800; color: var(--leather);">8.50</span>
+                            </div>
+                        </div>
+                        <input type="range" id="log-rating-slider" min="1" max="10" step="0.25" value="8.5" style="width: 100%; accent-color: var(--leather); cursor: pointer;" oninput="syncRatingSlider(this.value)">
+                        <input type="hidden" id="log-rating" value="8.5">
+                        <div style="display: flex; justify-content: space-between; font-size: 9px; font-weight: 700; color: var(--text-dim); margin-top: 4px; font-family: var(--font-mono);">
+                            <span>1.0</span>
+                            <span>5.0</span>
+                            <span>10.0</span>
+                        </div>
                     </div>
+
 
                     <!-- PUBLIC TOGGLE FOR LOUNGE FEED -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 16px 20px; background: var(--surface-04dp); border-radius: 14px; border: 1px solid var(--border-subtle);">
@@ -3233,10 +3254,17 @@
                     div.className = 'autocomplete-item';
                     div.innerText = match;
                     
-                    div.onclick = function() {
+                                        div.onclick = function() {
                         input.value = match;
                         dropdown.style.display = 'none';
+                        
+                        // Auto-link triggers
+                        if (inputId === 'vault-vitola') checkVitolaRingDefault(match, 'vault-ring-gauge');
+                        if (inputId === 'log-vitola') checkVitolaRingDefault(match, 'log-ring-gauge');
+                        if (inputId === 'vault-wrapper') updateWrapperSwatch('vault-wrapper', 'vault-wrapper-swatch');
+                        if (inputId === 'log-wrapper') updateWrapperSwatch('log-wrapper', 'log-wrapper-swatch');
                     };
+
                     dropdown.appendChild(div);
                 });
                 dropdown.style.display = 'block';
@@ -3260,6 +3288,147 @@
     
     setupAutocomplete('vault-wrapper', 'vault-wrapper-autocomplete', () => window.wrapperLibrary);
     setupAutocomplete('log-wrapper', 'log-wrapper-autocomplete', () => window.wrapperLibrary);
+
+        // --- DYNAMIC FORM LOGIC ENGINES ---
+    
+    // 1. Vitola to Ring Gauge Auto-Link Dictionary
+    const vitolaRingMap = {
+        "corona": 42,
+        "petit corona": 40,
+        "churchill": 47,
+        "robusto": 50,
+        "petit robusto": 50,
+        "toro": 52,
+        "corona gorda": 48,
+        "double corona": 50,
+        "panatela": 36,
+        "lancero": 38,
+        "lonsdale": 42,
+        "gordo": 60,
+        "grande": 60,
+        "gigante": 60,
+        "belicoso": 52,
+        "torpedo": 52,
+        "pyramid": 52,
+        "perfecto": 50,
+        "salomon": 57,
+        "rothschild": 48
+    };
+
+        window.checkVitolaRingDefault = function(vitolaVal, ringInputId) {
+        if (!vitolaVal) return;
+        const clean = vitolaVal.trim().toLowerCase();
+        const ringInput = document.getElementById(ringInputId);
+        if (ringInput) {
+            for (const [key, ring] of Object.entries(vitolaRingMap)) {
+                if (clean.includes(key)) {
+                    ringInput.value = ring;
+                    break;
+                }
+            }
+        }
+    };
+
+
+    // 2. Wrapper Color Swatch Preview Dictionary
+    const wrapperColorMap = {
+        "candela": "#4ADE80",
+        "double claro": "#4ADE80",
+        "claro": "#F5DEB3",
+        "connecticut": "#E5D0A1",
+        "colorado claro": "#C67A38",
+        "cameroon": "#BA6838",
+        "sumatra": "#A05A2C",
+        "habano": "#8B4513",
+        "rosado": "#A84C32",
+        "corojo": "#9E472A",
+        "colorado": "#963826",
+        "colorado maduro": "#5C2B1B",
+        "broadleaf": "#3D2418",
+        "san andres": "#361E14",
+        "maduro": "#28160E",
+        "oscuro": "#151515"
+    };
+
+    window.updateWrapperSwatch = function(inputId, swatchId) {
+        const val = document.getElementById(inputId).value.trim().toLowerCase();
+        const swatch = document.getElementById(swatchId);
+        if (!swatch) return;
+        let matchedColor = null;
+        for (const [key, color] of Object.entries(wrapperColorMap)) {
+            if (val.includes(key)) {
+                matchedColor = color;
+                break;
+            }
+        }
+        if (matchedColor) {
+            swatch.style.background = matchedColor;
+            swatch.style.borderColor = 'var(--gold)';
+            swatch.style.opacity = '1';
+        } else {
+            swatch.style.background = 'transparent';
+            swatch.style.borderColor = 'var(--border-subtle)';
+            swatch.style.opacity = '0.3';
+        }
+    };
+
+    // 3. Package & Price Per Stick Calculator
+    window.setVaultQuantity = function(qty) {
+        document.getElementById('vault-quantity').value = qty;
+        window.updatePriceBreakdown();
+    };
+
+    window.updatePriceBreakdown = function() {
+        const qty = parseInt(document.getElementById('vault-quantity').value) || 1;
+        const price = parseFloat(document.getElementById('vault-price').value);
+        const breakdown = document.getElementById('vault-price-breakdown');
+        if (!breakdown) return;
+        if (!isNaN(price) && price > 0) {
+            if (qty > 1) {
+                const perStick = (price / qty).toFixed(2);
+                breakdown.innerText = `≈ $${perStick} / stick`;
+            } else {
+                breakdown.innerText = '';
+            }
+        } else {
+            breakdown.innerText = '';
+        }
+    };
+
+    // 4. Target Peak Quick-Tap Presets & Live Plan Counter
+    window.setTargetPeakOffset = function(days) {
+        const acqInput = document.getElementById('vault-date');
+        const baseDate = acqInput.value ? new Date(acqInput.value + 'T00:00:00') : new Date();
+        baseDate.setDate(baseDate.getDate() + days);
+        const targetStr = baseDate.toISOString().split('T')[0];
+        document.getElementById('vault-target-date').value = targetStr;
+        window.updatePlannedRestBadge();
+    };
+
+    window.updatePlannedRestBadge = function() {
+        const acqVal = document.getElementById('vault-date').value;
+        const targetVal = document.getElementById('vault-target-date').value;
+        const badge = document.getElementById('vault-aging-plan-badge');
+        if (!badge) return;
+        if (acqVal && targetVal) {
+            const d1 = new Date(acqVal + 'T00:00:00').getTime();
+            const d2 = new Date(targetVal + 'T00:00:00').getTime();
+            const diffDays = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+            if (diffDays >= 0) {
+                badge.innerHTML = `<i class="fa-solid fa-hourglass-half" style="color: var(--leather);"></i> Planned Rest: <span style="color: var(--leather); font-weight: 800;">${diffDays} Days</span>`;
+            } else {
+                badge.innerHTML = `<span style="color: var(--danger);">Target date is before acquisition</span>`;
+            }
+        }
+    };
+
+    // 5. Interactive Rating Slider Sync
+    window.syncRatingSlider = function(val) {
+        const score = parseFloat(val).toFixed(2);
+        document.getElementById('rating-slider-display').innerText = score;
+        document.getElementById('log-rating').value = score;
+    };
+
 
     // --- AGING NOTIFICATION ALERT ENGINE ---
     window.checkAgingAlerts = function(inventory) {
@@ -4862,7 +5031,7 @@
         document.getElementById('view-humidor').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.clearHumidorForm = function() {
+        window.clearHumidorForm = function() {
         document.getElementById('vault-brand').value = '';
         document.getElementById('vault-quantity').value = '1';
         document.getElementById('vault-ring-gauge').value = '';
@@ -4877,6 +5046,9 @@
         photoBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Add Picture';
         
         initializeDates();
+        window.updatePriceBreakdown();
+        window.updateWrapperSwatch('vault-wrapper', 'vault-wrapper-swatch');
+        window.updatePlannedRestBadge();
         
         editingVaultId = null;
         const submitBtn = document.getElementById('vault-submit-btn');
@@ -4884,6 +5056,7 @@
         submitBtn.style.background = '';
         submitBtn.style.color = '';
     };
+
 
     window.storeCigar = async function() {
         const brand = document.getElementById('vault-brand').value;
@@ -5288,7 +5461,7 @@
         document.getElementById('view-journal').scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.clearJournalForm = function() {
+        window.clearJournalForm = function() {
         document.getElementById('log-brand').value = '';
         document.getElementById('log-vitola').value = '';
         document.getElementById('log-ring-gauge').value = '';
@@ -5296,7 +5469,11 @@
         document.getElementById('log-cut').selectedIndex = 0;
         document.getElementById('log-light').selectedIndex = 0;
         document.getElementById('log-pairing').value = '';
-        document.getElementById('log-rating').selectedIndex = 0;
+        
+        // Reset slider to default 8.50
+        document.getElementById('log-rating-slider').value = 8.5;
+        window.syncRatingSlider(8.5);
+        
         document.getElementById('log-notes').value = '';
         document.getElementById('log-public').checked = true;
         
@@ -5308,6 +5485,7 @@
         
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('log-date').value = today;
+        window.updateWrapperSwatch('log-wrapper', 'log-wrapper-swatch');
         
         editingJournalId = null;
         const submitBtn = document.getElementById('journal-submit-btn');
@@ -5315,6 +5493,7 @@
         submitBtn.style.background = '';
         submitBtn.style.color = '';
     };
+
 
     window.logSmoke = async function() {
         const date = document.getElementById('log-date').value;
