@@ -3984,6 +3984,56 @@
         }
     };
 
+        window.editComment = async function(logId, commentTimestamp) {
+        const logRef = doc(db, "journal", logId);
+        const logSnap = await getDoc(logRef);
+        if (!logSnap.exists()) return;
+        
+        const logData = logSnap.data();
+        const oldComment = logData.comments.find(c => c.timestamp === commentTimestamp && c.uid === auth.currentUser.uid);
+        if (!oldComment) return;
+
+        const newText = await window.customPrompt("Edit your comment:", oldComment.text, "Edit Comment");
+        if (newText !== null && newText.trim() !== "" && newText.trim() !== oldComment.text) {
+            
+            // Rebuild the array, replacing only the targeted comment while adding an 'edited' flag
+            const updatedComments = logData.comments.map(c => 
+                (c.timestamp === commentTimestamp && c.uid === auth.currentUser.uid) 
+                    ? { ...c, text: newText.trim(), edited: true } 
+                    : c
+            );
+            
+            try {
+                await updateDoc(logRef, { comments: updatedComments });
+            } catch (error) {
+                console.error("Error editing comment:", error);
+                window.customAlert("Failed to update comment.", "Error");
+            }
+        }
+    };
+
+    window.deleteComment = async function(logId, commentTimestamp) {
+        if (!(await window.customConfirm("Delete this comment?", "Confirm", true))) return;
+        
+        const logRef = doc(db, "journal", logId);
+        const logSnap = await getDoc(logRef);
+        if (!logSnap.exists()) return;
+        
+        const logData = logSnap.data();
+        const commentToTrash = logData.comments.find(c => c.timestamp === commentTimestamp && c.uid === auth.currentUser.uid);
+        
+        if (commentToTrash) {
+            try {
+                // arrayRemove requires the exact, identical object to wipe it
+                await updateDoc(logRef, { comments: arrayRemove(commentToTrash) });
+            } catch (error) {
+                console.error("Error deleting comment:", error);
+                window.customAlert("Failed to delete comment.", "Error");
+            }
+        }
+    };
+
+
         window.renderLoungeFeed = function() {
         const feedList = document.getElementById('lounge-feed-list');
         
@@ -4124,21 +4174,34 @@
                     const isCommentOpen = openComments.includes(log.id);
                     const commentDisplay = isCommentOpen ? 'block' : 'none';
 
-                    let commentsHtml = '';
+                                        let commentsHtml = '';
                     if (log.comments && log.comments.length > 0) {
                         log.comments.forEach(c => {
+                            let commentActions = '';
+                            if (c.uid === auth.currentUser.uid) {
+                                commentActions = `
+                                <div style="display: flex; gap: 10px; margin-left: auto; padding-left: 8px;">
+                                    <i class="fa-solid fa-pen" style="color: var(--text-dim); cursor: pointer; font-size: 10px;" onclick="event.stopPropagation(); editComment('${log.id}', ${c.timestamp})"></i>
+                                    <i class="fa-solid fa-trash" style="color: var(--danger); cursor: pointer; font-size: 10px; opacity: 0.8;" onclick="event.stopPropagation(); deleteComment('${log.id}', ${c.timestamp})"></i>
+                                </div>`;
+                            }
+
+                            const editedTag = c.edited ? '<span style="font-size: 9px; color: var(--text-dim); font-style: italic; margin-left: 4px;">(edited)</span>' : '';
+
                             commentsHtml += `
                             <div style="display: flex; gap: 8px; margin-bottom: 12px; font-size: 12px; align-items: flex-start;">
                                 <img src="${escapeHTML(c.avatar || 'app-icon.png')}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                                <div style="line-height: 1.3;">
+                                <div style="line-height: 1.3; flex: 1; min-width: 0;">
                                     <strong style="color: var(--text-main); font-size: 11px;">${escapeHTML(c.username)}</strong>
-                                    <span style="color: var(--text-dim); margin-left: 4px;">${escapeHTML(c.text)}</span>
+                                    <span style="color: var(--text-dim); margin-left: 4px; word-break: break-word;">${escapeHTML(c.text)}</span>${editedTag}
                                 </div>
+                                ${commentActions}
                             </div>`;
                         });
                     } else {
                         commentsHtml = '<div style="color: var(--text-dim); font-size: 11px; margin-bottom: 12px; text-align: center; font-style: italic;">No comments yet. Be the first.</div>';
                     }
+
 
                     socialBar = `
                     <div style="margin-top: 16px; border-top: 1px solid var(--border-subtle); padding-top: 16px;">
