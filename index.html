@@ -1146,7 +1146,7 @@
             
             <div class="greeting" id="greeting-container">
                 <span id="dynamic-layer-2-title" style="display: block; font-size: 28px; font-weight: 800; color: var(--text-main);">
-                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">Smiljan</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
+                    Welcome, <span id="display-name" style="display:inline; font-size: inherit; color: inherit; cursor: pointer;" onclick="editUsername()">The Final Third</span>.<i class="fa-solid fa-pen" style="font-size: 14px; color: var(--text-dim); cursor: pointer; vertical-align: middle; margin-left: 8px;" onclick="editUsername()"></i>
                 </span>
                 <span id="dynamic-layer-2-subtitle" style="color: var(--text-dim); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; display: block; font-family: var(--font-sans);">Vault Overview</span>
             </div>
@@ -1557,7 +1557,8 @@
                         </div>
                     </div>
                     <div id="profile-display-name-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; cursor: pointer; transition: opacity 0.2s;" onclick="openPersonalInfoModal()">
-                        <span id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main);">Smiljan</span>
+                        <span id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main);">Final Third</span>
+
                         <i class="fa-solid fa-circle-info" style="color: var(--text-dim); font-size: 14px;"></i>
                     </div>
                 </div>
@@ -2076,19 +2077,20 @@
     <div class="action-sheet" onclick="event.stopPropagation()">
         <div style="text-align: center; margin-bottom: 24px; font-size: 15px; font-weight: 700; color: var(--text-main);">Update Profile Picture</div>
         
-        <label class="action-btn" style="cursor: pointer; margin-bottom: 12px;">
+        <input type="file" id="avatar-upload-camera" accept="image/*" capture="environment" style="display: none;" onchange="handleAvatarUpload(event)">
+        <button class="action-btn" style="margin-bottom: 12px;" onclick="document.getElementById('avatar-upload-camera').click()">
             <i class="fa-solid fa-camera"></i> Take Photo
-            <input type="file" accept="image/*" capture="environment" style="display: none;" onchange="handleAvatarUpload(event)">
-        </label>
+        </button>
         
-        <label class="action-btn" style="cursor: pointer; margin-bottom: 12px;">
+        <input type="file" id="avatar-upload-photos" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+        <button class="action-btn" style="margin-bottom: 12px;" onclick="document.getElementById('avatar-upload-photos').click()">
             <i class="fa-solid fa-image"></i> Upload from Photos
-            <input type="file" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
-        </label>
+        </button>
         
         <button class="action-btn cancel" onclick="closeAvatarActionSheet()">Cancel</button>
     </div>
 </div>
+
 
 
 
@@ -2997,7 +2999,7 @@
     const auth = getAuth(app);
     const storage = getStorage(app);
 
-    window.currentUserName = "Smiljan";
+        window.currentUserName = "Final Third";
 
     // --- CROWDSOURCING HELPER FUNCTION ---
     window.brandLibrary = [];
@@ -3429,7 +3431,7 @@
         });
     };
 
-    window.compressAvatar = function(file) {
+            window.compressAvatar = function(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -3438,8 +3440,11 @@
                 img.src = event.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 400; 
-                    const MAX_HEIGHT = 400;
+                    
+                    // Doubled to 300px to account for high-resolution Retina screens
+                    const MAX_WIDTH = 300; 
+                    const MAX_HEIGHT = 300;
+                    
                     let width = img.width;
                     let height = img.height;
 
@@ -3453,13 +3458,17 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6)); 
+                    
+                    // Bumped quality to 0.8 to remove compression artifacts
+                    resolve(canvas.toDataURL('image/jpeg', 0.8)); 
                 };
                 img.onerror = error => reject(error);
             };
             reader.onerror = error => reject(error);
         });
     };
+
+
 
 
 
@@ -3501,34 +3510,37 @@
     window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
     window.closeAvatarActionSheet = function(event) { document.getElementById('avatar-action-sheet').classList.remove('active'); };
 
-            window.handleAvatarUpload = async function(event) {
-        const file = event.target.files[0];
+               window.handleAvatarUpload = async function(event) {
+        const fileInput = event.target;
+        const file = fileInput.files[0];
         if(!file) return;
         
         window.showAppToast('app-icon.png', 'Updating Avatar...', 'Please wait while we process your photo.');
 
         try {
             document.getElementById('profile-avatar-img').style.opacity = '0.5';
-            const compressedBase64 = await window.compressAvatar(file);
-            const imageUrl = await uploadImageToStorage(compressedBase64, 'avatar');
             
-            document.getElementById('profile-avatar-img').src = imageUrl;
+            const compressedBase64 = await window.compressAvatar(file);
+            
+            document.getElementById('profile-avatar-img').src = compressedBase64;
             document.getElementById('profile-avatar-img').style.opacity = '1';
-            localStorage.setItem('finalThirdAvatar', imageUrl); 
+            localStorage.setItem('finalThirdAvatar', compressedBase64); 
             
             if (auth.currentUser) {
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { avatar: imageUrl });
+                await updateDoc(doc(db, "users", auth.currentUser.uid), { avatar: compressedBase64 });
             }
-            window.showAppToast(imageUrl, 'Success!', 'Your profile picture has been updated.');
+            
+            window.showAppToast(compressedBase64, 'Success!', 'Your profile picture has been updated.');
         } catch (error) {
             console.error("Avatar upload failed:", error);
             window.customAlert("Failed to update profile picture. Please try again.", "Upload Error");
             document.getElementById('profile-avatar-img').style.opacity = '1';
         } finally {
-            event.target.value = ''; 
-            closeAvatarActionSheet(); // Delayed until processing is fully complete
+            fileInput.value = ''; 
+            window.closeAvatarActionSheet(); 
         }
     };
+
 
 
 
