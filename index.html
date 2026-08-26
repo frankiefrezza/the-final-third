@@ -195,104 +195,57 @@
         }
         [data-theme="platinum"] .bottom-dock-wrapper { background: linear-gradient(to top, var(--bg-base) 40%, rgba(15, 17, 21, 0) 100%); }
 
-        /* --- CLARO THEME (Warm Linen & Copper) --- */
+                /* --- CLARO THEME (Warm Linen & Terracotta) --- */
         [data-theme="claro"] {
-            --bg-base: #FAFAF9;
-            --surface-00dp: #FAFAF9;
-            --surface-01dp: #F5F5F4;
-            --surface-02dp: #FFFFFF;
-            --surface-04dp: #E7E5E4;
-            --surface-06dp: #FFFFFF;
-            --surface-08dp: #FFFFFF;
-            --surface-12dp: #FFFFFF;
-            --surface-16dp: #FFFFFF;
-            --surface-24dp: #FFFFFF;
-            --login-panel-bg: #FFFFFF;
-            --login-input-bg: #F5F5F4;
-            --input-border: #D6D3D1;
-            --bg-gradient-start: #FFFFFF;
-            --bg-gradient-end: #F5F5F4;
-            --layer2-grad-start: #FFFFFF;
-            --layer2-grad-end: #E7E5E4;
-            --surface-glass-bento: rgba(255, 255, 255, 0.8);
-            --border-glass-bento: rgba(180, 83, 9, 0.15);
-            --text-main: #1C1917;
-            --text-dim: #78716C;
-            --border-subtle: #D6D3D1;
-            --leather: #B45309; 
+            /* Warm sand/linen base */
+            --bg-base: #F3EFE6; 
+            --surface-00dp: #F3EFE6;
+            
+            /* Inputs and minor elements */
+            --surface-01dp: #EAE4D6; 
+            --surface-04dp: #E1D9C5; 
+            
+            /* Creamy ivory for cards/modals (No pure white) */
+            --surface-02dp: #FAF8F5; 
+            --surface-06dp: #FAF8F5;
+            --surface-08dp: #FAF8F5;
+            --surface-12dp: #FAF8F5;
+            --surface-16dp: #FAF8F5;
+            --surface-24dp: #FAF8F5;
+            
+            --login-panel-bg: #FAF8F5;
+            --login-input-bg: #EAE4D6;
+            --input-border: #D1C7B1;
+            
+            --bg-gradient-start: #FAF8F5;
+            --bg-gradient-end: #EAE4D6;
+            --layer2-grad-start: #FAF8F5;
+            --layer2-grad-end: #E1D9C5;
+            
+            --surface-glass-bento: rgba(250, 248, 245, 0.85);
+            --border-glass-bento: rgba(196, 98, 16, 0.2); /* Terracotta tint */
+            
+            /* Espresso & Warm Taupe text */
+            --text-main: #2C2016;
+            --text-dim: #8A7C6B;
+            --border-subtle: #D1C7B1;
+            
+            /* Rich Terracotta Accents */
+            --leather: #C46210; 
             --gold: #D97706;
-            --leather-rgb: 180, 83, 9;
-            --btn-leather: #B45309;
-            --stat-bg-end: #FAFAF9;
-            --login-top-grad: rgba(28, 25, 23, 0.25);
+            --leather-rgb: 196, 98, 16;
+            --btn-leather: #C46210;
+            --stat-bg-end: #F3EFE6;
+            --login-top-grad: rgba(44, 32, 22, 0.15);
+            
+            /* Shadows heavily tinted with terracotta to create warm lighting */
+            --shadow-subtle: rgba(196, 98, 16, 0.05);
+            --shadow-strong: rgba(196, 98, 16, 0.12);
+            --shadow-layer3: rgba(196, 98, 16, 0.08);
+            --glass-border: rgba(196, 98, 16, 0.1);
+            --overlay-bg: rgba(44, 32, 22, 0.6);
         }
-        [data-theme="claro"] .bottom-dock-wrapper { background: linear-gradient(to top, var(--bg-base) 40%, rgba(250, 250, 249, 0) 100%); }
-
-        /* --- CONNECTICUT THEME (Cream & Walnut) --- */
-        [data-theme="connecticut"] {
-            --bg-base: #FCFAF6;
-            --surface-00dp: #FCFAF6;
-            --surface-01dp: #F5F1E8;
-            --surface-02dp: #FFFFFF;
-            --surface-04dp: #EDE7DA;
-            --surface-06dp: #FFFFFF;
-            --surface-08dp: #FFFFFF;
-            --surface-12dp: #FFFFFF;
-            --surface-16dp: #FFFFFF;
-            --surface-24dp: #FFFFFF;
-            --login-panel-bg: #FFFFFF;
-            --login-input-bg: #F5F1E8;
-            --input-border: #DFD7C7;
-            --bg-gradient-start: #FFFFFF;
-            --bg-gradient-end: #F5F1E8;
-            --layer2-grad-start: #FFFFFF;
-            --layer2-grad-end: #EDE7DA;
-            --surface-glass-bento: rgba(255, 255, 255, 0.7);
-            --border-glass-bento: rgba(139, 69, 19, 0.15);
-            --text-main: #2C2216;
-            --text-dim: #7C6E5D;
-            --border-subtle: #DFD7C7;
-            --leather: #8B4513; 
-            --gold: #A67B5B;
-            --leather-rgb: 139, 69, 19;
-            --btn-leather: #8B4513;
-            --stat-bg-end: #FCFAF6;
-            --login-top-grad: rgba(44, 34, 22, 0.25);
-        }
-        [data-theme="connecticut"] .bottom-dock-wrapper { background: linear-gradient(to top, var(--bg-base) 40%, rgba(252, 250, 246, 0) 100%); }
-
-        /* --- ASH THEME (Cool White & Slate) --- */
-        [data-theme="ash"] {
-            --bg-base: #F8FAFC;
-            --surface-00dp: #F8FAFC;
-            --surface-01dp: #F1F5F9;
-            --surface-02dp: #FFFFFF;
-            --surface-04dp: #E2E8F0;
-            --surface-06dp: #FFFFFF;
-            --surface-08dp: #FFFFFF;
-            --surface-12dp: #FFFFFF;
-            --surface-16dp: #FFFFFF;
-            --surface-24dp: #FFFFFF;
-            --login-panel-bg: #FFFFFF;
-            --login-input-bg: #F1F5F9;
-            --input-border: #CBD5E1;
-            --bg-gradient-start: #FFFFFF;
-            --bg-gradient-end: #F1F5F9;
-            --layer2-grad-start: #FFFFFF;
-            --layer2-grad-end: #E2E8F0;
-            --surface-glass-bento: rgba(255, 255, 255, 0.8);
-            --border-glass-bento: rgba(71, 85, 105, 0.15);
-            --text-main: #0F172A;
-            --text-dim: #64748B;
-            --border-subtle: #CBD5E1;
-            --leather: #475569; 
-            --gold: #94A3B8;
-            --leather-rgb: 71, 85, 105;
-            --btn-leather: #475569;
-            --stat-bg-end: #F8FAFC;
-            --login-top-grad: rgba(15, 23, 42, 0.25);
-        }
-        [data-theme="ash"] .bottom-dock-wrapper { background: linear-gradient(to top, var(--bg-base) 40%, rgba(248, 250, 252, 0) 100%); }
+        [data-theme="claro"] .bottom-dock-wrapper { background: linear-gradient(to top, var(--bg-base) 40%, rgba(243, 239, 230, 0) 100%); }
 
 
 
@@ -2122,13 +2075,21 @@
 <div id="avatar-action-sheet" class="action-sheet-overlay" onclick="closeAvatarActionSheet(event)">
     <div class="action-sheet" onclick="event.stopPropagation()">
         <div style="text-align: center; margin-bottom: 24px; font-size: 15px; font-weight: 700; color: var(--text-main);">Update Profile Picture</div>
-        <button class="action-btn" onclick="document.getElementById('camera-upload').click();"><i class="fa-solid fa-camera"></i> Take Photo</button>
-        <button class="action-btn" onclick="document.getElementById('gallery-upload').click();"><i class="fa-solid fa-image"></i> Upload from Photos</button>
+        
+        <label class="action-btn" style="cursor: pointer; margin-bottom: 12px;">
+            <i class="fa-solid fa-camera"></i> Take Photo
+            <input type="file" accept="image/*" capture="environment" style="display: none;" onchange="handleAvatarUpload(event)">
+        </label>
+        
+        <label class="action-btn" style="cursor: pointer; margin-bottom: 12px;">
+            <i class="fa-solid fa-image"></i> Upload from Photos
+            <input type="file" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+        </label>
+        
         <button class="action-btn cancel" onclick="closeAvatarActionSheet()">Cancel</button>
-        <input type="file" id="camera-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleAvatarUpload(event)">
-        <input type="file" id="gallery-upload" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
     </div>
 </div>
+
 
 
 <!-- DELETE ACCOUNT MODAL -->
@@ -2859,7 +2820,7 @@
     }
 
             // --- THEME ENGINE ---
-    window.setAppTheme = function(themeName) {
+        window.setAppTheme = function(themeName) {
         const html = document.documentElement;
         
         // Apply theme to DOM and save to device
@@ -2867,9 +2828,10 @@
         localStorage.setItem('finalThirdTheme', themeName);
         
         // Reset all button borders
-        const buttons = ['dark', 'light', 'platinum', 'claro', 'connecticut', 'ash'];
+        const buttons = ['dark', 'light', 'platinum', 'claro'];
 
         buttons.forEach(t => {
+
             const btn = document.getElementById(`theme-btn-${t}`);
             if (btn) {
                 btn.style.borderColor = (t === themeName) ? 'var(--leather)' : 'var(--border-subtle)';
@@ -3435,7 +3397,7 @@
         document.getElementById('log-date').value = todayStr;
     }
 
-    window.compressImage = function(file) {
+            window.compressImage = function(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -3499,6 +3461,8 @@
         });
     };
 
+
+
     window.handleCigarImageUpload = async function(event, type) {
         const file = event.target.files[0];
         if (!file) return;
@@ -3537,10 +3501,12 @@
     window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
     window.closeAvatarActionSheet = function(event) { document.getElementById('avatar-action-sheet').classList.remove('active'); };
 
-        window.handleAvatarUpload = async function(event) {
-        closeAvatarActionSheet();
+            window.handleAvatarUpload = async function(event) {
         const file = event.target.files[0];
         if(!file) return;
+        
+        window.showAppToast('app-icon.png', 'Updating Avatar...', 'Please wait while we process your photo.');
+
         try {
             document.getElementById('profile-avatar-img').style.opacity = '0.5';
             const compressedBase64 = await window.compressAvatar(file);
@@ -3553,13 +3519,18 @@
             if (auth.currentUser) {
                 await updateDoc(doc(db, "users", auth.currentUser.uid), { avatar: imageUrl });
             }
+            window.showAppToast(imageUrl, 'Success!', 'Your profile picture has been updated.');
         } catch (error) {
             console.error("Avatar upload failed:", error);
+            window.customAlert("Failed to update profile picture. Please try again.", "Upload Error");
             document.getElementById('profile-avatar-img').style.opacity = '1';
         } finally {
             event.target.value = ''; 
+            closeAvatarActionSheet(); // Delayed until processing is fully complete
         }
     };
+
+
 
 
         window.editUsername = async function() {
