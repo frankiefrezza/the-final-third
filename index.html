@@ -1963,7 +1963,7 @@
                 </div>
 
 
-                <!-- Daily Selection Enable/Disable Toggle -->
+                                <!-- Daily Selection Enable/Disable Toggle -->
                 <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleDailyCigarPreference()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
@@ -1978,6 +1978,23 @@
                         <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
                     </div>
                 </div>
+
+                <!-- Notifications Enable/Disable Toggle -->
+                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleNotificationsPreference()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                            <i id="notif-pref-icon" class="fa-solid fa-bell"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Notifications</div>
+                            <div id="notif-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Enabled</div>
+                        </div>
+                    </div>
+                    <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
+                        <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
+                    </div>
+                </div>
+
 
                                 <!-- Feedback & Support Button -->
                 <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 24px; transition: transform 0.2s;" onclick="openFeedbackModal()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
@@ -2501,7 +2518,7 @@
     };
 
 
-    window.toggleDailyCigarExpand = function() {
+        window.toggleDailyCigarExpand = function() {
         const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
         if (expandedPref) {
             localStorage.setItem('finalThirdDailyExpanded', 'false');
@@ -2511,7 +2528,32 @@
         window.applyDailyCigarPreference();
     };
 
+    window.toggleNotificationsPreference = function() {
+        const currentState = localStorage.getItem('finalThirdNotificationsPref') || 'enabled';
+        if (currentState === 'enabled') {
+            localStorage.setItem('finalThirdNotificationsPref', 'disabled');
+        } else {
+            localStorage.setItem('finalThirdNotificationsPref', 'enabled');
+        }
+        window.applyNotificationsPreference();
+    };
+
+    window.applyNotificationsPreference = function() {
+        const savedPref = localStorage.getItem('finalThirdNotificationsPref') || 'enabled';
+        const icon = document.getElementById('notif-pref-icon');
+        const text = document.getElementById('notif-pref-text');
+        
+        if (savedPref === 'disabled') {
+            if(icon) icon.className = 'fa-solid fa-bell-slash';
+            if(text) text.innerText = 'Disabled';
+        } else {
+            if(icon) icon.className = 'fa-solid fa-bell';
+            if(text) text.innerText = 'Enabled';
+        }
+    };
+
     // --- DOSSIER PERSONAL INFO MODAL ---
+
     window.openPersonalInfoModal = function() {
         const user = auth.currentUser;
         if (!user) return;
@@ -4273,13 +4315,14 @@
             
             window.updateThemeUI(document.documentElement.getAttribute('data-theme'));
             
-            window.currentUserName = user.displayName || user.email.split('@')[0]; 
+                        window.currentUserName = user.displayName || user.email.split('@')[0]; 
             
             window.applyDailyCigarPreference();
+            window.applyNotificationsPreference(); // Boot up notification settings
             initializeDates();
             loadDailyCigar();
             loadBrandLibrary(); 
-            
+
             document.getElementById('profile-display-name').innerText = window.currentUserName;
 
             const localAvatar = localStorage.getItem('finalThirdAvatar');
@@ -4380,8 +4423,61 @@
                          // Flag to prevent the toast from firing 50 times when the app first loads
             let isInitialPublicFeedLoad = true;
 
-             // BULLETPROOF: Also filters out strings from public feeds to prevent UI crashes
+                          // BULLETPROOF: Also filters out strings from public feeds to prevent UI crashes
             unsubscribePublicFeed = onSnapshot(query(collection(db, "journal"), where("isPublic", "==", true)), (snapshot) => {
+                
+                const notifsEnabled = localStorage.getItem('finalThirdNotificationsPref') !== 'disabled';
+
+                // --- TRIGGER TOAST NOTIFICATIONS ---
+                if (!isInitialPublicFeedLoad && notifsEnabled) {
+                    snapshot.docChanges().forEach((change) => {
+                        const newData = change.doc.data();
+                        
+                        // 1. FRIEND POSTED SOMETHING NEW
+                        if (change.type === "added" && newData.uid !== auth.currentUser.uid && myFriends.includes(newData.uid)) {
+                            const isHumidor = newData.brand.startsWith("[New Addition]");
+                            const cleanBrand = isHumidor ? newData.brand.replace("[New Addition] ", "") : newData.brand;
+                            const actionText = isHumidor ? "Added to Humidor" : "Smoked";
+                            window.showAppToast(newData.avatar, newData.username || "A Friend", `${actionText}: ${cleanBrand}`);
+                        }
+
+                        // 2. SOMEONE INTERACTED WITH YOUR POST
+                        if (change.type === "modified" && newData.uid === auth.currentUser.uid) {
+                            const oldData = allPublicLogs.find(l => l.id === change.doc.id);
+                            
+                            if (oldData) {
+                                const newLikes = newData.likes ? newData.likes.length : 0;
+                                const oldLikes = oldData.likes ? oldData.likes.length : 0;
+                                
+                                const newComments = newData.comments ? newData.comments.length : 0;
+                                const oldComments = oldData.comments ? oldData.comments.length : 0;
+                                
+                                const cleanBrand = newData.brand.startsWith("[New Addition]") ? newData.brand.replace("[New Addition] ", "") : newData.brand;
+
+                                // Trigger Like Alert
+                                if (newLikes > oldLikes) {
+                                    const likerUid = newData.likes[newData.likes.length - 1];
+                                    if (likerUid !== auth.currentUser.uid) {
+                                        let likerName = "Someone";
+                                        const cachedFriends = JSON.parse(localStorage.getItem('finalThirdFriendsCache') || '{}');
+                                        if (cachedFriends[likerUid]) likerName = cachedFriends[likerUid].username;
+                                        
+                                        window.showAppToast('app-icon.png', 'New Like', `${likerName} liked your ${cleanBrand}`);
+                                    }
+                                }
+
+                                // Trigger Comment Alert
+                                if (newComments > oldComments) {
+                                    const latestComment = newData.comments[newData.comments.length - 1];
+                                    if (latestComment.uid !== auth.currentUser.uid) {
+                                        window.showAppToast(latestComment.avatar || 'app-icon.png', 'New Comment', `${latestComment.username} commented: "${latestComment.text}"`);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
                 allPublicLogs = [];
                 snapshot.forEach(doc => {
                     let d = doc.data();
@@ -4389,40 +4485,17 @@
                     d.rating = isNaN(r) ? null : r;
                     allPublicLogs.push({ id: doc.id, ...d });
                 });
+                
                 allPublicLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
                 renderLoungeFeed();
                 
-                // Triggers a live-update in the Network Modal if it's currently open
                 if (document.getElementById('network-modal').classList.contains('active')) {
                     renderNetworkModal();
-                }
-
-                // --- TRIGGER TOAST FOR NEW FRIEND ACTIVITY ---
-                if (!isInitialPublicFeedLoad) {
-                    snapshot.docChanges().forEach((change) => {
-                        // Only trigger if a NEW document was added
-                        if (change.type === "added") {
-                            const data = change.doc.data();
-                            
-                                                        // Check if the author is in your friends list and is NOT you
-                            if (data.uid !== auth.currentUser.uid && myFriends.includes(data.uid)) {
-                                const isHumidor = data.brand.startsWith("[New Addition]");
-                                const cleanBrand = isHumidor ? data.brand.replace("[New Addition] ", "") : data.brand;
-                                const actionText = isHumidor ? "Added to Humidor" : "Smoked";
-                                
-                                window.showAppToast(
-
-                                    data.avatar,
-                                    data.username || "A Friend",
-                                    `${actionText}: ${cleanBrand}`
-                                );
-                            }
-                        }
-                    });
                 }
                 
                 isInitialPublicFeedLoad = false;
             });
+
 
 
         } else {
