@@ -2239,7 +2239,105 @@
     </div>
 </div>
 
+<!-- LOUNGE EDIT MODAL -->
+<div id="lounge-edit-action-sheet" class="action-sheet-overlay" onclick="closeLoungeEditModal(event)">
+    <div class="action-sheet" onclick="event.stopPropagation()" style="height: 85vh; display: flex; flex-direction: column; padding-bottom: max(24px, env(safe-area-inset-bottom));">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main);">Edit Post</div>
+            <div onclick="closeLoungeEditModal()" style="color: var(--text-dim); font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        
+        <div style="overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; padding-right: 4px;">
+            <input type="hidden" id="lounge-edit-id">
+            
+            <input type="text" id="lounge-edit-brand" class="form-input" placeholder="Brand & Line (e.g., Perdomo)">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <input type="text" id="lounge-edit-vitola" class="form-input" placeholder="Vitola" style="margin-bottom: 0;">
+                <input type="text" id="lounge-edit-ring" class="form-input" placeholder="Ring Gauge" style="margin-bottom: 0;">
+            </div>
+            
+            <input type="text" id="lounge-edit-wrapper" class="form-input" placeholder="Wrapper" style="margin-top: 16px; margin-bottom: 0;">
+
+            <!-- JOURNAL ONLY FIELDS -->
+            <div id="lounge-edit-journal-fields">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <select id="lounge-edit-cut" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Cut Style</option>
+                        <option value="Straight Cut">Straight Cut</option>
+                        <option value="V-Cut">V-Cut</option>
+                        <option value="Crown Cut">Crown Cut</option>
+                        <option value="Punch">Punch</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                    <select id="lounge-edit-light" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Light Method</option>
+                        <option value="Torch Lighter">Torch Lighter</option>
+                        <option value="Soft Flame">Soft Flame</option>
+                        <option value="Cedar Spill">Cedar Spill</option>
+                        <option value="Matches">Matches</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <input type="text" id="lounge-edit-pairing" class="form-input" placeholder="Pairing" style="margin-bottom: 0;">
+                    <select id="lounge-edit-rating" class="form-input form-select" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Rating (1-10)</option>
+                        <option value="10">10.00</option>
+                        <option value="9.75">9.75</option>
+                        <option value="9.5">9.50</option>
+                        <option value="9.25">9.25</option>
+                        <option value="9">9.00</option>
+                        <option value="8.75">8.75</option>
+                        <option value="8.5">8.50</option>
+                        <option value="8.25">8.25</option>
+                        <option value="8">8.00</option>
+                        <option value="7.75">7.75</option>
+                        <option value="7.5">7.50</option>
+                        <option value="7.25">7.25</option>
+                        <option value="7">7.00</option>
+                        <option value="6.75">6.75</option>
+                        <option value="6.5">6.50</option>
+                        <option value="6.25">6.25</option>
+                        <option value="6">6.00</option>
+                        <option value="5.75">5.75</option>
+                        <option value="5.5">5.50</option>
+                        <option value="5.25">5.25</option>
+                        <option value="5">5.00</option>
+                        <option value="4.75">4.75</option>
+                        <option value="4.5">4.50</option>
+                        <option value="4.25">4.25</option>
+                        <option value="4">4.00</option>
+                        <option value="3.75">3.75</option>
+                        <option value="3.5">3.50</option>
+                        <option value="3.25">3.25</option>
+                        <option value="3">3.00</option>
+                        <option value="2.75">2.75</option>
+                        <option value="2.5">2.50</option>
+                        <option value="2.25">2.25</option>
+                        <option value="2">2.00</option>
+                        <option value="1.75">1.75</option>
+                        <option value="1.5">1.50</option>
+                        <option value="1.25">1.25</option>
+                        <option value="1">1.00</option>
+                    </select>
+                </div>
+                
+                <textarea id="lounge-edit-notes" class="form-input" rows="4" style="resize: none; margin-top: 16px; margin-bottom: 0;" placeholder="Tasting notes..."></textarea>
+            </div>
+
+            <button id="lounge-edit-submit-btn" class="btn-primary" style="margin-bottom: 0; margin-top: 24px;" onclick="submitLoungeEdit()">
+                Save Changes <i class="fa-solid fa-check" style="margin-left: 4px;"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
 <!-- FEEDBACK MODAL -->
+
 <div id="feedback-action-sheet" class="action-sheet-overlay" onclick="closeFeedbackModal(event)">
     <div class="action-sheet" onclick="event.stopPropagation()">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -4054,7 +4152,7 @@
         }
     };
 
-    window.deleteComment = async function(logId, commentTimestamp) {
+        window.deleteComment = async function(logId, commentTimestamp) {
         if (!(await window.customConfirm("Delete this comment?", "Confirm", true))) return;
         
         const logRef = doc(db, "journal", logId);
@@ -4075,8 +4173,122 @@
         }
     };
 
+            // --- INDEPENDENT LOUNGE POST ENGINE ---
+    window.editLoungePost = function(logId) {
+        window.closeAllSwipes(); 
+        
+        const log = allPublicLogs.find(l => l.id === logId);
+        if (!log) return;
+        
+        document.getElementById('lounge-edit-id').value = logId;
+        
+        // Handle Humidor additions gracefully
+        let cleanBrand = log.brand || "";
+        const isHumidorAddition = cleanBrand.startsWith("[New Addition] ");
+        if (isHumidorAddition) {
+            cleanBrand = cleanBrand.replace("[New Addition] ", "");
+        }
+        
+        // Populate the base cigar details
+        document.getElementById('lounge-edit-brand').value = cleanBrand;
+        document.getElementById('lounge-edit-vitola').value = log.vitola && log.vitola !== "Unknown" ? log.vitola : "";
+        document.getElementById('lounge-edit-ring').value = log.ring && log.ring !== "-" ? log.ring : "";
+        document.getElementById('lounge-edit-wrapper').value = log.wrapper && log.wrapper !== "Unknown" ? log.wrapper : "";
+        
+        // Dynamically toggle visibility of Journal-specific fields
+        const journalFields = document.getElementById('lounge-edit-journal-fields');
+        if (isHumidorAddition) {
+            journalFields.style.display = 'none';
+        } else {
+            journalFields.style.display = 'block';
+            
+            if(log.cut) document.getElementById('lounge-edit-cut').value = log.cut;
+            if(log.light) document.getElementById('lounge-edit-light').value = log.light;
+            if(log.rating) document.getElementById('lounge-edit-rating').value = log.rating;
+            
+            document.getElementById('lounge-edit-pairing').value = log.pairing && log.pairing !== "None" ? log.pairing : "";
+            document.getElementById('lounge-edit-notes').value = log.notes && log.notes !== "No notes." ? log.notes : "";
+        }
+
+        document.getElementById('lounge-edit-action-sheet').classList.add('active');
+    };
+
+    window.closeLoungeEditModal = function(event) {
+        document.getElementById('lounge-edit-action-sheet').classList.remove('active');
+    };
+
+    window.submitLoungeEdit = async function() {
+        const logId = document.getElementById('lounge-edit-id').value;
+        const btn = document.getElementById('lounge-edit-submit-btn');
+        if (!logId) return;
+
+        // Grab base values from the modal
+        const brand = document.getElementById('lounge-edit-brand').value.trim();
+        const vitola = document.getElementById('lounge-edit-vitola').value.trim();
+        const ring = document.getElementById('lounge-edit-ring').value.trim();
+        const wrapper = document.getElementById('lounge-edit-wrapper').value.trim();
+
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+        btn.disabled = true;
+
+        try {
+            const log = allPublicLogs.find(l => l.id === logId);
+            const isHumidorAddition = log && log.brand && log.brand.startsWith("[New Addition] ");
+            
+            let updatePayload = {
+                brand: isHumidorAddition ? "[New Addition] " + brand : (brand || "Unknown"),
+                vitola: vitola || "Unknown",
+                ring: ring || "-",
+                wrapper: wrapper || "Unknown"
+            };
+
+            // Only grab/update journal specific stats if it's a journal post
+            if (!isHumidorAddition) {
+                const cut = document.getElementById('lounge-edit-cut').value;
+                const light = document.getElementById('lounge-edit-light').value;
+                const pairing = document.getElementById('lounge-edit-pairing').value.trim();
+                const rating = document.getElementById('lounge-edit-rating').value;
+                const notes = document.getElementById('lounge-edit-notes').value.trim();
+                
+                updatePayload.cut = cut || "N/A";
+                updatePayload.light = light || "N/A";
+                updatePayload.pairing = pairing || "None";
+                updatePayload.rating = rating ? parseFloat(rating) : null;
+                updatePayload.notes = notes || "No notes.";
+            }
+
+            await updateDoc(doc(db, "journal", logId), updatePayload);
+            window.closeLoungeEditModal();
+        } catch (error) {
+            console.error("Error updating post:", error);
+            window.customAlert("Failed to update post. Check your connection.", "Error");
+        } finally {
+            btn.innerHTML = 'Save Changes <i class="fa-solid fa-check" style="margin-left: 4px;"></i>';
+            btn.disabled = false;
+        }
+    };
+
+
+
+
+    window.removeLoungePost = async function(logId) {
+        window.closeAllSwipes();
+        
+        if(await window.customConfirm("Remove this post from the Lounge? (It will remain safely in your private Journal).", "Remove Post", true)) {
+            try {
+                // We set isPublic to false instead of deleting the document. 
+                // This instantly removes it from the Lounge feed without touching your Journal/Humidor data!
+                await updateDoc(doc(db, "journal", logId), { isPublic: false });
+            } catch(e) {
+                console.error("Error hiding post:", e);
+                window.customAlert("Failed to remove post.", "Error");
+            }
+        }
+    };
+
 
         window.renderLoungeFeed = function() {
+
         const feedList = document.getElementById('lounge-feed-list');
         
         // --- PRESERVE UI STATE BEFORE RE-RENDER ---
@@ -4245,7 +4457,7 @@
                     }
 
 
-                    socialBar = `
+                                        socialBar = `
                     <div style="margin-top: 16px; border-top: 1px solid var(--border-subtle); padding-top: 16px;">
                         <div style="display: flex; gap: 16px; align-items: center;">
                             <button onclick="event.stopPropagation(); toggleLike('${log.id}')" style="background: none; border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">
@@ -4270,8 +4482,32 @@
                     </div>`;
                 }
 
+                // --- SWIPE TO EDIT/DELETE CONDITIONAL WRAPPER ---
+                let swipeWrapperStart = '';
+                let swipeWrapperEnd = '';
+                
+                // Only allow the post owner to swipe to edit/delete
+                if (log.uid === auth.currentUser.uid) {
+                    swipeWrapperStart = `
+                    <div class="swipe-container" style="margin-bottom: 16px;">
+                        <div class="swipe-actions">
+                            <button class="swipe-action-btn swipe-action-edit" onclick="editLoungePost('${log.id}')">
+                                <i class="fa-solid fa-pen" style="font-size: 14px;"></i> Edit
+                            </button>
+                            <button class="swipe-action-btn swipe-action-delete" onclick="removeLoungePost('${log.id}')">
+                                <i class="fa-solid fa-trash" style="font-size: 14px;"></i> Remove
+                            </button>
+                        </div>
+                        <div class="swipe-front log-card" style="margin-bottom: 0; padding: 20px; border-left: 2px solid var(--leather); border-radius: 12px 16px 16px 12px;">`;
+                    
+                    swipeWrapperEnd = `</div></div>`;
+                } else {
+                    swipeWrapperStart = `<div class="log-card" style="margin-bottom: 16px; padding: 20px; border-left: 2px solid var(--leather); border-radius: 12px 16px 16px 12px;">`;
+                    swipeWrapperEnd = `</div>`;
+                }
+
                 html += `
-                <div class="log-card" style="margin-bottom: 16px; padding: 20px; border-left: 2px solid var(--leather); border-radius: 12px 16px 16px 12px;">
+                ${swipeWrapperStart}
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                         <div style="flex: 1; padding-right: 12px;">
                             <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; line-height: 1.2;">${newBadge}${escapeHTML(displayBrand)}</div>
@@ -4284,7 +4520,7 @@
                     ${displayNotes}
                     ${actionIndicator}
                     ${socialBar}
-                </div>`;
+                ${swipeWrapperEnd}`;
             });
 
             html += `
@@ -4294,8 +4530,6 @@
         
         feedList.innerHTML = html;
     };
-
-
 
     let unsubscribeHumidor = null;
     let unsubscribeJournal = null;
