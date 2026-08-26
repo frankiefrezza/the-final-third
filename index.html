@@ -2122,13 +2122,14 @@
 <div id="avatar-action-sheet" class="action-sheet-overlay" onclick="closeAvatarActionSheet(event)">
     <div class="action-sheet" onclick="event.stopPropagation()">
         <div style="text-align: center; margin-bottom: 24px; font-size: 15px; font-weight: 700; color: var(--text-main);">Update Profile Picture</div>
-        <button class="action-btn" onclick="document.getElementById('camera-upload').click(); closeAvatarActionSheet();"><i class="fa-solid fa-camera"></i> Take Photo</button>
-        <button class="action-btn" onclick="document.getElementById('gallery-upload').click(); closeAvatarActionSheet();"><i class="fa-solid fa-image"></i> Upload from Photos</button>
+        <button class="action-btn" onclick="document.getElementById('camera-upload').click();"><i class="fa-solid fa-camera"></i> Take Photo</button>
+        <button class="action-btn" onclick="document.getElementById('gallery-upload').click();"><i class="fa-solid fa-image"></i> Upload from Photos</button>
         <button class="action-btn cancel" onclick="closeAvatarActionSheet()">Cancel</button>
         <input type="file" id="camera-upload" accept="image/*" capture="environment" style="display: none;" onchange="handleAvatarUpload(event)">
         <input type="file" id="gallery-upload" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
     </div>
 </div>
+
 
 <!-- DELETE ACCOUNT MODAL -->
 <div id="delete-action-sheet" class="action-sheet-overlay" onclick="closeDeleteActionSheet(event)">
@@ -3536,7 +3537,8 @@
     window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
     window.closeAvatarActionSheet = function(event) { document.getElementById('avatar-action-sheet').classList.remove('active'); };
 
-    window.handleAvatarUpload = async function(event) {
+        window.handleAvatarUpload = async function(event) {
+        closeAvatarActionSheet();
         const file = event.target.files[0];
         if(!file) return;
         try {
@@ -3554,8 +3556,11 @@
         } catch (error) {
             console.error("Avatar upload failed:", error);
             document.getElementById('profile-avatar-img').style.opacity = '1';
+        } finally {
+            event.target.value = ''; 
         }
     };
+
 
         window.editUsername = async function() {
         const newName = await window.customPrompt("Enter your new username:", window.currentUserName, "Edit Username");
@@ -3767,9 +3772,11 @@
         }
     };
 
-    window.handleLogout = async function() {
+        window.handleLogout = async function() {
+        localStorage.removeItem('finalThirdAvatar');
         await signOut(auth);
     };
+
 
     // --- LOUNGE / FRIEND LOGIC ENGINE ---
     window.openFriendSearchModal = function() {
@@ -4559,9 +4566,11 @@
 
             document.getElementById('profile-display-name').innerText = window.currentUserName;
 
-            const localAvatar = localStorage.getItem('finalThirdAvatar');
+                        const localAvatar = localStorage.getItem('finalThirdAvatar');
             if(localAvatar) {
                 document.getElementById('profile-avatar-img').src = localAvatar;
+            } else {
+                document.getElementById('profile-avatar-img').src = 'app-icon.png';
             }
 
             try {
@@ -4573,14 +4582,14 @@
                         uid: user.uid,
                         username: window.currentUserName,
                         searchName: window.currentUserName.toLowerCase(),
-                        avatar: localAvatar || "",
+                        avatar: "",
                         friends: []
                     });
+                    document.getElementById('profile-avatar-img').src = 'app-icon.png';
                 } else {
                     const data = userDocSnap.data();
                     
                     // --- BULLETPROOF SELF-HEALING ---
-                    // If the database document exists but is missing the username for any reason, force patch it!
                     if (!data.username || !data.searchName) {
                         await updateDoc(userDocRef, {
                             username: window.currentUserName,
@@ -4592,8 +4601,11 @@
                         const cloudAvatar = data.avatar;
                         document.getElementById('profile-avatar-img').src = cloudAvatar;
                         localStorage.setItem('finalThirdAvatar', cloudAvatar); 
+                    } else {
+                        document.getElementById('profile-avatar-img').src = 'app-icon.png';
                     }
                 }
+
             } catch(e) { 
                 console.error("User sync error. Check Firebase Rules.", e); 
             }
