@@ -494,34 +494,29 @@
             top: 0;
         }
 
-        body.app-scrolled #layer-2-container {
+                body.app-scrolled #layer-2-container {
             padding: calc(env(safe-area-inset-top, 0px) - 4px) 24px 64px 24px !important;
-            background: rgba(18, 18, 18, 0.35) !important;
-            backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+            background: var(--layer2-grad-start) !important;
+            backdrop-filter: none; -webkit-backdrop-filter: none;
             border-bottom: 1px solid var(--border-subtle) !important;
             border-radius: 0 !important; box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
         }
-        [data-theme="light"] body.app-scrolled #layer-2-container { background: rgba(247, 245, 240, 0.7) !important; }
-        [data-theme="platinum"] body.app-scrolled #layer-2-container { background: rgba(15, 17, 21, 0.65) !important; }
-        [data-theme="claro"] body.app-scrolled #layer-2-container { background: rgba(243, 239, 230, 0.7) !important; }
 
         /* Humidor & Journal Sticky Glass Headers */
         .sticky-glass-header {
             position: sticky; top: -32px; z-index: 10;
             padding: 32px 0 16px 0; margin: -32px 0 16px 0;
-            background: var(--bg-base); transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
+            background: var(--bg-base); transition: background 0.3s, border-color 0.3s;
             border-bottom: 1px solid transparent;
         }
         body.app-scrolled .sticky-glass-header {
-            background: rgba(18, 18, 18, 0.35);
-            backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+            background: var(--bg-base);
+            backdrop-filter: none; -webkit-backdrop-filter: none;
             border-bottom: 1px solid var(--border-subtle);
             margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         }
-        [data-theme="light"] body.app-scrolled .sticky-glass-header { background: rgba(247, 245, 240, 0.7); }
-        [data-theme="platinum"] body.app-scrolled .sticky-glass-header { background: rgba(15, 17, 21, 0.65); }
-        [data-theme="claro"] body.app-scrolled .sticky-glass-header { background: rgba(243, 239, 230, 0.7); }
+
 
 
 
@@ -535,9 +530,10 @@
         }
 
                 body.app-scrolled #dynamic-layer-2-title {
-            transform: scale(0.7) translateY(-8px); /* Nudges the text itself slightly higher */
+            transform: scale(0.7) translateY(6px); /* Nudges the text downwards to center it */
             margin-bottom: -18px; 
         }
+
 
 
         #dynamic-layer-2-subtitle {
