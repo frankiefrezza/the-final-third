@@ -1368,14 +1368,22 @@
                         </div>
 
                         
-                        <!-- PUBLIC TOGGLE FOR LOUNGE FEED (Humidor Share) -->
+                                                <!-- PUBLIC TOGGLE FOR LOUNGE FEED (Humidor Share) -->
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 16px 20px; background: var(--surface-04dp); border-radius: 14px; border: 1px solid var(--border-subtle);">
                             <div>
                                 <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">Share to Lounge</div>
-                                <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Let your friends see this addition</div>
+                                <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Select where this appears</div>
                             </div>
-                            <input type="checkbox" id="vault-public" checked style="width: 24px; height: 24px; accent-color: var(--leather); cursor: pointer;">
+                            <div style="display: flex; gap: 16px; align-items: center;">
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--text-main); cursor: pointer; letter-spacing: 0.5px;">
+                                    LOCAL <input type="checkbox" id="vault-share-local" style="width: 20px; height: 20px; accent-color: var(--leather); cursor: pointer;">
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--text-main); cursor: pointer; letter-spacing: 0.5px;">
+                                    GLOBAL <input type="checkbox" id="vault-share-global" style="width: 20px; height: 20px; accent-color: var(--leather); cursor: pointer;">
+                                </label>
+                            </div>
                         </div>
+
 
                         <!-- Hidden Input and Visual Upload Button -->
                         <input type="file" id="vault-image-upload" accept="image/*" style="display: none;" onchange="handleCigarImageUpload(event, 'vault')">
@@ -1491,14 +1499,22 @@
                     </div>
 
 
-                    <!-- PUBLIC TOGGLE FOR LOUNGE FEED -->
+                                        <!-- PUBLIC TOGGLE FOR LOUNGE FEED -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 16px 20px; background: var(--surface-04dp); border-radius: 14px; border: 1px solid var(--border-subtle);">
                         <div>
                             <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">Share to Lounge</div>
-                            <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Let your friends see this log</div>
+                            <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Select where to post this log</div>
                         </div>
-                        <input type="checkbox" id="log-public" checked style="width: 24px; height: 24px; accent-color: var(--leather); cursor: pointer;">
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--text-main); cursor: pointer; letter-spacing: 0.5px;">
+                                LOCAL <input type="checkbox" id="log-share-local" style="width: 20px; height: 20px; accent-color: var(--leather); cursor: pointer;">
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--text-main); cursor: pointer; letter-spacing: 0.5px;">
+                                GLOBAL <input type="checkbox" id="log-share-global" style="width: 20px; height: 20px; accent-color: var(--leather); cursor: pointer;">
+                            </label>
+                        </div>
                     </div>
+
 
                     <textarea id="log-notes" class="form-input" placeholder="Tasting notes for the final third..." rows="3" style="resize: none; margin-bottom: 16px;"></textarea>
                     
@@ -1937,42 +1953,36 @@
                     </div>
                 </div>
 
-
-                                <!-- Daily Selection Enable/Disable Toggle -->
-                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleDailyCigarPreference()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                <!-- Daily Selection Enable/Disable Toggle -->
+                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;" onclick="toggleDailyCigarPreference()" onmousedown="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" onmouseup="this.style.transform='scale(1)'; this.style.opacity='1';" onmouseleave="this.style.transform='scale(1)'; this.style.opacity='1';" ontouchstart="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" ontouchend="this.style.transform='scale(1)'; this.style.opacity='1';">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
                             <i id="daily-pref-icon" class="fa-solid fa-eye"></i>
                         </div>
-                        <div>
-                            <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Daily Selection</div>
-                            <div id="daily-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Enabled</div>
-                        </div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Daily Selection</div>
                     </div>
-                    <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
-                        <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
+                    <!-- Custom Toggle Switch -->
+                    <div id="daily-toggle-track" style="width: 50px; height: 30px; background: var(--leather); border-radius: 16px; position: relative; transition: background 0.3s, border 0.3s; box-sizing: border-box;">
+                        <div id="daily-toggle-knob" style="width: 26px; height: 26px; background: #FFFFFF; border-radius: 50%; position: absolute; top: 2px; left: 22px; transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"></div>
                     </div>
                 </div>
 
                 <!-- Notifications Enable/Disable Toggle -->
-                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s;" onclick="toggleNotificationsPreference()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;" onclick="toggleNotificationsPreference()" onmousedown="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" onmouseup="this.style.transform='scale(1)'; this.style.opacity='1';" onmouseleave="this.style.transform='scale(1)'; this.style.opacity='1';" ontouchstart="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" ontouchend="this.style.transform='scale(1)'; this.style.opacity='1';">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
                             <i id="notif-pref-icon" class="fa-solid fa-bell"></i>
                         </div>
-                        <div>
-                            <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Notifications</div>
-                            <div id="notif-pref-text" style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Enabled</div>
-                        </div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Notifications</div>
                     </div>
-                    <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
-                        <i class="fa-solid fa-arrows-rotate" style="color: var(--text-dim); font-size: 11px;"></i>
+                    <!-- Custom Toggle Switch -->
+                    <div id="notif-toggle-track" style="width: 50px; height: 30px; background: var(--leather); border-radius: 16px; position: relative; transition: background 0.3s, border 0.3s; box-sizing: border-box;">
+                        <div id="notif-toggle-knob" style="width: 26px; height: 26px; background: #FFFFFF; border-radius: 50%; position: absolute; top: 2px; left: 22px; transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"></div>
                     </div>
                 </div>
 
-
-                                <!-- Feedback & Support Button -->
-                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 24px; transition: transform 0.2s;" onclick="openFeedbackModal()" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.98)'" ontouchend="this.style.transform='scale(1)'">
+                <!-- Feedback & Support Button -->
+                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 24px; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;" onclick="openFeedbackModal()" onmousedown="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" onmouseup="this.style.transform='scale(1)'; this.style.opacity='1';" onmouseleave="this.style.transform='scale(1)'; this.style.opacity='1';" ontouchstart="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" ontouchend="this.style.transform='scale(1)'; this.style.opacity='1';">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
                             <i class="fa-solid fa-comment-dots"></i>
@@ -1982,11 +1992,10 @@
                             <div style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Report bugs or request features</div>
                         </div>
                     </div>
-                    <div style="background: var(--surface-04dp); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-subtle);">
-                        <i class="fa-solid fa-chevron-right" style="color: var(--text-dim); font-size: 11px;"></i>
+                    <div style="display: flex; justify-content: center; align-items: center; padding-right: 4px; opacity: 0.6;">
+                        <i class="fa-solid fa-chevron-right" style="color: var(--text-dim); font-size: 14px;"></i>
                     </div>
                 </div>
-
 
                 <button class="btn-primary" style="background: rgba(var(--danger-rgb), 0.1); color: var(--danger); width: 100%; border: none; border-radius: 12px;" onclick="handleLogout()">
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
@@ -2621,19 +2630,125 @@
         window.applyNotificationsPreference();
     };
 
+        window.applyDailyCigarPreference = function() {
+        const savedPref = localStorage.getItem('finalThirdDailyPref') || 'enabled';
+        const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
+        
+        const icon = document.getElementById('daily-pref-icon');
+        const track = document.getElementById('daily-toggle-track');
+        const knob = document.getElementById('daily-toggle-knob');
+        
+        const headerLayer1 = document.getElementById('daily-cigar-header');
+        const exp = document.getElementById('daily-cigar-expanded');
+        const chev = document.getElementById('daily-cigar-chevron');
+        const layer2 = document.getElementById('layer-2-container');
+        
+        if (savedPref === 'disabled') {
+            if(icon) icon.className = 'fa-solid fa-eye-slash';
+            if(track) {
+                track.style.background = 'var(--surface-04dp)';
+                track.style.border = '1px solid var(--border-subtle)';
+            }
+            if(knob) {
+                knob.style.left = '1px';
+                knob.style.top = '1px';
+                knob.style.background = 'var(--text-dim)';
+            }
+            
+            if(headerLayer1) headerLayer1.style.display = 'none';
+            
+            if(layer2) {
+                layer2.style.paddingTop = 'calc(20px + env(safe-area-inset-top, 0px))';
+                layer2.style.borderRadius = '0';
+                layer2.style.borderTop = 'none';
+                layer2.style.background = 'var(--bg-base)';
+            }
+        } else {
+            if(icon) icon.className = 'fa-solid fa-eye';
+            if(track) {
+                track.style.background = 'var(--leather)';
+                track.style.border = 'none';
+            }
+            if(knob) {
+                knob.style.left = '22px';
+                knob.style.top = '2px';
+                knob.style.background = '#FFFFFF';
+            }
+            
+            if(headerLayer1) {
+                headerLayer1.style.display = 'block';
+                if (expandedPref) {
+                    if(exp) { exp.style.maxHeight = '150px'; exp.style.opacity = '1'; }
+                    if(chev) chev.className = 'fa-solid fa-chevron-down';
+                    headerLayer1.style.paddingBottom = '32px';
+                } else {
+                    if(exp) { exp.style.maxHeight = '0'; exp.style.opacity = '0'; }
+                    if(chev) chev.className = 'fa-solid fa-chevron-up';
+                    headerLayer1.style.paddingBottom = '24px';
+                }
+            }
+            
+            if(layer2) {
+                layer2.style.paddingTop = '20px';
+                layer2.style.borderRadius = '40px 40px 0 0';
+                layer2.style.borderTop = '1px solid var(--border-subtle)';
+                layer2.style.background = 'linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%)';
+            }
+        }
+    };
+
+    window.toggleDailyCigarExpand = function() {
+        const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
+        if (expandedPref) {
+            localStorage.setItem('finalThirdDailyExpanded', 'false');
+        } else {
+            localStorage.setItem('finalThirdDailyExpanded', 'true');
+        }
+        window.applyDailyCigarPreference();
+    };
+
+    window.toggleNotificationsPreference = function() {
+        const currentState = localStorage.getItem('finalThirdNotificationsPref') || 'enabled';
+        if (currentState === 'enabled') {
+            localStorage.setItem('finalThirdNotificationsPref', 'disabled');
+        } else {
+            localStorage.setItem('finalThirdNotificationsPref', 'enabled');
+        }
+        window.applyNotificationsPreference();
+    };
+
     window.applyNotificationsPreference = function() {
         const savedPref = localStorage.getItem('finalThirdNotificationsPref') || 'enabled';
+        
         const icon = document.getElementById('notif-pref-icon');
-        const text = document.getElementById('notif-pref-text');
+        const track = document.getElementById('notif-toggle-track');
+        const knob = document.getElementById('notif-toggle-knob');
         
         if (savedPref === 'disabled') {
             if(icon) icon.className = 'fa-solid fa-bell-slash';
-            if(text) text.innerText = 'Disabled';
+            if(track) {
+                track.style.background = 'var(--surface-04dp)';
+                track.style.border = '1px solid var(--border-subtle)';
+            }
+            if(knob) {
+                knob.style.left = '1px';
+                knob.style.top = '1px';
+                knob.style.background = 'var(--text-dim)';
+            }
         } else {
             if(icon) icon.className = 'fa-solid fa-bell';
-            if(text) text.innerText = 'Enabled';
+            if(track) {
+                track.style.background = 'var(--leather)';
+                track.style.border = 'none';
+            }
+            if(knob) {
+                knob.style.left = '22px';
+                knob.style.top = '2px';
+                knob.style.background = '#FFFFFF';
+            }
         }
     };
+
 
     // --- DOSSIER PERSONAL INFO MODAL ---
 
@@ -3149,7 +3264,9 @@
         document.getElementById('log-pairing').value = '';
         document.getElementById('log-rating').selectedIndex = 0;
         document.getElementById('log-notes').value = '';
-        document.getElementById('log-public').checked = true; 
+        document.getElementById('log-share-local').checked = false; 
+        document.getElementById('log-share-global').checked = false; 
+
         
         const logWrapper = document.getElementById('journal-form-wrapper');
         const logChevron = document.getElementById('journal-form-chevron');
@@ -4462,11 +4579,20 @@
             if (el.style.display === 'block') openComments.push(el.id.replace('comment-section-', ''));
         });
         
-        let filteredLogs = [];
+                   let filteredLogs = [];
         if(currentFeedTab === 'friends') {
-            filteredLogs = allPublicLogs.filter(log => myFriends.includes(log.uid) || log.uid === auth.currentUser.uid);
+            filteredLogs = allPublicLogs.filter(log => {
+                // If it is strictly global, do not show it in the friends feed
+                if (log.shareScope === 'global') return false; 
+                return myFriends.includes(log.uid) || log.uid === auth.currentUser.uid;
+            });
         } else {
-            filteredLogs = allPublicLogs;
+            // Global tab
+            filteredLogs = allPublicLogs.filter(log => {
+                // If it is strictly local, do not show it in the global feed
+                if (log.shareScope === 'local') return false;
+                return true;
+            });
         }
 
         if(filteredLogs.length === 0) {
@@ -4478,6 +4604,8 @@
                 </div>`;
             return;
         }
+
+
 
         // 1. Group the logs by User ID
         const groupedLogs = {};
@@ -4665,15 +4793,16 @@
                     swipeWrapperEnd = `</div>`;
                 }
 
-                html += `
+                                html += `
                 ${swipeWrapperStart}
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                         <div style="flex: 1; padding-right: 12px;">
                             <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; line-height: 1.2;">${newBadge}${escapeHTML(displayBrand)}</div>
-                            <div style="font-size: 12px; color: var(--text-dim); font-weight: 600;">${escapeHTML(log.vitola)} • ${escapeHTML(log.wrapper)}</div>
+                            <div style="font-size: 12px; color: var(--text-dim); font-weight: 600;">${escapeHTML(log.vitola)} • <span style="font-family: var(--font-mono);">${escapeHTML(log.ring)}</span> • ${escapeHTML(log.wrapper)}</div>
                         </div>
                         <div class="badge badge-amber" style="font-size: 9px; white-space: nowrap;">${escapeHTML(log.date)}</div>
                     </div>
+
                     
                     ${mechanicsRow}
                     ${displayNotes}
@@ -5039,6 +5168,10 @@
         document.getElementById('vault-vitola').value = '';
         document.getElementById('vault-wrapper').value = '';
         
+        document.getElementById('vault-share-local').checked = false;
+        document.getElementById('vault-share-global').checked = false;
+
+        
         currentVaultImage = null;
         document.getElementById('vault-image-upload').value = "";
         const photoBtn = document.getElementById('vault-photo-btn');
@@ -5065,10 +5198,27 @@
         const ring = document.getElementById('vault-ring-gauge').value;
         const wrapper = document.getElementById('vault-wrapper').value;
         const priceVal = document.getElementById('vault-price').value;
-        const acquiredDate = document.getElementById('vault-date').value;
+                const acquiredDate = document.getElementById('vault-date').value;
         const targetDate = document.getElementById('vault-target-date').value;
-        const isPublic = document.getElementById('vault-public').checked;
+        
+        const shareLocal = document.getElementById('vault-share-local').checked;
+        const shareGlobal = document.getElementById('vault-share-global').checked;
         const submitBtn = document.getElementById('vault-submit-btn');
+        
+        let shareScope = 'none';
+        let isPublic = false;
+        
+        if (shareLocal && shareGlobal) {
+            shareScope = 'both';
+            isPublic = true;
+        } else if (shareLocal) {
+            shareScope = 'local';
+            isPublic = true;
+        } else if (shareGlobal) {
+            shareScope = 'global';
+            isPublic = true;
+        }
+
 
         if(!brand || !acquiredDate || !targetDate) { 
             await window.customAlert("Please enter the brand, date acquired, and target peak date.", "Missing Data");
@@ -5123,7 +5273,9 @@
                         rating: null,
                         notes: `Just added ${parseInt(qtyVal) || 1} to the humidor. Target aging: ${document.getElementById('vault-target-date').value}`,
                         isPublic: true,
+                        shareScope: shareScope,
                         image: currentVaultImage 
+
                     });
                 }
             }
@@ -5433,8 +5585,12 @@
         document.getElementById('log-light').value = log.light !== 'N/A' ? log.light : '';
         document.getElementById('log-pairing').value = log.pairing !== 'None' ? log.pairing : '';
         document.getElementById('log-rating').value = log.rating || '';
-        document.getElementById('log-notes').value = log.notes !== 'No notes.' ? log.notes : '';
-        document.getElementById('log-public').checked = log.isPublic !== false;
+                document.getElementById('log-notes').value = log.notes !== 'No notes.' ? log.notes : '';
+        
+        // Backward compatibility handling for older posts without shareScope
+        document.getElementById('log-share-local').checked = log.shareScope === 'local' || log.shareScope === 'both' || (log.isPublic && !log.shareScope);
+        document.getElementById('log-share-global').checked = log.shareScope === 'global' || log.shareScope === 'both' || (log.isPublic && !log.shareScope);
+
 
         currentLogImage = log.image || null;
         const photoBtn = document.getElementById('log-photo-btn');
@@ -5474,8 +5630,12 @@
         document.getElementById('log-rating-slider').value = 8.5;
         window.syncRatingSlider(8.5);
         
-        document.getElementById('log-notes').value = '';
-        document.getElementById('log-public').checked = true;
+                document.getElementById('log-notes').value = log.notes !== 'No notes.' ? log.notes : '';
+        
+        // Backward compatibility handling for older posts without shareScope
+        document.getElementById('log-share-local').checked = log.shareScope === 'local' || log.shareScope === 'both' || (log.isPublic && !log.shareScope);
+        document.getElementById('log-share-global').checked = log.shareScope === 'global' || log.shareScope === 'both' || (log.isPublic && !log.shareScope);
+
         
         currentLogImage = null;
         document.getElementById('log-image-upload').value = "";
@@ -5504,10 +5664,27 @@
         const cut = document.getElementById('log-cut').value;
         const light = document.getElementById('log-light').value;
         const pairing = document.getElementById('log-pairing').value;
-        const rating = document.getElementById('log-rating').value;
+                const rating = document.getElementById('log-rating').value;
         const notes = document.getElementById('log-notes').value;
-        const isPublic = document.getElementById('log-public').checked;
+        
+        const shareLocal = document.getElementById('log-share-local').checked;
+        const shareGlobal = document.getElementById('log-share-global').checked;
         const submitBtn = document.getElementById('journal-submit-btn');
+
+        let shareScope = 'none';
+        let isPublic = false;
+        
+        if (shareLocal && shareGlobal) {
+            shareScope = 'both';
+            isPublic = true;
+        } else if (shareLocal) {
+            shareScope = 'local';
+            isPublic = true;
+        } else if (shareGlobal) {
+            shareScope = 'global';
+            isPublic = true;
+        }
+
 
         if(!brand) { 
             await window.customAlert("Please enter the brand to log.", "Missing Data");
@@ -5530,10 +5707,12 @@
                 cut: cut || "N/A",
                 light: light || "N/A",
                 pairing: pairing || "None",
-                rating: rating ? parseFloat(rating) : null,
+                                rating: rating ? parseFloat(rating) : null,
                 notes: notes || "No notes.",
                 isPublic: isPublic,
+                shareScope: shareScope,
                 image: currentLogImage 
+
             };
 
             if (editingJournalId) {
