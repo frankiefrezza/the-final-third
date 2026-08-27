@@ -494,14 +494,33 @@
             top: 0;
         }
 
-                     body.app-scrolled #layer-2-container {
-            /* Pulls the padding tight against the Dynamic Island to remove the gap */
+                    body.app-scrolled #layer-2-container {
             padding: calc(env(safe-area-inset-top, 0px) - 4px) 24px 64px 24px !important;
-            background: linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%) !important;
-            border-bottom: none !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
+            background: rgba(18, 18, 18, 0.75) !important;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle) !important;
+            border-radius: 0 !important; box-shadow: none !important;
         }
+        [data-theme="light"] body.app-scrolled #layer-2-container { background: rgba(247, 245, 240, 0.85) !important; }
+        [data-theme="platinum"] body.app-scrolled #layer-2-container { background: rgba(15, 17, 21, 0.85) !important; }
+        [data-theme="claro"] body.app-scrolled #layer-2-container { background: rgba(243, 239, 230, 0.85) !important; }
+
+        /* Humidor & Journal Sticky Glass Headers */
+        .sticky-glass-header {
+            position: sticky; top: -32px; z-index: 10;
+            padding: 32px 0 16px 0; margin: -32px 0 16px 0;
+            background: var(--bg-base); transition: background 0.3s, backdrop-filter 0.3s;
+        }
+        body.app-scrolled .sticky-glass-header {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px;
+        }
+        [data-theme="light"] body.app-scrolled .sticky-glass-header { background: rgba(247, 245, 240, 0.85); }
+        [data-theme="platinum"] body.app-scrolled .sticky-glass-header { background: rgba(15, 17, 21, 0.85); }
+        [data-theme="claro"] body.app-scrolled .sticky-glass-header { background: rgba(243, 239, 230, 0.85); }
+
 
 
 
@@ -548,26 +567,51 @@
         }
 
 
-        /* --- VIEW SECTIONS & ANIMATIONS --- */
-         .view-section { 
-            position: absolute; 
-            top: 0; bottom: 0; left: 0; right: 0; 
-            /* Pad bottom heavily to offset the container stretch, preserving the actual scroll bounds */
-            padding: 32px 16px calc(410px + env(safe-area-inset-bottom, 0px)) 16px; 
-            display: none; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
-            overscroll-behavior-y: contain; /* Prevents scroll chaining/stuttering at the bottom */
+                    /* --- VIEW SECTIONS & ANIMATIONS --- */
+        .view-section { 
+            position: absolute; top: 0; bottom: 0; left: 0; right: 0; 
+            /* Dialed bottom padding back from 410px to 140px to perfectly clear the bottom dock */
+            padding: 32px 16px calc(140px + env(safe-area-inset-bottom, 0px)) 16px; 
+            display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
         }
+
 
         .view-section.active { display: block; }
         
-        .view-section.slide-anim { animation: cardSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        @keyframes cardSlide { 
-            0% { opacity: 0; transform: translateY(60px); } 
-            100% { opacity: 1; transform: translateY(0); } 
+        /* 1. SMOOTH TAB TRANSITIONS */
+        .view-section.slide-anim { animation: tabFadeSlide 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        @keyframes tabFadeSlide { 
+            0% { opacity: 0; transform: translateY(20px) scale(0.98); } 
+            100% { opacity: 1; transform: translateY(0) scale(1); } 
         }
+
+        /* 2. SKELETON LOADING STATES */
+        @keyframes skeletonPulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .skeleton-block {
+            background: var(--surface-04dp);
+            border-radius: 12px;
+            animation: skeletonPulse 1.5s infinite ease-in-out;
+            margin-bottom: 8px;
+        }
+        
+        /* 3. DONUT CHART (PALATE MAPPING) */
+        .donut-chart-container {
+            position: relative; width: 100px; height: 100px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            background: conic-gradient(var(--surface-04dp) 100%, transparent 0);
+            transition: background 0.8s ease-out;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .donut-chart-hole {
+            width: 70px; height: 70px; border-radius: 50%; background: var(--surface-02dp);
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
 
         .greeting.text-slide-up { animation: textSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
@@ -1282,12 +1326,13 @@
                 <!-- ADD TO HUMIDOR FORM -->
                 <div id="humidor-add-section">
                     
-                    <div class="section-header" style="margin-top: 0; cursor: pointer; padding-right: 8px;" onclick="toggleEntryForm('humidor-form-wrapper', 'humidor-form-chevron')">
+                                        <div class="section-header" style="margin-top: 0; cursor: pointer; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;" onclick="toggleEntryForm('humidor-form-wrapper', 'humidor-form-chevron')">
                         <div class="section-title">Store New Acquisition</div>
-                        <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border-radius: 8px; width: 28px; height: 28px; border: 1px solid var(--border-subtle);">
+                        <div style="color: var(--leather); display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border-radius: 8px; width: 32px; height: 32px; border: 1px solid var(--border-subtle); flex-shrink: 0;">
                             <i id="humidor-form-chevron" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 12px;"></i>
                         </div>
                     </div>
+
 
                                         <div id="humidor-form-wrapper" style="display: none; padding-top: 8px;">
                         
@@ -1391,21 +1436,22 @@
                             <i class="fa-solid fa-camera"></i> Add Picture
                         </button>
                         
-                        <div style="display: flex; gap: 12px; width: 100%;">
+                                                <div style="display: flex; gap: 12px; width: 100%; padding-bottom: 32px;">
                             <button id="vault-submit-btn" class="btn-primary" onclick="storeCigar()" style="flex: 1; margin-bottom: 0;">Add to Humidor <i class="fa-solid fa-lock"></i></button>
                             <button id="vault-clear-btn" class="btn-secondary" onclick="clearHumidorForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
                         </div>
                     </div>
 
+
                 </div>
 
-                <!-- HUMIDOR HEADER WITH SEARCH & SORT -->
-                <div id="humidor-list-header">
-                    <div class="section-header" style="margin-top: 32px; border-bottom: none; padding-bottom: 0;">
+                                <!-- HUMIDOR HEADER WITH SEARCH & SORT -->
+                <div id="humidor-list-header" class="sticky-glass-header">
+                    <div class="section-header" style="margin-top: 0; border-bottom: none; padding-bottom: 0;">
                         <div class="section-title">Aging Timeline</div>
                     </div>
                     
-                    <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px;">
+                    <div style="display: flex; gap: 8px; margin-top: 16px;">
                         <div style="position: relative; flex: 1;">
                             <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
                             <input type="text" id="humidor-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderHumidor()">
@@ -1417,22 +1463,23 @@
                 </div>
 
                 <div id="humidor-inventory-list" style="margin-bottom: 40px;">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-box" style="font-size: 20px; opacity: 0.3;"></i>
-                        <span>Humidor is currently empty</span>
-                    </div>
+                    <div class="skeleton-block" style="height: 90px; width: 100%;"></div>
+                    <div class="skeleton-block" style="height: 90px; width: 100%; opacity: 0.7;"></div>
+                    <div class="skeleton-block" style="height: 90px; width: 100%; opacity: 0.4;"></div>
                 </div>
+
             </section>
 
             <!-- JOURNAL SCREEN -->
             <section id="view-journal" class="view-section">
                 
-                <div class="section-header" style="margin-top: 0; cursor: pointer; padding-right: 8px;" onclick="toggleEntryForm('journal-form-wrapper', 'journal-form-chevron')">
+                                <div class="section-header" style="margin-top: 0; cursor: pointer; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;" onclick="toggleEntryForm('journal-form-wrapper', 'journal-form-chevron')">
                     <div class="section-title">Log a Smoke</div>
-                    <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border-radius: 8px; width: 28px; height: 28px; border: 1px solid var(--border-subtle);">
+                    <div style="color: var(--leather); display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border-radius: 8px; width: 32px; height: 32px; border: 1px solid var(--border-subtle); flex-shrink: 0;">
                         <i id="journal-form-chevron" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 12px;"></i>
                     </div>
                 </div>
+
 
                 <div id="journal-form-wrapper" style="display: none; padding-top: 8px;">
                     <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
@@ -1524,33 +1571,36 @@
                         <i class="fa-solid fa-camera"></i> Add Picture
                     </button>
 
-                    <div style="display: flex; gap: 12px; width: 100%;">
+                                        <div style="display: flex; gap: 12px; width: 100%; padding-bottom: 32px;">
                         <button id="journal-submit-btn" class="btn-primary" onclick="logSmoke()" style="flex: 1; margin-bottom: 0;">Commit to Ledger <i class="fa-solid fa-check"></i></button>
                         <button id="journal-clear-btn" class="btn-secondary" onclick="clearJournalForm()" style="margin-bottom: 0; padding: 18px 16px; border-radius: 12px; width: auto; flex-shrink: 0;"><i class="fa-solid fa-eraser"></i></button>
                     </div>
                 </div>
 
-                <!-- JOURNAL HEADER WITH SEARCH & SORT -->
-                <div class="section-header" style="margin-top: 32px; border-bottom: none; padding-bottom: 0;">
-                    <div class="section-title">Journal History</div>
-                </div>
-                
-                <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px;">
-                    <div style="position: relative; flex: 1;">
-                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
-                        <input type="text" id="journal-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderJournal()">
+
+                                <!-- JOURNAL HEADER WITH SEARCH & SORT -->
+                <div id="journal-list-header" class="sticky-glass-header">
+                    <div class="section-header" style="margin-top: 0; border-bottom: none; padding-bottom: 0;">
+                        <div class="section-title">Journal History</div>
                     </div>
-                    <button id="journal-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleJournalSort()">
-                        <i class="fa-solid fa-calendar-days"></i>
-                    </button>
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 16px;">
+                        <div style="position: relative; flex: 1;">
+                            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px;"></i>
+                            <input type="text" id="journal-search" class="form-input" placeholder="Search brand or vitola..." style="margin-bottom: 0; padding-left: 36px; height: 42px; min-height: 42px; border-radius: 12px; font-size: 13px;" oninput="debouncedRenderJournal()">
+                        </div>
+                        <button id="journal-sort-btn" class="btn-secondary" style="margin-bottom: 0; width: auto; padding: 0 16px; height: 42px; border-radius: 12px; font-size: 14px;" onclick="toggleJournalSort()">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <div id="journal-history-list" style="margin-bottom: 40px;">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-book-open" style="font-size: 20px; opacity: 0.3;"></i>
-                        <span>No smokes logged yet</span>
-                    </div>
+                    <div class="skeleton-block" style="height: 120px; width: 100%;"></div>
+                    <div class="skeleton-block" style="height: 120px; width: 100%; opacity: 0.7;"></div>
+                    <div class="skeleton-block" style="height: 120px; width: 100%; opacity: 0.4;"></div>
                 </div>
+
 
             </section>
 
@@ -1575,11 +1625,10 @@
                     <div id="feed-tab-global" onclick="switchFeedTab('global')" style="flex: 1; text-align: center; padding: 10px; border-radius: 8px; color: var(--text-dim); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s;">Global</div>
                 </div>
                 
-                <div id="lounge-feed-list" style="margin-bottom: 40px;">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-users" style="font-size: 20px; opacity: 0.3;"></i>
-                        <span style="line-height: 1.4;">Your feed is quiet.<br>Add some friends to see what they are smoking.</span>
-                    </div>
+                                <div id="lounge-feed-list" style="margin-bottom: 40px;">
+                    <div class="skeleton-block" style="height: 60px; width: 100%;"></div>
+                    <div class="skeleton-block" style="height: 200px; width: 100%; opacity: 0.7;"></div>
+                    <div class="skeleton-block" style="height: 200px; width: 100%; opacity: 0.4;"></div>
                 </div>
             </section>
 
@@ -1653,7 +1702,7 @@
                     </div>
                 </div>
 
-                <div class="log-card">
+                                <div class="log-card">
                     <div class="log-header">
                         <div>
                             <div class="log-title">Optimal Mechanics</div>
@@ -1661,20 +1710,41 @@
                         </div>
                         <i class="fa-solid fa-gear" style="color: var(--leather);"></i>
                     </div>
-                    <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
-                        <span class="badge badge-rose" id="profile-mechanics-ring">N/A Gauge</span>
-                        <span class="badge badge-mint" id="profile-mechanics-cut">N/A Cut</span>
-                        <span class="badge badge-amber" id="profile-mechanics-light">N/A Light</span>
+                    
+                    <!-- Premium 3-Column Bento Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px;">
+                        
+                                                <!-- Ring Gauge -->
+                        <div style="background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fa-regular fa-circle" style="color: var(--danger); font-size: 18px; margin-bottom: 10px;"></i>
+                            <span id="profile-mechanics-ring" style="font-size: 10px; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;">N/A Gauge</span>
+                        </div>
+
+                        
+                        <!-- Cut Style -->
+                        <div style="background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fa-solid fa-scissors" style="color: var(--mint); font-size: 18px; margin-bottom: 10px;"></i>
+                            <span id="profile-mechanics-cut" style="font-size: 10px; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;">N/A Cut</span>
+                        </div>
+                        
+                        <!-- Light Method -->
+                        <div style="background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fa-solid fa-fire-flame-curved" style="color: var(--gold); font-size: 18px; margin-bottom: 10px;"></i>
+                            <span id="profile-mechanics-light" style="font-size: 10px; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;">N/A Light</span>
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- THE ACADEMY (NOW COLLAPSIBLE) -->
-                <div class="section-header" style="margin-top: 32px; cursor: pointer; padding-right: 8px;" onclick="toggleEntryForm('academy-form-wrapper', 'academy-form-chevron')">
+
+                               <!-- THE ACADEMY (NOW COLLAPSIBLE) -->
+                <div class="section-header" style="margin-top: 32px; cursor: pointer; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;" onclick="toggleEntryForm('academy-form-wrapper', 'academy-form-chevron')">
                     <div class="section-title">The Academy</div>
-                    <div style="color: var(--leather); padding: 4px; display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border-radius: 8px; width: 28px; height: 28px; border: 1px solid var(--border-subtle);">
+                    <div style="color: var(--leather); display: flex; align-items: center; justify-content: center; background: var(--surface-01dp); border-radius: 8px; width: 32px; height: 32px; border: 1px solid var(--border-subtle); flex-shrink: 0;">
                         <i id="academy-form-chevron" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 12px;"></i>
                     </div>
                 </div>
+
 
                 <div id="academy-form-wrapper" style="display: none; padding-top: 8px;">
                     <!-- Pairing Guide Tool -->
@@ -2548,10 +2618,9 @@
         }
     };
 
-    // --- DAILY SELECTION ENGINE ---
+        // --- DAILY SELECTION ENGINE ---
     window.toggleDailyCigarPreference = function() {
         const currentState = localStorage.getItem('finalThirdDailyPref') || 'enabled';
-        
         if (currentState === 'enabled') {
             localStorage.setItem('finalThirdDailyPref', 'disabled');
         } else {
@@ -2561,76 +2630,6 @@
     };
 
     window.applyDailyCigarPreference = function() {
-        const savedPref = localStorage.getItem('finalThirdDailyPref') || 'enabled';
-        const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
-        
-        const icon = document.getElementById('daily-pref-icon');
-        const text = document.getElementById('daily-pref-text');
-        
-        const headerLayer1 = document.getElementById('daily-cigar-header');
-        const exp = document.getElementById('daily-cigar-expanded');
-        const chev = document.getElementById('daily-cigar-chevron');
-        const layer2 = document.getElementById('layer-2-container');
-        
-        if (savedPref === 'disabled') {
-            if(icon) icon.className = 'fa-solid fa-eye-slash';
-            if(text) text.innerText = 'Disabled';
-            
-            if(headerLayer1) headerLayer1.style.display = 'none';
-            
-            if(layer2) {
-                layer2.style.paddingTop = 'calc(20px + env(safe-area-inset-top, 0px))';
-                layer2.style.borderRadius = '0';
-                layer2.style.borderTop = 'none';
-                layer2.style.background = 'var(--bg-base)';
-            }
-        } else {
-            if(icon) icon.className = 'fa-solid fa-eye';
-            if(text) text.innerText = 'Enabled';
-            
-            if(headerLayer1) {
-                headerLayer1.style.display = 'block';
-                if (expandedPref) {
-                    if(exp) { exp.style.maxHeight = '150px'; exp.style.opacity = '1'; }
-                    if(chev) chev.className = 'fa-solid fa-chevron-down';
-                    headerLayer1.style.paddingBottom = '32px';
-                } else {
-                    if(exp) { exp.style.maxHeight = '0'; exp.style.opacity = '0'; }
-                    if(chev) chev.className = 'fa-solid fa-chevron-up';
-                    headerLayer1.style.paddingBottom = '24px';
-                }
-            }
-                        if(layer2) {
-                layer2.style.paddingTop = '20px';
-                layer2.style.borderRadius = '40px 40px 0 0';
-                layer2.style.borderTop = '1px solid var(--border-subtle)';
-                layer2.style.background = 'linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%)';
-            }
-        }
-    };
-
-
-        window.toggleDailyCigarExpand = function() {
-        const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
-        if (expandedPref) {
-            localStorage.setItem('finalThirdDailyExpanded', 'false');
-        } else {
-            localStorage.setItem('finalThirdDailyExpanded', 'true');
-        }
-        window.applyDailyCigarPreference();
-    };
-
-    window.toggleNotificationsPreference = function() {
-        const currentState = localStorage.getItem('finalThirdNotificationsPref') || 'enabled';
-        if (currentState === 'enabled') {
-            localStorage.setItem('finalThirdNotificationsPref', 'disabled');
-        } else {
-            localStorage.setItem('finalThirdNotificationsPref', 'enabled');
-        }
-        window.applyNotificationsPreference();
-    };
-
-        window.applyDailyCigarPreference = function() {
         const savedPref = localStorage.getItem('finalThirdDailyPref') || 'enabled';
         const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
         
@@ -2748,6 +2747,7 @@
             }
         }
     };
+
 
 
     // --- DOSSIER PERSONAL INFO MODAL ---
@@ -3290,7 +3290,7 @@
         return Math.floor(diff / oneDay);
     }
 
-    async function loadDailyCigar() {
+        async function loadDailyCigar() {
         if (!auth.currentUser) return;
 
         const rawDay = getDayOfYear();
@@ -3299,20 +3299,44 @@
         const totalRosterCount = 365;
         const scrambledDay = ((rawDay * 157 + 31) % totalRosterCount) + 1;
         
+        const applyAmbientGlow = (cigarName) => {
+            const header = document.getElementById('daily-cigar-header');
+            if(!header) return;
+            const clean = cigarName.toLowerCase();
+            let glowColor = 'transparent';
+            
+            if (clean.includes('maduro') || clean.includes('oscuro') || clean.includes('broadleaf')) {
+                glowColor = 'radial-gradient(ellipse at top center, rgba(61, 36, 24, 0.4) 0%, transparent 70%)';
+            } else if (clean.includes('claro') || clean.includes('connecticut') || clean.includes('cameroon')) {
+                glowColor = 'radial-gradient(ellipse at top center, rgba(229, 208, 161, 0.2) 0%, transparent 70%)';
+            } else if (clean.includes('candela')) {
+                glowColor = 'radial-gradient(ellipse at top center, rgba(74, 222, 128, 0.15) 0%, transparent 70%)';
+            } else {
+                glowColor = 'radial-gradient(ellipse at top center, rgba(var(--leather-rgb), 0.2) 0%, transparent 70%)';
+            }
+            
+            header.style.backgroundImage = glowColor;
+        };
+        
         try {
             const docRef = doc(db, "daily_roster", scrambledDay.toString());
             const docSnap = await getDoc(docRef);
             
             if (docSnap.exists()) {
-                displayEl.innerText = docSnap.data().name;
+                const cName = docSnap.data().name;
+                displayEl.innerText = cName;
+                applyAmbientGlow(cName);
             } else {
                 displayEl.innerText = "Padrón 60th Anniversary Perfecto"; 
+                applyAmbientGlow("Padrón 60th Anniversary Perfecto");
             }
         } catch(e) {
             console.error("[Daily Cigar] Firestore fetch failed.", e);
             displayEl.innerText = "Padrón 1964 Anniversary"; 
+            applyAmbientGlow("Padrón 1964 Anniversary");
         }
     }
+
 
     setInterval(loadDailyCigar, 1000 * 60 * 60);
 
@@ -3447,25 +3471,26 @@
     };
 
 
-    // 2. Wrapper Color Swatch Preview Dictionary
+        // 2. Wrapper Color Swatch Preview Dictionary
     const wrapperColorMap = {
         "candela": "#4ADE80",
         "double claro": "#4ADE80",
         "claro": "#F5DEB3",
         "connecticut": "#E5D0A1",
-        "colorado claro": "#C67A38",
-        "cameroon": "#BA6838",
-        "sumatra": "#A05A2C",
-        "habano": "#8B4513",
+        "colorado claro": "#D6813B", 
+        "cameroon": "#C9703E", 
+        "sumatra": "#B86532", 
+        "habano": "#A35320", 
         "rosado": "#A84C32",
         "corojo": "#9E472A",
         "colorado": "#963826",
-        "colorado maduro": "#5C2B1B",
-        "broadleaf": "#3D2418",
-        "san andres": "#361E14",
-        "maduro": "#28160E",
-        "oscuro": "#151515"
+        "colorado maduro": "#85371F", 
+        "broadleaf": "#732D16", 
+        "san andres": "#612510", 
+        "maduro": "#541F0C", 
+        "oscuro": "#401607" 
     };
+
 
     window.updateWrapperSwatch = function(inputId, swatchId) {
         const val = document.getElementById(inputId).value.trim().toLowerCase();
@@ -5543,22 +5568,64 @@
         else if (avgDays >= 30) agingStatus = "&bull; DEVELOPING &bull;";
         document.getElementById('stat-aging-pill').innerHTML = agingStatus;
         
-        const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
+                const sortedWrappers = Object.entries(wrapperCounts).sort((a, b) => b[1] - a[1]);
         
         if (totalValidWrappers > 0) {
-            let wrapperHtml = '';
             const top3 = sortedWrappers.slice(0, 3);
-            const badgeClasses = ['badge-indigo', 'badge-mint', 'badge-amber'];
             
+            // Map specific wrapper colors to the chart
+            const getWrapperColor = (wrapperName, fallback) => {
+                const clean = wrapperName.toLowerCase();
+                for (const [key, color] of Object.entries(wrapperColorMap)) {
+                    if (clean.includes(key)) return color;
+                }
+                return fallback;
+            };
+
+            let gradientStops = [];
+            let currentPct = 0;
+            let legendHtml = '<div style="display: flex; flex-direction: column; justify-content: center; gap: 8px;">';
+            
+            const chartColors = ['var(--leather)', 'var(--mint)', 'var(--gold)'];
+
             top3.forEach((item, index) => {
-                const pct = Math.round((item[1] / totalValidWrappers) * 100);
-                const badgeClass = badgeClasses[index] || 'badge-indigo';
-                wrapperHtml += `<span class="badge ${badgeClass}">${pct}% ${escapeHTML(item[0])}</span>`;
+                const pct = (item[1] / totalValidWrappers) * 100;
+                const color = getWrapperColor(item[0], chartColors[index] || 'var(--text-dim)');
+                
+                gradientStops.push(`${color} ${currentPct}% ${currentPct + pct}%`);
+                currentPct += pct;
+                
+                legendHtml += `
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--text-main);">
+                        <div style="width: 10px; height: 10px; border-radius: 3px; background: ${color};"></div>
+                        ${Math.round(pct)}% ${escapeHTML(item[0])}
+                    </div>`;
             });
-            wrapperContainer.innerHTML = wrapperHtml;
+            legendHtml += '</div>';
+
+                        // Fill empty space if the top 3 don't make up 100% of the humidor
+            if (currentPct < 100) {
+                gradientStops.push(`var(--border-subtle) ${currentPct}% 100%`);
+            }
+
+
+            const conicString = `conic-gradient(${gradientStops.join(', ')})`;
+
+            wrapperContainer.style.display = 'flex';
+            wrapperContainer.style.alignItems = 'center';
+            wrapperContainer.style.gap = '20px';
+            wrapperContainer.innerHTML = `
+                <div class="donut-chart-container" style="background: ${conicString};">
+                    <div class="donut-chart-hole">
+                        <i class="fa-solid fa-leaf" style="color: var(--text-dim); font-size: 16px;"></i>
+                    </div>
+                </div>
+                ${legendHtml}
+            `;
         } else {
             wrapperContainer.innerHTML = `<span class="badge badge-indigo">N/A</span>`;
         }
+
     };
 
     window.removeCigar = async function(id) {
