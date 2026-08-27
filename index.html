@@ -929,7 +929,7 @@
             background: var(--surface-12dp);
         }
 
-        /* --- FLOATING BOTTOM DOCK (08dp) --- */
+                /* --- FLOATING BOTTOM DOCK (08dp) --- */
         .bottom-dock-wrapper { 
             position: fixed; 
             bottom: 0; 
@@ -946,6 +946,7 @@
         [data-theme="light"] .bottom-dock-wrapper { 
             background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); 
         }
+
                 .bottom-dock { 
             width: calc(100% - 32px); 
             max-width: 390px; 
@@ -1688,7 +1689,7 @@
                             <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; white-space: nowrap;">Humidor Value</div>
                             <div style="flex: 1; height: 1px; background: linear-gradient(270deg, transparent, rgba(var(--leather-rgb), 0.3));"></div>
                         </div>
-                        <div id="stat-humidor-value-val" style="font-family: var(--font-serif); font-size: 38px; color: var(--leather); line-height: 1; font-weight: 400;">$0</div>
+                        <div id="stat-humidor-value-val" style="font-family: var(--font-serif); font-size: clamp(24px, 8vw, 38px); color: var(--leather); line-height: 1; font-weight: 400; white-space: nowrap;">$0</div>
                         <div style="font-size: 10px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; margin-top: 8px; margin-bottom: 20px;">EST. TOTAL</div>
                         <div id="stat-value-pill" style="margin-top: auto; border: 1px solid rgba(var(--mint-rgb), 0.3); border-radius: 12px; padding: 4px 12px; font-size: 9px; color: var(--mint); background: rgba(var(--mint-rgb), 0.1); font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;"><i class="fa-solid fa-arrow-trend-up"></i> +$0 this month</div>
                     </div>
@@ -5558,14 +5559,19 @@
             alertsIcon.style.opacity = readyAlertsCount > 0 ? '1' : '';
         }
         
-        let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
+                let avgDays = humidorInventory.length > 0 ? Math.floor(totalAgedDays / humidorInventory.length) : 0;
         document.getElementById('stat-avg-aging-val').innerText = avgDays;
         
-        let formattedValue = totalValue % 1 === 0 ? `$${totalValue.toLocaleString('en-US')}` : `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        document.getElementById('stat-humidor-value-val').innerText = formattedValue;
-        
-        let formattedMonthly = monthlyAddedValue % 1 === 0 ? `+$${monthlyAddedValue.toLocaleString('en-US')}` : `+$${monthlyAddedValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        document.getElementById('stat-value-pill').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${formattedMonthly} this month`;
+        // Helper to abbreviate large numbers (e.g., $2.08M or $150.5K)
+        const formatLargeCurrency = (val) => {
+            if (val >= 1000000) return `$${(val / 1000000).toFixed(2)}M`;
+            if (val >= 100000) return `$${(val / 1000).toFixed(1)}K`;
+            return val % 1 === 0 ? `$${val.toLocaleString('en-US')}` : `$${val.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        };
+
+        document.getElementById('stat-humidor-value-val').innerText = formatLargeCurrency(totalValue);
+        document.getElementById('stat-value-pill').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> +${formatLargeCurrency(monthlyAddedValue)} this month`;
+
 
         let agingStatus = "&bull; JUST RESTING &bull;";
         if (avgDays >= 180) agingStatus = "&bull; VINTAGE &bull;";
