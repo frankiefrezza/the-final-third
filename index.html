@@ -156,11 +156,12 @@
             --shadow-layer3: rgba(0,0,0,0.08);
             --glass-border: rgba(0, 0, 0, 0.04);
             --overlay-bg: rgba(26, 28, 35, 0.6);
-            --stat-bg-end: #F7F5F0;
+                        --stat-bg-end: #F7F5F0;
 
-                        /* Login specific contrast gradient (Dark shadow for light mode top) */
-            --login-top-grad: rgba(0, 0, 0, 0.35);
+            /* Login specific contrast gradient */
+            --login-top-grad: rgba(0, 0, 0, 0.05);
         }
+
 
                 /* --- PLATINUM THEME (Slate & Silver) --- */
         [data-theme="platinum"] {
@@ -236,9 +237,10 @@
             --leather-rgb: 196, 98, 16;
             --btn-leather: #C46210;
             --stat-bg-end: #F3EFE6;
-            --login-top-grad: rgba(44, 32, 22, 0.15);
+            --login-top-grad: rgba(44, 32, 22, 0.05);
             
             /* Shadows heavily tinted with terracotta to create warm lighting */
+
             --shadow-subtle: rgba(196, 98, 16, 0.05);
             --shadow-strong: rgba(196, 98, 16, 0.12);
             --shadow-layer3: rgba(196, 98, 16, 0.08);
@@ -281,7 +283,7 @@
                 linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-base) 100%);
         }
 
-        /* Adjusted Logo */
+               /* Adjusted Logo */
         .app-logo-luxury { 
             width: 220px; 
             height: auto; 
@@ -290,6 +292,13 @@
             position: relative; 
             z-index: 2; 
         }
+
+        /* Flips white text to dark while perfectly preserving the gold hue */
+        [data-theme="light"] .app-logo-luxury,
+        [data-theme="claro"] .app-logo-luxury {
+            filter: invert(1) hue-rotate(180deg);
+        }
+
 
         .login-tagline {
             font-family: var(--font-serif);
