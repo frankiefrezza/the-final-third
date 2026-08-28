@@ -2212,7 +2212,10 @@
 <div id="lightbox-overlay" class="action-sheet-overlay" onclick="closeLightbox(event)">
     <div class="lightbox-close" onclick="closeLightbox(event)"><i class="fa-solid fa-xmark"></i></div>
     <img id="lightbox-img" src="" onclick="event.stopPropagation()">
+    <!-- New Title Text Element -->
+    <div id="lightbox-title" onclick="event.stopPropagation()" style="color: #FFFFFF; font-family: var(--font-serif); font-size: 24px; font-weight: 800; text-align: center; margin-top: 20px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); padding: 0 24px;"></div>
 </div>
+
 
 <!-- CIGAR REVIEW MODAL -->
 <div id="cigar-modal" class="modal-overlay" onclick="closeCigarModal(event)">
@@ -2927,9 +2930,11 @@
     // Global States
     let humidorSortOrder = 'date'; 
     let journalSortOrder = 'date'; 
-    let currentVaultImage = null;
+        let currentVaultImage = null;
     let currentLogImage = null;
     window.imageRegistry = {}; 
+    window.titleRegistry = {}; 
+
 
     // Lounge Engine States
     let myFriends = [];
@@ -3807,18 +3812,24 @@
         }
     };
 
-    window.openLightbox = function(docId) {
+        window.openLightbox = function(docId) {
         const urlStr = window.imageRegistry[docId];
+        const titleStr = window.titleRegistry[docId] || '';
         if(urlStr) {
             document.getElementById('lightbox-img').src = urlStr;
+            document.getElementById('lightbox-title').innerText = titleStr;
             document.getElementById('lightbox-overlay').classList.add('active');
         }
     };
 
     window.closeLightbox = function(event) {
         document.getElementById('lightbox-overlay').classList.remove('active');
-        setTimeout(() => { document.getElementById('lightbox-img').src = ""; }, 300);
+        setTimeout(() => { 
+            document.getElementById('lightbox-img').src = ""; 
+            document.getElementById('lightbox-title').innerText = ""; 
+        }, 300);
     };
+
 
     window.openAvatarActionSheet = function() { document.getElementById('avatar-action-sheet').classList.add('active'); };
     window.closeAvatarActionSheet = function(event) { document.getElementById('avatar-action-sheet').classList.remove('active'); };
@@ -4696,9 +4707,11 @@
                 let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
 
                 let imageBadge = '';
-                if(log.image) {
+                                                if(log.image) {
                     window.imageRegistry[log.id] = log.image;
-                    imageBadge = `<button type="button" class="view-photo-badge" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
+                    window.titleRegistry[log.id] = displayBrand;
+                    imageBadge = `<button type="button" class="view-photo-badge"
+ onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${log.id}')" style="appearance: none; font-family: inherit; margin: 0; outline: none; font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: 700; cursor: pointer; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-camera"></i> View Photo</button>`;
                 }
 
                 // --- ACTION INDICATOR & NOTES LOGIC ---
@@ -5495,17 +5508,31 @@
                 let progressColor = isReady ? 'var(--leather)' : 'var(--text-dim)';
                 
                                 // --- NEW IMAGE / TITLE LOGIC ---
-                let titleHtml = `<div class="log-title" style="line-height: 1.3; margin-bottom: 8px;">${newBadge}${escapeHTML(cigar.brand)}</div>`;
+                const titleClampStyles = "display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal; word-break: break-word;";
                 
+                // Always store the full name in the registry so the popups can read it safely
+                window.titleRegistry[cigar.id] = cigar.brand;
+
+                let titleHtml = '';
+
                 if(cigar.image) {
                     window.imageRegistry[cigar.id] = cigar.image;
-                    // Makes the title clickable and adds a small gold camera indicator
+                    // Has Image: Show camera icon BEFORE the brand name so it never truncates
                     titleHtml = `
-                        <div class="log-title" style="line-height: 1.3; margin-bottom: 8px; cursor: pointer; display: inline-block;" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')">
-                            ${newBadge}${escapeHTML(cigar.brand)} <i class="fa-solid fa-camera" style="font-size: 12px; color: var(--leather); margin-left: 4px; vertical-align: middle;"></i>
+                        <div class="log-title" style="line-height: 1.3; margin-bottom: 12px; cursor: pointer; ${titleClampStyles}" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); openLightbox('${cigar.id}')">
+                            ${newBadge}<i class="fa-solid fa-camera" style="font-size: 12px; color: var(--leather); margin-right: 4px; vertical-align: middle;"></i>${escapeHTML(cigar.brand)}
+                        </div>
+                    `;
+                } else {
+                    // No Image: Click opens the app's native alert modal with the full un-truncated name
+                    titleHtml = `
+                        <div class="log-title" style="line-height: 1.3; margin-bottom: 12px; cursor: pointer; ${titleClampStyles}" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="event.stopPropagation(); window.customAlert(window.titleRegistry['${cigar.id}'], 'Cigar Details')">
+                            ${newBadge}${escapeHTML(cigar.brand)}
                         </div>
                     `;
                 }
+
+
 
                 html += `
                 <div class="swipe-container">
@@ -5519,11 +5546,13 @@
                     </div>
                     
                     <div class="swipe-front log-card" style="margin-bottom: 0; border-radius: 16px;" onclick="handleHumidorCardClick('${cigar.id}', event)">
-                        <div class="log-header" style="margin-bottom: 0;">
+                        <div class="log-header" style="margin-bottom: 0; align-items: stretch;">
                             
                             <!-- LEFT COLUMN: Grid Details -->
-                            <div style="flex: 1; padding-right: 12px; overflow: hidden;">
-                                ${titleHtml}
+                            <div style="flex: 1; padding-right: 12px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+                                <div>
+                                    ${titleHtml}
+                                </div>
                                 <div style="display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-dim); line-height: 1.4; letter-spacing: 0.5px;">
                                     <span>VITOLA:</span> <span style="color: var(--text-main); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(cigar.vitola)}</span>
                                     <span>RING:</span>   <span style="color: var(--text-main); font-weight: 700;">${escapeHTML(cigar.ring)}</span>
@@ -5532,8 +5561,9 @@
                             </div>
 
                             <!-- RIGHT COLUMN: Aging & Qty -->
-                            <div style="display: flex; flex-direction: column; align-items: stretch; min-width: 100px; flex-shrink: 0;">
-                                <div class="badge ${badgeClass}" style="--aging-progress: ${progress}%; margin-bottom: 8px; width: 100%; box-sizing: border-box;">${statusIcon}${statusText}</div>
+                            <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: stretch; min-width: 95px; flex-shrink: 0;">
+                                <div class="badge ${badgeClass}" style="--aging-progress: ${progress}%; margin-bottom: 12px; width: 100%; box-sizing: border-box; text-align: center; justify-content: center;">${statusIcon}${statusText}</div>
+                                
                                 <div style="font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-dim); line-height: 1.4; letter-spacing: 0.5px; padding: 0 2px;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
                                         <span>AGED:</span>
@@ -5545,7 +5575,7 @@
                                     </div>
                                     <div style="display: flex; justify-content: space-between;">
                                         <span>QTY:</span>
-                                        <span style="color: var(--leather); font-weight: 800;">${cigarQty}</span>
+                                        <span style="color: var(--text-main); font-weight: 700;">${cigarQty}</span>
                                     </div>
                                 </div>
                             </div>
@@ -5553,6 +5583,7 @@
                         </div>
                     </div>
                 </div>`;
+
 
 
             });
