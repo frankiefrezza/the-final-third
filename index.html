@@ -4688,12 +4688,13 @@
 
             // Render their individual logs inside the wrapper
             group.logs.forEach(log => {
+
                 // --- NEW TAG LOGIC ---
                 const isNew = (Date.now() - new Date(log.date).getTime()) < (48 * 60 * 60 * 1000);
                 const newBadge = isNew ? '<span class="badge badge-rose" style="padding: 2px 6px; font-size: 8px; margin-right: 6px; vertical-align: middle;">NEW</span>' : '';
 
                 let ratingBadge = log.rating ? `<span style="font-size: 10px; background: var(--surface-01dp); padding: 4px 10px; border-radius: 6px; color: var(--leather); font-weight: 700; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-star"></i> ${log.rating.toFixed(2)}</span>` : '';
-                
+
                 let imageBadge = '';
                 if(log.image) {
                     window.imageRegistry[log.id] = log.image;
@@ -5106,12 +5107,12 @@
         }
 
          let html = '<div class="glass-bento" style="border-radius: 20px; padding: 8px 20px;">';
-        sorted.forEach((cigar, index) => {
+                sorted.forEach((cigar, index) => {
             // Uses a linear gradient background to create a tapered gold line that is strongest in the center
             const borderStr = index < sorted.length - 1 ? 'background: linear-gradient(to right, transparent, rgba(var(--leather-rgb), 0.4) 50%, transparent) bottom center / 100% 2px no-repeat;' : '';
+            
             html += `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; ${borderStr}">
-
                 <div>
                     <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">${escapeHTML(cigar.brand)}</div>
                     <div style="font-size: 12px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(cigar.vitola)} • ${escapeHTML(cigar.wrapper)}</div>
@@ -5122,13 +5123,14 @@
                 </div>
             </div>`;
         });
+        
         html += '</div>';
         favContainer.innerHTML = html;
     };
 
-
     // --- HUMIDOR ENGINE (RESTORED) ---
     document.getElementById('vault-date').addEventListener('change', function(e) {
+
         if (!e.target.value) return;
         const acquired = new Date(e.target.value + 'T00:00:00');
         acquired.setDate(acquired.getDate() + 7);
@@ -5150,10 +5152,14 @@
         editingVaultId = id;
         document.getElementById('vault-brand').value = cigar.brand || '';
         document.getElementById('vault-quantity').value = cigar.quantity || 1;
-        document.getElementById('vault-vitola').value = cigar.vitola || '';
+                document.getElementById('vault-vitola').value = cigar.vitola || '';
         document.getElementById('vault-ring-gauge').value = cigar.ring !== '-' ? cigar.ring : '';
         document.getElementById('vault-wrapper').value = cigar.wrapper || '';
-        document.getElementById('vault-price').value = cigar.price || '';
+        
+        // Multiplies the saved per-stick price by the quantity so the form shows the Total Box Price
+        document.getElementById('vault-price').value = cigar.price ? (cigar.price * (cigar.quantity || 1)).toFixed(2) : '';
+        window.updatePriceBreakdown();
+
         
         if (cigar.acquiredDate) {
             document.getElementById('vault-date').value = new Date(cigar.acquiredDate).toISOString().split('T')[0];
@@ -5259,18 +5265,20 @@
         const targetTime = new Date(targetDate + 'T00:00:00').getTime();
 
         try {
-            const newCigar = {
+               const newCigar = {
                 uid: auth.currentUser.uid,
                 brand,
                 quantity: parseInt(qtyVal) || 1,
                 vitola: vitola || "Unknown",
                 ring: ring || "-",
                 wrapper: wrapper || "Unknown",
-                price: priceVal ? parseFloat(priceVal) : null,
+                // Divides the total input price by the quantity to save the true per-stick value
+                price: priceVal ? Number((parseFloat(priceVal) / (parseInt(qtyVal) || 1)).toFixed(2)) : null,
                 targetDate: isNaN(targetTime) ? acqTime + (7 * 86400000) : targetTime, 
                 acquiredDate: isNaN(acqTime) ? Date.now() : acqTime, 
                 image: currentVaultImage
             };
+
 
             if (editingVaultId) {
                 await updateDoc(doc(db, "humidor", editingVaultId), newCigar);
