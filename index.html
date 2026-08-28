@@ -2063,8 +2063,8 @@
                     </div>
                 </div>
 
-                <!-- Feedback & Support Button -->
-                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 24px; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;" onclick="openFeedbackModal()" onmousedown="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" onmouseup="this.style.transform='scale(1)'; this.style.opacity='1';" onmouseleave="this.style.transform='scale(1)'; this.style.opacity='1';" ontouchstart="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" ontouchend="this.style.transform='scale(1)'; this.style.opacity='1';">
+                                <!-- Feedback & Support Button -->
+                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 16px; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;" onclick="openFeedbackModal()" onmousedown="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" onmouseup="this.style.transform='scale(1)'; this.style.opacity='1';" onmouseleave="this.style.transform='scale(1)'; this.style.opacity='1';" ontouchstart="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" ontouchend="this.style.transform='scale(1)'; this.style.opacity='1';">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
                             <i class="fa-solid fa-comment-dots"></i>
@@ -2079,7 +2079,24 @@
                     </div>
                 </div>
 
+                <!-- Release Notes Button -->
+                <div class="glass-bento" style="border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 24px; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;" onclick="openReleaseNotesModal()" onmousedown="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" onmouseup="this.style.transform='scale(1)'; this.style.opacity='1';" onmouseleave="this.style.transform='scale(1)'; this.style.opacity='1';" ontouchstart="this.style.transform='scale(0.96)'; this.style.opacity='0.7';" ontouchend="this.style.transform='scale(1)'; this.style.opacity='1';">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: rgba(var(--leather-rgb), 0.15); width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--leather);">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">Release Notes</div>
+                            <div style="font-size: 12px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">Latest features & updates</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center; padding-right: 4px; opacity: 0.6;">
+                        <i class="fa-solid fa-chevron-right" style="color: var(--text-dim); font-size: 14px;"></i>
+                    </div>
+                </div>
+
                 <button class="btn-primary" style="background: rgba(var(--danger-rgb), 0.1); color: var(--danger); width: 100%; border: none; border-radius: 12px;" onclick="handleLogout()">
+
                     <i class="fa-solid fa-right-from-bracket" style="margin-right: 8px;"></i> Log Out
                 </button>
                 
@@ -2438,6 +2455,72 @@
         </button>
     </div>
 </div>
+
+<!-- RELEASE NOTES MODAL -->
+<div id="release-notes-action-sheet" class="action-sheet-overlay" onclick="closeReleaseNotesModal(event)">
+    <div class="action-sheet" onclick="event.stopPropagation()" style="height: 85vh; display: flex; flex-direction: column; padding-bottom: max(24px, env(safe-area-inset-bottom));">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="font-family: var(--font-serif); font-size: 20px; font-weight: 800; color: var(--text-main);">Release Notes</div>
+            <div onclick="closeReleaseNotesModal()" style="color: var(--text-dim); font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        
+        <div style="overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; padding-right: 4px;">
+            
+            <div class="glass-bento" style="padding: 16px; border-radius: 16px; margin-bottom: 16px; border-left: 4px solid var(--leather);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 style="font-family: var(--font-serif); font-size: 18px; color: var(--text-main); margin: 0;">v1.5.0 - The Lounge Overhaul</h3>
+                    <span class="badge badge-amber" style="font-size: 9px;">LATEST</span>
+                </div>
+                <ul class="info-list" style="margin-top: 0; font-size: 12px;">
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Redesigned Lounge Feed UI for cleaner grid layouts and unified stat alignment.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Relocated share buttons to only appear within expanded card details.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Implemented advanced CSS gradient blending for seamless Proportional Aging bars.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Resolved Light Mode contrast issues with dynamic logo inversion.</div></li>
+                </ul>
+            </div>
+
+            <div class="glass-bento" style="padding: 16px; border-radius: 16px; margin-bottom: 16px;">
+                <h3 style="font-family: var(--font-serif); font-size: 16px; color: var(--text-main); margin: 0 0 12px 0;">v1.4.0 - Connectivity & Sharing</h3>
+                <ul class="info-list" style="margin-top: 0; font-size: 12px;">
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Introduced the Social Lounge with Local vs. Global network filtering.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Added the ability to securely share high-resolution Tasting Cards generated via HTML Canvas.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Built a unified, hardware-accelerated Swipe-to-Reveal engine for editing and deleting entries.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Integrated Firebase Cloud Storage for personal cigar photography and lightboxes.</div></li>
+                </ul>
+            </div>
+
+            <div class="glass-bento" style="padding: 16px; border-radius: 16px; margin-bottom: 16px;">
+                <h3 style="font-family: var(--font-serif); font-size: 16px; color: var(--text-main); margin: 0 0 12px 0;">v1.3.0 - The Academy</h3>
+                <ul class="info-list" style="margin-top: 0; font-size: 12px;">
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Launched the Academy, featuring guides for Vitolas, Wrappers, and Mechanics.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Added the Flavor Matching Engine to calculate perfect pairings based on leaf profiles.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Introduced Palate Mapping with dynamic donut charting.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Built dynamic Humidor Valuation tracking.</div></li>
+                </ul>
+            </div>
+
+            <div class="glass-bento" style="padding: 16px; border-radius: 16px; margin-bottom: 16px;">
+                <h3 style="font-family: var(--font-serif); font-size: 16px; color: var(--text-main); margin: 0 0 12px 0;">v1.2.0 - Multi-Theme & Data Entry</h3>
+                <ul class="info-list" style="margin-top: 0; font-size: 12px;">
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Deployed custom UI Themes: Dark, Light, Platinum, and Claro.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Created dynamic Autocomplete Libraries for brands, shapes, and wrappers to speed up logging.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Added fast-tap package chips and price-per-stick calculators.</div></li>
+                </ul>
+            </div>
+
+            <div class="glass-bento" style="padding: 16px; border-radius: 16px; margin-bottom: 40px;">
+                <h3 style="font-family: var(--font-serif); font-size: 16px; color: var(--text-main); margin: 0 0 12px 0;">v1.0.0 - Initial Beta</h3>
+                <ul class="info-list" style="margin-top: 0; font-size: 12px;">
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Core application architecture laid down.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Humidor inventory logic and Journal ledger tracking established.</div></li>
+                    <li><i class="fa-solid fa-check info-list-icon"></i><div class="info-list-content">Firebase Authentication and secure data routing built.</div></li>
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
 
 <!-- IN-APP TOAST NOTIFICATION -->
 <div id="app-toast" style="position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--surface-24dp); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 12px 20px; border-radius: 30px; box-shadow: 0 16px 32px rgba(0,0,0,0.4); z-index: 9999; display: flex; align-items: center; gap: 12px; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s; opacity: 0; width: 90%; max-width: 350px; cursor: pointer;" onclick="dismissToastAndGoToLounge()">
@@ -2863,6 +2946,14 @@
 
     window.closeFeedbackModal = function(event) {
         document.getElementById('feedback-action-sheet').classList.remove('active');
+    };
+    // --- RELEASE NOTES ENGINE ---
+    window.openReleaseNotesModal = function() {
+        document.getElementById('release-notes-action-sheet').classList.add('active');
+    };
+
+    window.closeReleaseNotesModal = function(event) {
+        document.getElementById('release-notes-action-sheet').classList.remove('active');
     };
 
     window.submitFeedback = async function() {
