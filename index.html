@@ -26,11 +26,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Final Third">
 
-    <script>
+        <script>
         // Check local storage immediately to prevent a white/dark flash of unstyled content
-        const savedTheme = localStorage.getItem('finalThirdTheme') || 'dark';
+        const savedTheme = localStorage.getItem('finalThirdTheme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
+
 
     <style>
         /* --- DEFAULT DARK THEME (MATERIAL DESIGN STANDARD) --- */
