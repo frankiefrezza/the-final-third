@@ -576,12 +576,22 @@
 
 
                     /* --- VIEW SECTIONS & ANIMATIONS --- */
-        .view-section { 
+                .view-section { 
             position: absolute; top: 0; bottom: 0; left: 0; right: 0; 
-            /* Dialed bottom padding back from 410px to 140px to perfectly clear the bottom dock */
             padding: 32px 16px calc(140px + env(safe-area-inset-bottom, 0px)) 16px; 
-            display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
+            display: none; 
+            overflow-y: scroll; 
+            -webkit-overflow-scrolling: touch; 
+            overscroll-behavior-y: contain;
+            
+            /* HARDWARE ACCELERATION ENGINE */
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            will-change: transform, scroll-position;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
+
 
 
         .view-section.active { display: block; }
@@ -6536,19 +6546,33 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
     };
 
 
-    // --- BUTTER-SMOOTH STICKY SCROLL ENGINE ---
+        // --- BUTTER-SMOOTH STICKY SCROLL ENGINE ---
+    let scrollTicking = false;
+
     window.handleAppScroll = function(e) {
-        const st = e.target.scrollTop;
-        if (st > 25) {
-            document.body.classList.add('app-scrolled');
-        } else {
-            document.body.classList.remove('app-scrolled');
+        if (!scrollTicking) {
+            window.requestAnimationFrame(() => {
+                const st = e.target.scrollTop;
+                // Only update the DOM if the state actually needs to change
+                if (st > 25) {
+                    if (!document.body.classList.contains('app-scrolled')) {
+                        document.body.classList.add('app-scrolled');
+                    }
+                } else {
+                    if (document.body.classList.contains('app-scrolled')) {
+                        document.body.classList.remove('app-scrolled');
+                    }
+                }
+                scrollTicking = false;
+            });
+            scrollTicking = true;
         }
     };
 
     document.querySelectorAll('.view-section').forEach(section => {
         section.addEventListener('scroll', window.handleAppScroll, { passive: true });
     });
+
 
     const originalSwitchTab = window.switchTab;
     window.switchTab = function(targetViewId, dockIndex) {
