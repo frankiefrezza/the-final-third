@@ -4723,14 +4723,14 @@
     };
 
 
-        window.renderLoungeFeed = function() {
+            window.renderLoungeFeed = function() {
 
         const feedList = document.getElementById('lounge-feed-list');
         
        // --- PRESERVE UI STATE BEFORE RE-RENDER ---
-const closedFeeds = [];
+const openFeeds = [];
 document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
-    if (el.style.display === 'none') closedFeeds.push(el.id.replace('feed-container-', ''));
+    if (el.style.display === 'block') openFeeds.push(el.id.replace('feed-container-', ''));
 });
 
 
@@ -4797,10 +4797,14 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
         let html = '';
         sortedGroups.forEach(group => {
             
-       // Restore previous open/closed state
-const isFeedClosed = closedFeeds.includes(group.uid);
-const containerDisplay = isFeedClosed ? 'none' : 'block';
-const chevronRotation = isFeedClosed ? 'rotate(0deg)' : 'rotate(180deg)';
+            // Check if there are any new logs in this group
+            const hasNewLog = group.logs.some(log => (Date.now() - new Date(log.date).getTime()) < (48 * 60 * 60 * 1000));
+            const groupNewBadge = hasNewLog ? '<span class="badge badge-rose" style="font-size: 9px; padding: 4px 8px;">NEW</span>' : '';
+            
+            // Restore previous open/closed state (Collapsed by default)
+            const isFeedOpen = openFeeds.includes(group.uid);
+            const containerDisplay = isFeedOpen ? 'block' : 'none';
+            const chevronRotation = isFeedOpen ? 'rotate(180deg)' : 'rotate(0deg)';
 
             
                        // Render Collapsible User Header (Click isolated to chevron)
@@ -4811,6 +4815,7 @@ const chevronRotation = isFeedClosed ? 'rotate(0deg)' : 'rotate(180deg)';
                         <img src="${escapeHTML(group.avatar)}" onerror="this.onerror=null; this.src='app-icon.png';" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
                         <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">${escapeHTML(group.username)}</div>
                         <div class="badge badge-amber" style="font-size: 9px; padding: 4px 8px;">${group.logs.length} LOGS</div>
+                        ${groupNewBadge}
                     </div>
                     <!-- ONLY this div is clickable now -->
                     <div style="color: var(--text-dim); padding: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center;" onclick="toggleUserFeed('${group.uid}')">
@@ -5032,6 +5037,7 @@ const chevronRotation = isFeedClosed ? 'rotate(0deg)' : 'rotate(180deg)';
         
         feedList.innerHTML = html;
     };
+
 
     let unsubscribeHumidor = null;
     let unsubscribeJournal = null;
