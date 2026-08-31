@@ -4812,11 +4812,10 @@
         const feedList = document.getElementById('lounge-feed-list');
         
        // --- PRESERVE UI STATE BEFORE RE-RENDER ---
-const openFeeds = [];
+const closedFeeds = [];
 document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
-    if (el.style.display === 'block') openFeeds.push(el.id.replace('feed-container-', ''));
+    if (el.style.display === 'none') closedFeeds.push(el.id.replace('feed-container-', ''));
 });
-
 
         const openComments = [];
         document.querySelectorAll('[id^="comment-section-"]').forEach(el => {
@@ -4885,11 +4884,10 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
             const hasNewLog = group.logs.some(log => (Date.now() - new Date(log.date).getTime()) < (48 * 60 * 60 * 1000));
             const groupNewBadge = hasNewLog ? '<span class="badge badge-rose" style="font-size: 9px; padding: 4px 8px;">NEW</span>' : '';
             
-            // Restore previous open/closed state (Collapsed by default)
-            const isFeedOpen = openFeeds.includes(group.uid);
-            const containerDisplay = isFeedOpen ? 'block' : 'none';
-            const chevronRotation = isFeedOpen ? 'rotate(180deg)' : 'rotate(0deg)';
-
+            // Restore previous open/closed state (Expanded by default)
+const isFeedClosed = closedFeeds.includes(group.uid);
+const containerDisplay = isFeedClosed ? 'none' : 'block';
+const chevronRotation = isFeedClosed ? 'rotate(0deg)' : 'rotate(180deg)';
             
                        // Render Collapsible User Header (Click isolated to chevron)
             html += `
