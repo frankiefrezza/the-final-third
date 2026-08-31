@@ -810,25 +810,22 @@
 
         .timeline-footer { font-family: var(--font-mono); display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-dim); }
 
-                /* --- PROGRESS BAR SHIMMER ANIMATION --- */
+        /* --- PROGRESS BAR SHIMMER ANIMATION --- */
         @keyframes sweepShimmer {
-            0% { transform: translateX(-150%); }
-            100% { transform: translateX(250%); }
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
         }
         .shimmer-track::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            /* TIGHTENED: Forces the glare into a concentrated 50% width beam instead of a massive wash */
-            width: 50%; 
+            width: 100%;
             height: 100%;
-            /* SHARPENED: Angled the glare and pumped the white opacity up to 0.8 */
-            background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.8) 50%, transparent 80%);
-            /* SPED UP: Linear timing makes it sweep evenly like a scanner rather than slowing down at the ends */
-            animation: sweepShimmer 2.5s infinite linear; 
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            animation: sweepShimmer 3s infinite ease-in-out;
             pointer-events: none;
-            z-index: 10; /* Ensures the light sits completely on top of the colored DOM nodes */
+            z-index: 1;
         }
 
         /* --- SWIPE TO ACTION ENGINE --- */
