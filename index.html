@@ -3194,7 +3194,7 @@
         }
     };
 
-    function handleDragStart(e) {
+        function handleDragStart(e) {
         if (e.target.closest('.swipe-actions') || e.target.closest('.view-photo-badge') || e.target.closest('.share-action-btn')) return; 
         
         const swipeFront = e.target.closest('.swipe-front');
@@ -3211,11 +3211,10 @@
         swipeStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         isSwiping = false;
         
-        swipeFront.style.transition = 'none';
-        swipeFront.parentElement.classList.add('is-swiping'); 
+        // REMOVED DOM MUTATIONS HERE TO PROTECT NATIVE iOS SCROLLING
     }
 
-    function handleDragMove(e) {
+        function handleDragMove(e) {
         if (!isDragging) return;
         
         const swipeFront = e.target.closest('.swipe-front');
@@ -3226,17 +3225,17 @@
         const diffX = currentX - swipeStartX;
         const diffY = currentY - swipeStartY;
 
-        // FIXED: Hard bias towards vertical scrolling to stop diagonal drag interference
         if (!isSwiping) {
             if (Math.abs(diffY) > 5) {
-                // User is scrolling vertically. Instantly kill the horizontal swipe detector.
+                // User is scrolling vertically. Safely kill the horizontal swipe detector.
                 swipeStartX = null; 
                 isDragging = false;
-                swipeFront.parentElement.classList.remove('is-swiping');
                 return;
             } else if (Math.abs(diffX) > 15) {
-                // Require a deliberate 15px horizontal drag to activate swipe-to-delete
+                // User is definitively swiping horizontally. NOW we safely apply the DOM locks.
                 isSwiping = true;
+                swipeFront.style.transition = 'none';
+                swipeFront.parentElement.classList.add('is-swiping'); 
             }
         }
 
@@ -3254,6 +3253,7 @@
             swipeFront.style.transform = `translateX(${moveX}px)`;
         }
     }
+
 
     function handleDragEnd(e) {
         if (!isDragging) return;
