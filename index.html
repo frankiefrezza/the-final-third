@@ -498,13 +498,14 @@
        /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; position: relative; }
         
-                  #layer-2-container {
+                #layer-2-container {
             z-index: 10 !important; 
             transition: background 0.3s, border-radius 0.3s ease, box-shadow 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: sticky; 
             top: 0;
-            /* Uses a variable so JS can inject the notch-safe padding. Bottom padding slashed to 28px */
-            padding: var(--layer2-pt, 12px) 24px 28px 24px; 
+            padding: var(--layer2-pt, 12px) 24px 24px 24px; 
+            /* NEW: Forces iOS to keep the layer actively loaded in the GPU */
+            transform: translateY(0px); 
         }
 
         #layer-2-container::before {
@@ -532,8 +533,7 @@
             border-bottom: 1px solid var(--border-subtle) !important;
             border-radius: 0 !important; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-            /* Safely calls the variable so it doesn't jump into the notch on scroll */
-            padding: var(--layer2-pt, 12px) 24px 28px 24px !important; 
+            padding: var(--layer2-pt, 12px) 24px 24px 24px !important; 
         }
 
         /* Humidor & Journal Sticky Glass Headers */
@@ -556,6 +556,8 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: inline-block;
             transform-origin: left center; 
+            /* NEW: Forces GPU lock */
+            transform: scale(1) translateY(0px);
         }
 
         body.app-scrolled #dynamic-layer-2-title {
@@ -577,8 +579,8 @@
         /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
         .layer-3-container { 
             background-color: var(--bg-base);
-            border-radius: 32px 32px 0 0; /* Slightly softened curve to frame the title better */
-            margin-top: -20px; /* Adjusted to perfectly clear the tightened bottom padding */
+            border-radius: 32px 32px 0 0; 
+            margin-top: -24px; 
             position: relative; 
             flex-grow: 1; 
             border-top: 1px solid var(--border-subtle); 
@@ -586,22 +588,21 @@
             overflow: hidden; 
             z-index: 15; 
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            /* NEW: Forces GPU lock */
+            transform: translateY(0px);
         }
 
         body.app-scrolled .layer-3-container {
              transform: translateY(var(--header-shift));
         }
 
-
-                       .view-section { 
+                 .view-section { 
             position: absolute; top: 0; bottom: 0; left: 0; right: 0; 
-            padding: 16px 16px calc(140px + env(safe-area-inset-bottom, 0px)) 16px; /* TIGHTENED */
+            padding: 16px 16px calc(140px + env(safe-area-inset-bottom, 0px)) 16px; 
             display: none; 
             overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
             overscroll-behavior-y: contain;
         }
-
 
         .view-section.active { display: block; }
         
@@ -691,13 +692,17 @@
             width: 100%;
         }
 
-        .log-card, .stat-box, .glass-bento { 
+                .log-card, .stat-box, .glass-bento { 
             background: var(--surface-02dp) !important;
             border-radius: 16px; 
             border: 1px solid var(--border-glass-bento) !important;
             box-shadow: 0 4px 5px rgba(0,0,0,0.05), 0 1px 10px rgba(0,0,0,0.03); 
             position: relative; 
             transition: transform 0.2s, background-color 0.3s, border-color 0.3s; 
+            /* Forces iOS to prioritize scroll momentum and stops text-selection sinks */
+            user-select: none;          
+            -webkit-user-select: none;
+            touch-action: pan-y;        
         }
 
         .log-card {
@@ -2275,20 +2280,26 @@
 </div>
 
 <!-- UNIFIED CIGAR DETAILS & PHOTO LIGHTBOX MODAL -->
-<div id="lightbox-overlay" class="custom-dialog-overlay" onclick="closeLightbox(event)" style="z-index: 3000;">
-    <div class="custom-dialog-box" onclick="event.stopPropagation()" style="padding: 0; overflow: hidden; width: 85%; max-width: 380px;">
-        <!-- Image expands here if present -->
-        <img id="lightbox-img" src="" style="width: 100%; max-height: 45vh; object-fit: cover; display: none; background: var(--surface-01dp);">
+<div id="lightbox-overlay" class="action-sheet-overlay" onclick="closeLightbox(event)" style="z-index: 3000;">
+    <div class="action-sheet" onclick="event.stopPropagation()" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; max-height: 85vh; width: 100%;">
         
-        <!-- Content Container -->
-        <div style="padding: 32px 24px 24px 24px;">
-            <h2 id="lightbox-title" style="font-family: var(--font-serif); font-size: 26px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; text-align: center; line-height: 1.2;"></h2>
-            <div id="lightbox-details" style="margin-bottom: 32px;"></div>
-            <button class="btn-primary" style="margin-bottom: 0;" onclick="closeLightbox()">Close</button>
+        <!-- Floating Close Button -->
+        <div onclick="closeLightbox()" style="position: absolute; top: 16px; right: 16px; background: var(--surface-08dp); color: var(--text-dim); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10; border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.2s, color 0.2s;" onactive="this.style.transform='scale(0.9)'">
+            <i class="fa-solid fa-xmark" style="font-size: 16px;"></i>
+        </div>
+
+        <!-- Image Banner -->
+        <img id="lightbox-img" src="" style="width: 100%; height: 260px; object-fit: cover; display: none; background: var(--surface-01dp); flex-shrink: 0; border-bottom: 1px solid var(--border-subtle);">
+        
+        <!-- Content Area -->
+        <div style="padding: 24px 24px max(24px, env(safe-area-inset-bottom)); overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1;">
+            <!-- Added right padding to the title so it never collides with the floating close button -->
+            <h2 id="lightbox-title" style="font-family: var(--font-serif); font-size: 26px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; line-height: 1.2; padding-right: 40px;"></h2>
+            
+            <div id="lightbox-details" style="margin-bottom: 0;"></div>
         </div>
     </div>
 </div>
-
 
 <!-- CIGAR REVIEW MODAL -->
 <div id="cigar-modal" class="modal-overlay" onclick="closeCigarModal(event)">
@@ -2801,10 +2812,8 @@
             if(headerLayer1) headerLayer1.style.display = 'none';
             
             if(layer2) {
-                // Injects safe-area dynamically via variable so the !important CSS doesn't crush it
                 document.documentElement.style.setProperty('--layer2-pt', 'calc(10px + env(safe-area-inset-top, 0px))');
-                
-                layer2.style.paddingTop = ''; // Clear old inline style
+                layer2.style.paddingTop = ''; 
                 layer2.style.borderRadius = '0';
                 layer2.style.borderTop = 'none';
                 layer2.style.background = 'var(--bg-base)';
@@ -2832,27 +2841,26 @@
                     if(exp) { exp.style.maxHeight = '150px'; exp.style.opacity = '1'; }
                     if(chev) chev.className = 'fa-solid fa-chevron-down';
                     headerLayer1.style.paddingBottom = '8px'; 
-                    document.documentElement.style.setProperty('--header-shift', 'calc(-125px + env(safe-area-inset-top, 35px))');
+                    // FIXED: Replaced conflicting env() math with the exact pixel height of the container
+                    document.documentElement.style.setProperty('--header-shift', '-88px');
                 } else {
                     if(exp) { exp.style.maxHeight = '0'; exp.style.opacity = '0'; }
                     if(chev) chev.className = 'fa-solid fa-chevron-up';
                     headerLayer1.style.paddingBottom = '8px'; 
-                    document.documentElement.style.setProperty('--header-shift', 'calc(-60px + env(safe-area-inset-top, 35px))');
+                    // FIXED: Replaced conflicting env() math
+                    document.documentElement.style.setProperty('--header-shift', '-34px');
                 }
             }
             
             if(layer2) {
-                // Layer 1 handles the safe area, so we lock Layer 2 tightly to 12px
                 document.documentElement.style.setProperty('--layer2-pt', '12px');
-                
-                layer2.style.paddingTop = ''; // Clear old inline style
+                layer2.style.paddingTop = ''; 
                 layer2.style.borderRadius = '40px 40px 0 0';
                 layer2.style.borderTop = '1px solid var(--border-subtle)';
                 layer2.style.background = 'linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%)';
             }
         }
     };
-
 
     window.toggleDailyCigarExpand = function() {
         const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
@@ -3188,7 +3196,7 @@
         }
     };
 
-    function handleDragStart(e) {
+        function handleDragStart(e) {
         if (e.target.closest('.swipe-actions') || e.target.closest('.view-photo-badge') || e.target.closest('.share-action-btn')) return; 
         
         const swipeFront = e.target.closest('.swipe-front');
@@ -3205,11 +3213,10 @@
         swipeStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         isSwiping = false;
         
-        swipeFront.style.transition = 'none';
-        swipeFront.parentElement.classList.add('is-swiping'); 
+        // REMOVED DOM MUTATIONS HERE TO PROTECT NATIVE iOS SCROLLING
     }
 
-    function handleDragMove(e) {
+        function handleDragMove(e) {
         if (!isDragging) return;
         
         const swipeFront = e.target.closest('.swipe-front');
@@ -3220,17 +3227,17 @@
         const diffX = currentX - swipeStartX;
         const diffY = currentY - swipeStartY;
 
-        // FIXED: Hard bias towards vertical scrolling to stop diagonal drag interference
         if (!isSwiping) {
             if (Math.abs(diffY) > 5) {
-                // User is scrolling vertically. Instantly kill the horizontal swipe detector.
+                // User is scrolling vertically. Safely kill the horizontal swipe detector.
                 swipeStartX = null; 
                 isDragging = false;
-                swipeFront.parentElement.classList.remove('is-swiping');
                 return;
             } else if (Math.abs(diffX) > 15) {
-                // Require a deliberate 15px horizontal drag to activate swipe-to-delete
+                // User is definitively swiping horizontally. NOW we safely apply the DOM locks.
                 isSwiping = true;
+                swipeFront.style.transition = 'none';
+                swipeFront.parentElement.classList.add('is-swiping'); 
             }
         }
 
@@ -3248,6 +3255,7 @@
             swipeFront.style.transform = `translateX(${moveX}px)`;
         }
     }
+
 
     function handleDragEnd(e) {
         if (!isDragging) return;
@@ -4815,17 +4823,23 @@
 
         const feedList = document.getElementById('lounge-feed-list');
         
-       // --- PRESERVE UI STATE BEFORE RE-RENDER ---
-const openFeeds = [];
-document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
-    if (el.style.display === 'block') openFeeds.push(el.id.replace('feed-container-', ''));
-});
+               // --- PRESERVE UI STATE BEFORE RE-RENDER ---
+        // Default to EXPANDED, so we track what the user has explicitly CLOSED
+        const closedFeeds = [];
+        document.querySelectorAll('#lounge-feed-list [id^="feed-container-"]').forEach(el => {
+            if (el.style.display === 'none') closedFeeds.push(el.id.replace('feed-container-', ''));
+        });
 
+        const closedEntries = [];
+        document.querySelectorAll('#lounge-feed-list [id^="journal-details-"]').forEach(el => {
+            if (el.style.display === 'none') closedEntries.push(el.id.replace('journal-details-', ''));
+        });
 
         const openComments = [];
-        document.querySelectorAll('[id^="comment-section-"]').forEach(el => {
+        document.querySelectorAll('#lounge-feed-list [id^="comment-section-"]').forEach(el => {
             if (el.style.display === 'block') openComments.push(el.id.replace('comment-section-', ''));
         });
+
         
                  let filteredLogs = [];
         if(currentFeedTab === 'friends') {
@@ -4889,14 +4903,14 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
             const hasNewLog = group.logs.some(log => (Date.now() - new Date(log.date).getTime()) < (48 * 60 * 60 * 1000));
             const groupNewBadge = hasNewLog ? '<span class="badge badge-rose" style="font-size: 9px; padding: 4px 8px;">NEW</span>' : '';
             
-            // Restore previous open/closed state (Collapsed by default)
-            const isFeedOpen = openFeeds.includes(group.uid);
-            const containerDisplay = isFeedOpen ? 'block' : 'none';
-            const chevronRotation = isFeedOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+                        // Restore previous open/closed state (Expanded by default)
+            const isFeedClosed = closedFeeds.includes(group.uid);
+            const containerDisplay = isFeedClosed ? 'none' : 'block';
+            const chevronRotation = isFeedClosed ? 'rotate(0deg)' : 'rotate(180deg)';
 
             
                        // Render Collapsible User Header (Click isolated to chevron)
-            html += `
+                                    html += `
             <div class="user-feed-group" style="margin-bottom: 12px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-01dp); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border-subtle); margin-bottom: 12px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -5086,8 +5100,8 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
                             </button>
                         </div>
                         
-                        <div id="comment-section-${log.id}" style="display: ${commentDisplay}; margin-top: 16px; background: var(--surface-04dp); padding: 16px; border-radius: 12px; border: 1px solid var(--border-subtle);">
-                            <div style="max-height: 200px; overflow-y: auto; margin-bottom: 12px;">
+                                                        <div id="comment-section-${log.id}" style="display: ${commentDisplay}; margin-top: 16px; background: var(--surface-04dp); padding: 16px; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                            <div style="max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; margin-bottom: 12px;">
                                 ${commentsHtml}
                             </div>
                             <div style="display: flex; gap: 8px;">
@@ -6315,15 +6329,25 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
                             </div>
                         </div>
 
-                        <!-- Centered Chevron -->
-                        <div style="display: flex; justify-content: center; margin-top: 8px;">
-                            <button onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="toggleJournalExpand('${log.id}', event)" id="journal-chevron-${log.id}" style="background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px 20px; transition: transform 0.3s; font-size: 14px; display: flex; justify-content: center;">
-                                <i class="fa-solid fa-chevron-down"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- Hidden Collapsible Details Block -->
-                        <div id="journal-details-${log.id}" style="display: none;">
+                                                ${(() => {
+                            // Check if individual entry should be closed (Expanded by default)
+                            const isEntryClosed = closedEntries.includes(log.id);
+                            const entryDisplay = isEntryClosed ? 'none' : 'block';
+                            const entryChevronRotation = isEntryClosed ? 'rotate(0deg)' : 'rotate(180deg)';
+                            
+                            return `
+                            <!-- Centered Chevron -->
+                            <div style="display: flex; justify-content: center; margin-top: 8px;">
+                                <button onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="toggleJournalExpand('${log.id}', event)" id="journal-chevron-${log.id}" style="background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px 20px; transition: transform 0.3s; transform: ${entryChevronRotation}; font-size: 14px; display: flex; justify-content: center;">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Collapsible Details Block -->
+                            <div id="journal-details-${log.id}" style="display: ${entryDisplay};">
+                            `;
+                        })()}
+
                             
                             <div style="border-top: 1px dashed var(--border-subtle); margin-top: 4px; padding-top: 16px;">
                                 
@@ -6692,11 +6716,10 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
         // --- BUTTER-SMOOTH STICKY SCROLL ENGINE ---
     let scrollTicking = false;
 
-    window.handleAppScroll = function(e) {
+        window.handleAppScroll = function(e) {
         if (!scrollTicking) {
             window.requestAnimationFrame(() => {
                 const st = e.target.scrollTop;
-                // Only update the DOM if the state actually needs to change
                 if (st > 25) {
                     if (!document.body.classList.contains('app-scrolled')) {
                         document.body.classList.add('app-scrolled');
@@ -6704,6 +6727,12 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
                 } else {
                     if (document.body.classList.contains('app-scrolled')) {
                         document.body.classList.remove('app-scrolled');
+                        
+                        // SAFARI REFLOW HAMMER: 
+                        // Reading the offsetHeight forces iOS WebKit to instantly repaint the DOM, 
+                        // preventing the layers from getting visually frozen in the "up" position.
+                        void document.getElementById('layer-2-container').offsetHeight;
+                        void document.querySelector('.layer-3-container').offsetHeight;
                     }
                 }
                 scrollTicking = false;
@@ -6712,9 +6741,21 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
         }
     };
 
-    document.querySelectorAll('.view-section').forEach(section => {
+
+        document.querySelectorAll('.view-section').forEach(section => {
         section.addEventListener('scroll', window.handleAppScroll, { passive: true });
+        
+        // iOS Safari Momentum Safety Net
+        // Guarantees Layer 3 drops down even if WebKit swallows the final momentum scroll event
+        section.addEventListener('touchend', () => {
+            setTimeout(() => {
+                if (section.scrollTop <= 25 && document.body.classList.contains('app-scrolled')) {
+                    document.body.classList.remove('app-scrolled');
+                }
+            }, 400); // Waits for the iOS rubber-band snap to settle
+        }, { passive: true });
     });
+
 
 
     const originalSwitchTab = window.switchTab;
