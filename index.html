@@ -498,16 +498,34 @@
        /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; position: relative; }
         
-        #layer-2-container {
+                #layer-2-container {
             z-index: 10 !important; 
             transition: background 0.3s, border-radius 0.3s ease, box-shadow 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: sticky; 
             top: 0;
-            padding: 12px 24px 44px 24px; /* TIGHTENED bottom padding */
+            padding: 12px 24px 44px 24px; 
+        }
+
+        /* NEW: Creates a seamless solid background extension to cover the status bar when scrolled */
+        #layer-2-container::before {
+            content: '';
+            position: absolute;
+            bottom: 100%; /* Anchors to the top edge and paints upward */
+            left: 0; 
+            right: 0;
+            height: 150px; /* Tall enough to cover any notch */
+            background: var(--layer2-grad-start);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        body.app-scrolled #layer-2-container::before {
+            opacity: 1; /* Fades in smoothly as you scroll */
         }
 
         body.app-scrolled #layer-2-container {
-            /* KILLED padding shift to save momentum, replaced with dynamic GPU slide */
             transform: translateY(var(--header-shift)) !important;
             background: var(--layer2-grad-start) !important;
             backdrop-filter: none; -webkit-backdrop-filter: none;
@@ -519,7 +537,7 @@
         /* Humidor & Journal Sticky Glass Headers */
         .sticky-glass-header {
             position: sticky; top: -16px; z-index: 10;
-            padding: 16px 0 16px 0; margin: -16px 0 16px 0; /* TIGHTENED from 32px to 16px */
+            padding: 16px 0 16px 0; margin: -16px 0 16px 0; 
             background: var(--bg-base); transition: background 0.3s, border-color 0.3s;
             border-bottom: 1px solid transparent;
         }
@@ -539,7 +557,7 @@
         }
 
         body.app-scrolled #dynamic-layer-2-title {
-            transform: scale(0.8) translateY(2px); /* Removed margin layout shift */
+            transform: scale(0.8) translateY(2px);
         }
 
         #dynamic-layer-2-subtitle {
@@ -2754,7 +2772,7 @@
         window.applyDailyCigarPreference();
     };
 
-        window.applyDailyCigarPreference = function() {
+            window.applyDailyCigarPreference = function() {
         const savedPref = localStorage.getItem('finalThirdDailyPref') || 'enabled';
         const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
         
@@ -2788,7 +2806,6 @@
                 layer2.style.background = 'var(--bg-base)';
             }
             
-            // Set dynamic slide to 0 when header is hidden
             document.documentElement.style.setProperty('--header-shift', '0px');
             
         } else {
@@ -2805,16 +2822,23 @@
             
             if(headerLayer1) {
                 headerLayer1.style.display = 'block';
+                // TIGHTENED: Slashed global padding on the header wrapper
+                headerLayer1.style.paddingTop = 'calc(4px + env(safe-area-inset-top, 0px))';
+                
                 if (expandedPref) {
                     if(exp) { exp.style.maxHeight = '150px'; exp.style.opacity = '1'; }
                     if(chev) chev.className = 'fa-solid fa-chevron-down';
-                    headerLayer1.style.paddingBottom = '16px'; 
-                    document.documentElement.style.setProperty('--header-shift', '-135px');
+                    headerLayer1.style.paddingBottom = '8px'; // Tightened bottom gap
+                    
+                    // MATH FIX: Slide up, but offset it downwards by the height of the physical iOS notch
+                    document.documentElement.style.setProperty('--header-shift', 'calc(-125px + env(safe-area-inset-top, 35px))');
                 } else {
                     if(exp) { exp.style.maxHeight = '0'; exp.style.opacity = '0'; }
                     if(chev) chev.className = 'fa-solid fa-chevron-up';
-                    headerLayer1.style.paddingBottom = '12px'; 
-                    document.documentElement.style.setProperty('--header-shift', '-90px');
+                    headerLayer1.style.paddingBottom = '8px'; // Tightened bottom gap
+                    
+                    // MATH FIX: Slide up, but offset it downwards by the height of the physical iOS notch
+                    document.documentElement.style.setProperty('--header-shift', 'calc(-60px + env(safe-area-inset-top, 35px))');
                 }
             }
             
@@ -2826,7 +2850,6 @@
             }
         }
     };
-
 
     window.toggleDailyCigarExpand = function() {
         const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
