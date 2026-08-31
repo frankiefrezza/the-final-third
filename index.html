@@ -690,13 +690,17 @@
             width: 100%;
         }
 
-        .log-card, .stat-box, .glass-bento { 
+                .log-card, .stat-box, .glass-bento { 
             background: var(--surface-02dp) !important;
             border-radius: 16px; 
             border: 1px solid var(--border-glass-bento) !important;
             box-shadow: 0 4px 5px rgba(0,0,0,0.05), 0 1px 10px rgba(0,0,0,0.03); 
             position: relative; 
             transition: transform 0.2s, background-color 0.3s, border-color 0.3s; 
+            /* Forces iOS to prioritize scroll momentum and stops text-selection sinks */
+            user-select: none;          
+            -webkit-user-select: none;
+            touch-action: pan-y;        
         }
 
         .log-card {
@@ -4892,8 +4896,8 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
 
             
                        // Render Collapsible User Header (Click isolated to chevron)
-            html += `
-            <div class="user-feed-group" style="margin-bottom: 12px;">
+                        html += `
+            <div class="user-feed-group" style="margin-bottom: 12px; touch-action: pan-y; user-select: none; -webkit-user-select: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-01dp); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border-subtle); margin-bottom: 12px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <img src="${escapeHTML(group.avatar)}" onerror="this.onerror=null; this.src='app-icon.png';" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
@@ -5082,8 +5086,8 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
                             </button>
                         </div>
                         
-                        <div id="comment-section-${log.id}" style="display: ${commentDisplay}; margin-top: 16px; background: var(--surface-04dp); padding: 16px; border-radius: 12px; border: 1px solid var(--border-subtle);">
-                            <div style="max-height: 200px; overflow-y: auto; margin-bottom: 12px;">
+                                                <div id="comment-section-${log.id}" style="display: ${commentDisplay}; margin-top: 16px; background: var(--surface-04dp); padding: 16px; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                            <div style="max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; margin-bottom: 12px;">
                                 ${commentsHtml}
                             </div>
                             <div style="display: flex; gap: 8px;">
