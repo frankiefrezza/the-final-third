@@ -2278,20 +2278,26 @@
 </div>
 
 <!-- UNIFIED CIGAR DETAILS & PHOTO LIGHTBOX MODAL -->
-<div id="lightbox-overlay" class="custom-dialog-overlay" onclick="closeLightbox(event)" style="z-index: 3000;">
-    <div class="custom-dialog-box" onclick="event.stopPropagation()" style="padding: 0; overflow: hidden; width: 85%; max-width: 380px;">
-        <!-- Image expands here if present -->
-        <img id="lightbox-img" src="" style="width: 100%; max-height: 45vh; object-fit: cover; display: none; background: var(--surface-01dp);">
+<div id="lightbox-overlay" class="action-sheet-overlay" onclick="closeLightbox(event)" style="z-index: 3000;">
+    <div class="action-sheet" onclick="event.stopPropagation()" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; max-height: 85vh; width: 100%;">
         
-        <!-- Content Container -->
-        <div style="padding: 32px 24px 24px 24px;">
-            <h2 id="lightbox-title" style="font-family: var(--font-serif); font-size: 26px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; text-align: center; line-height: 1.2;"></h2>
-            <div id="lightbox-details" style="margin-bottom: 32px;"></div>
-            <button class="btn-primary" style="margin-bottom: 0;" onclick="closeLightbox()">Close</button>
+        <!-- Floating Close Button -->
+        <div onclick="closeLightbox()" style="position: absolute; top: 16px; right: 16px; background: var(--surface-08dp); color: var(--text-dim); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10; border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.2s, color 0.2s;" onactive="this.style.transform='scale(0.9)'">
+            <i class="fa-solid fa-xmark" style="font-size: 16px;"></i>
+        </div>
+
+        <!-- Image Banner -->
+        <img id="lightbox-img" src="" style="width: 100%; height: 260px; object-fit: cover; display: none; background: var(--surface-01dp); flex-shrink: 0; border-bottom: 1px solid var(--border-subtle);">
+        
+        <!-- Content Area -->
+        <div style="padding: 24px 24px max(24px, env(safe-area-inset-bottom)); overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1;">
+            <!-- Added right padding to the title so it never collides with the floating close button -->
+            <h2 id="lightbox-title" style="font-family: var(--font-serif); font-size: 26px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; line-height: 1.2; padding-right: 40px;"></h2>
+            
+            <div id="lightbox-details" style="margin-bottom: 0;"></div>
         </div>
     </div>
 </div>
-
 
 <!-- CIGAR REVIEW MODAL -->
 <div id="cigar-modal" class="modal-overlay" onclick="closeCigarModal(event)">
