@@ -498,13 +498,13 @@
        /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; position: relative; }
         
-                  #layer-2-container {
+                    #layer-2-container {
             z-index: 10 !important; 
             transition: background 0.3s, border-radius 0.3s ease, box-shadow 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: sticky; 
             top: 0;
-            /* Uses a variable so JS can inject the notch-safe padding. Bottom padding slashed to 28px */
-            padding: var(--layer2-pt, 12px) 24px 28px 24px; 
+            /* TIGHTENED: Bottom padding cut to 24px */
+            padding: var(--layer2-pt, 12px) 24px 24px 24px; 
         }
 
         #layer-2-container::before {
@@ -532,8 +532,7 @@
             border-bottom: 1px solid var(--border-subtle) !important;
             border-radius: 0 !important; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-            /* Safely calls the variable so it doesn't jump into the notch on scroll */
-            padding: var(--layer2-pt, 12px) 24px 28px 24px !important; 
+            padding: var(--layer2-pt, 12px) 24px 24px 24px !important; 
         }
 
         /* Humidor & Journal Sticky Glass Headers */
@@ -577,8 +576,9 @@
         /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
         .layer-3-container { 
             background-color: var(--bg-base);
-            border-radius: 32px 32px 0 0; /* Slightly softened curve to frame the title better */
-            margin-top: -20px; /* Adjusted to perfectly clear the tightened bottom padding */
+            border-radius: 32px 32px 0 0; 
+            /* TIGHTENED: Matched to the bottom padding of Layer 2 to perfectly snap together */
+            margin-top: -24px; 
             position: relative; 
             flex-grow: 1; 
             border-top: 1px solid var(--border-subtle); 
@@ -591,7 +591,6 @@
         body.app-scrolled .layer-3-container {
              transform: translateY(var(--header-shift));
         }
-
 
                        .view-section { 
             position: absolute; top: 0; bottom: 0; left: 0; right: 0; 
@@ -2801,10 +2800,8 @@
             if(headerLayer1) headerLayer1.style.display = 'none';
             
             if(layer2) {
-                // Injects safe-area dynamically via variable so the !important CSS doesn't crush it
                 document.documentElement.style.setProperty('--layer2-pt', 'calc(10px + env(safe-area-inset-top, 0px))');
-                
-                layer2.style.paddingTop = ''; // Clear old inline style
+                layer2.style.paddingTop = ''; 
                 layer2.style.borderRadius = '0';
                 layer2.style.borderTop = 'none';
                 layer2.style.background = 'var(--bg-base)';
@@ -2832,27 +2829,26 @@
                     if(exp) { exp.style.maxHeight = '150px'; exp.style.opacity = '1'; }
                     if(chev) chev.className = 'fa-solid fa-chevron-down';
                     headerLayer1.style.paddingBottom = '8px'; 
-                    document.documentElement.style.setProperty('--header-shift', 'calc(-125px + env(safe-area-inset-top, 35px))');
+                    // FIXED: Replaced conflicting env() math with the exact pixel height of the container
+                    document.documentElement.style.setProperty('--header-shift', '-88px');
                 } else {
                     if(exp) { exp.style.maxHeight = '0'; exp.style.opacity = '0'; }
                     if(chev) chev.className = 'fa-solid fa-chevron-up';
                     headerLayer1.style.paddingBottom = '8px'; 
-                    document.documentElement.style.setProperty('--header-shift', 'calc(-60px + env(safe-area-inset-top, 35px))');
+                    // FIXED: Replaced conflicting env() math
+                    document.documentElement.style.setProperty('--header-shift', '-34px');
                 }
             }
             
             if(layer2) {
-                // Layer 1 handles the safe area, so we lock Layer 2 tightly to 12px
                 document.documentElement.style.setProperty('--layer2-pt', '12px');
-                
-                layer2.style.paddingTop = ''; // Clear old inline style
+                layer2.style.paddingTop = ''; 
                 layer2.style.borderRadius = '40px 40px 0 0';
                 layer2.style.borderTop = '1px solid var(--border-subtle)';
                 layer2.style.background = 'linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%)';
             }
         }
     };
-
 
     window.toggleDailyCigarExpand = function() {
         const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
