@@ -256,9 +256,11 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        :root {
-            --scroll-progress: 0; /* Drives the 120fps smooth header collapse */
+                :root {
+            --scroll-progress: 0; 
+            --header-shift: -135px; /* Dynamically controls the GPU slide distance */
         }
+
 
         html, body {
             overscroll-behavior-y: none; /* Keeps the bounce killed */
@@ -476,16 +478,19 @@
         .btn-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 16px; border-radius: 12px; font-size: 14px; font-weight: 700; border: 1px dashed var(--border-subtle); cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: var(--font-sans); margin-bottom: 16px; }
         .btn-secondary.attached { background: var(--surface-04dp); color: var(--leather); border: 1px solid var(--leather); border-style: solid; }
 
-        /* --- PERSISTENT HEADER (LAYER 1) --- */
-                .dash-header {
+                    /* --- PERSISTENT HEADER (LAYER 1) --- */
+        .dash-header {
             text-align: center;
-            padding: calc(20px + env(safe-area-inset-top, 0px)) 16px 32px 16px;
+            /* TIGHTENED: Reduced top and bottom padding to eliminate dead space */
+            padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 12px 16px;
             background: var(--bg-base);
-            transition: opacity 0.3s ease;
-            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            position: relative;
+            z-index: 5;
         }
 
         body.app-scrolled .dash-header {
+            transform: translateY(-100%) !important; /* Forces it entirely off the top of the screen */
             opacity: 0 !important;
             pointer-events: none;
         }
@@ -493,30 +498,32 @@
        /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; position: relative; }
         
-                    #layer-2-container {
+        #layer-2-container {
             z-index: 10 !important; 
-            transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.3s ease, background 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: background 0.3s, border-radius 0.3s ease, box-shadow 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: sticky; 
             top: 0;
+            padding: 12px 24px 44px 24px; /* TIGHTENED bottom padding */
         }
 
         body.app-scrolled #layer-2-container {
-            padding: calc(env(safe-area-inset-top, 0px) - 4px) 24px 64px 24px !important;
+            /* KILLED padding shift to save momentum, replaced with dynamic GPU slide */
+            transform: translateY(var(--header-shift)) !important;
             background: var(--layer2-grad-start) !important;
             backdrop-filter: none; -webkit-backdrop-filter: none;
             border-bottom: 1px solid var(--border-subtle) !important;
             border-radius: 0 !important; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-            transform: translateY(-100px); 
         }
 
         /* Humidor & Journal Sticky Glass Headers */
         .sticky-glass-header {
-            position: sticky; top: -32px; z-index: 10;
-            padding: 32px 0 16px 0; margin: -32px 0 16px 0;
+            position: sticky; top: -16px; z-index: 10;
+            padding: 16px 0 16px 0; margin: -16px 0 16px 0; /* TIGHTENED from 32px to 16px */
             background: var(--bg-base); transition: background 0.3s, border-color 0.3s;
             border-bottom: 1px solid transparent;
         }
+        
         body.app-scrolled .sticky-glass-header {
             background: var(--bg-base);
             backdrop-filter: none; -webkit-backdrop-filter: none;
@@ -525,24 +532,15 @@
             box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         }
 
-
-
-
-
-
-
         #dynamic-layer-2-title {
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), margin-bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: inline-block;
             transform-origin: left center; 
         }
 
-                body.app-scrolled #dynamic-layer-2-title {
-            transform: scale(0.7) translateY(6px); /* Nudges the text downwards to center it */
-            margin-bottom: -18px; 
+        body.app-scrolled #dynamic-layer-2-title {
+            transform: scale(0.8) translateY(2px); /* Removed margin layout shift */
         }
-
-
 
         #dynamic-layer-2-subtitle {
             transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -557,7 +555,7 @@
         }
 
         /* --- MAIN CONTENT CONTAINER (LAYER 3) --- */
-                .layer-3-container { 
+        .layer-3-container { 
             background-color: var(--bg-base);
             border-radius: 40px 40px 0 0; 
             margin-top: -40px; 
@@ -571,18 +569,20 @@
         }
 
         body.app-scrolled .layer-3-container {
-            transform: translateY(-100px);
+             transform: translateY(var(--header-shift));
         }
 
 
-                .view-section { 
+
+                       .view-section { 
             position: absolute; top: 0; bottom: 0; left: 0; right: 0; 
-            padding: 32px 16px calc(140px + env(safe-area-inset-bottom, 0px)) 16px; 
+            padding: 16px 16px calc(140px + env(safe-area-inset-bottom, 0px)) 16px; /* TIGHTENED */
             display: none; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch; 
             overscroll-behavior-y: contain;
         }
+
 
         .view-section.active { display: block; }
         
@@ -2754,7 +2754,7 @@
         window.applyDailyCigarPreference();
     };
 
-    window.applyDailyCigarPreference = function() {
+        window.applyDailyCigarPreference = function() {
         const savedPref = localStorage.getItem('finalThirdDailyPref') || 'enabled';
         const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
         
@@ -2782,11 +2782,15 @@
             if(headerLayer1) headerLayer1.style.display = 'none';
             
             if(layer2) {
-                layer2.style.paddingTop = 'calc(20px + env(safe-area-inset-top, 0px))';
+                layer2.style.paddingTop = 'calc(10px + env(safe-area-inset-top, 0px))';
                 layer2.style.borderRadius = '0';
                 layer2.style.borderTop = 'none';
                 layer2.style.background = 'var(--bg-base)';
             }
+            
+            // Set dynamic slide to 0 when header is hidden
+            document.documentElement.style.setProperty('--header-shift', '0px');
+            
         } else {
             if(icon) icon.className = 'fa-solid fa-eye';
             if(track) {
@@ -2804,22 +2808,25 @@
                 if (expandedPref) {
                     if(exp) { exp.style.maxHeight = '150px'; exp.style.opacity = '1'; }
                     if(chev) chev.className = 'fa-solid fa-chevron-down';
-                    headerLayer1.style.paddingBottom = '32px';
+                    headerLayer1.style.paddingBottom = '16px'; 
+                    document.documentElement.style.setProperty('--header-shift', '-135px');
                 } else {
                     if(exp) { exp.style.maxHeight = '0'; exp.style.opacity = '0'; }
                     if(chev) chev.className = 'fa-solid fa-chevron-up';
-                    headerLayer1.style.paddingBottom = '24px';
+                    headerLayer1.style.paddingBottom = '12px'; 
+                    document.documentElement.style.setProperty('--header-shift', '-90px');
                 }
             }
             
             if(layer2) {
-                layer2.style.paddingTop = '20px';
+                layer2.style.paddingTop = '12px'; 
                 layer2.style.borderRadius = '40px 40px 0 0';
                 layer2.style.borderTop = '1px solid var(--border-subtle)';
                 layer2.style.background = 'linear-gradient(135deg, var(--layer2-grad-start) 0%, var(--layer2-grad-end) 100%)';
             }
         }
     };
+
 
     window.toggleDailyCigarExpand = function() {
         const expandedPref = localStorage.getItem('finalThirdDailyExpanded') !== 'false';
