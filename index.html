@@ -6660,7 +6660,8 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
         // --- BUTTER-SMOOTH STICKY SCROLL ENGINE ---
     let scrollTicking = false;
 
-    window.handleAppScroll = function(e) {
+        window.handleAppScroll = function(e) {
+        return; // <--- ADD THIS. It prevents the layout shift from firing.
         if (!scrollTicking) {
             window.requestAnimationFrame(() => {
                 const st = e.target.scrollTop;
