@@ -498,13 +498,14 @@
        /* --- DYNAMIC TITLE (LAYER 2) --- */
         .greeting { font-family: var(--font-serif); color: var(--text-main); margin-bottom: 0; position: relative; }
         
-                    #layer-2-container {
+                #layer-2-container {
             z-index: 10 !important; 
             transition: background 0.3s, border-radius 0.3s ease, box-shadow 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: sticky; 
             top: 0;
-            /* TIGHTENED: Bottom padding cut to 24px */
             padding: var(--layer2-pt, 12px) 24px 24px 24px; 
+            /* NEW: Forces iOS to keep the layer actively loaded in the GPU */
+            transform: translateY(0px); 
         }
 
         #layer-2-container::before {
@@ -555,6 +556,8 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: inline-block;
             transform-origin: left center; 
+            /* NEW: Forces GPU lock */
+            transform: scale(1) translateY(0px);
         }
 
         body.app-scrolled #dynamic-layer-2-title {
@@ -577,7 +580,6 @@
         .layer-3-container { 
             background-color: var(--bg-base);
             border-radius: 32px 32px 0 0; 
-            /* TIGHTENED: Matched to the bottom padding of Layer 2 to perfectly snap together */
             margin-top: -24px; 
             position: relative; 
             flex-grow: 1; 
@@ -586,18 +588,20 @@
             overflow: hidden; 
             z-index: 15; 
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            /* NEW: Forces GPU lock */
+            transform: translateY(0px);
         }
 
         body.app-scrolled .layer-3-container {
              transform: translateY(var(--header-shift));
         }
 
-                    .view-section { 
+                 .view-section { 
             position: absolute; top: 0; bottom: 0; left: 0; right: 0; 
             padding: 16px 16px calc(140px + env(safe-area-inset-bottom, 0px)) 16px; 
             display: none; 
             overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
+            overscroll-behavior-y: contain;
         }
 
         .view-section.active { display: block; }
@@ -6696,11 +6700,10 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
         // --- BUTTER-SMOOTH STICKY SCROLL ENGINE ---
     let scrollTicking = false;
 
-    window.handleAppScroll = function(e) {
+        window.handleAppScroll = function(e) {
         if (!scrollTicking) {
             window.requestAnimationFrame(() => {
                 const st = e.target.scrollTop;
-                // Only update the DOM if the state actually needs to change
                 if (st > 25) {
                     if (!document.body.classList.contains('app-scrolled')) {
                         document.body.classList.add('app-scrolled');
@@ -6708,6 +6711,12 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
                 } else {
                     if (document.body.classList.contains('app-scrolled')) {
                         document.body.classList.remove('app-scrolled');
+                        
+                        // SAFARI REFLOW HAMMER: 
+                        // Reading the offsetHeight forces iOS WebKit to instantly repaint the DOM, 
+                        // preventing the layers from getting visually frozen in the "up" position.
+                        void document.getElementById('layer-2-container').offsetHeight;
+                        void document.querySelector('.layer-3-container').offsetHeight;
                     }
                 }
                 scrollTicking = false;
@@ -6715,6 +6724,7 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
             scrollTicking = true;
         }
     };
+
 
         document.querySelectorAll('.view-section').forEach(section => {
         section.addEventListener('scroll', window.handleAppScroll, { passive: true });
