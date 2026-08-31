@@ -592,15 +592,13 @@
              transform: translateY(var(--header-shift));
         }
 
-                       .view-section { 
+                    .view-section { 
             position: absolute; top: 0; bottom: 0; left: 0; right: 0; 
-            padding: 16px 16px calc(140px + env(safe-area-inset-bottom, 0px)) 16px; /* TIGHTENED */
+            padding: 16px 16px calc(140px + env(safe-area-inset-bottom, 0px)) 16px; 
             display: none; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch; 
-            overscroll-behavior-y: contain;
         }
-
 
         .view-section.active { display: block; }
         
@@ -6718,9 +6716,20 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
         }
     };
 
-    document.querySelectorAll('.view-section').forEach(section => {
+        document.querySelectorAll('.view-section').forEach(section => {
         section.addEventListener('scroll', window.handleAppScroll, { passive: true });
+        
+        // iOS Safari Momentum Safety Net
+        // Guarantees Layer 3 drops down even if WebKit swallows the final momentum scroll event
+        section.addEventListener('touchend', () => {
+            setTimeout(() => {
+                if (section.scrollTop <= 25 && document.body.classList.contains('app-scrolled')) {
+                    document.body.classList.remove('app-scrolled');
+                }
+            }, 400); // Waits for the iOS rubber-band snap to settle
+        }, { passive: true });
     });
+
 
 
     const originalSwitchTab = window.switchTab;
