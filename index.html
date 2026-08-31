@@ -4902,8 +4902,8 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
 
             
                        // Render Collapsible User Header (Click isolated to chevron)
-                        html += `
-            <div class="user-feed-group" style="margin-bottom: 12px; touch-action: pan-y; user-select: none; -webkit-user-select: none;">
+                                    html += `
+            <div class="user-feed-group" style="margin-bottom: 12px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-01dp); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border-subtle); margin-bottom: 12px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <img src="${escapeHTML(group.avatar)}" onerror="this.onerror=null; this.src='app-icon.png';" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
@@ -5092,8 +5092,8 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
                             </button>
                         </div>
                         
-                                                <div id="comment-section-${log.id}" style="display: ${commentDisplay}; margin-top: 16px; background: var(--surface-04dp); padding: 16px; border-radius: 12px; border: 1px solid var(--border-subtle);">
-                            <div style="max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; margin-bottom: 12px;">
+                                                        <div id="comment-section-${log.id}" style="display: ${commentDisplay}; margin-top: 16px; background: var(--surface-04dp); padding: 16px; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                            <div style="max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; margin-bottom: 12px;">
                                 ${commentsHtml}
                             </div>
                             <div style="display: flex; gap: 8px;">
