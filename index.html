@@ -1692,14 +1692,14 @@
                             <i class="fa-solid fa-camera" style="font-size: 16px;"></i>
                         </div>
                     </div>
-                    <div id="profile-display-name-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; cursor: pointer; transition: opacity 0.2s;" onclick="openPersonalInfoModal()">
-                        <span id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main);">Final Third</span>
+                               <div id="profile-display-name-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; cursor: pointer; transition: opacity 0.2s;" onclick="openPersonalInfoModal()">
+                <span id="profile-display-name" style="font-family: var(--font-serif); font-size: 24px; font-weight: 800; color: var(--text-main);">Final Third</span>
+                <i class="fa-solid fa-circle-info" style="color: var(--text-dim); font-size: 14px;"></i>
+            </div>
+            <div id="profile-member-since" style="font-size: 10px; color: var(--text-dim); font-weight: 500; margin-top: 4px;"></div>
+        </div>
 
-                        <i class="fa-solid fa-circle-info" style="color: var(--text-dim); font-size: 14px;"></i>
-                    </div>
-                </div>
-
-                <div class="section-header" style="margin-top: 0;">
+                    <div class="section-header" style="margin-top: 0;">
                     <div class="section-title">Combustion & Burn Analytics</div>
                 </div>
                 
@@ -2356,11 +2356,6 @@
         </div>
 
         <div style="margin-bottom: 16px;">
-            <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase;">Date Joined</label>
-            <div id="modal-info-joined" style="font-size: 16px; font-weight: 600; color: var(--text-main);"></div>
-        </div>
-
-        <div style="margin-bottom: 16px;">
             <label style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase;">Top Rated Cigar</label>
             <div id="modal-info-favorite" style="font-size: 16px; font-weight: 600; color: var(--text-main);"></div>
         </div>
@@ -2913,13 +2908,7 @@
         document.getElementById('modal-info-username').innerText = window.currentUserName;
         document.getElementById('modal-info-email').innerText = user.email;
         
-        const joinDate = new Date(user.metadata.creationTime).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-        document.getElementById('modal-info-joined').innerText = joinDate;
-        
+           
         let favorite = "No rated cigars yet";
         if (journalHistory && journalHistory.length > 0) {
             const ratedCigars = journalHistory.filter(c => c.rating != null && !isNaN(c.rating));
@@ -4884,18 +4873,19 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
             const hasNewLog = group.logs.some(log => (Date.now() - new Date(log.date).getTime()) < (48 * 60 * 60 * 1000));
             const groupNewBadge = hasNewLog ? '<span class="badge badge-rose" style="font-size: 9px; padding: 4px 8px;">NEW</span>' : '';
             
-            // Restore previous open/closed state (Expanded by default)
-const isFeedClosed = closedFeeds.includes(group.uid);
-const containerDisplay = isFeedClosed ? 'none' : 'block';
-const chevronRotation = isFeedClosed ? 'rotate(0deg)' : 'rotate(180deg)';
+                        // Restore previous open/closed state (Expanded by default)
+            const isFeedClosed = closedFeeds.includes(group.uid);
+            const containerDisplay = isFeedClosed ? 'none' : 'block';
+            const chevronRotation = isFeedClosed ? 'rotate(0deg)' : 'rotate(180deg)';
             
-                       // Render Collapsible User Header (Click isolated to chevron)
+            // Render Collapsible User Header (Click isolated to chevron)
             html += `
-            <div class="user-feed-group" style="margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-01dp); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border-subtle); margin-bottom: 12px;">
+            <div class="user-feed-group" style="margin-bottom: 32px; background: var(--surface-01dp); border: 1px solid var(--border-subtle); border-top: 4px solid var(--leather); border-radius: 24px; box-shadow: 0 4px 12px var(--shadow-subtle); overflow: hidden;">
+                <!-- Elevated Header with Subtle Color Wash -->
+                <div style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to right, rgba(var(--leather-rgb), 0.08) 0%, var(--surface-02dp) 60%); padding: 16px 20px; border-bottom: 1px solid var(--border-subtle);">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <img src="${escapeHTML(group.avatar)}" onerror="this.onerror=null; this.src='app-icon.png';" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-subtle);">
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 15px;">${escapeHTML(group.username)}</div>
+                        <img src="${escapeHTML(group.avatar)}" onerror="this.onerror=null; this.src='app-icon.png';" style="width: 40px; height: 40px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(var(--leather-rgb), 0.6); box-shadow: 0 2px 8px rgba(var(--leather-rgb), 0.2);">
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 16px; letter-spacing: 0.5px;">${escapeHTML(group.username)}</div>
                         <div class="badge badge-amber" style="font-size: 9px; padding: 4px 8px;">${group.logs.length} LOGS</div>
                         ${groupNewBadge}
                     </div>
@@ -4904,7 +4894,7 @@ const chevronRotation = isFeedClosed ? 'rotate(0deg)' : 'rotate(180deg)';
                         <i id="feed-chevron-${group.uid}" class="fa-solid fa-chevron-down" style="transition: transform 0.3s; font-size: 14px; transform: ${chevronRotation};"></i>
                     </div>
                 </div>
-                <div id="feed-container-${group.uid}" style="display: ${containerDisplay};">
+                <div id="feed-container-${group.uid}" style="display: ${containerDisplay}; padding: 16px 16px 0 16px;">
             `;
 
             // Render their individual logs inside the wrapper
@@ -5174,8 +5164,14 @@ const chevronRotation = isFeedClosed ? 'rotate(0deg)' : 'rotate(180deg)';
             loadDailyCigar();
             loadBrandLibrary(); 
 
-            document.getElementById('profile-display-name').innerText = window.currentUserName;
-
+                        document.getElementById('profile-display-name').innerText = window.currentUserName;
+            
+            const joinDate = new Date(user.metadata.creationTime).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('profile-member-since').innerText = `Member Since: ${joinDate}`;
                         const localAvatar = localStorage.getItem('finalThirdAvatar');
             if(localAvatar) {
                 document.getElementById('profile-avatar-img').src = localAvatar;
