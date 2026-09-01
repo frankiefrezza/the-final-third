@@ -985,6 +985,11 @@
             pointer-events: none; 
             transition: background 0.3s; 
         }
+                /* Instantly hide the dock when the virtual keyboard is open */
+        body:has(input:focus, textarea:focus, select:focus) .bottom-dock-wrapper {
+            display: none !important;
+        }
+
         [data-theme="light"] .bottom-dock-wrapper { 
             background: linear-gradient(to top, var(--bg-base) 40%, rgba(247, 245, 240, 0) 100%); 
         }
