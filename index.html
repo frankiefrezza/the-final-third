@@ -286,7 +286,50 @@
                 linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-base) 100%);
         }
 
-               /* Adjusted Logo */
+                /* --- SPLASH SCREEN LOGIC --- */
+        
+        /* Cinematic breathing ember glow behind the logo during splash */
+        #login-environment.startup-splash::before {
+            content: '';
+            position: absolute;
+            top: 45vh; 
+            left: 50%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(var(--leather-rgb), 0.25) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 1;
+            animation: splashBreathe 2s infinite ease-in-out;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+        }
+
+        @keyframes splashBreathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+        }
+
+        /* Instantly kill the glow when the animation finishes */
+        #login-environment:not(.startup-splash)::before {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Increased logo scale from 1.15 to 1.45 for a bolder entrance */
+        #login-environment.startup-splash .app-logo-luxury {
+            transform: translateY(30vh) scale(1.45); 
+        }
+        
+        #login-environment.startup-splash .login-tagline,
+        #login-environment.startup-splash .glass-panel,
+        #login-environment.startup-splash .beta-card-minimal {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        /* Adjusted Logo */
         .app-logo-luxury { 
             width: 220px; 
             height: auto; 
@@ -294,6 +337,7 @@
             display: block; 
             position: relative; 
             z-index: 2; 
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* Flips white text to dark while perfectly preserving the gold hue */
@@ -301,7 +345,6 @@
         [data-theme="claro"] .app-logo-luxury {
             filter: invert(1) hue-rotate(180deg);
         }
-
 
         .login-tagline {
             font-family: var(--font-serif);
@@ -312,6 +355,8 @@
             position: relative;
             z-index: 2;
             letter-spacing: 0.5px;
+            /* Fades in smoothly after the logo slides up */
+            transition: opacity 0.8s ease 0.2s, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.2s; 
         }
 
         /* Material Elevated Panel (24dp) */
@@ -324,7 +369,12 @@
             position: relative;
             z-index: 2;
             box-shadow: 0 16px 32px var(--shadow-strong);
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, opacity 0.8s ease 0.3s, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.3s;
+        }
+
+        /* Staggered fade in for the beta card */
+        .beta-card-minimal {
+            transition: opacity 0.8s ease 0.4s, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
         }
 
         .welcome-heading {
@@ -1119,7 +1169,7 @@
 
 <div id="app-container">
 
-    <div id="login-environment" class="app-environment active">
+        <div id="login-environment" class="app-environment active startup-splash">
         
         <div style="width: 100%; max-width: 400px; display: flex; flex-direction: column; min-height: 90vh; justify-content: flex-start; align-items: center; padding-top: 20px;">
             
@@ -1135,15 +1185,15 @@
                     <h2 class="welcome-heading">Welcome Back</h2>
                     <p class="welcome-subtitle">Sign in to access your humidor, journal and daily cigar selection.</p>
 
-                    <div class="input-group">
-                        <i class="fa-solid fa-envelope input-icon"></i>
-                        <input type="email" id="signin-email" class="luxury-input" placeholder="Email Address" autocomplete="off">
-                    </div>
-                    
-                    <div class="input-group" style="margin-bottom: 32px;">
-                        <i class="fa-solid fa-lock input-icon"></i>
-                        <input type="password" id="signin-password" class="luxury-input" placeholder="Password" autocomplete="off">
-                    </div>
+                 <div class="input-group">
+                    <i class="fa-solid fa-envelope input-icon"></i>
+                    <input type="email" id="signin-email" class="luxury-input" placeholder="Email Address" autocomplete="off" disabled>
+                </div>
+                
+                <div class="input-group" style="margin-bottom: 32px;">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input type="password" id="signin-password" class="luxury-input" placeholder="Password" autocomplete="off" disabled>
+                </div>
                     
                     <button id="signin-btn" class="btn-cigar-band" onclick="handleLogin()">
                         Log In <i class="fa-solid fa-arrow-right"></i>
@@ -5156,10 +5206,12 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
     let unsubscribeJournal = null;
     let unsubscribeUser = null;
     let unsubscribeRequests = null;
-    let unsubscribePublicFeed = null;
+        let unsubscribePublicFeed = null;
+    let isInitialBoot = true; // Tracks if this is the first app launch
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
+            isInitialBoot = false; // Bypass splash delay if already authenticated
             document.getElementById('login-environment').classList.remove('active');
             document.getElementById('main-environment').style.display = 'flex';
             document.getElementById('main-environment').classList.add('active');
@@ -5363,13 +5415,29 @@ document.querySelectorAll('[id^="feed-container-"]').forEach(el => {
             });
 
 
-
-        } else {
-
+                } else {
             document.getElementById('main-environment').classList.remove('active');
             document.getElementById('main-environment').style.display = 'none';
             document.getElementById('login-environment').classList.add('active');
             showAuthView('signin');
+            
+                    // Execute the splash screen animation only on cold boot
+        if (isInitialBoot) {
+            setTimeout(() => {
+                document.getElementById('login-environment').classList.remove('startup-splash');
+                
+                // Unlock the inputs so the autofill prompt appears exactly as the form fades in
+                document.getElementById('signin-email').removeAttribute('disabled');
+                document.getElementById('signin-password').removeAttribute('disabled');
+                
+                isInitialBoot = false;
+            }, 2000); // 2-second delay before sliding up
+        } else {
+            // Instantly remove splash state if they are just logging out
+            document.getElementById('login-environment').classList.remove('startup-splash');
+            document.getElementById('signin-email').removeAttribute('disabled');
+            document.getElementById('signin-password').removeAttribute('disabled');
+        }
             
             document.getElementById('signin-email').value = '';
             document.getElementById('signin-password').value = '';
