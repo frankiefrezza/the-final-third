@@ -3382,9 +3382,11 @@
         "Perfecto", "Salomon", "Diadema", "Culebra", "Chisel"
     ];
     
-    window.wrapperLibrary = [
+            window.wrapperLibrary = [
         "Connecticut", "Corojo", "Habano", "Maduro", "Oscuro", "Cameroon",
-        "Candela", "Sumatra", "Broadleaf", "Rosado"
+        "Candela", "Sumatra", "Broadleaf", "Rosado", "Ecuador", "Mexican", 
+        "Nicaraguan", "San Andrés", "Criollo", "Mata Fina", "Arapiraca", 
+        "Dominican", "Honduran"
     ];
 
     window.checkAndAddNewBrand = async function(brandName) {
@@ -3705,27 +3707,34 @@
         }
     };
 
-
         // 2. Wrapper Color Swatch Preview Dictionary
-    const wrapperColorMap = {
+         const wrapperColorMap = {
         "candela": "#4ADE80",
         "double claro": "#4ADE80",
         "claro": "#F5DEB3",
         "connecticut": "#E5D0A1",
+        "ecuador": "#A35320",
         "colorado claro": "#D6813B", 
+        "dominican": "#D6813B",
         "cameroon": "#C9703E", 
         "sumatra": "#B86532", 
         "habano": "#A35320", 
         "rosado": "#A84C32",
+        "nicaraguan": "#9E472A",
         "corojo": "#9E472A",
+        "criollo": "#9E472A",
         "colorado": "#963826",
+        "honduran": "#963826",
         "colorado maduro": "#85371F", 
         "broadleaf": "#732D16", 
-        "san andres": "#612510", 
+        "mexican": "#612510",
+        "san andres": "#612510",
+        "san andrés": "#612510", 
+        "mata fina": "#541F0C",
+        "arapiraca": "#541F0C",
         "maduro": "#541F0C", 
         "oscuro": "#401607" 
     };
-
 
     window.updateWrapperSwatch = function(inputId, swatchId) {
         const val = document.getElementById(inputId).value.trim().toLowerCase();
